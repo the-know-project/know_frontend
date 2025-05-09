@@ -1,15 +1,18 @@
-
+"use client"
 import { FaBell, FaRegUser } from "react-icons/fa6";
 import { useState } from "react";
 import UserDropdown from "./userdropdown";
+import Image from "next/image";
 
-export default function Header() {
+export default function HeaderInside() {
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <header className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
       <div className="flex items-center gap-2">
-        <img src="/logo.png" alt="logo" className="h-6" />
+        <Image src="/Know-Logo.png" alt="logo" height={20} width={20}/>
+      
         <input type="text" placeholder="Search" className="border rounded px-2 py-1 text-sm" />
       </div>
       <div className="flex items-center gap-4">

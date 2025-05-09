@@ -1,8 +1,11 @@
+import Image from "next/image";
+
+
 export default function Sidebar() {
     return (
-      <aside className="w-72 p-4 border-r border-gray-200">
+      <aside className="w-72 p-4 border-r bg-white text-black border-gray-200">
         <div className="flex flex-col items-center">
-          <img src="/placeholder-avatar.png" alt="avatar" className="w-20 h-20 rounded-full mb-2" />
+          <img src="/Avatar.png" alt="avatar" className="w-20 h-20 rounded-full mb-2" />
           <div className="text-center">
             <h2 className="text-lg font-bold">Hydon Precious</h2>
             <p className="text-sm text-gray-500">Artist</p>

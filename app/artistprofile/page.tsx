@@ -1,13 +1,13 @@
 import Sidebar from "../components/sidebar";
-import Header from "../components/header";
 import PostGrid from "../components/postgrid";
+import HeaderInside from "../components/headerinside";
 
 export default function ArtistProfilePage() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex bg-white min-h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header />
+        <HeaderInside />
         <main className="p-6">
           <PostGrid />
         </main>
