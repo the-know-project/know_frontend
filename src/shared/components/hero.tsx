@@ -1,5 +1,4 @@
-// components/Hero.tsx
-import GradientText from "../Animation/GradientText";
+import GradientText from "./gradient-text";
 
 export default function Hero() {
   return (
