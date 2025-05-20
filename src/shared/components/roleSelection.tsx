@@ -1,8 +1,20 @@
 import Image from "next/image";
 import { LuUserRound } from "react-icons/lu";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { setRole } from "../../redux/slice/authSlice";
+import Router from "next/router";
 
 export default function SelectRole() {
+  const dispatch = useDispatch();
+  const router = Router
+
+  const handleSelectRole = (selectedRole: string) => {
+    dispatch(setRole(selectedRole));
+    router.push("/auth/signup");
+  };
+
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       
@@ -24,7 +36,7 @@ export default function SelectRole() {
         
         <div className="space-y-4">
           <Link href={"/auth/signup"}>
-          <button className="w-full cursor-pointer border border-b-neutral-300 p-4 rounded-lg flex items-start gap-3">
+          <button onClick={() => handleSelectRole("ARTIST")} className="w-full cursor-pointer border border-b-neutral-300 p-4 rounded-lg flex items-start gap-3">
             <div className="h-[20px]  md:h-[52px] md:w-[52px] w-[20px] flex items-center justify-center  rounded-[24px] bg-gray-400/35">
             <LuUserRound  className="mt-1 text-2xl  md:text-3xl text-neutral-700" />
             </div>
@@ -39,7 +51,7 @@ export default function SelectRole() {
           </Link>
           
 
-          <button className="w-full cursor-pointer p-4 rounded-lg flex items-start gap-3 hover:border-black transition">
+          <button onClick={() => handleSelectRole("BUYER")} className="w-full cursor-pointer p-4 rounded-lg flex items-start gap-3 hover:border-black transition">
            <div className="h-[20px] md:h-[52px] w-[20px] md:w-[52px] flex items-center justify-center  rounded-[24px] bg-gray-400/35">
             <LuUserRound  className="mt-1 text-2xl  md:text-3xl text-neutral-700" />
 

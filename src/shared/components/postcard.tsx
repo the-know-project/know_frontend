@@ -5,7 +5,7 @@ import { CiEdit } from "react-icons/ci";
 
 export default function PostCard({ post }: { post: any }) {
   return (
-    <div className="border rounded overflow-hidden shadow-sm bg-white">
+    <div className="border rounded text-black overflow-hidden shadow-sm bg-white">
       <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
       <div className="p-2">
         <h3 className="font-medium text-sm mb-1">{post.title}</h3>

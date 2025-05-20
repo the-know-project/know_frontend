@@ -1,6 +1,6 @@
 export default function UserDropdown() {
     return (
-      <div className="absolute right-0 mt-2 w-60 bg-white rounded shadow-lg border text-sm z-20">
+      <div className="absolute right-0 mt-2 w-60 bg-white text-black rounded shadow-lg border text-sm z-20">
         <div className="px-4 py-2 border-b">
           <p className="font-bold">Hydon Precious</p>
           <p className="text-gray-500 text-xs">hydonprecious@email.com</p>
