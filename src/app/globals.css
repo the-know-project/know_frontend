@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+
+@theme {
+  --keyframes-gradient: {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  };
+  --animation-gradient: gradient 8s linear infinite;
+}
