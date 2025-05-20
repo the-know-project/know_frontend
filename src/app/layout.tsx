@@ -21,9 +21,7 @@ const bebasNeue = localFont({
 });
 
 const Helvetica = localFont({
-  src: [
-    { path: "/fonts/Helvetica-Regular.ttf", weight: "400", style: "normal" },
-  ],
+  src: [{ path: "/fonts/Helvetica.ttf", weight: "400", style: "normal" }],
   variable: "--helvetica",
 });
 
@@ -38,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
       >

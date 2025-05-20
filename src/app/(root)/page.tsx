@@ -1,15 +1,14 @@
-import Footer from "./components/footer";
-import Header from "./components/header"
-import Hero from "./components/hero";
-import JoinCTA from "./components/joincta";
-import TiltSection from "./components/tiltsection";
-
+import Hero from "@/src/shared/components/hero";
+import JoinCTA from "@/src/shared/components/joincta";
+import TiltSection from "@/src/shared/components/tiltsection";
+import Footer from "@/src/shared/layout/footer";
+import Navbar from "@/src/shared/layout/navbar";
 
 export default function Home() {
   return (
     <div>
-      <Header/>
-      <Hero/>
+      <Navbar />
+      <Hero />
       <TiltSection
         title="Showcase your work, manage your portfolio, and reach global buyers."
         subtitle="Showcase your unique creations, manage a professional portfolio with ease, and connect with a global audience."
@@ -26,9 +25,8 @@ export default function Home() {
         subtitle="Showcase your unique creations, manage a professional portfolio with ease, and connect with a global audience."
         imgSrc="/forArtist.png"
       />
-      <JoinCTA/>
-      <Footer/>
-
+      <JoinCTA />
+      <Footer />
     </div>
   );
 }
