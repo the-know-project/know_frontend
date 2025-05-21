@@ -27,6 +27,7 @@ export default function Nav() {
   return (
     <div className="relative">
       <Navbar className="bg-black">
+        {/* Desktop Nav */}
         <NavBody>
           <NavbarLogo />
           <NavItems
@@ -35,21 +36,20 @@ export default function Nav() {
           />
 
           <NavbarButton colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}>
-            <button className="font-grotesk group relative inline-flex items-center gap-1 rounded-md bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200">
+            <button
+              onClick={handleGetStarted}
+              className="button_base group py-1.5"
+            >
               Get Started{" "}
-              <IconArrowRight
-                width={20}
-                height={20}
-                className="-rotate-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
+              <IconArrowRight width={20} height={20} className="button_icon" />
             </button>
           </NavbarButton>
         </NavBody>
 
+        {/* Mobile Nav */}
         <MobileNav className="w-full bg-black">
           <MobileNavHeader className="px-2">
             <NavbarLogo />
-
             <MobileNavToggle
               isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -76,13 +76,13 @@ export default function Nav() {
             >
               <button
                 onClick={handleGetStarted}
-                className="font-grotesk group relative inline-flex w-full items-center justify-center gap-1 self-center rounded-md bg-zinc-950 px-2.5 py-2 text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200"
+                className="group button_base justify-center self-center py-2"
               >
                 Get Started{" "}
                 <IconArrowRight
                   width={20}
                   height={20}
-                  className="-rotate-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  className="button_icon"
                 />
               </button>
             </NavbarButton>
