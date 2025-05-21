@@ -149,3 +149,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .button_base {
+    @apply font-grotesk relative inline-flex items-center gap-1 rounded-md bg-zinc-950 px-2.5 text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200;
+  }
+
+  .button_icon {
+    @apply -rotate-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5;
+  }
+}
