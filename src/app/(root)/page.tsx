@@ -2,12 +2,12 @@ import Hero from "@/src/shared/components/hero";
 import JoinCTA from "@/src/shared/components/joincta";
 import TiltSection from "@/src/shared/components/tiltsection";
 import Footer from "@/src/shared/layout/footer";
-import Navbar from "@/src/shared/layout/navbar";
+import Nav from "@/src/shared/layout/navbar";
 
 export default function Home() {
   return (
     <div>
-      <Navbar />
+      <Nav />
       <Hero />
       <TiltSection
         title="Showcase your work, manage your portfolio, and reach global buyers."
