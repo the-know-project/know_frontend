@@ -1,23 +1,36 @@
-// components/Header.tsx
-import Link from "next/link";
-import Image from "next/image";
+import { IconArrowRight } from "@tabler/icons-react";
+import {
+  NavbarLogo,
+  Navbar,
+  NavBody,
+  NavItems,
+  NavbarButton,
+} from "../ui/resizable-navbar";
+import { INavItems } from "@/src/constants/constants";
 
-export default function Header() {
+export default function Nav() {
   return (
-    <header className="flex justify-between items-center px-6 py-4 bg-black shadow-md">
-      <div className="text-xl font-bold text-primary">
-        <Image src="/Know-Logo.png"  alt="logo" width={50} height={50} priority/>
-      </div>
+    <div className="relative">
+      <Navbar className="bg-black">
+        <NavBody>
+          <NavbarLogo />
+          <NavItems
+            items={INavItems}
+            className="font-grotesk font-medium text-neutral-50"
+          />
 
-      <nav className="hidden md:flex gap-6 text-sm text-white font-medium">
-        <Link href="#">About Us</Link>
-        <Link href="#">Community</Link>
-        <Link href="#">Contact Us</Link>
-      </nav>
-
-      <Link href="/auth">
-        <button className="btn btn-primary btn-sm">Get Started</button>
-      </Link>
-    </header>
+          <NavbarButton colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}>
+            <button className="font-grotesk group relative inline-flex items-center gap-1 rounded-md bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200">
+              Get Started{" "}
+              <IconArrowRight
+                width={20}
+                height={20}
+                className="-rotate-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </button>
+          </NavbarButton>
+        </NavBody>
+      </Navbar>
+    </div>
   );
 }
