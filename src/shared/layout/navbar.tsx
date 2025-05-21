@@ -48,7 +48,7 @@ export default function Nav() {
 
         {/* Mobile Nav */}
         <MobileNav className="w-full bg-black">
-          <MobileNavHeader className="px-2">
+          <MobileNavHeader className="pr-2">
             <NavbarLogo />
             <MobileNavToggle
               isOpen={isMobileMenuOpen}
@@ -66,7 +66,7 @@ export default function Nav() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="relative text-white"
               >
-                <span className="font-grotesk text-md block">{item.name}</span>
+                <span className="font-grotesk block">{item.name}</span>
               </a>
             ))}
 
@@ -76,7 +76,7 @@ export default function Nav() {
             >
               <button
                 onClick={handleGetStarted}
-                className="group button_base justify-center self-center py-2"
+                className="group button_base w-full justify-center self-center py-2 text-sm"
               >
                 Get Started{" "}
                 <IconArrowRight
