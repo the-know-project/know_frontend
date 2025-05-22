@@ -32,7 +32,7 @@ export default function Nav() {
           <NavbarLogo />
           <NavItems
             items={INavItems}
-            className="font-grotesk font-medium text-neutral-50"
+            className="font-grotesk text-md font-medium text-neutral-50"
           />
 
           <NavbarButton colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}>
