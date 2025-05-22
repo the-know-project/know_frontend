@@ -7,8 +7,12 @@ import Nav from "@/src/shared/layout/navbar";
 export default function Home() {
   return (
     <div>
-      <Nav />
-      <Hero />
+      <div className="relative">
+        <div className="absolute w-full">
+          <Nav />
+        </div>
+        <Hero />
+      </div>
       <TiltSection
         title="Showcase your work, manage your portfolio, and reach global buyers."
         subtitle="Showcase your unique creations, manage a professional portfolio with ease, and connect with a global audience."
