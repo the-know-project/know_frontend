@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="flex min-h-screen w-full flex-col bg-black">
+    <section className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black">
       <div className="relative flex w-full flex-col items-center justify-center md:flex-row md:justify-between">
         <div className="absolute z-20 flex w-full flex-col gap-10 pl-4 sm:pl-0 md:relative md:w-2/4 md:gap-8">
           <GradientText className="flex w-full sm:max-w-prose">
