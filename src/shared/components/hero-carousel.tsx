@@ -38,7 +38,7 @@ const HeroCarousel = () => {
   return (
     <section className="flex w-full flex-col">
       <div {...carouselHandler} className="w-full">
-        <div className="relative h-[900px] w-[700px] overflow-hidden sm:w-[750px] md:rounded-[15px]">
+        <div className="relative flex min-h-screen w-[700px] items-center justify-center overflow-hidden sm:w-[900px] lg:w-[750px] lg:rounded-[15px]">
           {HeroCarouselItems.map((item, index) => (
             <Image
               key={index}
@@ -46,7 +46,7 @@ const HeroCarousel = () => {
               alt={`hero_image_${index}`}
               quality={100}
               fill
-              className={`absolute top-0 left-0 h-full w-full object-cover blur-xl transition-opacity duration-1000 ease-in-out md:blur-none ${index === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"} `}
+              className={`absolute top-0 left-0 h-full w-full object-cover blur-sm transition-opacity duration-1000 ease-in-out md:blur-sm lg:blur-none ${index === currentIndex ? "z-10 opacity-100" : "z-0 opacity-0"} `}
             />
           ))}
         </div>
