@@ -1,14 +1,16 @@
-// components/TiltSection.tsx
 import Image from "next/image";
+import { TitleText } from "../layout/header";
 
 type TiltSectionProps = {
+  role: string;
   title: string;
   subtitle: string;
   imgSrc: string;
-  reverse?: boolean; 
+  reverse?: boolean;
 };
 
 export default function TiltSection({
+  role,
   title,
   subtitle,
   imgSrc,
@@ -16,26 +18,30 @@ export default function TiltSection({
 }: TiltSectionProps) {
   return (
     <section
-      className={`flex flex-col md:flex-row bg-white text-black items-center justify-between px-6 py-12 gap-10 ${
+      className={`flex flex-col items-center justify-between gap-10 bg-white px-6 py-12 text-black md:flex-row ${
         reverse ? "md:flex-row-reverse" : ""
       }`}
     >
-      
       <div className="flex-1">
-        <p className="text-xs uppercase text-neutral-400">For Artists</p>
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">{title}</h2>
-        <p className="text-base text-gray-950">{subtitle}</p>
+        <TitleText textStyles={`w-full max-w-prose`}>
+          <p className="font-bebas text-sm text-neutral-400 uppercase">
+            {role}
+          </p>
+          <h2 className="font-helvetica mb-4 text-2xl font-medium capitalize md:text-3xl">
+            {title}
+          </h2>
+        </TitleText>
+        <p className="font-grotesk text-base text-gray-950">{subtitle}</p>
       </div>
 
-      
-      <div className="flex-1 flex justify-center">
-        <div className="transform rotate-[-6deg] overflow-hidden rounded-xl">
+      <div className="flex flex-1 justify-center">
+        <div className="rotate-[-6deg] transform overflow-hidden rounded-xl">
           <Image
             src={imgSrc}
             alt="Gallery Image"
             width={400}
             height={300}
-            className="object-fit transform rotate-[-6deg] "
+            className="object-fit rotate-[-6deg] transform"
           />
         </div>
       </div>
