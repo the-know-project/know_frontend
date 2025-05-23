@@ -3,11 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
-import { mainUser } from "@/src/lib/redux/slice/authSlice";
 
 // Validation Schema
 const SignupSchema = Yup.object().shape({
@@ -21,32 +19,13 @@ const SignupSchema = Yup.object().shape({
 
 export default function SignupForm() {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const role = useSelector((state: any) => state.state.role);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: any) => {
+    console.log(values);
     setLoading(true);
 
-    const userData = {
-      ...values,
-      username: values.email.split("@")[0],
-      role: role || "BUYER",
-    };
-
     try {
-      const res = await fetch("http://localhost:3000/api/auth/registerUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!res.ok) throw new Error("Failed to register");
-
-      const data = await res.json();
-      dispatch(mainUser(data));
       router.push("/explore");
     } catch (err) {
       alert("Signup failed. Please try again.");
