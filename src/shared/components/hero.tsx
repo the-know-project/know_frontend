@@ -26,9 +26,9 @@ export default function Hero() {
             >
               <Link
                 href={`/auth`}
-                className="font-bebas relative inline-flex items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-xl font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 lg:w-fit lg:text-lg"
+                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-xl font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 lg:text-lg"
               >
-                Get Started{" "}
+                Join The Movement
                 <IconArrowRight
                   width={20}
                   height={20}
