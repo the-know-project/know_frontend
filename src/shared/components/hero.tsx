@@ -7,17 +7,18 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <section className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black">
-      <div className="relative flex w-full flex-col items-center justify-center md:flex-row md:justify-between">
-        <div className="absolute z-20 flex w-full flex-col gap-10 pl-4 sm:pl-0 md:relative md:w-2/4 md:gap-8">
-          <GradientText className="flex w-full sm:max-w-prose">
-            <h3 className="font-marker text-6xl font-black sm:text-6xl md:text-8xl">
-              Discover, Showcase And Own Art
+      <div className="relative flex w-full flex-col items-center justify-center lg:flex-row lg:justify-between">
+        <div className="absolute z-20 flex w-full flex-col gap-10 pl-4 sm:pl-0 lg:relative lg:w-2/4 lg:gap-8">
+          <GradientText className="flex w-full p-0 md:p-6 lg:max-w-prose lg:p-0">
+            <h3 className="font-bebas text-7xl font-black sm:text-8xl lg:text-8xl">
+              {`Discover, Showcase & Own Art`}
             </h3>
           </GradientText>
-          <div className="flex w-full flex-col gap-[80px] pl-0 sm:pl-[3rem] md:gap-[50px]">
-            <p className="font-bebas max-w-prose text-2xl font-light text-neutral-100">
-              A blockchain-powered platform connecting artist and buyers like
-              never before
+          <div className="flex w-full flex-col gap-[80px] pl-1 md:pl-[2rem] lg:gap-[50px] lg:pl-[2.5rem]">
+            <p className="font-grotesk max-w-prose text-lg font-medium text-neutral-100 capitalize md:text-2xl lg:text-xl">
+              A blockchain-powered platform connecting{" "}
+              <br className="hidden md:block" /> artist and buyers like never
+              before
             </p>
             <NavbarButton
               colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
@@ -25,7 +26,7 @@ export default function Hero() {
             >
               <Link
                 href={`/auth`}
-                className="font-bebas md:text-md relative inline-flex items-center gap-1 rounded-md bg-zinc-950 px-2.5 py-1.5 text-xl font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 md:w-fit md:text-lg"
+                className="font-bebas relative inline-flex items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-xl font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 lg:w-fit lg:text-lg"
               >
                 Get Started{" "}
                 <IconArrowRight
@@ -38,7 +39,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex w-full items-end justify-end self-end md:w-fit">
+        <div className="flex w-full items-end justify-end self-end lg:w-fit">
           <HeroCarousel />
         </div>
       </div>
