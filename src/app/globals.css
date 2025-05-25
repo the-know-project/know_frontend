@@ -161,3 +161,18 @@
     @apply -rotate-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5;
   }
 }
+.purple-glow {
+  filter: drop-shadow(0 0 15px rgba(128, 0, 255, 0.7));
+}
+
+.orange-glow {
+  filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.7));
+}
+
+.yellow-glow {
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+}
+
+.green-glow {
+  filter: drop-shadow(0 0 15px rgba(50, 205, 50, 0.7));
+}
