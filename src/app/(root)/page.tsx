@@ -1,8 +1,8 @@
-import About from "@/src/shared/components/about";
-import Hero from "@/src/shared/components/hero";
-import JoinCTA from "@/src/shared/components/joincta";
 import Footer from "@/src/shared/layout/footer";
 import Nav from "@/src/shared/layout/navbar";
+import Hero from "./components/hero";
+import About from "./components/about";
+import JoinCTA from "./components/joincta";
 
 export default function Home() {
   return (
