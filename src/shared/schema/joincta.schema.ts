@@ -3,4 +3,4 @@ export const JoinCtaSchema = z.object({
   email: z.string().email(),
 });
 
-export type IJoinCtaSchema = z.infer<typeof JoinCtaSchema>;
+export type IJoinCta = z.infer<typeof JoinCtaSchema>;
