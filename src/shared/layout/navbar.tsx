@@ -40,7 +40,6 @@ export default function Nav() {
       });
     }
 
-    // Close mobile menu if open
     setIsMobileMenuOpen(false);
   };
 
