@@ -165,7 +165,7 @@
   }
 
   .accordion_title {
-    @apply font-helvetica ml-2 text-nowrap text-zinc-950 sm:text-lg dark:text-zinc-50;
+    @apply font-helvetica ml-2 text-nowrap text-zinc-950 sm:text-lg lg:text-xl dark:text-zinc-50;
   }
 
   .accordion_content {
