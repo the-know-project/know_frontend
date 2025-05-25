@@ -9,6 +9,7 @@ type TiltSectionProps = {
   title: string;
   subtitle: string;
   imgSrc: string | StaticImageData;
+  glow_color: string;
   reverse?: boolean;
 };
 
@@ -17,6 +18,7 @@ export default function TiltSection({
   title,
   subtitle,
   imgSrc,
+  glow_color,
   reverse = false,
 }: TiltSectionProps) {
   const { ref, isVisible } = useIsVisible();
@@ -28,7 +30,7 @@ export default function TiltSection({
     >
       <div className="flex-1">
         <TitleText textStyles={`w-full max-w-prose`}>
-          <p className="font-bebas text-sm text-neutral-400 uppercase">
+          <p className="font-bebas lg:text-md text-sm text-neutral-400 uppercase">
             {role}
           </p>
           <h2 className="font-helvetica mb-4 text-2xl font-medium capitalize md:text-3xl">
@@ -41,7 +43,9 @@ export default function TiltSection({
       </div>
 
       <div className="flex w-full flex-1 justify-center">
-        <div className="relative rotate-[-6deg] transform overflow-hidden rounded-xl">
+        <div
+          className={`${glow_color} relative rotate-[-6deg] transform overflow-hidden rounded-xl`}
+        >
           <Image
             ref={ref}
             src={imgSrc}
