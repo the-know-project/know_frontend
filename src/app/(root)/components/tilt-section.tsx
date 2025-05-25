@@ -24,7 +24,7 @@ export default function TiltSection({
   const { ref, isVisible } = useIsVisible();
   return (
     <section
-      className={`flex flex-col items-center justify-between gap-10 bg-neutral-50 px-6 py-12 text-black md:flex-row ${
+      className={`z-50 flex flex-col items-center justify-between gap-10 bg-transparent px-6 py-12 text-black md:flex-row ${
         reverse ? "md:flex-row-reverse" : ""
       }`}
     >
