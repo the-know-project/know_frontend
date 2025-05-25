@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { TitleText } from "../layout/header";
+import JoinCtaForm from "./joincta.form";
 
 export default function JoinCTA() {
   return (
@@ -22,7 +23,7 @@ export default function JoinCTA() {
       </div>
 
       <TitleText textStyles={`flex flex-col w-full`}>
-        <div className="relative z-10 mx-auto max-w-3xl md:ml-11">
+        <div className="relative z-10 mx-auto max-w-3xl gap-5 md:ml-11">
           <p className="font-bebas mb-2 text-lg text-neutral-300 uppercase">
             Ready to join?
           </p>
@@ -30,15 +31,9 @@ export default function JoinCTA() {
             Start your journey today. Showcase your talent or discover
             incredible art.
           </h2>
-
-          <form className="mx-auto flex max-w-lg items-center justify-center gap-2">
-            <input
-              type="email"
-              placeholder="Email Address"
-              className="input input-bordered w-full max-w-sm bg-white text-black"
-            />
-            <button className="btn btn-primary">Get Started</button>
-          </form>
+          <div>
+            <JoinCtaForm />
+          </div>
         </div>
       </TitleText>
     </section>
