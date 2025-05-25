@@ -20,7 +20,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^12.12.2",
     "lucide-react": "^0.511.0",
-    "motion": "^12.12.1",
+    "motion": "^12.12.2",
     "next": "15.2.4",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
