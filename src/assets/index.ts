@@ -5,5 +5,19 @@ import hero4 from "./hero4.png";
 import for_artist from "./forArtist.png";
 import for_buyers from "./for-buyers.png";
 import secure_tx from "./secure-transaction.png";
+import smoke_rose from "./smoke_rose.jpeg";
+import old_sage from "./old_sage.jpeg";
+import trusted from "./trusted.jpeg";
 
-export { hero1, hero2, hero3, hero4, for_artist, for_buyers, secure_tx };
+export {
+  hero1,
+  hero2,
+  hero3,
+  hero4,
+  for_artist,
+  for_buyers,
+  secure_tx,
+  smoke_rose,
+  old_sage,
+  trusted,
+};
