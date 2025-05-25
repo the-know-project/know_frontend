@@ -10,6 +10,10 @@ export const INavItems = [
     link: "#community",
   },
   {
+    name: "Faq",
+    link: "#faq",
+  },
+  {
     name: "Contact Us",
     link: "#contact",
   },
