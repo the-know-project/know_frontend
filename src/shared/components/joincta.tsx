@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { TitleText } from "../layout/header";
 
 export default function JoinCTA() {
   return (
@@ -20,24 +21,26 @@ export default function JoinCTA() {
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto max-w-3xl md:ml-11">
-        <p className="font-bebas mb-2 text-lg text-neutral-300 uppercase">
-          Ready to join?
-        </p>
-        <h2 className="font-helvetica mb-6 max-w-prose text-3xl font-bold capitalize md:text-4xl">
-          Start your journey today. Showcase your talent or discover incredible
-          art.
-        </h2>
+      <TitleText textStyles={`flex flex-col w-full`}>
+        <div className="relative z-10 mx-auto max-w-3xl md:ml-11">
+          <p className="font-bebas mb-2 text-lg text-neutral-300 uppercase">
+            Ready to join?
+          </p>
+          <h2 className="font-helvetica mb-6 max-w-prose text-3xl font-bold capitalize md:text-4xl">
+            Start your journey today. Showcase your talent or discover
+            incredible art.
+          </h2>
 
-        <form className="mx-auto flex max-w-lg items-center justify-center gap-2">
-          <input
-            type="email"
-            placeholder="Email Address"
-            className="input input-bordered w-full max-w-sm bg-white text-black"
-          />
-          <button className="btn btn-primary">Get Started</button>
-        </form>
-      </div>
+          <form className="mx-auto flex max-w-lg items-center justify-center gap-2">
+            <input
+              type="email"
+              placeholder="Email Address"
+              className="input input-bordered w-full max-w-sm bg-white text-black"
+            />
+            <button className="btn btn-primary">Get Started</button>
+          </form>
+        </div>
+      </TitleText>
     </section>
   );
 }
