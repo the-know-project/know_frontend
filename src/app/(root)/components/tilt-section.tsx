@@ -44,16 +44,22 @@ export default function TiltSection({
 
       <div className="flex w-full flex-1 justify-center">
         <div
-          className={`${glow_color} relative rotate-[-6deg] transform overflow-hidden rounded-xl`}
+          className={`${glow_color} relative rotate-[-6deg] transform-gpu rounded-xl ${isVisible ? "motion-preset-expand motion-duration-1000" : "opacity-0"}`}
+          style={{
+            padding: "20px", // Add padding to prevent clipping
+          }}
         >
-          <Image
-            ref={ref}
-            src={imgSrc}
-            alt="Gallery Image"
-            width={400}
-            height={300}
-            className={`object-fit relat rotate-[-6deg] transform ${isVisible ? "motion-preset-expand motion-duration-1000" : "opacity-0"}`}
-          />
+          <div className="overflow-hidden rounded-xl">
+            <Image
+              ref={ref}
+              src={imgSrc}
+              alt="Gallery Image"
+              width={400}
+              height={300}
+              quality={100}
+              className="h-full w-full object-cover"
+            />
+          </div>
         </div>
       </div>
     </section>

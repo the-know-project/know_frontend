@@ -1,4 +1,4 @@
-import { for_artist, for_buyers, secure_tx } from "@/src/assets";
+import { old_sage, secure_tx, smoke_rose, trusted } from "@/src/assets";
 import TiltSection from "./tilt-section";
 import GridBackground from "@/src/shared/components/grid-background";
 
@@ -11,14 +11,14 @@ const About = () => {
             role="For Artists"
             title="Showcase your work, manage your portfolio, and reach global buyers."
             subtitle="Showcase your unique creations, manage a professional portfolio with ease, and connect with a global audience."
-            imgSrc={for_artist}
+            imgSrc={smoke_rose}
             glow_color="purple-glow"
           />
           <TiltSection
             role="For Buyers"
             title="Discover unique art, express interest, and support artists worldwide."
             subtitle="From emerging talents to established artists, find unique art and foster a global creative community."
-            imgSrc={for_buyers}
+            imgSrc={old_sage}
             reverse
             glow_color="orange-glow"
           />
@@ -26,7 +26,7 @@ const About = () => {
             role="Secure Transactions"
             title="Safe and seamless payments with every transaction."
             subtitle="Enjoy the flexibility of paying in your preferred currency while benefiting from robust security measures that safeguard your financial data."
-            imgSrc={secure_tx}
+            imgSrc={trusted}
             glow_color="green-glow"
           />
         </>
