@@ -25,8 +25,8 @@ export default function JoinCTA() {
           Ready to join?
         </p>
         <h2 className="font-helvetica mb-6 max-w-prose text-3xl font-bold capitalize md:text-4xl">
-          Showcase your talent or discover incredible art — start your journey
-          today.
+          Start your journey today. Showcase your talent or discover incredible
+          art.
         </h2>
 
         <form className="mx-auto flex max-w-lg items-center justify-center gap-2">
