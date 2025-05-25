@@ -24,6 +24,26 @@ export default function Nav() {
     setIsMobileMenuOpen(false);
     router.push("/auth");
   };
+
+  const handleSmoothScroll = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    e.preventDefault();
+    const targetId = href.replace("#", "");
+    const targetElement = document.getElementById(targetId);
+
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+
+    // Close mobile menu if open
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <div className="relative">
       <Navbar className="bg-black">
@@ -33,6 +53,7 @@ export default function Nav() {
           <NavItems
             items={INavItems}
             className="font-grotesk text-md font-medium text-neutral-50"
+            onSmoothScroll={handleSmoothScroll}
           />
 
           <NavbarButton colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}>
@@ -63,7 +84,7 @@ export default function Nav() {
               <a
                 key={`mobile-link-${idx}`}
                 href={item.link}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => handleSmoothScroll(e, item.link)}
                 className="relative text-white"
               >
                 <span className="font-grotesk block">{item.name}</span>
