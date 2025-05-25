@@ -29,6 +29,10 @@ interface NavItemsProps {
   }[];
   className?: string;
   onItemClick?: () => void;
+  onSmoothScroll?: (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => void;
 }
 
 interface MobileNavProps {
@@ -113,8 +117,25 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   );
 };
 
-export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
+export const NavItems = ({
+  items,
+  className,
+  onItemClick,
+  onSmoothScroll,
+}: NavItemsProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
+
+  const handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: { name: string; link: string },
+  ) => {
+    if (onSmoothScroll) {
+      onSmoothScroll(e, item.link);
+    }
+    if (onItemClick) {
+      onItemClick();
+    }
+  };
 
   return (
     <motion.div
@@ -127,7 +148,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
       {items.map((item, idx) => (
         <a
           onMouseEnter={() => setHovered(idx)}
-          onClick={onItemClick}
+          onClick={(e) => handleClick(e, item)}
           className="relative px-4 py-2 text-white dark:text-neutral-300"
           key={`link-${idx}`}
           href={item.link}
