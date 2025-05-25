@@ -1,7 +1,6 @@
 import About from "@/src/shared/components/about";
 import Hero from "@/src/shared/components/hero";
 import JoinCTA from "@/src/shared/components/joincta";
-import TiltSection from "@/src/shared/components/tiltsection";
 import Footer from "@/src/shared/layout/footer";
 import Nav from "@/src/shared/layout/navbar";
 
