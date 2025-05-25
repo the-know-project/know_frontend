@@ -3,6 +3,7 @@ import Nav from "@/src/shared/layout/navbar";
 import Hero from "./components/hero";
 import About from "./components/about";
 import JoinCTA from "./components/joincta";
+import Faq from "./components/faq";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       </div>
       <About />
       <JoinCTA />
+      <Faq />
       <Footer />
     </>
   );

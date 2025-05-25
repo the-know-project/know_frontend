@@ -30,7 +30,7 @@ export default function TiltSection({
     >
       <div className="flex-1">
         <TitleText textStyles={`w-full max-w-prose`}>
-          <p className="font-bebas lg:text-md text-sm text-neutral-400 uppercase">
+          <p className="font-bebas text-lg text-neutral-400 uppercase">
             {role}
           </p>
           <h2 className="font-helvetica mb-4 text-2xl font-medium capitalize md:text-3xl">
