@@ -4,13 +4,14 @@ import { INavItems } from "@/src/constants/constants";
 import {
   IconBrandInstagram,
   IconBrandLinkedin,
+  IconBrandTiktok,
   IconBrandX,
 } from "@tabler/icons-react";
 
 export default function Footer() {
   return (
     <footer className="flex w-full flex-col bg-black text-neutral-50">
-      <div className="flex w-full flex-col px-6 py-10">
+      <div className="flex w-full flex-col items-center justify-center px-6 py-10">
         <div className="h-[50px]">
           <TextEffectWithExit text="Powered by stellar" />
         </div>
@@ -25,7 +26,7 @@ export default function Footer() {
             />
           </div>
 
-          <div className="font-grotesk lg:text-md flex flex-col gap-2 text-sm capitalize">
+          <div className="font-bricolage flex flex-col gap-2 text-sm capitalize lg:text-lg">
             {INavItems.map((item, index) => (
               <a key={index} href={item.link}>
                 {item.name}
@@ -39,7 +40,7 @@ export default function Footer() {
                 width={30}
                 height={30}
                 color="white"
-                className="transition-all duration-200 hover:scale-105 active:scale-95"
+                className="transition-all duration-200 hover:scale-105 active:scale-95 lg:h-[50px] lg:w-[50px]"
               />
             </a>
             <a href="#">
@@ -47,7 +48,7 @@ export default function Footer() {
                 width={30}
                 height={30}
                 color="white"
-                className="transition-all duration-200 hover:scale-105 active:scale-95"
+                className="transition-all duration-200 hover:scale-105 active:scale-95 lg:h-[50px] lg:w-[50px]"
               />
             </a>
             <a href="#">
@@ -55,13 +56,21 @@ export default function Footer() {
                 width={30}
                 height={30}
                 color="white"
-                className="transition-all duration-200 hover:scale-105 active:scale-95"
+                className="transition-all duration-200 hover:scale-105 active:scale-95 lg:h-[50px] lg:w-[50px]"
+              />
+            </a>
+            <a href="#">
+              <IconBrandTiktok
+                width={30}
+                height={30}
+                color="white"
+                className="transition-all duration-200 hover:scale-105 active:scale-95 lg:h-[50px] lg:w-[50px]"
               />
             </a>
           </div>
         </div>
 
-        <div className="font-grotesk mt-6 text-center text-sm text-neutral-200 capitalize">
+        <div className="font-bricolage mt-6 text-center text-sm text-neutral-200 capitalize lg:text-lg">
           &copy; {new Date().getFullYear()} All rights reserved.
         </div>
       </div>
