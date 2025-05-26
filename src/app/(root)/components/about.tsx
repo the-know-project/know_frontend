@@ -1,4 +1,4 @@
-import { old_sage, secure_tx, smoke_rose, trusted } from "@/src/assets";
+import { old_sage, smoke_rose, trusted } from "@/src/assets";
 import TiltSection from "./tilt-section";
 import GridBackground from "@/src/shared/components/grid-background";
 
