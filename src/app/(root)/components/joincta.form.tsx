@@ -53,7 +53,7 @@ const JoinCtaForm = () => {
             className="flex w-fit"
           >
             <button
-              className="font-bebas text-md group relative inline-flex h-9 w-fit items-center gap-1 rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
+              className="font-bebas text-md group relative inline-flex h-9 w-fit items-center gap-1 rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
               type="submit"
             >
               Get Started
