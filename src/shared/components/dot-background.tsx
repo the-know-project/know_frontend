@@ -3,11 +3,19 @@ import React from "react";
 
 interface IDotBackground {
   children: React.ReactNode;
+  className?: string;
+  variant?: "default" | "dark" | "light";
 }
 
-const DotBackground: React.FC<IDotBackground> = ({ children }) => {
+const DotBackground: React.FC<IDotBackground> = ({
+  children,
+  className,
+  variant,
+}) => {
   return (
-    <div className="relative flex h-fit w-full flex-col bg-white dark:bg-black">
+    <div
+      className={`relative flex h-fit w-full flex-col ${variant === "default" ? "bg-white dark:bg-black" : ""} ${className}`}
+    >
       <div
         className={cn(
           "absolute inset-0",
@@ -17,7 +25,7 @@ const DotBackground: React.FC<IDotBackground> = ({ children }) => {
         )}
       />
       {/* Radial gradient for the container to give a faded look */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-black"></div>
+
       {children}
     </div>
   );
