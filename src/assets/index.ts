@@ -8,6 +8,7 @@ import secure_tx from "./secure-transaction.png";
 import smoke_rose from "./smoke_rose.jpeg";
 import old_sage from "./old_sage.jpeg";
 import trusted from "./trusted.jpeg";
+import about_image from "./about_image.jpeg";
 
 export {
   hero1,
@@ -20,4 +21,5 @@ export {
   smoke_rose,
   old_sage,
   trusted,
+  about_image,
 };
