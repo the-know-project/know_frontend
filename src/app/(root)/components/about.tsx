@@ -1,12 +1,15 @@
 import { old_sage, smoke_rose, trusted } from "@/src/assets";
 import TiltSection from "./tilt-section";
 import GridBackground from "@/src/shared/components/grid-background";
+import Intro from "./intro";
 
 const About = () => {
   return (
     <section id="about" className="flex w-full flex-col scroll-smooth">
       <GridBackground>
         <>
+          <Intro />
+
           <TiltSection
             role="For Artists"
             title="Showcase your work, manage your portfolio, and reach global buyers."
