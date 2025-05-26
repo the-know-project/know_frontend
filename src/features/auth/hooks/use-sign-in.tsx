@@ -1,5 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+
+type TRole = "ARTIST" | "BUYER";
 
 export const useSignin = () => {
-  return useQuery({});
+  return useMutation({
+    mutationFn: async (role: TRole) => {
+      //function goes here
+      return true;
+    },
+  });
 };
