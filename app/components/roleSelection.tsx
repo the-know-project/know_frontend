@@ -1,13 +1,15 @@
+"use client"
+
 import Image from "next/image";
 import { LuUserRound } from "react-icons/lu";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setRole } from "../../redux/slice/authSlice";
-import Router from "next/router";
+import {useRouter} from "next/navigation";
 
 export default function SelectRole() {
   const dispatch = useDispatch();
-  const router = Router
+  const router = useRouter()
 
   const handleSelectRole = (selectedRole: string) => {
     dispatch(setRole(selectedRole));

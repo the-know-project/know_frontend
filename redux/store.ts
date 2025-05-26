@@ -1,15 +1,20 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import {
-  PURGE,
+  persistReducer,
+  persistStore,
+  FLUSH,
   PAUSE,
+  PERSIST,
+  PURGE,
   REGISTER,
   REHYDRATE,
-  FLUSH,
-  PERSIST,
-  persistReducer,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import rootReducer from "./slice/authSlice";
+import authReducer from "./slice/authSlice";
+
+const rootReducer = combineReducers({
+  state: authReducer,
+});
 
 const persistConfig = {
   key: "root",
@@ -28,3 +33,8 @@ export const store = configureStore({
       },
     }),
 });
+
+export const persistor = persistStore(store); // ✅ This fixes the error
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

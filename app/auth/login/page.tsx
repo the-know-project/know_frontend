@@ -10,8 +10,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 
 const SignupSchema = Yup.object().shape({
-  firstName: Yup.string().required("First name is required"),
-  lastName: Yup.string().required("Last name is required"),
+  
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(6, "Password too short")
@@ -21,7 +20,6 @@ const SignupSchema = Yup.object().shape({
 export default function SignupForm() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const role = useSelector((state: any) => state.state.role);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: any) => {
@@ -30,12 +28,12 @@ export default function SignupForm() {
     const userData = {
       ...values,
       username: values.email.split("@")[0],
-      role: role || "BUYER",
+     
     };
 
     try {
       const res = await fetch(
-        "https://know-api-4vwfv.ondigitalocean.app/api/auth/registerUser",
+        "https://know-api-4vwfv.ondigitalocean.app/api/auth/login",
         {
           method: "POST",
           headers: {
@@ -45,15 +43,30 @@ export default function SignupForm() {
         }
       );
 
-      if (!res.ok) throw new Error("Failed to register");
+      if (!res.ok) throw new Error("Failed to Login");
 
       const data = await res.json();
-      dispatch(mainUser(data));
-      router.push("/login");
-    } catch (err) {
-      alert("Signup failed. Please try again.");
-      console.error(err);
-    } finally {
+     if (res.ok && data.status === 200){
+        const {accessToken, refreshToken} = data.data
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+
+        router.push("/explore")
+       
+        return data.data
+
+     } 
+     else{
+        throw new Error(data.message || "Login Failed")
+     } 
+
+     } catch (err: any) {
+        console.log("Login Error:", err.message);
+        throw err
+     }
+      
+     
+     finally {
       setLoading(false);
     }
   };
@@ -66,19 +79,17 @@ export default function SignupForm() {
           <p className="text-sm text-neutral-500">
             Already have an account?{" "}
             <Link href="/login" className="text-blue-600 hover:underline">
-              Log In
+              Register
             </Link>
           </p>
         </div>
 
         <div>
-          <h1 className="text-3xl font-semibold mb-1">Sign Up</h1>
+          <h1 className="text-3xl font-semibold mb-1">Login</h1>
         </div>
 
         <Formik
           initialValues={{
-            firstName: "",
-            lastName: "",
             email: "",
             password: "",
           }}
@@ -94,41 +105,6 @@ export default function SignupForm() {
             errors,
           }) => (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <input
-                    type="text"
-                    name="firstName"
-                    placeholder="First Name"
-                    className="w-full px-4 py-2 border border-gray-300 text-black rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.firstName}
-                  />
-                  {touched.firstName && errors.firstName && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {errors.firstName}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    name="lastName"
-                    placeholder="Last Name"
-                    className="w-full px-4 py-2 border text-black  border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.lastName}
-                  />
-                  {touched.lastName && errors.lastName && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {errors.lastName}
-                    </div>
-                  )}
-                </div>
-              </div>
-
               <div className="mt-4">
                 <input
                   type="email"
@@ -168,7 +144,7 @@ export default function SignupForm() {
                 className="btn btn-primary w-full"
                 disabled={loading}
               >
-                {loading ? "Creating account..." : "Create account"}
+                {loading ? "Login In..." : "Login"}
               </button>
             </form>
           )}
@@ -176,9 +152,9 @@ export default function SignupForm() {
 
         <div className="space-y-3 pt-4">
           {[
-            { label: "Sign up with Google", icon: "/Google.png" },
-            { label: "Sign up with Facebook", icon: "/Facebook.png" },
-            { label: "Sign up with Discord", icon: "/discord_symbol.png" },
+            { label: "Sign in with Google", icon: "/Google.png" },
+            { label: "Sign in with Facebook", icon: "/Facebook.png" },
+            { label: "Sign in with Discord", icon: "/discord_symbol.png" },
           ].map(({ label, icon }) => (
             <button
               key={label}

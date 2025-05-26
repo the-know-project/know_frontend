@@ -1,4 +1,3 @@
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface GlobalState {
@@ -11,9 +10,8 @@ const initialState: GlobalState = {
   role: null,
 };
 
-
 const globalState = createSlice({
-  name: "state",
+  name: "auth", 
   initialState,
   reducers: {
     mainUser: (state, action: PayloadAction<Record<string, any>>) => {
@@ -26,11 +24,9 @@ const globalState = createSlice({
     setRole: (state, action: PayloadAction<string>) => {
       state.role = action.payload;
     },
-  }
-  
+  },
 });
 
 export const { logOut, mainUser, setRole } = globalState.actions;
-
 
 export default globalState.reducer;
