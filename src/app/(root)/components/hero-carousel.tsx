@@ -38,7 +38,7 @@ const HeroCarousel = () => {
   return (
     <section className="flex w-full flex-col">
       <div {...carouselHandler} className="w-full">
-        <div className="relative flex min-h-screen w-[700px] items-center justify-center overflow-hidden sm:w-[900px] lg:w-[750px] lg:rounded-[15px]">
+        <div className="relative flex min-h-screen w-[700px] items-center justify-center overflow-hidden sm:w-[900px] lg:w-[750px]">
           {HeroCarouselItems.map((item, index) => (
             <Image
               key={index}

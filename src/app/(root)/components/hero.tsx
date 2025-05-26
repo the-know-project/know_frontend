@@ -15,7 +15,7 @@ export default function Hero() {
             </h3>
           </GradientText>
           <div className="flex w-full flex-col gap-[80px] pl-1 md:pl-[2rem] lg:gap-[50px] lg:pl-[2.5rem]">
-            <p className="font-grotesk max-w-prose text-lg font-medium text-neutral-100 capitalize md:text-2xl lg:text-xl">
+            <p className="font-bricolage max-w-prose text-lg font-medium text-neutral-100 capitalize md:text-2xl lg:text-xl">
               A blockchain-powered platform connecting{" "}
               <br className="hidden md:block" /> artist and buyers like never
               before

@@ -36,9 +36,7 @@ export default function TiltSection({
           <h2 className="font-helvetica mb-4 text-2xl font-medium capitalize md:text-3xl">
             {title}
           </h2>
-          <p className="font-grotesk text-md max-w-prose text-gray-950 md:text-lg">
-            {subtitle}
-          </p>
+          <p className="about_content_text">{subtitle}</p>
         </TitleText>
       </div>
 

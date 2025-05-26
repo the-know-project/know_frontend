@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -19,6 +20,7 @@
 @theme inline {
   --font-grotesk: "Space Grotesk", sans-serif;
   --font-marker: "Permanent Marker", cursive;
+  --font-bricolage: "Bricolage Grotesque", sans-serif;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-bebas: var(--bebas-neue);
@@ -169,7 +171,11 @@
   }
 
   .accordion_content {
-    @apply font-grotesk max-w-prose pr-2 pl-6 text-zinc-500 dark:text-zinc-400;
+    @apply font-bricolage max-w-prose pr-2 pl-6 text-zinc-500 dark:text-zinc-400;
+  }
+
+  .about_content_text {
+    @apply font-bricolage max-w-prose tracking-wide text-gray-800 md:text-lg;
   }
 }
 .purple-glow {
@@ -186,4 +192,28 @@
 
 .green-glow {
   filter: drop-shadow(0 0 30px rgba(50, 205, 50, 0.7));
+}
+
+.gradient-glow {
+  position: relative;
+}
+
+.gradient-glow::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 140, 0, 0.4) 25%,
+    rgba(50, 205, 50, 0.4) 35%,
+    rgba(128, 0, 255, 0.4) 40%,
+    rgba(255, 215, 0, 0.4) 50%,
+    transparent 100%
+  );
+  border-radius: inherit;
+  z-index: -1;
+  filter: blur(15px);
 }
