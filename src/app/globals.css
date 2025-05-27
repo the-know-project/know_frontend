@@ -77,6 +77,24 @@
   --animation-gradient: gradient 8s linear infinite;
 }
 
+.success-toast {
+  backdrop-filter: inherit;
+  opacity: 95;
+  background-color: oklch(62.7% 0.194 149.214);
+}
+
+.warn-toast {
+  backdrop-filter: inherit;
+  opacity: 95;
+  background-color: oklch(68.1% 0.162 75.834);
+}
+
+.error-toast {
+  backdrop-filter: inherit;
+  opacity: 95;
+  background-color: oklch(57.7% 0.245 27.325);
+}
+
 :root {
   --radius: 0.625rem;
 
