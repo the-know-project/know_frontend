@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "../lib/react-query-client";
+import { Toaster } from "../shared/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +43,8 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
         >
-          {children}
+          <main>{children}</main>
+          <Toaster />
         </body>
       </Provider>
     </html>
