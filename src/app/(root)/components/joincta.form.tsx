@@ -18,6 +18,9 @@ import {
 } from "@/src/features/mail-list/schemas/email.schema";
 import { useAddToMailList } from "@/src/features/mail-list/hooks/use-add-to-mail-list";
 import Spinner from "@/src/shared/components/spinner";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 
 const JoinCtaForm = () => {
   const { mutateAsync: addToMailList, isPending } = useAddToMailList();
@@ -30,7 +33,52 @@ const JoinCtaForm = () => {
 
   const handleCtaAction = async (ctx: IAddToMailList) => {
     const data = await addToMailList(ctx);
-    console.log(data);
+
+    if (data.status === 200) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
+
+    if (data.status === 302) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(68.1% 0.162 75.834)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    } else {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={`An error occurred`} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(68.1% 0.162 75.834)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
   };
   return (
     <section className="flex w-full flex-row items-center justify-start sm:justify-center">
@@ -46,7 +94,7 @@ const JoinCtaForm = () => {
               <FormItem>
                 <FormControl>
                   <Input
-                    className="font-bricolage placeholder:font-bebas !important placeholder:text-md flex w-full rounded-lg bg-neutral-100 text-neutral-700 shadow-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0 sm:placeholder:text-sm md:min-w-[400px]"
+                    className="font-bricolage placeholder:font-bebas !important flex w-full rounded-lg bg-neutral-100 text-neutral-700 shadow-sm placeholder:text-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0 md:min-w-[400px]"
                     placeholder="Enter your email"
                     {...field}
                   />
