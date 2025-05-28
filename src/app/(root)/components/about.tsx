@@ -15,7 +15,7 @@ const About = () => {
             title="Showcase your work, manage your portfolio, and reach global buyers."
             subtitle="Showcase your unique creations, manage a professional portfolio with ease, and connect with a global audience."
             imgSrc={smoke_rose}
-            glow_color="purple-glow"
+            glow_color="animated-purple-glow"
           />
           <TiltSection
             role="For Buyers"
@@ -23,14 +23,14 @@ const About = () => {
             subtitle="From emerging talents to established artists, find unique art and foster a global creative community."
             imgSrc={old_sage}
             reverse
-            glow_color="orange-glow"
+            glow_color="animated-orange-glow"
           />
           <TiltSection
             role="Secure Transactions"
             title="Safe and seamless payments with every transaction."
             subtitle="Enjoy the flexibility of paying in your preferred currency while benefiting from robust security measures that safeguard your financial data."
             imgSrc={security}
-            glow_color="green-glow"
+            glow_color="animated-blue-glow"
           />
         </>
       </GridBackground>
