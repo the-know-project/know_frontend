@@ -1,4 +1,4 @@
-import { old_sage, smoke_rose, trusted } from "@/src/assets";
+import { old_sage, security, smoke_rose } from "@/src/assets";
 import TiltSection from "./tilt-section";
 import GridBackground from "@/src/shared/components/grid-background";
 import Intro from "./intro";
@@ -29,7 +29,7 @@ const About = () => {
             role="Secure Transactions"
             title="Safe and seamless payments with every transaction."
             subtitle="Enjoy the flexibility of paying in your preferred currency while benefiting from robust security measures that safeguard your financial data."
-            imgSrc={trusted}
+            imgSrc={security}
             glow_color="green-glow"
           />
         </>
