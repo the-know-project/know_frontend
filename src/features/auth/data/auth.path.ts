@@ -1,4 +1,4 @@
-export enum AuthPath {
+export enum AUTH_OP {
   LOGIN = "api/auth/login",
   LOGOUT = "api/auth/logout",
   SIGN_UP = "api/auth/registerUser",
