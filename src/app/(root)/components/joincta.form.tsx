@@ -48,9 +48,7 @@ const JoinCtaForm = () => {
           fontWeight: "bolder",
         },
       });
-    }
-
-    if (data.status === 302) {
+    } else if (data.status === 302) {
       toast("", {
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
@@ -79,6 +77,8 @@ const JoinCtaForm = () => {
         },
       });
     }
+
+
   };
   return (
     <section className="flex w-full flex-row items-center justify-start sm:justify-center">
