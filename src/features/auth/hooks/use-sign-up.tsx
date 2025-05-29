@@ -1,6 +1,5 @@
 import { handleAxiosError } from "@/src/utils/handle-axios-error";
 import { useMutation } from "@tanstack/react-query";
-import Router from "next/router";
 import { signUp } from "../api/sign-up/route";
 import { SignUpResponseDto } from "../dto/auth.dto";
 import { useRoleStore } from "../state/store/role.store";
@@ -28,7 +27,6 @@ export const useSignUp = () => {
     },
     onSuccess: (data) => {
       console.log(data);
-      Router.push("/");
     },
     onError: (error) => {
       console.log(`Failed to sign up ${error.message}`);
