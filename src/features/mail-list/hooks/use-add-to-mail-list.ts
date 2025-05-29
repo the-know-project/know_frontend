@@ -1,10 +1,10 @@
+import { handleAxiosError } from "@/src/utils/handle-axios-error";
 import { useMutation } from "@tanstack/react-query";
 import { addToMailList } from "../api/route";
 import {
   AddToMailListResponseDto,
   IAddToMailList,
 } from "../schemas/email.schema";
-import { handleAxiosError } from "@/src/utils/handle-axios-error";
 
 export const useAddToMailList = () => {
   return useMutation({
