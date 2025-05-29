@@ -1,4 +1,6 @@
+import React from "react";
 import { hero1, hero2, hero3, hero4 } from "../assets";
+import { IconPalette, IconMusic, IconShoppingBag } from "@tabler/icons-react";
 
 export const INavItems = [
   {
@@ -37,3 +39,18 @@ export const HeroCarouselItems = [
     image: hero4,
   },
 ];
+
+export const RoleSelectionItems = [
+  {
+    id: 1,
+    name: "Artist",
+    content: "Showcase your art to a global audience and expand your reach",
+    icon: React.createElement(IconPalette, { size: 24, stroke: 1.5 }),
+  },
+  {
+    id: 2,
+    name: "Buyer",
+    content: "Discover unique artworks, connect with artists, and build you",
+    icon: React.createElement(IconShoppingBag, { size: 24, stroke: 1.5 }),
+  },
+] as const;
