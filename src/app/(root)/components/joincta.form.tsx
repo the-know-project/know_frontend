@@ -21,8 +21,10 @@ import Spinner from "@/src/shared/components/spinner";
 import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
+import { useRouter } from "next/navigation";
 
 const JoinCtaForm = () => {
+  const router = useRouter();
   const { mutateAsync: addToMailList, isPending } = useAddToMailList();
   const form = useForm<IAddToMailList>({
     resolver: zodResolver(EmailSchema),
@@ -48,6 +50,7 @@ const JoinCtaForm = () => {
           fontWeight: "bolder",
         },
       });
+      router.push("/role");
     } else if (data.status === 302) {
       toast("", {
         icon: <ToastIcon />,
@@ -62,6 +65,7 @@ const JoinCtaForm = () => {
           fontWeight: "bolder",
         },
       });
+      router.push("/role");
     } else {
       toast("", {
         icon: <ToastIcon />,
@@ -77,8 +81,6 @@ const JoinCtaForm = () => {
         },
       });
     }
-
-
   };
   return (
     <section className="flex w-full flex-row items-center justify-start sm:justify-center">
