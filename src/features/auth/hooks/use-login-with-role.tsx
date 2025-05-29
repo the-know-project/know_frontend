@@ -5,35 +5,43 @@ import { login } from "../api/login/route";
 import { LoginResponseDto } from "../dto/auth.dto";
 import { useAuth } from "./use-auth";
 
-interface LoginSuccess {
+interface LoginWithRoleInput extends ILogin {
+  selectedRole: IRole;
+}
+
+interface LoginWithRoleSuccess {
   user: {
     id: string;
     email: string;
   };
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  role?: IRole;
+  role: IRole;
+  message: string;
 }
 
-export const useLogin = () => {
+export const useLoginWithRole = () => {
   const auth = useAuth();
 
   return useMutation({
-    mutationFn: async (ctx: ILogin): Promise<LoginSuccess> => {
+    mutationFn: async (
+      ctx: LoginWithRoleInput,
+    ): Promise<LoginWithRoleSuccess> => {
       try {
-        const data = await login(ctx);
+        const { selectedRole, ...loginData } = ctx;
+        const data = await login(loginData);
         const validatedData = LoginResponseDto.parse(data);
+
         if (validatedData.status !== 200 || !validatedData.data) {
-          throw new Error(validatedData.message || "Login Failed");
+          throw new Error(validatedData.message || "Login failed");
         }
 
         const { id, email, accessToken, refreshToken } = validatedData.data;
 
+        auth.login(accessToken, refreshToken, { id, email }, selectedRole);
+
         return {
           user: { id, email },
-          tokens: { accessToken, refreshToken },
+          role: selectedRole,
+          message: validatedData.message,
         };
       } catch (error) {
         handleAxiosError(error);
@@ -44,20 +52,6 @@ export const useLogin = () => {
             : "An unexpected error occurred",
         );
       }
-    },
-
-    onSuccess: (data, variables) => {
-      auth.login(
-        data.tokens.accessToken,
-        data.tokens.refreshToken,
-        data.user,
-        data.role || "NONE",
-      );
-      console.log(`Login Successful : ${data.user}`);
-    },
-    onError: (error) => {
-      auth.logout();
-      console.error(`Login failed ${error}`);
     },
   });
 };

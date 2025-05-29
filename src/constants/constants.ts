@@ -1,6 +1,7 @@
 import { IconPalette, IconShoppingBag } from "@tabler/icons-react";
 import React from "react";
 import { hero1, hero2, hero3, hero4 } from "../assets";
+import { IconPalette, IconShoppingBag } from "@tabler/icons-react";
 
 export const INavItems = [
   {
