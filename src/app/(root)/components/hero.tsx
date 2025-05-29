@@ -25,7 +25,7 @@ export default function Hero() {
               className="w-fit"
             >
               <Link
-                href={`/auth`}
+                href={`/role`}
                 className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-xl font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 lg:text-lg"
               >
                 Join The Movement
