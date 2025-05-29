@@ -14,7 +14,7 @@ function provideUrl() {
   });
 }
 
-export async function loginIn(ctx: ILogin) {
+export async function login(ctx: ILogin) {
   const response = await axios.post(provideUrl(), ctx);
   return response.data;
 }
