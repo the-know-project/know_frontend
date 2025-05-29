@@ -70,7 +70,7 @@ export default function SelectRole() {
                 >
                   {item.icon}
                 </div>
-                <div className="flex flex-col gap-2 text-start">
+                <div className="flex flex-col text-start">
                   <h3 className="font-helvetica text-lg font-medium text-black">
                     {item.name}
                   </h3>
@@ -87,9 +87,10 @@ export default function SelectRole() {
       <div className="motion-preset-blur-right-lg motion-duration-700 relative hidden md:block">
         <Image
           src="/roleselect.png"
-          alt="Signup Visual"
-          layout="fill"
-          objectFit="cover"
+          alt="role_selection_image"
+          quality={100}
+          fill
+          className="h-full w-full object-cover"
         />
       </div>
     </div>
