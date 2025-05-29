@@ -55,6 +55,7 @@ export default function TiltSection({
               width={400}
               height={300}
               quality={100}
+              priority={true}
               className="h-full w-full object-cover"
             />
           </div>
