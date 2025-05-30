@@ -54,3 +54,10 @@ export const RoleSelectionItems = [
     icon: React.createElement(IconShoppingBag, { size: 24, stroke: 1.5 }),
   },
 ] as const;
+
+export enum SOCIALS {
+  INSTAGRAM = "https://www.instagram.com/knowcabinet?igsh=em93cWM4OWQ5N2l3&utm_source=qr",
+  X = "https://x.com/KnowForCreators",
+  LINKEDIN = "https://www.linkedin.com/company/106916933/admin/page-posts/published/",
+  TIKTOK = "https://www.tiktok.com/@knowcabinet?_t=ZM-8wmuEXAOZUe&_r=1",
+}
