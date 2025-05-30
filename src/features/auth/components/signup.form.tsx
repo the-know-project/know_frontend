@@ -1,6 +1,8 @@
 "use client";
 
 import Spinner from "@/src/shared/components/spinner";
+import ToastDescription from "@/src/shared/components/toast-description";
+import ToastIcon from "@/src/shared/components/toast-icon";
 import {
   Form,
   FormControl,
@@ -14,15 +16,13 @@ import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconSend } from "@tabler/icons-react";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { SignUpFormSchema } from "../schema/auth.schema";
-import { ISignUpForm } from "../types/auth.types";
-import { useSignUp } from "../hooks/use-sign-up";
-import { toast } from "sonner";
-import ToastIcon from "@/src/shared/components/toast-icon";
-import ToastDescription from "@/src/shared/components/toast-description";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useSignUp } from "../hooks/use-sign-up";
+import { SignUpFormSchema } from "../schema/auth.schema";
+import { ISignUpForm } from "../types/auth.types";
 
 const SignupForm = () => {
   const { mutateAsync: handleSignUp, isPending } = useSignUp();
@@ -37,6 +37,7 @@ const SignupForm = () => {
       firstName: "",
       lastName: "",
       email: "",
+      userName: "",
       password: "",
     },
   });
@@ -45,7 +46,7 @@ const SignupForm = () => {
     setActiveButton("regular");
     const data = await handleSignUp(ctx);
 
-    if (data.status === 200) {
+    if (data.status === 201) {
       toast("", {
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
@@ -74,6 +75,7 @@ const SignupForm = () => {
           fontWeight: "bolder",
         },
       });
+      router.push("/login");
     } else {
       toast("", {
         icon: <ToastIcon />,
@@ -81,7 +83,7 @@ const SignupForm = () => {
         style: {
           backdropFilter: "-moz-initial",
           opacity: "-moz-initial",
-          backgroundColor: "oklch(68.1% 0.162 75.834)",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
           fontSize: "15px",
           font: "Space Grotesk",
           color: "#ffffff",
@@ -223,6 +225,7 @@ const SignupForm = () => {
                   <Input
                     className="signup_form_input"
                     placeholder="Password"
+                    type="password"
                     {...field}
                   />
                 </FormControl>
