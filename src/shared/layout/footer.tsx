@@ -1,6 +1,6 @@
 import Image from "next/image";
 import TextEffectWithExit from "../components/animate-text";
-import { INavItems } from "@/src/constants/constants";
+import { INavItems, SOCIALS } from "@/src/constants/constants";
 import {
   IconBrandInstagram,
   IconBrandLinkedin,
@@ -35,7 +35,7 @@ export default function Footer() {
           </div>
 
           <div className="mt-5 flex gap-4 text-lg">
-            <a href="#">
+            <a href={SOCIALS.INSTAGRAM} target="_blank">
               <IconBrandInstagram
                 width={30}
                 height={30}
@@ -43,7 +43,7 @@ export default function Footer() {
                 className="transition-all duration-200 hover:scale-105 active:scale-95 lg:h-[50px] lg:w-[50px]"
               />
             </a>
-            <a href="#">
+            <a href={SOCIALS.X} target="_blank">
               <IconBrandX
                 width={30}
                 height={30}
@@ -51,7 +51,7 @@ export default function Footer() {
                 className="transition-all duration-200 hover:scale-105 active:scale-95 lg:h-[50px] lg:w-[50px]"
               />
             </a>
-            <a href="#">
+            <a href={SOCIALS.LINKEDIN} target="_blank">
               <IconBrandLinkedin
                 width={30}
                 height={30}
@@ -59,7 +59,7 @@ export default function Footer() {
                 className="transition-all duration-200 hover:scale-105 active:scale-95 lg:h-[50px] lg:w-[50px]"
               />
             </a>
-            <a href="#">
+            <a href={SOCIALS.TIKTOK} target="_blank">
               <IconBrandTiktok
                 width={30}
                 height={30}
