@@ -12,11 +12,11 @@ export const SignUpSchema = z.object({
 });
 
 export const SignUpFormSchema = z.object({
-  firstName: z.string().min(2, "must be at least 2 characters").max(100),
-  lastName: z.string().min(2, "must be at least 2 characters").max(100),
-  userName: z.string().min(2, "must be at least 2 characters").max(100),
+  firstName: z.string().min(2, "at least 2 characters").max(100),
+  lastName: z.string().min(2, "at least 2 characters").max(100),
+  userName: z.string().min(2, "at least 2 characters").max(100),
   email: z.string().email(),
-  password: z.string().min(6, "must be at least 6 characters").max(100),
+  password: z.string().min(6, "at least 6 characters").max(100),
 });
 
 export const LoginSchema = z.object({
