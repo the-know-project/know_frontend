@@ -17,8 +17,20 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { SignUpFormSchema } from "../schema/auth.schema";
 import { ISignUpForm } from "../types/auth.types";
+import { useSignUp } from "../hooks/use-sign-up";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const SignupForm = () => {
+  const { mutateAsync: handleSignUp, isPending } = useSignUp();
+  const router = useRouter();
+  const [activeButton, setActiveButton] = useState<
+    "regular" | "google" | "discord" | null
+  >(null);
+
   const form = useForm<ISignUpForm>({
     resolver: zodResolver(SignUpFormSchema),
     defaultValues: {
@@ -29,10 +41,71 @@ const SignupForm = () => {
     },
   });
 
-  const isPending = false;
+  const onSubmit = async (ctx: ISignUpForm) => {
+    setActiveButton("regular");
+    const data = await handleSignUp(ctx);
 
-  const onSubmit = async (values: ISignUpForm) => {
-    console.log(values);
+    if (data.status === 200) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+      router.push("/login");
+    } else if (data.status === 409) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(68.1% 0.162 75.834)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    } else {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={`An error occurred`} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(68.1% 0.162 75.834)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
+    setActiveButton(null);
+  };
+
+  const handleGoogleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setActiveButton("google");
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setActiveButton(null);
+  };
+
+  const handleDiscordSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setActiveButton("discord");
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setActiveButton(null);
   };
 
   return (
@@ -170,8 +243,9 @@ const SignupForm = () => {
           <button
             className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
             type="submit"
+            disabled={isPending && activeButton === "regular"}
           >
-            {isPending ? (
+            {isPending && activeButton === "regular" ? (
               <div className="flex w-full items-center justify-center">
                 <Spinner />
               </div>
@@ -192,9 +266,11 @@ const SignupForm = () => {
         {/* Sign Up With Google */}
         <button
           className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95"
-          type="submit"
+          type="button"
+          onClick={handleGoogleSignup}
+          disabled={activeButton === "google"}
         >
-          {isPending ? (
+          {activeButton === "google" ? (
             <div className="flex w-full items-center justify-center">
               <Spinner />
             </div>
@@ -217,9 +293,11 @@ const SignupForm = () => {
         {/* Sign Up With Discord Button */}
         <button
           className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95"
-          type="submit"
+          type="button"
+          onClick={handleDiscordSignup}
+          disabled={activeButton === "discord"}
         >
-          {isPending ? (
+          {activeButton === "discord" ? (
             <div className="flex w-full items-center justify-center">
               <Spinner />
             </div>
