@@ -14,7 +14,7 @@ const Layout: React.FC<ILayoutProps> = ({ children }) => {
           <div className="flex w-full max-w-full flex-col px-8 py-12 md:px-16">
             <div className="mx-auto w-full max-w-md">{children}</div>
           </div>
-          <div className="relative hidden md:block">
+          <div className="motion-preset-blur-right-lg motion-duration-700 relative hidden md:block">
             <Image
               src={signup_asset}
               alt="signup_image"
