@@ -11,8 +11,8 @@ const Layout: React.FC<ILayoutProps> = ({ children }) => {
     <section className="flex w-full flex-col">
       <GridBackground>
         <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
-          <div className="flex flex-col justify-center px-8 py-12 md:px-16">
-            {children}
+          <div className="flex w-full max-w-full flex-col px-8 py-12 md:px-16">
+            <div className="mx-auto w-full max-w-md">{children}</div>
           </div>
           <div className="relative hidden md:block">
             <Image
