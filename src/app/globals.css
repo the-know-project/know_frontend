@@ -177,6 +177,18 @@
   .about_content_text {
     @apply font-bricolage max-w-prose tracking-wide text-gray-800 md:text-lg;
   }
+
+  .signup_form_label {
+    @apply font-helvetica text-sm font-bold tracking-wide text-neutral-700 uppercase;
+  }
+
+  .signup_form_input {
+    @apply font-bricolage placeholder:font-bricolage flex w-full rounded-sm bg-neutral-100 text-neutral-700 shadow-sm placeholder:text-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0 md:max-w-[600px];
+  }
+
+  .signup_error_message {
+    @apply font-bricolage text-xs font-light text-red-500 capitalize;
+  }
 }
 .purple-glow {
   filter: drop-shadow(0 0 30px rgba(128, 0, 255, 0.7));
