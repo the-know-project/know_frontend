@@ -3,12 +3,12 @@ import { useMutation } from "@tanstack/react-query";
 import { signUp } from "../api/sign-up/route";
 import { SignUpResponseDto } from "../dto/auth.dto";
 import { useRoleStore } from "../state/store/role.store";
-import { ISignUp } from "../types/auth.types";
+import { ISignUpForm } from "../types/auth.types";
 
 export const useSignUp = () => {
   const role = useRoleStore((state) => state.role);
   return useMutation({
-    mutationFn: async (ctx: Omit<ISignUp, "role">) => {
+    mutationFn: async (ctx: ISignUpForm) => {
       try {
         const result = await signUp({
           ...ctx,
