@@ -10,6 +10,7 @@ import old_sage from "./old_sage.jpeg";
 import trusted from "./trusted.jpeg";
 import about_image from "./about_image.jpeg";
 import security from "./security.jpg";
+import signup_asset from "./signup_asset.png";
 
 export {
   hero1,
@@ -24,4 +25,5 @@ export {
   trusted,
   about_image,
   security,
+  signup_asset,
 };
