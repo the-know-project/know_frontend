@@ -275,7 +275,7 @@ const SignupForm = () => {
         >
           {activeButton === "google" ? (
             <div className="flex w-full items-center justify-center">
-              <Spinner />
+              <Spinner borderColor="border-yellow-500" />
             </div>
           ) : (
             <div className="flex w-full items-center justify-center gap-2">
@@ -302,7 +302,7 @@ const SignupForm = () => {
         >
           {activeButton === "discord" ? (
             <div className="flex w-full items-center justify-center">
-              <Spinner />
+              <Spinner borderColor="border-purple-600" />
             </div>
           ) : (
             <div className="flex w-full items-center justify-center gap-2">
