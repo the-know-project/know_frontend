@@ -1,29 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
-import { ILogin, IRole } from "../types/auth.types";
 import { handleAxiosError } from "@/src/utils/handle-axios-error";
+import { useMutation } from "@tanstack/react-query";
 import { login } from "../api/login/route";
 import { LoginResponseDto } from "../dto/auth.dto";
+import { ILogin, ILoginSuccess } from "../types/auth.types";
 import { useAuth } from "./use-auth";
-
-interface LoginSuccess {
-  status: number;
-  message: string;
-  user: {
-    id: string;
-    email: string;
-  };
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  role?: IRole;
-}
 
 export const useLogin = () => {
   const auth = useAuth();
 
   return useMutation({
-    mutationFn: async (ctx: ILogin): Promise<LoginSuccess> => {
+    mutationFn: async (ctx: ILogin): Promise<ILoginSuccess> => {
       try {
         const data = await login(ctx);
         const validatedData = LoginResponseDto.parse(data);
