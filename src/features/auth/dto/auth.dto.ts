@@ -3,8 +3,8 @@ import { z } from "zod";
 const AuthSuccessDataDto = z.object({
   id: z.string().uuid(),
   email: z.string().email().min(1).max(100),
-  refreshToken: z.string().uuid(),
-  accessToken: z.string().uuid(),
+  refreshToken: z.string(),
+  accessToken: z.string(),
 });
 
 export const SignUpResponseDto = z.object({
