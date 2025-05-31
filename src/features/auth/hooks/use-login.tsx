@@ -6,6 +6,8 @@ import { LoginResponseDto } from "../dto/auth.dto";
 import { useAuth } from "./use-auth";
 
 interface LoginSuccess {
+  status: number;
+  message: string;
   user: {
     id: string;
     email: string;
@@ -32,6 +34,8 @@ export const useLogin = () => {
         const { id, email, accessToken, refreshToken } = validatedData.data;
 
         return {
+          status: validatedData.status,
+          message: validatedData.message,
           user: { id, email },
           tokens: { accessToken, refreshToken },
         };
