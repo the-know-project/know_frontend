@@ -20,8 +20,7 @@ export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
   } = options;
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { isAuthenticated, getAccessToken, getRefreshToken, user } =
-    useTokenStore();
+  const { isAuthenticated, getAccessToken, user } = useTokenStore();
 
   /**
    * Manual token refresh function
