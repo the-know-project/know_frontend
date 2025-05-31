@@ -111,8 +111,8 @@ class HttpClient {
     const skipAuthPaths = [
       "/api/auth/login",
       "/api/auth/registerUser",
-      "/api/auth/refresh-token",
-      "/api/mail-list",
+      "/api/auth/refreshToken",
+      "/api/mail-list/addToMailList",
     ];
 
     const url = config.url || "";
@@ -129,12 +129,7 @@ class HttpClient {
         return false;
       }
 
-      const expiresIn = tokenService.getDefaultExpiresIn();
-      const response = await tokenService.refreshAccessToken(
-        refreshToken,
-        user.id,
-        expiresIn,
-      );
+      const response = await tokenService.refreshAccessToken(refreshToken);
 
       if (response.status === 200 && response.data) {
         const {
