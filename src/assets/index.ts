@@ -11,6 +11,7 @@ import trusted from "./trusted.jpeg";
 import about_image from "./about_image.jpeg";
 import security from "./security.jpg";
 import signup_asset from "./signup_asset.png";
+import login_asset from "./login_asset.jpeg";
 
 export {
   hero1,
@@ -26,4 +27,5 @@ export {
   about_image,
   security,
   signup_asset,
+  login_asset,
 };
