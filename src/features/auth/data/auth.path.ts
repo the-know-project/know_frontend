@@ -4,5 +4,5 @@ export enum AUTH_OP {
   SIGN_UP = "/api/auth/registerUser",
   GOOGLE_LOGIN = "/api/auth/google-login",
   DISCORD_LOGIN = "/api/auth/discord-login",
-  REFRESH_TOKEN = "/api/token/refreshToken",
+  REFRESH_TOKEN = "/api/auth/refreshToken",
 }
