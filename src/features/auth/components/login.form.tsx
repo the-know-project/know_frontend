@@ -21,11 +21,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useLogin } from "../hooks";
+import { useGoogleLogin } from "../hooks/use-google-login";
 import { LoginSchema } from "../schema/auth.schema";
-import { ILogin } from "../types/auth.types";
+import { ILogin, ILoginSuccess } from "../types/auth.types";
 
 const LoginForm = () => {
   const router = useRouter();
+  const { mutateAsync: handleGoogleLogin, isPending: isGooglePending } =
+    useGoogleLogin();
   const { mutateAsync: handleLogin, isPending } = useLogin();
   const [activeButton, setActiveButton] = useState<
     "regular" | "google" | "discord" | null
@@ -38,10 +41,7 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = async (ctx: ILogin) => {
-    setActiveButton("regular");
-    const data = await handleLogin(ctx);
-
+  const handleToast = (data: ILoginSuccess) => {
     if (data.status === 200) {
       toast("", {
         icon: <ToastIcon />,
@@ -56,6 +56,7 @@ const LoginForm = () => {
           fontWeight: "bolder",
         },
       });
+      router.push("/explore");
     } else if (data.status === 401) {
       toast("", {
         icon: <ToastIcon />,
@@ -70,7 +71,6 @@ const LoginForm = () => {
           fontWeight: "bolder",
         },
       });
-      router.push("/explore");
     } else {
       toast("", {
         icon: <ToastIcon />,
@@ -88,12 +88,17 @@ const LoginForm = () => {
     }
   };
 
+  const onSubmit = async (ctx: ILogin) => {
+    setActiveButton("regular");
+    const data = await handleLogin(ctx);
+    handleToast(data);
+  };
+
   const handleGoogleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setActiveButton("google");
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setActiveButton(null);
+    const data = await handleGoogleLogin();
+    handleToast(data);
   };
 
   const handleDiscordSignup = async (e: React.FormEvent) => {
@@ -190,9 +195,8 @@ const LoginForm = () => {
           className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95"
           type="button"
           onClick={handleGoogleSignup}
-          disabled={activeButton === "google"}
         >
-          {activeButton === "google" ? (
+          {isGooglePending ? (
             <div className="flex w-full items-center justify-center">
               <Spinner borderColor="border-yellow-500" />
             </div>
