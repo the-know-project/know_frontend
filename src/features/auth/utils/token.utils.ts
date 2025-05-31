@@ -29,11 +29,8 @@ export class TokenUtils {
     }
 
     try {
-      const expiresIn = tokenService.calculateExpiresIn(accessToken);
       const refreshResponse = await tokenService.refreshAccessToken(
         refreshToken,
-        user.id,
-        expiresIn,
       );
 
       if (refreshResponse.status === 200 && refreshResponse.data) {
@@ -69,11 +66,8 @@ export class TokenUtils {
     }
 
     try {
-      const expiresIn = tokenService.calculateExpiresIn(accessToken);
       const refreshResponse = await tokenService.refreshWithRetry(
         refreshToken,
-        user.id,
-        expiresIn,
       );
 
       if (refreshResponse.status === 200 && refreshResponse.data) {
@@ -93,39 +87,7 @@ export class TokenUtils {
     return false;
   }
 
-  static async refreshTokenWithCustomExpiry(
-    expiresIn: number,
-  ): Promise<boolean> {
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
 
-    if (!refreshToken || !user) {
-      return false;
-    }
-
-    try {
-      const refreshResponse = await tokenService.refreshWithRetry(
-        refreshToken,
-        user.id,
-        expiresIn,
-      );
-
-      if (refreshResponse.status === 200 && refreshResponse.data) {
-        const {
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-          user: updatedUser,
-        } = refreshResponse.data;
-        this.tokenStore.setTokens(newAccessToken, newRefreshToken, updatedUser);
-        return true;
-      }
-    } catch (error) {
-      console.error("Custom token refresh failed:", error);
-      this.tokenStore.clearTokens();
-    }
-
-    return false;
-  }
 
   static async logout(): Promise<void> {
     const refreshToken = this.tokenStore.getRefreshToken();
