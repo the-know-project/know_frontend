@@ -1,10 +1,8 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { ILogin } from "../types/auth.types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema } from "../schema/auth.schema";
-import { useState } from "react";
+import Spinner from "@/src/shared/components/spinner";
+import ToastDescription from "@/src/shared/components/toast-description";
+import ToastIcon from "@/src/shared/components/toast-icon";
 import {
   Form,
   FormControl,
@@ -15,15 +13,19 @@ import {
 } from "@/src/shared/ui/form";
 import { Input } from "@/src/shared/ui/input";
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
-import Spinner from "@/src/shared/components/spinner";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { IconSend } from "@tabler/icons-react";
 import Image from "next/image";
-import { useLogin } from "../hooks";
-import ToastIcon from "@/src/shared/components/toast-icon";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import ToastDescription from "@/src/shared/components/toast-description";
+import { useLogin } from "../hooks";
+import { LoginSchema } from "../schema/auth.schema";
+import { ILogin } from "../types/auth.types";
 
 const LoginForm = () => {
+  const router = useRouter();
   const { mutateAsync: handleLogin, isPending } = useLogin();
   const [activeButton, setActiveButton] = useState<
     "regular" | "google" | "discord" | null
@@ -68,6 +70,7 @@ const LoginForm = () => {
           fontWeight: "bolder",
         },
       });
+      router.push("/explore");
     } else {
       toast("", {
         icon: <ToastIcon />,
@@ -115,8 +118,8 @@ const LoginForm = () => {
                 <FormControl>
                   <Input
                     className="signup_form_input"
-                    placeholder="Email"
                     type="email"
+                    placeholder=""
                     {...field}
                   />
                 </FormControl>
@@ -140,7 +143,7 @@ const LoginForm = () => {
                 <FormControl>
                   <Input
                     className="signup_form_input"
-                    placeholder="Password"
+                    placeholder=""
                     type="password"
                     {...field}
                   />
