@@ -17,7 +17,7 @@ export interface RouteProtectionConfig {
   level: RouteProtectionLevel;
   requiredRoles?: UserRole[];
   redirectTo?: string;
-  fallbackComponent: React.ComponentType;
+  fallbackComponent?: React.ComponentType;
 }
 
 export interface ProtectedRoute {
