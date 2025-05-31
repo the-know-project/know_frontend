@@ -50,13 +50,14 @@ export const useGoogleLogin = () => {
       }
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       auth.login(
         data.tokens.accessToken,
         data.tokens.refreshToken,
         data.user,
         data.role || "NONE",
       );
+
       console.log(`Google Login Successful : ${data.user}`);
     },
     onError: (error) => {

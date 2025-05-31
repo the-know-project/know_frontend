@@ -12,6 +12,7 @@ export const useLogin = () => {
     mutationFn: async (ctx: ILogin): Promise<ILoginSuccess> => {
       try {
         const data = await login(ctx);
+        console.log(data);
         const validatedData = LoginResponseDto.parse(data);
         if (validatedData.status !== 200 || !validatedData.data) {
           throw new Error(validatedData.message || "Login Failed");
@@ -36,13 +37,14 @@ export const useLogin = () => {
       }
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       auth.login(
         data.tokens.accessToken,
         data.tokens.refreshToken,
         data.user,
         data.role || "NONE",
       );
+
       console.log(`Login Successful : ${data.user}`);
     },
     onError: (error) => {
