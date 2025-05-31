@@ -127,7 +127,7 @@ const SignupForm = () => {
                   <FormControl>
                     <Input
                       className="signup_form_input !important"
-                      placeholder="First Name"
+                      placeholder=""
                       {...field}
                     />
                   </FormControl>
@@ -150,7 +150,7 @@ const SignupForm = () => {
                   <FormControl>
                     <Input
                       className="signup_form_input !important"
-                      placeholder="Last Name"
+                      placeholder=""
                       {...field}
                     />
                   </FormControl>
@@ -176,7 +176,7 @@ const SignupForm = () => {
                   <FormControl>
                     <Input
                       className="signup_form_input"
-                      placeholder="Email"
+                      placeholder=""
                       {...field}
                     />
                   </FormControl>
@@ -199,7 +199,7 @@ const SignupForm = () => {
                   <FormControl>
                     <Input
                       className="signup_form_input"
-                      placeholder="Username"
+                      placeholder=""
                       {...field}
                     />
                   </FormControl>
@@ -224,7 +224,7 @@ const SignupForm = () => {
                 <FormControl>
                   <Input
                     className="signup_form_input"
-                    placeholder="Password"
+                    placeholder=""
                     type="password"
                     {...field}
                   />
