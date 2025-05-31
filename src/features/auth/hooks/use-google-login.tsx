@@ -28,7 +28,7 @@ export const useGoogleLogin = () => {
         const data = await googleLogin();
         const validatedData = LoginResponseDto.parse(data);
         if (validatedData.status !== 200 || !validatedData.data) {
-          throw new Error(validatedData.message || "Login Failed");
+          throw new Error(validatedData.message || "Google Login Failed");
         }
 
         const { id, email, accessToken, refreshToken } = validatedData.data;
@@ -57,7 +57,7 @@ export const useGoogleLogin = () => {
         data.user,
         data.role || "NONE",
       );
-      console.log(`Login Successful : ${data.user}`);
+      console.log(`Google Login Successful : ${data.user}`);
     },
     onError: (error) => {
       auth.logout();
