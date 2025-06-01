@@ -44,6 +44,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
         >
           <main>{children}</main>
+
           <Toaster />
         </body>
       </Provider>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useRef } from "react";
 import { useTokenStore } from "../state/store/token.store";
 
@@ -18,8 +20,7 @@ export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
   } = options;
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { isAuthenticated, getAccessToken, user } =
-    useTokenStore();
+  const { isAuthenticated, getAccessToken, user } = useTokenStore();
 
   /**
    * Manual token refresh function
@@ -52,8 +53,6 @@ export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
     const currentTime = Date.now() / 1000;
     return Math.max(0, validation.payload.exp - currentTime);
   }, [getAccessToken]);
-
-
 
   // Set up automatic refresh interval
   useEffect(() => {

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useAuth } from "./use-auth";
 import { useTokenRefresh } from "./use-token-refresh";
