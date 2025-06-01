@@ -1,8 +1,10 @@
 "use client";
 
-import Spinner from "@/src/shared/components/spinner";
-import ToastDescription from "@/src/shared/components/toast-description";
-import ToastIcon from "@/src/shared/components/toast-icon";
+import { useForm } from "react-hook-form";
+import { ILogin } from "../types/auth.types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema } from "../schema/auth.schema";
+import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -13,40 +15,32 @@ import {
 } from "@/src/shared/ui/form";
 import { Input } from "@/src/shared/ui/input";
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Spinner from "@/src/shared/components/spinner";
 import { IconSend } from "@tabler/icons-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useLogin } from "../hooks";
+import ToastIcon from "@/src/shared/components/toast-icon";
 import { toast } from "sonner";
-import { useSignUp } from "../hooks/use-sign-up";
-import { SignUpFormSchema } from "../schema/auth.schema";
-import { ISignUpForm } from "../types/auth.types";
+import ToastDescription from "@/src/shared/components/toast-description";
 
-const SignupForm = () => {
-  const { mutateAsync: handleSignUp, isPending } = useSignUp();
-  const router = useRouter();
+const LoginForm = () => {
+  const { mutateAsync: handleLogin, isPending } = useLogin();
   const [activeButton, setActiveButton] = useState<
     "regular" | "google" | "discord" | null
   >(null);
-
-  const form = useForm<ISignUpForm>({
-    resolver: zodResolver(SignUpFormSchema),
+  const form = useForm<ILogin>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
       email: "",
-      userName: "",
       password: "",
     },
   });
 
-  const onSubmit = async (ctx: ISignUpForm) => {
+  const onSubmit = async (ctx: ILogin) => {
     setActiveButton("regular");
-    const data = await handleSignUp(ctx);
+    const data = await handleLogin(ctx);
 
-    if (data.status === 201) {
+    if (data.status === 200) {
       toast("", {
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
@@ -60,22 +54,20 @@ const SignupForm = () => {
           fontWeight: "bolder",
         },
       });
-      router.push("/login");
-    } else if (data.status === 409) {
+    } else if (data.status === 401) {
       toast("", {
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
         style: {
           backdropFilter: "-moz-initial",
           opacity: "-moz-initial",
-          backgroundColor: "oklch(68.1% 0.162 75.834)",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
           fontSize: "15px",
           font: "Space Grotesk",
           color: "#ffffff",
           fontWeight: "bolder",
         },
       });
-      router.push("/login");
     } else {
       toast("", {
         icon: <ToastIcon />,
@@ -91,7 +83,6 @@ const SignupForm = () => {
         },
       });
     }
-    setActiveButton(null);
   };
 
   const handleGoogleSignup = async (e: React.FormEvent) => {
@@ -113,104 +104,29 @@ const SignupForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* FirstName & LastName */}
-        <div className="flex flex-row items-center justify-between gap-5">
-          <div className="relative flex w-fit flex-col">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="signup_form_label">
-                    First Name
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="signup_form_input !important"
-                      placeholder="First Name"
-                      {...field}
-                    />
-                  </FormControl>
+        {/* Email */}
+        <div className="relative flex w-full flex-col">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="signup_form_label">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    className="signup_form_input"
+                    placeholder="Email"
+                    type="email"
+                    {...field}
+                  />
+                </FormControl>
 
-                  <div className="absolute right-0 -bottom-5">
-                    <FormMessage className="signup_error_message" />
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="relative flex w-fit flex-col">
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="signup_form_label">Last Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="signup_form_input !important"
-                      placeholder="Last Name"
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <div className="absolute right-0 -bottom-5">
-                    <FormMessage className="signup_error_message" />
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
-
-        {/* Username & Email */}
-        <div className="flex flex-row items-center justify-between gap-5">
-          <div className="relative flex w-fit flex-col">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="signup_form_label">Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="signup_form_input"
-                      placeholder="Email"
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <div className="absolute right-0 -bottom-5">
-                    <FormMessage className="signup_error_message" />
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="relative flex w-fit flex-col">
-            <FormField
-              control={form.control}
-              name="userName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="signup_form_label">User Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="signup_form_input"
-                      placeholder="Username"
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <div className="absolute right-0 -bottom-5">
-                    <FormMessage className="signup_error_message" />
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
+                <div className="absolute right-0 -bottom-5">
+                  <FormMessage className="signup_error_message" />
+                </div>
+              </FormItem>
+            )}
+          />
         </div>
 
         {/* Password */}
@@ -254,7 +170,7 @@ const SignupForm = () => {
               </div>
             ) : (
               <div className="flex w-full items-center justify-center gap-2">
-                Create Account
+                Login
                 <IconSend
                   width={20}
                   height={20}
@@ -279,7 +195,7 @@ const SignupForm = () => {
             </div>
           ) : (
             <div className="flex w-full items-center justify-center gap-2">
-              Sign Up With Google
+              Login With Google
               <Image
                 src="/Google.png"
                 alt="google"
@@ -306,7 +222,7 @@ const SignupForm = () => {
             </div>
           ) : (
             <div className="flex w-full items-center justify-center gap-2">
-              Sign Up With Discord
+              Login With Discord
               <Image
                 src="/discord_symbol.png"
                 alt="discord"
@@ -324,4 +240,4 @@ const SignupForm = () => {
   );
 };
 
-export default SignupForm;
+export default LoginForm;

@@ -23,7 +23,7 @@ export default function SelectRole() {
 
   return (
     <div className="relative z-50 grid min-h-screen grid-cols-1 md:grid-cols-2">
-      <div className="flex flex-col justify-center bg-transparent px-8 py-12 md:px-16">
+      <div className="flex flex-col bg-transparent px-8 py-12 md:px-16">
         <div className="mb-10 flex items-center justify-between">
           <Image
             src="/Know-Logo.png"

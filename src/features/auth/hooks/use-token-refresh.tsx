@@ -8,7 +8,6 @@ interface UseTokenRefreshOptions {
   refreshThresholdMinutes?: number;
   autoRefreshInterval?: number;
   enableAutoRefresh?: boolean;
-  customExpiresIn?: number;
 }
 
 export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
@@ -16,7 +15,6 @@ export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
     refreshThresholdMinutes = 5,
     autoRefreshInterval = 60000, // 1 minute
     enableAutoRefresh = true,
-    customExpiresIn,
   } = options;
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -26,13 +24,9 @@ export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
    * Manual token refresh function
    */
   const refreshToken = useCallback(async (): Promise<boolean> => {
-    if (customExpiresIn) {
-      return await TokenUtils.refreshTokenWithCustomExpiry(customExpiresIn);
-    }
-
     const result = await TokenUtils.refreshIfNeeded(refreshThresholdMinutes);
     return result;
-  }, [customExpiresIn, refreshThresholdMinutes]);
+  }, [refreshThresholdMinutes]);
 
   /**
    * Check if current token needs refresh
@@ -58,12 +52,7 @@ export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
     return Math.max(0, validation.payload.exp - currentTime);
   }, [getAccessToken]);
 
-  /**
-   * Get the current user ID for token refresh operations
-   */
-  const getCurrentUserId = useCallback((): string | null => {
-    return user?.id || null;
-  }, [user]);
+
 
   // Set up automatic refresh interval
   useEffect(() => {
@@ -99,6 +88,5 @@ export const useTokenRefresh = (options: UseTokenRefreshOptions = {}) => {
     refreshToken,
     needsRefresh,
     getTimeUntilExpiry,
-    getCurrentUserId,
   };
 };

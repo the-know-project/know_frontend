@@ -2,8 +2,6 @@ import { IUser } from "../../state/interface/auth.interface";
 
 export interface IRefreshTokenRequest {
   refreshToken: string;
-  userId: string;
-  expiresIn: number;
 }
 
 export interface RefreshTokenResponse {

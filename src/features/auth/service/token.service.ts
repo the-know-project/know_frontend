@@ -66,17 +66,11 @@ export class TokenService {
 
   public async refreshAccessToken(
     refreshToken: string,
-    userId: string,
-    expiresIn: number = 3600,
   ): Promise<RefreshTokenResponse> {
     try {
       const url = this.buildRefreshUrl();
-      const requestData: IRefreshTokenRequest = {
-        refreshToken,
-        userId,
-        expiresIn,
-      };
 
+      const requestData: IRefreshTokenRequest = { refreshToken };
       return await ApiClient.post<RefreshTokenResponse>(url, requestData);
     } catch (error) {
       console.error("Token refresh error:", error);
@@ -86,19 +80,13 @@ export class TokenService {
 
   public async refreshWithRetry(
     refreshToken: string,
-    userId: string,
-    expiresIn: number = 3600,
     maxRetries: number = 2,
   ): Promise<RefreshTokenResponse> {
     let lastError: Error;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        const result = await this.refreshAccessToken(
-          refreshToken,
-          userId,
-          expiresIn,
-        );
+        const result = await this.refreshAccessToken(refreshToken);
         return result;
       } catch (error: any) {
         lastError = error;
@@ -143,29 +131,7 @@ export class TokenService {
     }
   }
 
-  public getDefaultExpiresIn(): number {
-    return 3600;
-  }
 
-  public calculateExpiresIn(currentToken: string | null): number {
-    if (!currentToken) {
-      return this.getDefaultExpiresIn();
-    }
-
-    const validation = this.validateToken(currentToken);
-    if (!validation.isValid || !validation.payload) {
-      return this.getDefaultExpiresIn();
-    }
-
-    const currentTime = Date.now() / 1000;
-    const originalExpiration = validation.payload.exp;
-    const originalDuration =
-      originalExpiration - (validation.payload.iat || currentTime);
-
-    return originalDuration > 0
-      ? Math.floor(originalDuration)
-      : this.getDefaultExpiresIn();
-  }
 
   private buildRefreshUrl(): string {
     const config = env.env;
