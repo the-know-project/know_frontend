@@ -46,7 +46,7 @@ export const useLogin = () => {
       }
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       auth.login(
         data.tokens.accessToken,
         data.tokens.refreshToken,
