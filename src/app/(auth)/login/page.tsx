@@ -29,9 +29,7 @@ const Login = () => {
 
         <div className="mt-5 flex w-full flex-col">
           <TitleText textStyles={`w-full`}>
-            <h1 className="font-helvetica text-3xl font-semibold text-black">
-              Welcome Back
-            </h1>
+            <h1 className="title_text">Welcome Back</h1>
           </TitleText>
           <div className="motion-preset-expand motion-duration-700 mt-10 flex max-w-full flex-col">
             <LoginForm />
