@@ -4,9 +4,10 @@ import { TextEffect } from "../ui/text-effect";
 
 interface ITextEffect {
   text: string;
+  style?: string;
 }
 
-const TextEffectWithExit: React.FC<ITextEffect> = ({ text }) => {
+const TextEffectWithExit: React.FC<ITextEffect> = ({ text, style }) => {
   const [trigger, setTrigger] = useState(true);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const TextEffectWithExit: React.FC<ITextEffect> = ({ text }) => {
 
   return (
     <TextEffect
-      className="font-grotesk inline-flex text-sm font-bold capitalize lg:text-lg"
+      className={`font-grotesk inline-flex text-sm font-bold capitalize lg:text-lg ${style}`}
       per="char"
       variants={blurSlideVariants}
       trigger={trigger}
