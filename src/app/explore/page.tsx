@@ -1,27 +1,4 @@
-"use client";
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-
-const ExplorePage = () => {
-  const filters = [
-    "neoexpressionism",
-    "Painting",
-    "Architecture",
-    "Sculpture",
-    "Digital Art",
-    "Illustration",
-    "Photography",
-    "Drawing",
-  ];
-
-  const artworks = new Array(9).fill({
-    name: "Artist Name",
-    likes: "16k",
-    image: "/placeholder.png",
-  });
-
-  const [showSubFilters, setShowSubFilters] = useState(false);
+import { PageAuthGuard } from "@/src/features/auth/guards";
 
   return (
     <div className="px-6 py-4">
