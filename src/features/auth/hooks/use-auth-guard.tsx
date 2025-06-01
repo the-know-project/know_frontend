@@ -19,7 +19,7 @@ interface AuthGuardState {
   protectionResult: RouteProtectionResult | null;
 }
 
-export const UseAuthGuard = (options: UseAuthGuardOptions = {}) => {
+export const useAuthGuard = (options: UseAuthGuardOptions = {}) => {
   const { redirectOnUnauthorized = true, onUnauthorized } = options;
 
   const router = useRouter();
