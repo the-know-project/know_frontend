@@ -7,6 +7,7 @@ const PROTECTED_ROUTES = [
   "/artist-profile",
   "/user",
   "/admin",
+  "/personalize",
 ];
 
 const GUEST_ONLY_ROUTES = ["/login", "/signup", "/forgot-password"];
