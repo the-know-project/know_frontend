@@ -109,7 +109,7 @@ export const PROTECTED_ROUTES: ProtectedRoute[] = [
   },
 ];
 
-export const AUHT_REDIRECT_CONFIG: AuthRedirectConfig = {
+export const AUTH_REDIRECT_CONFIG: AuthRedirectConfig = {
   authenticatedUserDefaultRoute: "/explore",
   unauthenticatedUserDefaultRoute: "/",
   loginRoute: "/login",
