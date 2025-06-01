@@ -40,4 +40,12 @@ export class AuthenticatedApiClient {
     });
     return ApiClient.delete<T>(url);
   }
+
+  static window(path: string) {
+    const url = createUrl({
+      baseUrl: this.getBaseUrl(),
+      path,
+    });
+    window.location.href = url;
+  }
 }
