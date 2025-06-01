@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { UseAuthGuard } from "../hooks/use-auth-guard";
 import { RouteProtectionResult } from "../types/route-protection.types";
