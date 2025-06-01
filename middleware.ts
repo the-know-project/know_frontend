@@ -9,11 +9,7 @@ const PROTECTED_ROUTES = [
   "/admin",
 ];
 
-const GUEST_ONLY_ROUTES = [
-  "/auth/login",
-  "/auth/register",
-  "/auth/forgot-password",
-];
+const GUEST_ONLY_ROUTES = ["/login", "/signup", "/forgot-password"];
 
 const PUBLIC_ROUTES = ["/", "/about", "/api"];
 
