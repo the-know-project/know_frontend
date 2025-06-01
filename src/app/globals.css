@@ -162,6 +162,10 @@
     @apply font-grotesk relative inline-flex items-center gap-1 rounded-md bg-zinc-950 px-2.5 font-medium text-white outline outline-[#fff2f21f] transition-all duration-200;
   }
 
+  .title_text {
+    @apply font-helvetica text-4xl font-semibold text-black capitalize;
+  }
+
   .button_icon {
     @apply -rotate-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5;
   }
