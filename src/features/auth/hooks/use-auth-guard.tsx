@@ -1,3 +1,5 @@
+"use client";
+
 import { usePathname, useRouter } from "next/navigation";
 import { RouteProtectionResult } from "../types/route-protection.types";
 import { useAuthStatus } from "./use-auth-status";
