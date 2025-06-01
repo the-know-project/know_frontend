@@ -5,12 +5,20 @@ export enum RouteProtectionLevel {
 }
 
 export enum UserRole {
-  USER = "user",
-  ARTIST = "artist",
-  ADMIN = "admin",
-  BUYER = "buyer",
-  MODERATOR = "moderator",
-  NONE = "none",
+  USER = "USER",
+  ARTIST = "ARTIST",
+  ADMIN = "ADMIN",
+  BUYER = "BUYER",
+  MODERATOR = "MODERATOR",
+  NONE = "NONE",
+}
+
+interface RouteMetadata {
+  title: string;
+  description?: string;
+  keywords?: string[];
+  showInNavigation?: boolean;
+  navigationOrder?: number;
 }
 
 export interface RouteProtectionConfig {
@@ -25,6 +33,8 @@ export interface ProtectedRoute {
   protection: RouteProtectionConfig;
   name: string;
   description?: string;
+  metadata?: RouteMetadata;
+  children?: ProtectedRoute[];
 }
 
 export interface AuthRedirectConfig {
