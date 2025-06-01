@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { UseAuthGuard } from "../hooks/use-auth-guard";
+import { useAuthGuard } from "../hooks/use-auth-guard";
 import { RouteProtectionResult } from "../types/route-protection.types";
 
 interface AuthGuardProps {
@@ -28,7 +28,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
   redirectOnUnauthorized = true,
   onUnauthorized,
 }) => {
-  const { isLoading, isAuthorized, protectionResult } = UseAuthGuard({
+  const { isLoading, isAuthorized, protectionResult } = useAuthGuard({
     redirectOnUnauthorized,
     onUnauthorized,
   });
