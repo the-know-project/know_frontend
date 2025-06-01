@@ -12,6 +12,7 @@ import about_image from "./about_image.jpeg";
 import security from "./security.jpg";
 import signup_asset from "./signup_asset.png";
 import login_asset from "./login_asset.jpeg";
+import personalize_asset from "./personalize_asset.jpg";
 
 export {
   hero1,
@@ -28,4 +29,5 @@ export {
   security,
   signup_asset,
   login_asset,
+  personalize_asset,
 };
