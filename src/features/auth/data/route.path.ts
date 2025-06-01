@@ -12,6 +12,7 @@ export const ROUTE_PATHS = {
   },
 
   EXPLORE: "/explore",
+  PERSONALIZE: "/personalize",
   PUBLISH: "/publish",
   UPLOAD: "/upload",
   ARTIST_PROFILE: "/artist-profile",
