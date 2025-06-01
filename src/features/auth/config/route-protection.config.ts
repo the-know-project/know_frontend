@@ -79,6 +79,19 @@ export const PROTECTED_ROUTES: ProtectedRoute[] = [
 
   // Authenticated Users only
   {
+    path: ROUTE_PATHS.PERSONALIZE,
+    name: "Personalize",
+    description: "Personalize your profile",
+    protection: {
+      level: RouteProtectionLevel.AUTHENTICATED,
+      redirectTo: ROUTE_PATHS.AUTH.LOGIN,
+    },
+    metadata: {
+      title: "Personalize Your Experience - KNOW",
+      showInNavigation: false,
+    },
+  },
+  {
     path: ROUTE_PATHS.EXPLORE,
     name: "Explore",
     description: "Main dashboard",
