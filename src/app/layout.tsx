@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "../lib/react-query-client";
 import { Toaster } from "../shared/ui/sonner";
-import { AppLayout } from "../shared/components/AppLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,9 +43,8 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
         >
-          <AppLayout>
-            <main>{children}</main>
-          </AppLayout>
+          <main>{children}</main>
+
           <Toaster />
         </body>
       </Provider>
