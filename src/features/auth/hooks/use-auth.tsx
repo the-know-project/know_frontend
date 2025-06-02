@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useRoleStore, useTokenStore } from "../state/store";
+import { IRole } from "../types/auth.types";
 
 export const useAuth = () => {
   const tokenStore = useTokenStore();
@@ -22,7 +23,7 @@ export const useAuth = () => {
         accessToken: string,
         refreshToken: string,
         user: { id: string; email: string },
-        role: "ARTIST" | "BUYER" | "NONE",
+        role: IRole,
       ) => {
         tokenStore.setTokens(accessToken, refreshToken, user);
         roleStore.setRole(role);
