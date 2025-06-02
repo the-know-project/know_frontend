@@ -2,26 +2,26 @@
 
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useRoleStore } from "@/src/features/auth/state/store";
+import { TitleText } from "@/src/shared/layout/header";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function CallbackPage() {
   const role = useRoleStore((state) => state.role);
   const router = useRouter();
   const auth = useAuth();
+  const hasProcessed = useRef(false);
 
   useEffect(() => {
+    if (hasProcessed.current) return;
+
     const handleCallback = async () => {
       try {
-        // Get the current URL to check for OAuth data
-        const currentUrl = window.location.href;
+        hasProcessed.current = true;
 
-        // If the page was loaded with OAuth data (you might need to adjust this based on how your backend returns data)
         const urlParams = new URLSearchParams(window.location.search);
 
-        // Check if we have success data in URL params or need to fetch it
         if (urlParams.get("success") === "true") {
-          // Extract tokens from URL params (adjust based on your backend implementation)
           const accessToken = urlParams.get("accessToken");
           const refreshToken = urlParams.get("refreshToken");
           const userId = urlParams.get("userId");
@@ -30,34 +30,42 @@ export default function CallbackPage() {
           if (accessToken && refreshToken && userId && email) {
             auth.login(accessToken, refreshToken, { id: userId, email }, role);
 
-            if (role === "ARTIST") {
-              router.push("/explore");
-            } else {
-              router.push("/personalize");
-            }
+            // Add a small delay to ensure login is processed
+            setTimeout(() => {
+              if (role === "ARTIST") {
+                router.push("/explore");
+              } else {
+                router.push("/personalize");
+              }
+            }, 100);
             return;
           }
         }
 
-        // If no success params, redirect to login
-        router.push("/login");
+        setTimeout(() => {
+          router.push("/login");
+        }, 100);
       } catch (error) {
         console.error("OAuth callback error:", error);
         auth.logout();
-        router.push("/login");
+        setTimeout(() => {
+          router.push("/login");
+        }, 100);
       }
     };
 
     handleCallback();
-  }, [router, auth]);
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <h2 className="mb-2 text-xl font-semibold">Processing login...</h2>
-        <p className="text-gray-600">
-          Please wait while we complete your authentication.
-        </p>
+        <TitleText textStyles={`w-full`}>
+          <p className="font-bebas text-3xl text-gray-600 capitalize">
+            Are you in the know?
+          </p>
+        </TitleText>
+        <p className="mt-4 text-gray-500">Processing your authentication...</p>
       </div>
     </div>
   );
