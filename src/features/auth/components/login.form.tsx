@@ -27,7 +27,7 @@ import { ILogin, ILoginSuccess } from "../types/auth.types";
 
 const LoginForm = () => {
   const router = useRouter();
-  const { mutateAsync: handleGoogleLogin, isPending: isGooglePending } =
+  const { mutate: handleGoogleLogin, isPending: isGooglePending } =
     useGoogleLogin();
   const { mutateAsync: handleLogin, isPending } = useLogin();
   const [activeButton, setActiveButton] = useState<
@@ -94,11 +94,10 @@ const LoginForm = () => {
     handleToast(data);
   };
 
-  const handleGoogleSignup = async (e: React.FormEvent) => {
+  const handleGoogleSignup = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = await handleGoogleLogin();
-    handleToast(data);
+    handleGoogleLogin();
   };
 
   const handleDiscordSignup = async (e: React.FormEvent) => {
