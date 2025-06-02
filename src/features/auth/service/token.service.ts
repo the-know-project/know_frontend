@@ -131,8 +131,6 @@ export class TokenService {
     }
   }
 
-
-
   private buildRefreshUrl(): string {
     const config = env.env;
     const baseUrl = isProduction() ? config.PROD_URL : config.STAGING_URL;
