@@ -1,13 +1,11 @@
 "use client";
 
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { useRoleStore } from "@/src/features/auth/state/store";
 import { TitleText } from "@/src/shared/layout/header";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export default function CallbackPage() {
-  const role = useRoleStore((state) => state.role);
   const router = useRouter();
   const auth = useAuth();
   const hasProcessed = useRef(false);
@@ -26,6 +24,7 @@ export default function CallbackPage() {
           const refreshToken = urlParams.get("refreshToken");
           const userId = urlParams.get("userId");
           const email = urlParams.get("email");
+          const role = urlParams.get("role");
 
           if (accessToken && refreshToken && userId && email) {
             auth.login(accessToken, refreshToken, { id: userId, email }, role);
