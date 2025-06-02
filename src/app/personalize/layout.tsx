@@ -1,4 +1,4 @@
-import { login_asset, personalize_asset } from "@/src/assets";
+import { personalize_asset } from "@/src/assets";
 import GridBackground from "@/src/shared/components/grid-background";
 import Image from "next/image";
 
