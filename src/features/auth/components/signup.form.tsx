@@ -27,7 +27,7 @@ import { useGoogleLogin } from "../hooks/use-google-login";
 
 const SignupForm = () => {
   const { mutateAsync: handleSignUp, isPending } = useSignUp();
-  const { mutateAsync: handleGoogleLogin, isPending: isGooglePending } =
+  const { mutate: handleGoogleLogin, isPending: isGooglePending } =
     useGoogleLogin();
   const router = useRouter();
   const [activeButton, setActiveButton] = useState<
@@ -129,10 +129,9 @@ const SignupForm = () => {
     setActiveButton(null);
   };
 
-  const handleGoogleSignup = async (e: React.FormEvent) => {
+  const handleGoogleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    const data = await handleGoogleLogin();
-    handleToast(data);
+    handleGoogleLogin();
   };
 
   const handleDiscordSignup = async (e: React.FormEvent) => {
