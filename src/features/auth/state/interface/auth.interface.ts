@@ -9,6 +9,7 @@ export interface IRoleState {
 export interface IUser {
   id: string;
   email: string;
+  role?: string;
 }
 
 export interface ITokenState {
