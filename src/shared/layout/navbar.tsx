@@ -22,7 +22,7 @@ export default function Nav() {
 
   const handleGetStarted = () => {
     setIsMobileMenuOpen(false);
-    router.push("/auth");
+    router.push("/role");
   };
 
   const handleSmoothScroll = (
