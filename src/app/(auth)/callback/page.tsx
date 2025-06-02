@@ -1,7 +1,8 @@
 "use client";
 
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { TitleText } from "@/src/shared/layout/header";
+import { IRole } from "@/src/features/auth/types/auth.types";
+import TextEffectWithExit from "@/src/shared/components/animate-text";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -27,7 +28,12 @@ export default function CallbackPage() {
           const role = urlParams.get("role");
 
           if (accessToken && refreshToken && userId && email) {
-            auth.login(accessToken, refreshToken, { id: userId, email }, role);
+            auth.login(
+              accessToken,
+              refreshToken,
+              { id: userId, email },
+              role ? (role as IRole) : "BUYER",
+            );
 
             // Add a small delay to ensure login is processed
             setTimeout(() => {
@@ -59,11 +65,11 @@ export default function CallbackPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <TitleText textStyles={`w-full`}>
-          <p className="font-bebas text-3xl text-gray-600 capitalize">
-            Are you in the know?
-          </p>
-        </TitleText>
+        <TextEffectWithExit
+          text="Are you in the know"
+          style="!font-bebas !text-3xl !text-gray-600 !capitalize"
+        />
+
         <p className="mt-4 text-gray-500">Processing your authentication...</p>
       </div>
     </div>
