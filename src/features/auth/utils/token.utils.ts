@@ -70,6 +70,8 @@ export class TokenUtils {
         refreshToken,
       );
 
+      console.log(`Token Refresh endpoint hit. ${refreshResponse}`);
+
       if (refreshResponse.status === 200 && refreshResponse.data) {
         const {
           accessToken: newAccessToken,
