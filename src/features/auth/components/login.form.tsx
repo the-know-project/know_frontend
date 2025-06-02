@@ -94,10 +94,12 @@ const LoginForm = () => {
     handleToast(data);
   };
 
-  const handleGoogleSignup = (e: React.FormEvent) => {
+  const handleGoogleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setActiveButton("google");
 
     handleGoogleLogin();
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   };
 
   const handleDiscordSignup = async (e: React.FormEvent) => {
@@ -194,8 +196,9 @@ const LoginForm = () => {
           className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95"
           type="button"
           onClick={handleGoogleSignup}
+          disabled={activeButton === "google"}
         >
-          {isGooglePending ? (
+          {activeButton === "google" ? (
             <div className="flex w-full items-center justify-center">
               <Spinner borderColor="border-yellow-500" />
             </div>
