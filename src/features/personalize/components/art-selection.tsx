@@ -5,8 +5,11 @@ import { DummyArtPreferences } from "../data/personalize.data";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useGetCategories } from "../hooks/use-get-categories";
+import ArtSelectionSkeleton from "./art-selection-skeleton";
 
 const ArtSelection = () => {
+  const { data, isLoading } = useGetCategories();
   const [selectedArt, setSelectedArt] = useState<string[]>([]);
 
   const handleSelection = (pref: string) => {
@@ -23,25 +26,31 @@ const ArtSelection = () => {
 
   const isItemSelected = (item: string) => selectedArt.includes(item);
 
+  if (isLoading) {
+    return <ArtSelectionSkeleton />;
+  }
+
+  const artPreferences = data || DummyArtPreferences;
+
   return (
     <section className="relative flex w-full flex-col">
       <div className="z-50 grid w-full grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4">
-        {DummyArtPreferences.map((pref, index) => (
+        {artPreferences.map((pref, index) => (
           <button
-            key={pref.id}
+            key={index}
             className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit rounded-md bg-black px-2 py-1 text-[16px] font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
             style={{
               animationDelay: `${index * 100}ms`,
             }}
-            onClick={() => handleSelection(pref.name)}
+            onClick={() => handleSelection(pref)}
           >
             <p
               className={cn(
                 "transition-all duration-200 group-hover:scale-105 group-active:scale-95",
-                isItemSelected(pref.name) && "text-neutral-700",
+                isItemSelected(pref) && "text-neutral-700",
               )}
             >
-              {pref.name}
+              {pref}
             </p>
           </button>
         ))}
