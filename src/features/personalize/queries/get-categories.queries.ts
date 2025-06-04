@@ -1,11 +1,11 @@
 import { handleAxiosError } from "@/src/utils/handle-axios-error";
 import { getCategories } from "../api/categories/get-categories/route";
-import { GetCategoriesResponse } from "../dto/personalize.dto";
+import { GetCategoriesResponseDto } from "../dto/personalize.dto";
 
 export const getCategoriesQuery = async () => {
   try {
     const result = await getCategories();
-    const data = GetCategoriesResponse.parse(result);
+    const data = GetCategoriesResponseDto.parse(result);
     return data;
   } catch (error) {
     handleAxiosError(error);
