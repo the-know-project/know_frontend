@@ -10,8 +10,6 @@ import ArtSelectionSkeleton from "./art-selection-skeleton";
 
 const ArtSelection = () => {
   const { data, isLoading, error } = useGetCategories();
-
-  console.log(data);
   const [selectedArt, setSelectedArt] = useState<string[]>([]);
 
   const handleSelection = (pref: string) => {
@@ -24,8 +22,6 @@ const ArtSelection = () => {
     });
   };
 
-  console.log(selectedArt);
-
   const isItemSelected = (item: string) => selectedArt.includes(item);
 
   if (isLoading) {
@@ -36,12 +32,12 @@ const ArtSelection = () => {
     return <div className="text-red-500">Error fetching categories</div>;
   }
 
-  const artPreferences = data ? data : DummyArtPreferences;
+  const artPreferences = data ? data.data.slice(0, 35) : DummyArtPreferences;
 
   return (
     <section className="relative flex w-full flex-col">
-      <div className="z-50 grid w-full grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4">
-        {artPreferences.map((pref, index) => (
+      <div className="z-50 grid w-full grid-cols-3 gap-x-3 gap-y-4 lg:grid-cols-4">
+        {artPreferences?.map((pref, index) => (
           <button
             key={index}
             className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit rounded-md bg-black px-2 py-1 text-[16px] font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
