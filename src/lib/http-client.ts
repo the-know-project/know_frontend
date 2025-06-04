@@ -113,6 +113,7 @@ class HttpClient {
       "/api/auth/registerUser",
       "/api/auth/refreshToken",
       "/api/mail-list/addToMailList",
+      "/api/categories/getCategories",
     ];
 
     const url = config.url || "";
