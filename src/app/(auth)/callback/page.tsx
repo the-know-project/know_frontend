@@ -69,8 +69,6 @@ export default function CallbackPage() {
           text="Are you in the know"
           style="!font-bebas !text-3xl !text-gray-600 !capitalize"
         />
-
-        <p className="mt-4 text-gray-500">Processing your authentication...</p>
       </div>
     </div>
   );
