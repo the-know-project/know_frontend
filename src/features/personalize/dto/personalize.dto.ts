@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const GetCategoriesResponse = z.object({
+export const GetCategoriesResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(255),
   data: z.array(z.string().min(1).max(255)),
@@ -11,4 +11,9 @@ export const GetCategoriesResponse = z.object({
       limit: z.number().min(1).max(100),
     })
     .nullable(),
+});
+
+export const PersonalizeResponseDto = z.object({
+  status: z.number(),
+  message: z.string().min(1).max(255),
 });
