@@ -9,7 +9,9 @@ import { useGetCategories } from "../hooks/use-get-categories";
 import ArtSelectionSkeleton from "./art-selection-skeleton";
 
 const ArtSelection = () => {
-  const { data, isLoading } = useGetCategories();
+  const { data, isLoading, error } = useGetCategories();
+
+  console.log(data);
   const [selectedArt, setSelectedArt] = useState<string[]>([]);
 
   const handleSelection = (pref: string) => {
@@ -30,7 +32,11 @@ const ArtSelection = () => {
     return <ArtSelectionSkeleton />;
   }
 
-  const artPreferences = data || DummyArtPreferences;
+  if (error) {
+    return <div className="text-red-500">Error fetching categories</div>;
+  }
+
+  const artPreferences = data ? data : DummyArtPreferences;
 
   return (
     <section className="relative flex w-full flex-col">
