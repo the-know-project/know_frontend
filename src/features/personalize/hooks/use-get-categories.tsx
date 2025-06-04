@@ -1,6 +1,7 @@
 import { handleAxiosError } from "@/src/utils/handle-axios-error";
 import { useQuery } from "@tanstack/react-query";
 import { getCategories } from "../api/categories/get-categories/route";
+import { GetCategoriesSchema } from "../schema/personalize.schema";
 
 export const useGetCategories = () => {
   return useQuery({
@@ -8,7 +9,8 @@ export const useGetCategories = () => {
     queryFn: async () => {
       try {
         const result = await getCategories();
-        return result as string[];
+        const data = GetCategoriesSchema.parse(result);
+        return data.data;
       } catch (error) {
         handleAxiosError(error);
 
