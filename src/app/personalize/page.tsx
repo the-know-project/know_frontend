@@ -1,17 +1,19 @@
 import { PageAuthGuard } from "@/src/features/auth/guards";
-import { getCategories } from "@/src/features/personalize/api/categories/get-categories/route";
 import ArtSelection from "@/src/features/personalize/components/art-selection";
-import { queryClient } from "@/src/lib/react.query";
+import { getCategoriesQueryOptions } from "@/src/features/personalize/queries/get-categories.queries";
+
 import { TitleText } from "@/src/shared/layout/header";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import Image from "next/image";
 
 const Page = async () => {
+  const queryClient = new QueryClient();
   try {
-    await queryClient.prefetchQuery({
-      queryKey: ["get-categories"],
-      queryFn: getCategories,
-    });
+    await queryClient.prefetchQuery(getCategoriesQueryOptions);
     return (
       <PageAuthGuard requiresAuth>
         <section className="relative z-50 flex w-full flex-col">
