@@ -85,7 +85,6 @@ const ArtSelection = () => {
 
   const handlePersonalizeExp = async () => {
     const data = await personalizeExp(selectedArt);
-    console.log(data);
     handleToast(data);
   };
 
