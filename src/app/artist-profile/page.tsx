@@ -1,4 +1,4 @@
-import ExploreNav from "@/src/shared/components/explore-nav";
+import ExploreNav from "@/src/features/explore/components/explore-nav";
 import PostGrid from "@/src/shared/components/postgrid";
 
 export default function Page() {
