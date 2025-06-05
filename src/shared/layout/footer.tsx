@@ -20,9 +20,10 @@ export default function Footer() {
             <Image
               src="/Know-Logo.png"
               alt="Logo"
-              width={50}
+              width={90}
               height={50}
               quality={100}
+              className="object-contain object-center"
             />
           </div>
 
