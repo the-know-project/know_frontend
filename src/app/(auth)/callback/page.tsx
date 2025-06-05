@@ -26,6 +26,7 @@ export default function CallbackPage() {
           const userId = urlParams.get("userId");
           const email = urlParams.get("email");
           const role = urlParams.get("role");
+          const isFirstTime = urlParams.get("isFirstTime");
 
           if (accessToken && refreshToken && userId && email) {
             auth.login(
@@ -40,7 +41,11 @@ export default function CallbackPage() {
               if (role === "ARTIST") {
                 router.push("/explore");
               } else {
-                router.push("/personalize");
+                if (isFirstTime === "true") {
+                  router.push("/personalize");
+                } else {
+                  router.push("/explore");
+                }
               }
             }, 100);
             return;
