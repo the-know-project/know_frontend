@@ -1,10 +1,13 @@
 import { z } from "zod";
+import { RoleSchema } from "../schema/auth.schema";
 
 const AuthSuccessDataDto = z.object({
   id: z.string().uuid(),
   email: z.string().email().min(1).max(100),
   refreshToken: z.string(),
   accessToken: z.string(),
+  role: RoleSchema,
+  isFirstTime: z.boolean(),
 });
 
 export const SignUpResponseDto = z.object({
