@@ -19,6 +19,7 @@ export interface ILoginSuccess {
     refreshToken: string;
   };
   role?: IRole;
+  isFirstTime: boolean;
 }
 
 export type ISignUp = z.infer<typeof SignUpSchema>;
