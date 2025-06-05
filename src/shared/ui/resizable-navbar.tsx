@@ -2,12 +2,13 @@
 import { cn } from "@/lib/utils";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import {
-  motion,
   AnimatePresence,
-  useScroll,
+  motion,
   useMotionValueEvent,
+  useScroll,
 } from "motion/react";
 
+import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { GlowEffect } from "./glow-effect";
 
@@ -254,10 +255,16 @@ export const MobileNavToggle = ({
 export const NavbarLogo = () => {
   return (
     <a
-      href="#"
+      href="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
-      <img src="/Know-Logo.png" alt="logo" width={50} height={50} />
+      <Image
+        src="/Know-Logo.png"
+        alt="logo"
+        width={50}
+        height={50}
+        className="object-contain object-center"
+      />
     </a>
   );
 };
