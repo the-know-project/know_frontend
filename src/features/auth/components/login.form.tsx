@@ -56,7 +56,12 @@ const LoginForm = () => {
           fontWeight: "bolder",
         },
       });
-      router.push("/personalize");
+
+      if (data.role === "ARTIST") {
+        router.push("/explore");
+      } else {
+        router.push("/personalize");
+      }
     } else if (data.status === 401) {
       toast("", {
         icon: <ToastIcon />,
