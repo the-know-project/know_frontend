@@ -27,8 +27,7 @@ import { ILogin, ILoginSuccess } from "../types/auth.types";
 
 const LoginForm = () => {
   const router = useRouter();
-  const { mutate: handleGoogleLogin, isPending: isGooglePending } =
-    useGoogleLogin();
+  const { mutate: handleGoogleLogin } = useGoogleLogin();
   const { mutateAsync: handleLogin, isPending } = useLogin();
   const [activeButton, setActiveButton] = useState<
     "regular" | "google" | "discord" | null
@@ -60,7 +59,11 @@ const LoginForm = () => {
       if (data.role === "ARTIST") {
         router.push("/explore");
       } else {
-        router.push("/personalize");
+        if (data.isFirstTime === true) {
+          router.push("/personalize");
+        } else {
+          router.push("explore");
+        }
       }
     } else if (data.status === 401) {
       toast("", {
