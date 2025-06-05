@@ -18,13 +18,16 @@ export const useLogin = () => {
           throw new Error(validatedData.message || "Login Failed");
         }
 
-        const { id, email, accessToken, refreshToken } = validatedData.data;
+        const { id, email, accessToken, refreshToken, role, isFirstTime } =
+          validatedData.data;
 
         return {
           status: validatedData.status,
           message: validatedData.message,
           user: { id, email },
           tokens: { accessToken, refreshToken },
+          role,
+          isFirstTime,
         };
       } catch (error) {
         handleAxiosError(error);
@@ -44,8 +47,6 @@ export const useLogin = () => {
         data.user,
         data.role || "NONE",
       );
-
-      console.log(`Login Successful : ${data.user}`);
     },
     onError: (error) => {
       auth.logout();
