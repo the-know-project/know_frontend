@@ -52,6 +52,20 @@ const ArtSelection = () => {
         },
       });
       router.push("/explore");
+    } else if (data.status === 400) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
     } else {
       toast("", {
         icon: <ToastIcon />,
@@ -67,24 +81,12 @@ const ArtSelection = () => {
         },
       });
     }
-
-    toast("", {
-      icon: <ToastIcon />,
-      description: <ToastDescription description={`An error occurred`} />,
-      style: {
-        backdropFilter: "-moz-initial",
-        opacity: "-moz-initial",
-        backgroundColor: "oklch(62.8% 0.258 29.234)",
-        fontSize: "15px",
-        font: "Space Grotesk",
-        color: "#ffffff",
-        fontWeight: "bolder",
-      },
-    });
   };
 
-  const handlePersonalizeExp = async (ctx: string[]) => {
-    const data = await personalizeExp(ctx);
+  const handlePersonalizeExp = async () => {
+    const data = await personalizeExp(selectedArt);
+    console.log(data);
+    handleToast(data);
   };
 
   if (isLoading) {
@@ -125,7 +127,11 @@ const ArtSelection = () => {
         colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
         className="mt-[150px] flex w-full items-center justify-center self-center"
       >
-        <button className="font-bebas group relative inline-flex w-full items-center justify-center gap-1 self-center rounded-lg bg-black px-2.5 py-1.5 text-[16px] font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-300 hover:scale-110 active:scale-95">
+        <button
+          className="font-bebas group relative inline-flex w-full items-center justify-center gap-1 self-center rounded-lg bg-black px-2.5 py-1.5 text-[16px] font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-300 hover:scale-110 active:scale-95"
+          onClick={handlePersonalizeExp}
+          disabled={isPending || selectedArt.length === 0}
+        >
           {isPending ? (
             <div className="flex items-center justify-center">
               <Spinner borderColor="border-white" />
