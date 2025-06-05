@@ -193,6 +193,14 @@
   .signup_error_message {
     @apply font-bricolage text-xs font-light text-red-500 capitalize;
   }
+
+  .explore_logo_wrapper {
+    @apply flex w-fit items-center justify-center rounded-full border border-white/20 bg-black/5 p-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.4),inset_0_-1px_0_0_rgba(0,0,0,0.2),0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-md;
+  }
+
+  .explore_nav_wrapper {
+    @apply flex w-fit items-center justify-center rounded-full border border-white/20 bg-black/5 px-2.5 py-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.4),inset_0_-1px_0_0_rgba(0,0,0,0.2),0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-md;
+  }
 }
 .purple-glow {
   filter: drop-shadow(0 0 30px rgba(128, 0, 255, 0.7));
