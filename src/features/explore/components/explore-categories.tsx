@@ -85,7 +85,7 @@ const ExploreCategories = ({
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
-              className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-[12px] font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95 sm:text-sm"
+              className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
               style={{
                 animationDelay: `${index * 100}ms`,
               }}
@@ -112,14 +112,14 @@ const ExploreCategories = ({
               className={`absolute top-1 bottom-1 rounded-lg bg-black px-2 transition-all duration-300 ease-in-out ${
                 activeButton === "for-you"
                   ? "left-1 w-[calc(50%-6px)]"
-                  : "right-1 w-[calc(50%-3px)]"
+                  : "right-1 w-[calc(50%-2px)]"
               }`}
             />
 
             {/* Buttons */}
             <button
               onClick={() => setActiveButton("for-you")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-[12px] font-medium transition-colors duration-300 sm:px-4 sm:py-2 sm:text-sm ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 ${
                 activeButton === "for-you"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"
@@ -130,7 +130,7 @@ const ExploreCategories = ({
 
             <button
               onClick={() => setActiveButton("following")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-[12px] font-medium transition-colors duration-300 sm:px-4 sm:py-2 sm:text-sm ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 ${
                 activeButton === "following"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"
@@ -147,7 +147,7 @@ const ExploreCategories = ({
             {artPreferences?.map((pref, index) => (
               <button
                 key={index}
-                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-[12px] font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95 sm:text-sm"
+                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
                 style={{
                   animationDelay: `${index * 100}ms`,
                 }}
@@ -169,7 +169,7 @@ const ExploreCategories = ({
         {/* Filter */}
         <div className="motion-preset-expand motion-duration-700 motion-delay-700 flex w-fit gap-1 rounded-lg bg-black px-2 py-1 sm:px-4 sm:py-2">
           <IconFilter color="white" width={20} height={20} />
-          <p className="font-bebas text-[12px] font-medium text-neutral-300 sm:text-sm">
+          <p className="font-bebas text-sm font-medium text-neutral-300">
             Filter
           </p>
         </div>
