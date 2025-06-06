@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { IconFilter } from "@tabler/icons-react";
+import { IconFilter2Edit } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 import ArtSelectionSkeleton from "../../personalize/components/art-selection-skeleton";
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
@@ -205,7 +205,7 @@ const ExploreCategories = ({
         </div>
 
         {/* Catgeories */}
-        <div className="scrollbar-hide z-50 hidden w-full max-w-[400px] overflow-x-auto sm:flex">
+        <div className="scrollbar-hide z-50 hidden w-full max-w-[500px] overflow-x-auto sm:flex">
           <div className="flex min-w-fit items-center gap-2 px-4">
             {artPreferences?.map((pref, index) => (
               <button
@@ -234,7 +234,7 @@ const ExploreCategories = ({
           onClick={handleToggleFilter}
           className="motion-preset-expand motion-duration-700 motion-delay-700 flex w-fit gap-1 rounded-lg bg-black px-2 py-1 sm:px-4 sm:py-2"
         >
-          <IconFilter color="white" width={20} height={20} />
+          <IconFilter2Edit color="white" width={20} height={20} />
           <p className="font-bebas text-sm font-medium text-neutral-300">
             Filter
           </p>
