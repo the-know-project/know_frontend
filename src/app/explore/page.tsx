@@ -1,4 +1,5 @@
 import { PageAuthGuard } from "@/src/features/auth/guards";
+import ExploreCanvas from "@/src/features/explore/components/explore-canvas";
 import ExploreCategories from "@/src/features/explore/components/explore-categories";
 import { getCategoriesQueryOptions } from "@/src/features/personalize/queries/get-categories.queries";
 import {
@@ -16,11 +17,15 @@ const Page = async () => {
   }
   return (
     <PageAuthGuard requiresAuth>
-      <section className="relative z-50 flex w-full px-6">
+      <section className="relative z-50 flex w-full flex-col px-6">
         <div className="mt-2 flex w-full">
           <HydrationBoundary state={dehydrate(queryClient)}>
             <ExploreCategories />
           </HydrationBoundary>
+        </div>
+
+        <div className="mt-[50px] flex w-full flex-col">
+          <ExploreCanvas />
         </div>
       </section>
     </PageAuthGuard>
