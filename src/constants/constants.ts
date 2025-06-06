@@ -132,3 +132,48 @@ export const ExploreFilters = [
     },
   },
 ];
+
+export const ExploreDemoItem = [
+  {
+    id: 1,
+    artistName: "Victoria Hydon",
+    artWork: "/Painting1.png",
+    artistImage: "/Avatar.png",
+    likeCount: 33,
+  },
+  {
+    id: 2,
+    artistName: "Aina Mafoluku",
+    artWork: "/Painting2.png",
+    artistImage: "/Avatar.png",
+    likeCount: 50,
+  },
+  {
+    id: 3,
+    artistName: "Tayo Adebanjo",
+    artWork: "/Painting3.png",
+    artistImage: "/Avatar.png",
+    likeCount: 50,
+  },
+  {
+    id: 4,
+    artistName: "Princess Ugoeze",
+    artWork: "/Painting4.png",
+    artistImage: "/Avatar.png",
+    likeCount: 50,
+  },
+  {
+    id: 5,
+    artistName: "Victoria Hydon",
+    artWork: "/Painting5.png",
+    artistImage: "/Avatar.png",
+    likeCount: 50,
+  },
+  {
+    id: 6,
+    artistName: "Jide Awolowo",
+    artWork: "/Art3.png",
+    artistImage: "/Avatar.png",
+    likeCount: 50,
+  },
+];
