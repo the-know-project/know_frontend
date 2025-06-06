@@ -27,12 +27,21 @@ export default function CallbackPage() {
           const email = urlParams.get("email");
           const role = urlParams.get("role");
           const isFirstTime = urlParams.get("isFirstTime");
+          const firstName = urlParams.get("firstName");
+          const imageUrl = urlParams.get("imageUrl");
 
-          if (accessToken && refreshToken && userId && email) {
+          if (
+            accessToken &&
+            refreshToken &&
+            userId &&
+            email &&
+            firstName &&
+            imageUrl
+          ) {
             auth.login(
               accessToken,
               refreshToken,
-              { id: userId, email },
+              { id: userId, email, firstName, imageUrl },
               role ? (role as IRole) : "BUYER",
             );
 
