@@ -18,13 +18,21 @@ export const useLogin = () => {
           throw new Error(validatedData.message || "Login Failed");
         }
 
-        const { id, email, accessToken, refreshToken, role, isFirstTime } =
-          validatedData.data;
+        const {
+          id,
+          email,
+          accessToken,
+          refreshToken,
+          role,
+          isFirstTime,
+          firstName,
+          imageUrl,
+        } = validatedData.data;
 
         return {
           status: validatedData.status,
           message: validatedData.message,
-          user: { id, email },
+          user: { id, email, firstName, imageUrl },
           tokens: { accessToken, refreshToken },
           role,
           isFirstTime,
