@@ -3,9 +3,12 @@
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
 import { IconNotification, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
+import { useAuthStatus } from "../../auth/hooks";
 import ExploreForm from "./explore-form";
 
 const ExploreNav = () => {
+  const { user } = useAuthStatus();
+  console.log(user);
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
       <div className="flex w-full px-4 sm:hidden">
@@ -51,7 +54,17 @@ const ExploreNav = () => {
           <div className="explore_nav_wrapper">
             <div className="flex items-center gap-2 bg-transparent px-2">
               <IconNotification color="black" className="h-[30px] w-[30px]" />
-              <IconUser color="black" className="h-[30px] w-[30px]" />
+              {user?.imageUrl ? (
+                <Image
+                  alt="user profile"
+                  src={user?.imageUrl}
+                  width={30}
+                  height={30}
+                  className="rounded-full object-contain object-center"
+                />
+              ) : (
+                <IconUser color="black" className="h-[30px] w-[30px]" />
+              )}
             </div>
           </div>
         </div>
