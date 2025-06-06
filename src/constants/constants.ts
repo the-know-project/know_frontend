@@ -66,61 +66,69 @@ export const ExploreFilters = [
   {
     id: 1,
     name: "Medium",
-    filter: [
-      {
-        id: 1,
-        name: "Image",
-      },
-      {
-        id: 2,
-        name: "Video",
-      },
-    ],
+    filters: {
+      items: [
+        {
+          id: 1,
+          name: "Image",
+        },
+        {
+          id: 2,
+          name: "Video",
+        },
+      ],
+    },
   },
   {
     id: 2,
     name: "Availability",
-    filter: [
-      {
-        id: 1,
-        naame: "For Sale",
-      },
-      {
-        id: 2,
-        name: "Not For Sale",
-      },
-    ],
+    filters: {
+      items: [
+        {
+          id: 1,
+          name: "For Sale",
+        },
+        {
+          id: 2,
+          name: "Not For Sale",
+        },
+      ],
+    },
   },
   {
     id: 3,
     name: "Date Added",
-    filters: [
-      {
-        id: 1,
-        name: "Oldest",
-      },
-      {
-        id: 2,
-        name: "Latest",
-      },
-    ],
+    filters: {
+      items: [
+        {
+          id: 1,
+          name: "Oldest",
+        },
+        {
+          id: 2,
+          name: "Latest",
+        },
+      ],
+    },
   },
   {
     id: 4,
     name: "Price Range",
-    filters: [
-      {
-        id: 1,
-        name: "$50 - $500",
-      },
-      {
-        id: 2,
-        name: "$501 - $1500",
-      },
-      {
-        id: 3,
-        name: "$1500 - above",
-      },
-    ],
+    filters: {
+      items: [
+        {
+          id: 1,
+          name: "$50 - $500",
+        },
+        {
+          id: 2,
+          name: "$501 - $1500",
+        },
+        {
+          id: 3,
+          name: "$1500 - above",
+        },
+      ],
+    },
   },
-] as const;
+];
