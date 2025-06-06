@@ -61,3 +61,66 @@ export enum SOCIALS {
   LINKEDIN = "https://www.linkedin.com/company/106916933/admin/page-posts/published/",
   TIKTOK = "https://www.tiktok.com/@knowcabinet?_t=ZM-8wmuEXAOZUe&_r=1",
 }
+
+export const ExploreFilters = [
+  {
+    id: 1,
+    name: "Medium",
+    filter: [
+      {
+        id: 1,
+        name: "Image",
+      },
+      {
+        id: 2,
+        name: "Video",
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Availability",
+    filter: [
+      {
+        id: 1,
+        naame: "For Sale",
+      },
+      {
+        id: 2,
+        name: "Not For Sale",
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "Date Added",
+    filters: [
+      {
+        id: 1,
+        name: "Oldest",
+      },
+      {
+        id: 2,
+        name: "Latest",
+      },
+    ],
+  },
+  {
+    id: 4,
+    name: "Price Range",
+    filters: [
+      {
+        id: 1,
+        name: "$50 - $500",
+      },
+      {
+        id: 2,
+        name: "$501 - $1500",
+      },
+      {
+        id: 3,
+        name: "$1500 - above",
+      },
+    ],
+  },
+] as const;
