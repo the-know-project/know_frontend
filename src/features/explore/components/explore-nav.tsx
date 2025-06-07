@@ -3,12 +3,12 @@
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
 import { IconNotification, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
-import { useAuthStatus } from "../../auth/hooks";
 import ExploreForm from "./explore-form";
+import { useTokenStore } from "../../auth/state/store";
 
 const ExploreNav = () => {
-  const { user } = useAuthStatus();
-  console.log(user);
+  const user = useTokenStore((state) => state.user);
+
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
       <div className="flex w-full px-4 sm:hidden">
