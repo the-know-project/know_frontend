@@ -221,8 +221,6 @@ We use Prettier and ESLint for code formatting and linting. Run the following be
 npm run lint
 npx prettier --write .
 ```
-
-
 ---
 
 ## 📞 Support & Contact
