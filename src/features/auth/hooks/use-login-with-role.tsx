@@ -13,6 +13,8 @@ interface LoginWithRoleSuccess {
   user: {
     id: string;
     email: string;
+    firstName: string;
+    imageUrl: string;
   };
   role: IRole;
   message: string;
@@ -34,12 +36,18 @@ export const useLoginWithRole = () => {
           throw new Error(validatedData.message || "Login failed");
         }
 
-        const { id, email, accessToken, refreshToken } = validatedData.data;
+        const { id, email, accessToken, refreshToken, firstName, imageUrl } =
+          validatedData.data;
 
-        auth.login(accessToken, refreshToken, { id, email }, selectedRole);
+        auth.login(
+          accessToken,
+          refreshToken,
+          { id, email, firstName, imageUrl },
+          selectedRole,
+        );
 
         return {
-          user: { id, email },
+          user: { id, email, firstName, imageUrl },
           role: selectedRole,
           message: validatedData.message,
         };
