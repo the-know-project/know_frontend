@@ -4,13 +4,13 @@ import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
 import { IconNotification, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import ExploreForm from "./explore-form";
-import { useTokenStore } from "../../auth/state/store";
 import { useRouter } from "next/navigation";
+import { useAuthStatus } from "../../auth/hooks";
 
 const ExploreNav = () => {
   const router = useRouter();
-  const user = useTokenStore((state) => state.user);
-
+  const { user, role } = useAuthStatus();
+  console.log(role);
   const handleShareWork = () => {
     router.push("/upload");
   };
@@ -48,13 +48,13 @@ const ExploreNav = () => {
         </div>
 
         <div className="flex items-center gap-5">
-          {user && user?.role === "ARTIST" && (
+          {user && role.toLowerCase() === "artist" && (
             <NavbarButton
               colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
               className="w-fit"
             >
               <button
-                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 sm:text-[16px]"
+                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 sm:text-[16px] hover:scale-105 active:scale-95"
                 onClick={handleShareWork}
               >
                 <p className="block">share your work</p>
