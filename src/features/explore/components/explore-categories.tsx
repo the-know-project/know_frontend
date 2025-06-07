@@ -143,7 +143,7 @@ const ExploreCategories = ({
   return (
     <section className="relative z-50 flex w-full flex-col gap-2 sm:px-6">
       {/* Catgeories */}
-      <div className="scrollbar-hide z-50 flex w-full overflow-x-auto sm:hidden">
+      <div className="scrollbar-hide z-50 flex w-full overflow-x-auto md:hidden">
         <div className="flex min-w-fit items-center gap-2">
           {artPreferences?.map((pref, index) => (
             <button
@@ -182,7 +182,7 @@ const ExploreCategories = ({
             {/* Buttons */}
             <button
               onClick={() => setActiveButton("for-you")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "for-you"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"
@@ -193,7 +193,7 @@ const ExploreCategories = ({
 
             <button
               onClick={() => setActiveButton("following")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "following"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"
@@ -205,12 +205,12 @@ const ExploreCategories = ({
         </div>
 
         {/* Catgeories */}
-        <div className="scrollbar-hide z-50 hidden w-full max-w-[500px] overflow-x-auto sm:flex">
+        <div className="scrollbar-hide z-50 hidden w-full max-w-[500px] overflow-x-auto md:flex">
           <div className="flex min-w-fit items-center gap-2 px-4">
             {artPreferences?.map((pref, index) => (
               <button
                 key={index}
-                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
+                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px]"
                 style={{
                   animationDelay: `${index * 100}ms`,
                 }}
@@ -235,7 +235,7 @@ const ExploreCategories = ({
           className="motion-preset-expand motion-duration-700 motion-delay-700 flex w-fit gap-1 rounded-lg bg-black px-2 py-1 sm:px-4 sm:py-2"
         >
           <IconFilter2Edit color="white" width={20} height={20} />
-          <p className="font-bebas text-sm font-medium text-neutral-300">
+          <p className="font-bebas text-sm font-medium text-neutral-300 lg:text-[16px]">
             Filter
           </p>
         </button>
