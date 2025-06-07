@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { ExploreFilters } from "@/src/constants/constants";
 import { IconFilter2Edit } from "@tabler/icons-react";
-import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import ArtSelectionSkeleton from "../../personalize/components/art-selection-skeleton";
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
 import { useGetCategories } from "../../personalize/hooks";
-import { AnimatePresence, motion } from "framer-motion";
-import { ExploreFilters } from "@/src/constants/constants";
+import { vibrantColors } from "../data/explore.data";
 
 interface ExploreCategoriesProps {
   debounceMs?: number;
@@ -48,6 +49,7 @@ const useFilterDebounce = (value: string[], delay: number) => {
 const ExploreCategories = ({
   debounceMs = 800,
 }: ExploreCategoriesProps = {}) => {
+
   const { data, isLoading, error } = useGetCategories();
   const [activeButton, setActiveButton] = useState<"for-you" | "following">(
     "for-you",
@@ -127,8 +129,8 @@ const ExploreCategories = ({
   };
 
   const variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
+    hidden: { opacity: 0, y: -20, height: 0 },
+    visible: { opacity: 1, y: 0, height: "auto" },
   };
 
   if (isLoading) {
@@ -148,8 +150,9 @@ const ExploreCategories = ({
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
-              className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
+              className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
               style={{
+                backgroundColor: vibrantColors[index % vibrantColors.length],
                 animationDelay: `${index * 100}ms`,
               }}
               onClick={() => handleSelection(pref)}
@@ -157,7 +160,7 @@ const ExploreCategories = ({
               <p
                 className={cn(
                   "transition-all duration-200 group-hover:scale-105 group-active:scale-95",
-                  isItemSelected(pref) && "text-neutral-700",
+                  isItemSelected(pref) && "text-neutral-300 opacity-60",
                 )}
               >
                 {pref}
@@ -172,32 +175,29 @@ const ExploreCategories = ({
           <div className="relative flex items-center rounded-lg bg-neutral-100 p-1">
             {/* Sliding background */}
             <div
-              className={`absolute top-1 bottom-1 rounded-lg bg-black px-2 transition-all duration-300 ease-in-out ${
-                activeButton === "for-you"
-                  ? "left-1 w-[calc(50%-6px)]"
-                  : "right-1 w-[calc(50%-2px)]"
-              }`}
+              className={`absolute top-1 bottom-1 rounded-lg bg-black px-2 transition-all duration-300 ease-in-out ${activeButton === "for-you"
+                ? "left-1 w-[calc(50%-6px)]"
+                : "right-1 w-[calc(50%-2px)]"
+                }`}
             />
 
             {/* Buttons */}
             <button
               onClick={() => setActiveButton("for-you")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
-                activeButton === "for-you"
-                  ? "text-neutral-300"
-                  : "text-neutral-700 hover:text-neutral-500"
-              }`}
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${activeButton === "for-you"
+                ? "text-neutral-300"
+                : "text-neutral-700 hover:text-neutral-500"
+                }`}
             >
               For you
             </button>
 
             <button
               onClick={() => setActiveButton("following")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
-                activeButton === "following"
-                  ? "text-neutral-300"
-                  : "text-neutral-700 hover:text-neutral-500"
-              }`}
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${activeButton === "following"
+                ? "text-neutral-300"
+                : "text-neutral-700 hover:text-neutral-500"
+                }`}
             >
               Following
             </button>
@@ -210,8 +210,9 @@ const ExploreCategories = ({
             {artPreferences?.map((pref, index) => (
               <button
                 key={index}
-                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md bg-black px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px]"
+                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px]"
                 style={{
+                  backgroundColor: vibrantColors[index % vibrantColors.length],
                   animationDelay: `${index * 100}ms`,
                 }}
                 onClick={() => handleSelection(pref)}
@@ -219,7 +220,7 @@ const ExploreCategories = ({
                 <p
                   className={cn(
                     "transition-all duration-200 group-hover:scale-105 group-active:scale-95",
-                    isItemSelected(pref) && "text-neutral-700",
+                    isItemSelected(pref) && "text-neutral-300 opacity-60",
                   )}
                 >
                   {pref}
@@ -242,13 +243,13 @@ const ExploreCategories = ({
       </div>
 
       {/* Filter Params */}
-      <div className="flex w-full flex-row items-center justify-between">
+      <div className="overflow-hidden">
         <AnimatePresence>
           {isFilterToggled && (
             <motion.div
               variants={variants}
               initial="hidden"
-              whileInView="visible"
+              animate="visible"
               exit="hidden"
               transition={{
                 delay: 0.05,
