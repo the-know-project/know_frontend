@@ -213,6 +213,8 @@ We welcome contributions! Please follow these steps:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+---
+
 ### Code Style
 
 We use Prettier and ESLint for code formatting and linting. Run the following before committing:
