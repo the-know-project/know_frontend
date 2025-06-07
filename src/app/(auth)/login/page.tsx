@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const Login = () => {
   return (
-    <PageAuthGuard>
+    <PageAuthGuard guestOnly>
       <section className="relative z-50 flex w-full flex-col">
         <div className="flex items-center justify-between">
           <Image
