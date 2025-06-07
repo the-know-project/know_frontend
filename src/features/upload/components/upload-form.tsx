@@ -115,7 +115,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
           >
             Save as draft
           </button>
-          <Link href="/publish">
+          <Link href="/upload">
             <NavbarButton
               colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
               className="w-fit"
@@ -176,11 +176,10 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
                       htmlFor="file-upload"
-                      className={`flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${
-                        dragging
+                      className={`flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${dragging
                           ? "border-primary bg-blue-50"
                           : "border-gray-300"
-                      }`}
+                        }`}
                     >
                       {previewUrl && watchedFile ? (
                         <div className="relative h-full w-full overflow-hidden rounded-md">
