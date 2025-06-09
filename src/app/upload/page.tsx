@@ -1,5 +1,5 @@
-import UploadCanvas from "@/src/features/auth/components/upload-canvas";
 import { PageAuthGuard } from "@/src/features/auth/guards";
+import UploadCanvas from "@/src/features/upload/components/upload-canvas";
 
 const UploadPage = () => {
   return (
