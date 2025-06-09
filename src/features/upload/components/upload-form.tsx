@@ -15,23 +15,26 @@ import { IconFileUpload, IconX } from "@tabler/icons-react";
 import Link from "next/link";
 import React, { DragEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { UploadSchema } from "../schema/upload.schema";
-import { IUploadForm } from "../types/upload.types";
+import { UploadFormSchema } from "../schema/upload.schema";
+import { IUploadFormState } from "../types/upload.types";
+import { useUploadContext } from "../context/upload-context";
 
 interface UploadFormProps {
-  onSaveDraft?: (data: IUploadForm) => void;
-  onContinue?: (data: IUploadForm) => void;
+  onSaveDraft?: (data: IUploadFormState) => void;
+  onContinue?: (data: IUploadFormState) => void;
   onCancel?: () => void;
 }
 
 const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
   const [dragging, setDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { uploadData, updateBasicInfo } = useUploadContext();
 
-  const form = useForm<IUploadForm>({
-    resolver: zodResolver(UploadSchema),
+  const form = useForm<IUploadFormState>({
+    resolver: zodResolver(UploadFormSchema),
     defaultValues: {
-      title: "",
+      title: uploadData.title,
+      file: uploadData.file || undefined,
     },
   });
 
@@ -54,6 +57,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
       const file = e.dataTransfer.files[0];
       form.setValue("file", file);
       form.trigger("file");
+      updateBasicInfo({ file });
 
       // Create preview URL
       const url = URL.createObjectURL(file);
@@ -66,6 +70,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
     if (selectedFile) {
       form.setValue("file", selectedFile);
       form.trigger("file");
+      updateBasicInfo({ file: selectedFile });
 
       // Create preview URL
       const url = URL.createObjectURL(selectedFile);
@@ -75,12 +80,14 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
 
   const handleSaveDraft = () => {
     const formData = form.getValues();
+    updateBasicInfo(formData);
     if (formData.file && onSaveDraft) {
       onSaveDraft(formData);
     }
   };
 
-  const onSubmit = (data: IUploadForm) => {
+  const onSubmit = (data: IUploadFormState) => {
+    updateBasicInfo(data);
     if (onContinue) {
       onContinue(data);
     }
@@ -124,7 +131,8 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
                 className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
                 onClick={() => {
                   if (watchedFile && watchedTitle) {
-                    onSubmit({ file: watchedFile, title: watchedTitle });
+                    const data: IUploadFormState = { file: watchedFile, title: watchedTitle };
+                    onSubmit(data);
                   }
                 }}
                 disabled={!watchedFile || !watchedTitle}
@@ -155,6 +163,10 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
                     className="font-helvetica placeholder:font-bebas bg-transparent text-2xl text-white placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
                     placeholder="Enter your artwork title..."
                     {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      updateBasicInfo({ title: e.target.value });
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -166,7 +178,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
           <FormField
             control={form.control}
             name="file"
-            render={({ field: { onChange, value, ...field } }) => (
+            render={() => (
               <FormItem>
                 <FormControl>
                   <div className="relative">
@@ -223,7 +235,6 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
                         </>
                       )}
                       <input
-                        {...field}
                         type="file"
                         id="file-upload"
                         accept="image/png, image/jpeg, video/mp4"

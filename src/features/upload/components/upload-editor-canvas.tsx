@@ -5,6 +5,8 @@ import UploadEditor from "./upload-editor";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+
+
 const UploadEditorCanvas = () => {
   const [isEditorOpen, setIsEditorOpen] = useState<boolean>(true);
   const variants = {
