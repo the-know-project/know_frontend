@@ -152,7 +152,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="font-helvetica placeholder:font-bebas bg-transparent text-2xl text-neutral-900 placeholder:text-lg placeholder:text-neutral-800 focus-visible:shadow-none focus-visible:ring-0"
+                    className="font-helvetica placeholder:font-bebas bg-transparent text-2xl text-white placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
                     placeholder="Enter your artwork title..."
                     {...field}
                   />
@@ -176,7 +176,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
                       htmlFor="file-upload"
-                      className={`flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${
+                      className={`font-grotesk flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${
                         dragging
                           ? "border-primary bg-blue-50"
                           : "border-gray-300"
