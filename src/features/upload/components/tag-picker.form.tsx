@@ -12,11 +12,18 @@ interface TagPickerFormProps {
 const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
   const { uploadData, updateTags } = useUploadContext();
   const [inputValue, setInputValue] = useState("");
+  const [animatingTag, setAnimatingTag] = useState<string | null>(null);
 
   const handleAddTag = (tag: string) => {
     if (tag.trim() && !uploadData.tags.includes(tag.trim())) {
-      const newTags = [...uploadData.tags, tag.trim()];
+      const trimmedTag = tag.trim();
+      const newTags = [...uploadData.tags, trimmedTag];
       updateTags(newTags);
+
+      // Trigger animation
+      setAnimatingTag(trimmedTag);
+      setTimeout(() => setAnimatingTag(null), 600);
+
       if (onSaveDraft) {
         onSaveDraft(newTags);
       }
@@ -24,7 +31,7 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    const newTags = uploadData.tags.filter(tag => tag !== tagToRemove);
+    const newTags = uploadData.tags.filter((tag) => tag !== tagToRemove);
     updateTags(newTags);
     if (onSaveDraft) {
       onSaveDraft(newTags);
@@ -44,14 +51,14 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
   };
 
   return (
-    <section className="flex w-full flex-col rounded-md bg-neutral-700 px-4 py-4">
+    <section className="editor_container">
       <div className="space-y-4">
         {/* Tag Input */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-gray-600 text-gray-300">
+        <div className="flex items-center justify-between rounded-lg bg-gray-600 p-3 text-gray-300">
           <Input
             type="text"
             placeholder="Add tags... (press Enter)"
-            className="border-none bg-transparent text-white placeholder:text-gray-400 focus:ring-0 focus:outline-none"
+            className="placeholder:font-bebas font-grotesk border-none bg-transparent text-white placeholder:text-white"
             value={inputValue}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
@@ -64,13 +71,17 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
             {uploadData.tags.map((tag, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm"
+                className={`font-bebas flex transform items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-3 py-1 text-xs tracking-wide text-white transition-all duration-500 ${
+                  animatingTag === tag
+                    ? "scale-110 animate-pulse shadow-lg"
+                    : "scale-100 hover:scale-105"
+                } `}
               >
                 <span>{tag}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  className="hover:bg-white/20 rounded-full p-1 transition-colors"
+                  className="rounded-full p-1 transition-colors hover:bg-white/20"
                 >
                   <IconX width={12} height={12} />
                 </button>
@@ -80,8 +91,9 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
         )}
 
         {/* Tag Count */}
-        <div className="text-sm text-gray-400">
-          {uploadData.tags.length} tag{uploadData.tags.length !== 1 ? 's' : ''} added
+        <div className="font-bebas text-xs text-gray-400">
+          {uploadData.tags.length} tag{uploadData.tags.length !== 1 ? "s" : ""}{" "}
+          added
         </div>
       </div>
     </section>
