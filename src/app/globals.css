@@ -201,6 +201,18 @@
   .explore_nav_wrapper {
     @apply flex w-fit items-center justify-center rounded-full border border-white/20 bg-black/5 px-2.5 py-2 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.4),inset_0_-1px_0_0_rgba(0,0,0,0.2),0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-md;
   }
+
+  .upload_editor_button {
+    @apply font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-transparent px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] sm:text-[16px];
+  }
+
+  .upload_editor_input {
+    @apply placeholder:font-grotesk font-grotesk ml-3 [appearance:textfield] bg-transparent text-right font-bold text-white outline outline-[#fff2f21f] placeholder:text-white focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none;
+  }
+
+  .editor_container {
+    @apply flex w-[300px] max-w-[500px] flex-col items-center justify-center self-center rounded-md bg-neutral-700 px-2 py-4 shadow-sm md:w-fit md:max-w-[200px] md:items-start md:justify-normal md:self-start;
+  }
 }
 .purple-glow {
   filter: drop-shadow(0 0 30px rgba(128, 0, 255, 0.7));
