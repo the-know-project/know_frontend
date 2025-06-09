@@ -35,7 +35,7 @@ const UploadCanvasContent = () => {
     submissionData.append("title", formData.title);
     submissionData.append("file", formData.file);
     submissionData.append("tags", JSON.stringify(formData.tags));
-    submissionData.append("category", formData.category);
+    submissionData.append("category", JSON.stringify(formData.categories));
     submissionData.append("size", JSON.stringify(formData.size));
 
     // Mutation goes here
