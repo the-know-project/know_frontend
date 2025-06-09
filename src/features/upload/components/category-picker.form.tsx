@@ -2,78 +2,152 @@
 
 import { useState } from "react";
 import { useUploadContext } from "../context/upload-context";
+import { useGetCategories } from "@/src/features/personalize/hooks";
+import { cn } from "@/lib/utils";
+import { IconX } from "@tabler/icons-react";
 
 interface CategoryPickerFormProps {
-  onSaveDraft?: (category: string) => void;
+  onSaveDraft?: (categories: string[]) => void;
 }
 
-const categories = [
-  "Abstract",
-  "Landscape",
-  "Portrait",
-  "Still Life",
-  "Street Art",
-  "Digital Art",
-  "Photography",
-  "Sculpture",
-  "Mixed Media",
-  "Contemporary",
-  "Traditional",
-  "Pop Art",
-  "Minimalist",
-  "Surreal",
-  "Conceptual",
-];
+const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
+  onSaveDraft,
+}) => {
+  const { uploadData, updateCategories } = useUploadContext();
+  const { data, isLoading, error } = useGetCategories();
+  const [animatingCategory, setAnimatingCategory] = useState<string | null>(
+    null,
+  );
 
-const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({ onSaveDraft }) => {
-  const { uploadData, updateCategory } = useUploadContext();
-  const [selectedCategory, setSelectedCategory] = useState(uploadData.category);
+  const handleCategoryToggle = (category: string) => {
+    let newCategories: string[];
 
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
-    updateCategory(category);
+    if (uploadData.categories.includes(category)) {
+      // Remove category
+      newCategories = uploadData.categories.filter((cat) => cat !== category);
+    } else {
+      // Add category with animation
+      newCategories = [...uploadData.categories, category];
+      setAnimatingCategory(category);
+      setTimeout(() => setAnimatingCategory(null), 600);
+    }
+
+    updateCategories(newCategories);
     if (onSaveDraft) {
-      onSaveDraft(category);
+      onSaveDraft(newCategories);
     }
   };
 
+  const handleRemoveCategory = (categoryToRemove: string) => {
+    const newCategories = uploadData.categories.filter(
+      (cat) => cat !== categoryToRemove,
+    );
+    updateCategories(newCategories);
+    if (onSaveDraft) {
+      onSaveDraft(newCategories);
+    }
+  };
+
+  const isCategorySelected = (category: string) =>
+    uploadData.categories.includes(category);
+
+  if (isLoading) {
+    return (
+      <section className="editor_container">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
+          {Array.from({ length: 12 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-12 animate-pulse rounded-lg bg-gray-600"
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="editor_container">
+        <div className="py-4 text-center text-red-500">
+          Error loading categories. Please try again.
+        </div>
+      </section>
+    );
+  }
+
+  const categories = data?.data || [];
+
   return (
-    <section className="flex w-full flex-col rounded-md bg-neutral-700 px-4 py-4">
-      <div className="space-y-3">
-        {/* Category Grid */}
-        <div className="grid grid-cols-2 gap-2">
-          {categories.map((category) => (
+    <section className="w-fit max-w-[500px] flex-col items-center justify-center self-center rounded-md bg-neutral-700 px-2 py-4 shadow-sm md:items-start md:justify-normal md:self-start">
+      <div className="space-y-4">
+        {/* Categories Grid */}
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
+          {categories.slice(0, 31).map((category: string, index: number) => (
             <button
               key={category}
               type="button"
-              onClick={() => handleCategorySelect(category)}
-              className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                selectedCategory === category
+              onClick={() => handleCategoryToggle(category)}
+              className={cn(
+                "font-bebas group active:scale- inline-flex w-full rounded-lg px-2 py-2.5 text-sm font-bold text-nowrap transition-all duration-300 hover:scale-105 md:w-[80px] md:text-xs",
+                isCategorySelected(category)
                   ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-                  : "bg-gray-600 text-gray-300 hover:bg-gray-500"
-              }`}
+                  : "bg-gray-600 text-gray-300 hover:bg-gray-500",
+              )}
+              style={{
+                animationDelay: `${index * 50}ms`,
+              }}
             >
-              {category}
+              <p className="transition-all duration-200 group-hover:scale-105 group-active:scale-95">
+                {category}
+              </p>
             </button>
           ))}
         </div>
 
-        {/* Selected Category Display */}
-        {selectedCategory && (
-          <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-blue-500/30">
-            <div className="text-sm text-gray-300">Selected Category:</div>
-            <div className="text-lg font-medium text-white">{selectedCategory}</div>
+        {/* Selected Categories Display */}
+        {uploadData.categories.length > 0 && (
+          <div className="space-y-3">
+            <div className="font-bebas text-sm text-gray-400">
+              Selected Categories ({uploadData.categories.length}):
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {uploadData.categories.map((category, index) => (
+                <div
+                  key={category}
+                  className={`font-bebas flex transform items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-3 py-1.5 text-xs tracking-wide text-white transition-all duration-500 ${
+                    animatingCategory === category
+                      ? "scale-110 animate-pulse shadow-lg"
+                      : "scale-100 hover:scale-105"
+                  } `}
+                >
+                  <span>{category}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveCategory(category)}
+                    className="rounded-full p-1 transition-colors hover:bg-white/20"
+                  >
+                    <IconX width={10} height={10} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Clear Selection */}
-        {selectedCategory && (
+        {/* Clear All Button */}
+        {uploadData.categories.length > 0 && (
           <button
             type="button"
-            onClick={() => handleCategorySelect("")}
-            className="w-full p-2 rounded-lg bg-red-600/20 text-red-400 text-sm hover:bg-red-600/30 transition-colors"
+            onClick={() => {
+              updateCategories([]);
+              if (onSaveDraft) {
+                onSaveDraft([]);
+              }
+            }}
+            className="font-grotesk w-full rounded-lg bg-red-600/20 p-2 text-sm text-red-400 transition-colors hover:bg-red-600/30"
           >
-            Clear Selection
+            Clear All Categories
           </button>
         )}
       </div>
