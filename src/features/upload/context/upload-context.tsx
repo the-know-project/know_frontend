@@ -16,7 +16,7 @@ export interface ICompleteUploadForm {
   tags: string[];
 
   // Category data
-  category: string;
+  categories: string[];
 }
 
 interface UploadContextType {
@@ -24,7 +24,7 @@ interface UploadContextType {
   updateBasicInfo: (data: Partial<IUploadFormState>) => void;
   updateSizeInfo: (data: Partial<ISizePickerForm>) => void;
   updateTags: (tags: string[]) => void;
-  updateCategory: (category: string) => void;
+  updateCategories: (categories: string[]) => void;
   getAllFormData: () => ICompleteUploadForm;
   resetForm: () => void;
 }
@@ -44,7 +44,7 @@ const defaultUploadData: ICompleteUploadForm = {
     weightUnit: "kg",
   },
   tags: [],
-  category: "",
+  categories: [],
 };
 
 const UploadContext = createContext<UploadContextType | undefined>(undefined);
@@ -79,10 +79,10 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
     }));
   };
 
-  const updateCategory = (category: string) => {
+  const updateCategories = (categories: string[]) => {
     setUploadData((prev) => ({
       ...prev,
-      category,
+      categories,
     }));
   };
 
@@ -97,7 +97,7 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
     updateBasicInfo,
     updateSizeInfo,
     updateTags,
-    updateCategory,
+    updateCategories,
     getAllFormData,
     resetForm,
   };
