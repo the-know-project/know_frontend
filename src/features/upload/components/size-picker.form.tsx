@@ -3,233 +3,282 @@
 import { useForm } from "react-hook-form";
 import { SizePickerSchema } from "../schema/upload.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/src/shared/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/src/shared/ui/form";
 import { Input } from "@/src/shared/ui/input";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ISizePickerForm } from "../types/upload.types";
 import { useUploadContext } from "../context/upload-context";
+import { Check, ChevronDown } from "lucide-react";
+import {
+  IconCheck,
+  IconCircleCheck,
+  IconCloudCheck,
+} from "@tabler/icons-react";
 
 interface SizePickerFormProps {
   onSaveDraft?: (data: ISizePickerForm) => void;
 }
 
+const DIMENSIONS = [
+  { key: "width", label: "Width" },
+  { key: "height", label: "Height" },
+  { key: "depth", label: "Depth" },
+  { key: "length", label: "Length" },
+  { key: "weight", label: "Weight" },
+  { key: "diameter", label: "Diameter" },
+];
+
+const UNITS = {
+  dimension: ["cm", "in", "mm", "ft", "m"],
+  weight: ["kg", "lb", "g", "oz"],
+};
+
 const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
-  const [filledFields, setFilledFields] = useState<Set<string>>(new Set());
   const { uploadData, updateSizeInfo } = useUploadContext();
+  const [selectedDimension, setSelectedDimension] = useState("width");
+  const [inputValue, setInputValue] = useState("");
+  const [selectedUnit, setSelectedUnit] = useState("cm");
+  const [savedDimensions, setSavedDimensions] = useState<{
+    [key: string]: { value: number; unit: string };
+  }>({});
+  const [animatingDimension, setAnimatingDimension] = useState<string | null>(
+    null,
+  );
+  const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
+  const [isDimensionDropdownOpen, setIsDimensionDropdownOpen] = useState(false);
+  const unitDropdownRef = useRef<HTMLDivElement>(null);
+  const dimensionDropdownRef = useRef<HTMLDivElement>(null);
 
   const form = useForm({
     resolver: zodResolver(SizePickerSchema),
     defaultValues: uploadData.size,
   });
 
-  const handleFieldChange = (fieldName: string, value: string) => {
-    const newFilledFields = new Set(filledFields);
-    if (value && value.trim() !== "") {
-      newFilledFields.add(fieldName);
+  // Initialize saved dimensions from upload data
+  useEffect(() => {
+    const initialSaved: { [key: string]: { value: number; unit: string } } = {};
+    DIMENSIONS.forEach((dim) => {
+      const value = uploadData.size?.[dim.key as keyof typeof uploadData.size];
+      if (value !== undefined && value !== null && value !== "") {
+        const unit =
+          dim.key === "weight"
+            ? uploadData.size?.weightUnit || "kg"
+            : uploadData.size?.dimensionUnit || "cm";
+        initialSaved[dim.key] = { value: Number(value), unit };
+      }
+    });
+    setSavedDimensions(initialSaved);
+  }, [uploadData.size]);
+
+  // Update unit options when dimension changes
+  useEffect(() => {
+    const isWeight = selectedDimension === "weight";
+    const defaultUnit = isWeight ? "kg" : "cm";
+    setSelectedUnit(defaultUnit);
+
+    // Load existing value if available
+    if (savedDimensions[selectedDimension]) {
+      setInputValue(savedDimensions[selectedDimension].value.toString());
+      setSelectedUnit(savedDimensions[selectedDimension].unit);
     } else {
-      newFilledFields.delete(fieldName);
+      setInputValue("");
     }
-    setFilledFields(newFilledFields);
+  }, [selectedDimension, savedDimensions]);
+
+  const handleSave = () => {
+    if (!inputValue || inputValue.trim() === "" || isNaN(Number(inputValue))) {
+      return;
+    }
+
+    const numValue = Number(inputValue);
+
+    // Update saved dimensions
+    const newSavedDimensions = {
+      ...savedDimensions,
+      [selectedDimension]: { value: numValue, unit: selectedUnit },
+    };
+    setSavedDimensions(newSavedDimensions);
+
+    // Trigger animation
+    setAnimatingDimension(selectedDimension);
+    setTimeout(() => setAnimatingDimension(null), 600);
+
+    // Update form and context
+    const updateData: any = { [selectedDimension]: numValue };
+    if (selectedDimension === "weight") {
+      updateData.weightUnit = selectedUnit;
+    } else {
+      updateData.dimensionUnit = selectedUnit;
+    }
+
+    form.setValue(selectedDimension as any, numValue);
+    if (selectedDimension === "weight") {
+      form.setValue("weightUnit", selectedUnit);
+    } else {
+      form.setValue("dimensionUnit", selectedUnit);
+    }
+
+    updateSizeInfo(updateData);
+
+    if (onSaveDraft) {
+      const allData = { ...uploadData.size, ...updateData };
+      onSaveDraft(allData);
+    }
   };
 
-  const getFieldContainerClass = (fieldName: string) => {
-    return filledFields.has(fieldName)
-      ? "flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white transition-all duration-300"
-      : "flex items-center justify-between p-3 rounded-lg bg-gray-600 text-gray-300 transition-all duration-300";
+  const getUnitOptions = () => {
+    return selectedDimension === "weight" ? UNITS.weight : UNITS.dimension;
   };
-  
-  const handleSaveSize = () => {
-    const sizeData = form.getValues();
-    updateSizeInfo(sizeData);
-    if (onSaveDraft) {
-      onSaveDraft(sizeData);
+
+  const handleInputKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSave();
     }
   };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        unitDropdownRef.current &&
+        !unitDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUnitDropdownOpen(false);
+      }
+      if (
+        dimensionDropdownRef.current &&
+        !dimensionDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDimensionDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <section className="flex w-full flex-col rounded-md bg-neutral-700 px-4 py-4">
+    <section className="editor_container">
       <Form {...form}>
-        <div className="space-y-4">
-          <FormField
-            control={form.control}
-            name="width"
-            render={({ field }) => (
-              <FormItem>
-                <div className={getFieldContainerClass("width")}>
-                  <FormLabel className="min-w-[60px] text-sm font-medium">
-                    Width:
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      className="ml-3 border-none bg-transparent text-right focus:ring-0 focus:outline-none"
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const numValue = value ? Number(value) : undefined;
-                        field.onChange(numValue);
-                        updateSizeInfo({ width: numValue });
-                        handleFieldChange("width", value);
-                      }}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
-          />
+        {/* Single Row Form */}
+        <div className="flex w-full max-w-md items-center justify-between rounded-lg bg-gray-600 p-3 text-gray-300 transition-all duration-300">
+          {/* Custom Dimension Dropdown */}
+          <div ref={dimensionDropdownRef} className="relative">
+            <button
+              type="button"
+              className="upload_editor_button flex items-center gap-1"
+              onClick={() =>
+                setIsDimensionDropdownOpen(!isDimensionDropdownOpen)
+              }
+            >
+              {DIMENSIONS.find((d) => d.key === selectedDimension)?.label}
+              <ChevronDown
+                size={12}
+                className={`transition-transform duration-200 ${isDimensionDropdownOpen ? "rotate-180" : ""}`}
+              />
+            </button>
 
-          <FormField
-            control={form.control}
-            name="height"
-            render={({ field }) => (
-              <FormItem>
-                <div className={getFieldContainerClass("height")}>
-                  <FormLabel className="min-w-[60px] text-sm font-medium">
-                    Height:
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      className="ml-3 border-none bg-transparent text-right focus:ring-0 focus:outline-none"
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const numValue = value ? Number(value) : undefined;
-                        field.onChange(numValue);
-                        updateSizeInfo({ height: numValue });
-                        handleFieldChange("height", value);
-                      }}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
+            {isDimensionDropdownOpen && (
+              <div className="absolute top-full left-0 z-10 mt-1 w-fit overflow-hidden rounded-lg border border-gray-600 bg-gray-700 px-2 py-2 shadow-lg">
+                {DIMENSIONS.map((dim) => (
+                  <button
+                    key={dim.key}
+                    type="button"
+                    className="font-grotesk w-full px-2.5 py-1.5 text-left text-sm font-bold whitespace-nowrap text-white uppercase transition-colors duration-150 hover:bg-gray-600 focus:bg-gray-600 focus:outline-none"
+                    onClick={() => {
+                      setSelectedDimension(dim.key);
+                      setIsDimensionDropdownOpen(false);
+                    }}
+                  >
+                    {dim.label}
+                  </button>
+                ))}
+              </div>
             )}
-          />
+          </div>
 
-          <FormField
-            control={form.control}
-            name="depth"
-            render={({ field }) => (
-              <FormItem>
-                <div className={getFieldContainerClass("depth")}>
-                  <FormLabel className="min-w-[60px] text-sm font-medium">
-                    Depth:
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      className="ml-3 border-none bg-transparent text-right focus:ring-0 focus:outline-none"
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const numValue = value ? Number(value) : undefined;
-                        field.onChange(numValue);
-                        updateSizeInfo({ depth: numValue });
-                        handleFieldChange("depth", value);
-                      }}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="length"
-            render={({ field }) => (
-              <FormItem>
-                <div className={getFieldContainerClass("length")}>
-                  <FormLabel className="min-w-[60px] text-sm font-medium">
-                    Length:
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      className="ml-3 border-none bg-transparent text-right focus:ring-0 focus:outline-none"
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const numValue = value ? Number(value) : undefined;
-                        field.onChange(numValue);
-                        updateSizeInfo({ length: numValue });
-                        handleFieldChange("length", value);
-                      }}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="weight"
-            render={({ field }) => (
-              <FormItem>
-                <div className={getFieldContainerClass("weight")}>
-                  <FormLabel className="min-w-[60px] text-sm font-medium">
-                    Weight:
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      className="ml-3 border-none bg-transparent text-right focus:ring-0 focus:outline-none"
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const numValue = value ? Number(value) : 0;
-                        field.onChange(numValue);
-                        updateSizeInfo({ weight: numValue });
-                        handleFieldChange("weight", value);
-                      }}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="diameter"
-            render={({ field }) => (
-              <FormItem>
-                <div className={getFieldContainerClass("diameter")}>
-                  <FormLabel className="min-w-[60px] text-sm font-medium">
-                    Diameter:
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      className="ml-3 border-none bg-transparent text-right focus:ring-0 focus:outline-none"
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const numValue = value ? Number(value) : undefined;
-                        field.onChange(numValue);
-                        updateSizeInfo({ diameter: numValue });
-                        handleFieldChange("diameter", value);
-                      }}
-                    />
-                  </FormControl>
-                </div>
-              </FormItem>
-            )}
+          {/* Input Field */}
+          <Input
+            type="number"
+            placeholder="0"
+            className="upload_editor_input mx-2 w-20"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleInputKeyPress}
           />
         </div>
+
+        <div className="mt-3 flex w-full max-w-md items-center justify-between rounded-lg bg-gray-600 p-3 text-gray-300 transition-all duration-300">
+          {/* Custom Unit Dropdown */}
+          <div ref={unitDropdownRef} className="relative">
+            <button
+              type="button"
+              className="upload_editor_button"
+              onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
+            >
+              {selectedUnit}
+              <ChevronDown
+                size={12}
+                className={`transition-transform duration-200 ${isUnitDropdownOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {isUnitDropdownOpen && (
+              <div className="absolute top-full left-0 z-10 mt-1 w-full overflow-hidden rounded-lg border border-gray-600 bg-gray-700 shadow-lg">
+                {getUnitOptions().map((unit) => (
+                  <button
+                    key={unit}
+                    type="button"
+                    className="font-grotesk w-full px-2.5 py-1.5 text-left text-sm font-bold text-white uppercase transition-colors duration-150 hover:bg-gray-600 focus:bg-gray-600 focus:outline-none"
+                    onClick={() => {
+                      setSelectedUnit(unit);
+                      setIsUnitDropdownOpen(false);
+                    }}
+                  >
+                    {unit}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Save Button */}
+          <button
+            type="button"
+            onClick={handleSave}
+            className="ml-3 rounded-full bg-green-600 p-1 text-white transition-colors duration-200 hover:bg-green-500"
+            disabled={!inputValue || inputValue.trim() === ""}
+          >
+            <IconCloudCheck />
+          </button>
+        </div>
+
+        {/* Animated Feedback Chips */}
+        {Object.keys(savedDimensions).length > 0 && (
+          <div className="mt-6 w-full">
+            <div className="flex flex-wrap justify-center gap-2 md:justify-start">
+              {Object.entries(savedDimensions).map(
+                ([dimKey, { value, unit }]) => {
+                  const dimension = DIMENSIONS.find((d) => d.key === dimKey);
+                  return (
+                    <div
+                      key={dimKey}
+                      className={`font-bebas transform rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-2.5 py-1.5 text-xs font-bold text-white transition-all duration-500 ${
+                        animatingDimension === dimKey
+                          ? "scale-110 animate-pulse shadow-lg"
+                          : "scale-100 hover:scale-105"
+                      } `}
+                    >
+                      {dimension?.label}: {value} {unit}
+                    </div>
+                  );
+                },
+              )}
+            </div>
+          </div>
+        )}
       </Form>
     </section>
   );
