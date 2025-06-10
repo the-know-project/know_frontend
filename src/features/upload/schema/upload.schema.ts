@@ -48,3 +48,24 @@ export const SizePickerSchema = z.object({
   dimensionUnit: z.string().optional(),
   weightUnit: z.string().optional(),
 });
+
+export const UploadAssetSchema = z.object({
+  fileName: z
+    .string()
+    .min(1, "Title is required")
+    .max(100, "Title must be less than 100 characters"),
+  asset: z
+    .instanceof(File, { message: "Please select a file" })
+    .refine(
+      (file) => file.size <= 120 * 1024 * 1024,
+      "File size must be less than 120MB",
+    )
+    .refine((file) => {
+      const validTypes = ["image/png", "image/jpeg", "video/mp4"];
+      return validTypes.includes(file.type);
+    }, "Only PNG, JPEG images and MP4 videos are allowed"),
+  size: SizePickerSchema,
+  categories: z.array(z.string()),
+  tags: z.array(z.string()),
+  customMetadata: z.array(z.string()).optional(),
+});
