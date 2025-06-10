@@ -28,7 +28,14 @@ const UploadCanvasContent = () => {
       return;
     }
 
+    console.log("=== UPLOAD FORM DATA DEBUG ===");
     console.log("Complete form data:", formData);
+    console.log("Title:", formData.title);
+    console.log("File:", formData.file);
+    console.log("Tags:", formData.tags);
+    console.log("Categories:", formData.categories);
+    console.log("Size data:", formData.size);
+    console.log("=== END DEBUG ===");
 
     // Create FormData for API submission
     const submissionData = new FormData();
@@ -38,7 +45,24 @@ const UploadCanvasContent = () => {
     submissionData.append("category", JSON.stringify(formData.categories));
     submissionData.append("size", JSON.stringify(formData.size));
 
+    // Log FormData contents (FormData doesn't show contents with console.log)
+    console.log("=== FORM DATA CONTENTS ===");
+    for (const [key, value] of submissionData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}:`, {
+          name: value.name,
+          size: value.size,
+          type: value.type,
+          lastModified: value.lastModified,
+        });
+      } else {
+        console.log(`${key}:`, value);
+      }
+    }
+    console.log("=== END FORM DATA ===");
+
     // Mutation goes here
+    // TODO: Implement API call
   };
 
   return (
