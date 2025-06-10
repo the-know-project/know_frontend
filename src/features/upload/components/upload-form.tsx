@@ -12,20 +12,26 @@ import { Input } from "@/src/shared/ui/input";
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileUpload, IconX } from "@tabler/icons-react";
-import Link from "next/link";
 import React, { DragEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useUploadContext } from "../context/upload-context";
 import { UploadFormSchema } from "../schema/upload.schema";
 import { IUploadFormState } from "../types/upload.types";
-import { useUploadContext } from "../context/upload-context";
+import Spinner from "@/src/shared/components/spinner";
 
 interface UploadFormProps {
   onSaveDraft?: (data: IUploadFormState) => void;
   onContinue?: (data: IUploadFormState) => void;
   onCancel?: () => void;
+  isPending?: boolean;
 }
 
-const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
+const UploadForm = ({
+  onSaveDraft,
+  onContinue,
+  onCancel,
+  isPending = false,
+}: UploadFormProps) => {
   const [dragging, setDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { uploadData, updateBasicInfo } = useUploadContext();
@@ -129,21 +135,25 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
             colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
             className="w-fit"
           >
-            <button
-              className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
-              onClick={() => {
-                if (watchedFile && watchedTitle) {
-                  const data: IUploadFormState = {
-                    file: watchedFile,
-                    title: watchedTitle,
-                  };
-                  onSubmit(data);
-                }
-              }}
-              disabled={!watchedFile || !watchedTitle}
-            >
-              Continue
-            </button>
+            {isPending ? (
+              <Spinner borderColor="border-orange-600" />
+            ) : (
+              <button
+                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+                onClick={() => {
+                  if (watchedFile && watchedTitle) {
+                    const data: IUploadFormState = {
+                      file: watchedFile,
+                      title: watchedTitle,
+                    };
+                    onSubmit(data);
+                  }
+                }}
+                disabled={!watchedFile || !watchedTitle}
+              >
+                Continue
+              </button>
+            )}
           </NavbarButton>
         </div>
       </div>
