@@ -56,37 +56,55 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
     useState<ICompleteUploadForm>(defaultUploadData);
 
   const updateBasicInfo = (data: Partial<IUploadFormState>) => {
-    setUploadData((prev) => ({
-      ...prev,
-      ...data,
-    }));
+    setUploadData((prev) => {
+      const updated = {
+        ...prev,
+        ...data,
+      };
+      console.log("Context: New upload data after basic info update:", updated);
+      return updated;
+    });
   };
 
   const updateSizeInfo = (data: Partial<ISizePickerForm>) => {
-    setUploadData((prev) => ({
-      ...prev,
-      size: {
-        ...prev.size,
-        ...data,
-      },
-    }));
+    setUploadData((prev) => {
+      const updated = {
+        ...prev,
+        size: {
+          ...prev.size,
+          ...data,
+        },
+      };
+      console.log("Context: New upload data after size update:", updated);
+      return updated;
+    });
   };
 
   const updateTags = (tags: string[]) => {
-    setUploadData((prev) => ({
-      ...prev,
-      tags,
-    }));
+    setUploadData((prev) => {
+      const updated = {
+        ...prev,
+        tags,
+      };
+      console.log("Context: New upload data after tags update:", updated);
+      return updated;
+    });
   };
 
   const updateCategories = (categories: string[]) => {
-    setUploadData((prev) => ({
-      ...prev,
-      categories,
-    }));
+    setUploadData((prev) => {
+      const updated = {
+        ...prev,
+        categories,
+      };
+      console.log("Context: New upload data after categories update:", updated);
+      return updated;
+    });
   };
 
-  const getAllFormData = () => uploadData;
+  const getAllFormData = () => {
+    return uploadData;
+  };
 
   const resetForm = () => {
     setUploadData(defaultUploadData);
