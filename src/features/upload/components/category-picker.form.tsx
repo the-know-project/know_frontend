@@ -79,7 +79,7 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
   const categories = data?.data || [];
 
   return (
-    <section className="w-fit max-w-[500px] flex-col items-center justify-center self-center rounded-md bg-neutral-700 px-2 py-4 shadow-sm md:items-start md:justify-normal md:self-start">
+    <section className="w-[350px] max-w-[500px] flex-col items-center justify-center self-center rounded-md bg-neutral-700 px-2 py-4 shadow-sm md:w-[200px] md:items-start md:justify-normal md:self-start lg:w-full">
       <div className="space-y-4">
         {/* Categories Grid */}
         <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
@@ -91,8 +91,8 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
               className={cn(
                 "font-bebas group active:scale- inline-flex w-full rounded-lg px-2 py-2.5 text-sm font-bold text-nowrap transition-all duration-300 hover:scale-105 md:w-[80px] md:text-xs",
                 isCategorySelected(category)
-                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-                  : "bg-gray-600 text-gray-300 hover:bg-gray-500",
+                  ? "bg-gradient-to-r from-black to-orange-600 text-white"
+                  : "bg-black text-white hover:bg-black",
               )}
               style={{
                 animationDelay: `${index * 50}ms`,
@@ -115,7 +115,7 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
               {uploadData.categories.map((category, index) => (
                 <div
                   key={category}
-                  className={`font-bebas flex transform items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-3 py-1.5 text-xs tracking-wide text-white transition-all duration-500 ${
+                  className={`font-bebas flex transform items-center gap-2 rounded-full bg-gradient-to-r from-black to-orange-600 px-3 py-1.5 text-xs tracking-wide text-white transition-all duration-500 ${
                     animatingCategory === category
                       ? "scale-110 animate-pulse shadow-lg"
                       : "scale-100 hover:scale-105"
