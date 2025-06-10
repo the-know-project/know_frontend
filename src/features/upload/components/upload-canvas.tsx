@@ -12,7 +12,7 @@ import ToastDescription from "@/src/shared/components/toast-description";
 
 const UploadCanvasContent = () => {
   const router = useRouter();
-  const { mutateAsync: hanndleUploadAsset } = useUploadAsset();
+  const { mutateAsync: hanndleUploadAsset, isPending } = useUploadAsset();
   const { getAllFormData } = useUploadContext();
 
   const handleGoBack = () => {
@@ -96,6 +96,7 @@ const UploadCanvasContent = () => {
           onCancel={handleGoBack}
           onSaveDraft={handleOnSave}
           onContinue={handleOnContinue}
+          isPending={isPending}
         />
       </div>
 
