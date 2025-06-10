@@ -163,7 +163,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
     <section className="editor_container">
       <Form {...form}>
         {/* Single Row Form */}
-        <div className="flex w-full max-w-md items-center justify-between rounded-lg bg-gray-600 p-3 text-gray-300 transition-all duration-300">
+        <div className="flex w-full max-w-md items-center justify-between rounded-lg bg-black p-3 text-white transition-all duration-300">
           {/* Custom Dimension Dropdown */}
           <div ref={dimensionDropdownRef} className="relative">
             <button
@@ -181,7 +181,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
             </button>
 
             {isDimensionDropdownOpen && (
-              <div className="absolute top-full left-0 z-10 mt-1 w-fit overflow-hidden rounded-lg border border-gray-600 bg-gray-700 px-2 py-2 shadow-lg">
+              <div className="absolute top-full left-0 z-10 mt-1 w-fit overflow-hidden rounded-lg border border-orange-600 bg-black px-2 py-2 shadow-lg">
                 {DIMENSIONS.map((dim) => (
                   <button
                     key={dim.key}
@@ -210,7 +210,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
           />
         </div>
 
-        <div className="mt-3 flex w-full max-w-md items-center justify-between rounded-lg bg-gray-600 p-3 text-gray-300 transition-all duration-300">
+        <div className="mt-3 flex w-full max-w-md items-center justify-between rounded-lg bg-black p-3 text-gray-300 transition-all duration-300">
           {/* Custom Unit Dropdown */}
           <div ref={unitDropdownRef} className="relative">
             <button
@@ -251,7 +251,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
             className="ml-3 rounded-full bg-green-600 p-1 text-white transition-colors duration-200 hover:bg-green-500"
             disabled={!inputValue || inputValue.trim() === ""}
           >
-            <IconCloudCheck />
+            <IconCheck />
           </button>
         </div>
 
@@ -265,7 +265,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
                   return (
                     <div
                       key={dimKey}
-                      className={`font-bebas transform rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-2.5 py-1.5 text-xs font-bold text-white transition-all duration-500 ${
+                      className={`font-bebas transform rounded-full bg-gradient-to-r from-black to-orange-600 px-2.5 py-1.5 text-xs font-bold text-white transition-all duration-500 ${
                         animatingDimension === dimKey
                           ? "scale-110 animate-pulse shadow-lg"
                           : "scale-100 hover:scale-105"
