@@ -58,6 +58,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
       form.setValue("file", file);
       form.trigger("file");
       updateBasicInfo({ file });
+      console.log("File dropped:", file.name);
 
       // Create preview URL
       const url = URL.createObjectURL(file);
@@ -71,6 +72,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
       form.setValue("file", selectedFile);
       form.trigger("file");
       updateBasicInfo({ file: selectedFile });
+      console.log("File updated:", selectedFile.name);
 
       // Create preview URL
       const url = URL.createObjectURL(selectedFile);
@@ -87,6 +89,7 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
   };
 
   const onSubmit = (data: IUploadFormState) => {
+    console.log("Form submitted with data:", data);
     updateBasicInfo(data);
     if (onContinue) {
       onContinue(data);
@@ -122,25 +125,26 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
           >
             Save as draft
           </button>
-          <Link href="/upload">
-            <NavbarButton
-              colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
-              className="w-fit"
+          <NavbarButton
+            colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
+            className="w-fit"
+          >
+            <button
+              className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              onClick={() => {
+                if (watchedFile && watchedTitle) {
+                  const data: IUploadFormState = {
+                    file: watchedFile,
+                    title: watchedTitle,
+                  };
+                  onSubmit(data);
+                }
+              }}
+              disabled={!watchedFile || !watchedTitle}
             >
-              <button
-                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
-                onClick={() => {
-                  if (watchedFile && watchedTitle) {
-                    const data: IUploadFormState = { file: watchedFile, title: watchedTitle };
-                    onSubmit(data);
-                  }
-                }}
-                disabled={!watchedFile || !watchedTitle}
-              >
-                Continue
-              </button>
-            </NavbarButton>
-          </Link>
+              Continue
+            </button>
+          </NavbarButton>
         </div>
       </div>
 
@@ -160,12 +164,13 @@ const UploadForm = ({ onSaveDraft, onContinue, onCancel }: UploadFormProps) => {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="font-helvetica placeholder:font-bebas bg-transparent text-2xl text-white placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
+                    className="font-helvetica placeholder:font-bebas bg-transparent text-3xl text-black placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
                     placeholder="Enter your artwork title..."
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       updateBasicInfo({ title: e.target.value });
+                      console.log("Title updated:", e.target.value);
                     }}
                   />
                 </FormControl>
