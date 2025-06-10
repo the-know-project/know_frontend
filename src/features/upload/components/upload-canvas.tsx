@@ -4,9 +4,15 @@ import UploadEditorCanvas from "./upload-editor-canvas";
 import UploadForm from "./upload-form";
 import { useRouter } from "next/navigation";
 import { UploadProvider, useUploadContext } from "../context/upload-context";
+import { useUploadAsset } from "../hooks/use-upload-asset";
+import { IUploadAsset } from "../types/upload.types";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 
 const UploadCanvasContent = () => {
   const router = useRouter();
+  const { mutateAsync: hanndleUploadAsset } = useUploadAsset();
   const { getAllFormData } = useUploadContext();
 
   const handleGoBack = () => {
@@ -22,47 +28,65 @@ const UploadCanvasContent = () => {
   const handleOnContinue = async () => {
     const formData = getAllFormData();
 
-    // Validate that required fields are filled
-    if (!formData.file || !formData.title) {
+    if (!formData.file || !formData.title || !formData.size) {
       alert("Please fill in title and upload a file");
       return;
     }
 
-    console.log("=== UPLOAD FORM DATA DEBUG ===");
-    console.log("Complete form data:", formData);
-    console.log("Title:", formData.title);
-    console.log("File:", formData.file);
-    console.log("Tags:", formData.tags);
-    console.log("Categories:", formData.categories);
-    console.log("Size data:", formData.size);
-    console.log("=== END DEBUG ===");
+    const uploadData: IUploadAsset = {
+      fileName: formData.title,
+      asset: formData.file,
+      size: formData.size,
+      tags: formData.tags,
+      categories: formData.categories,
+      customMetadata: formData.tags,
+    };
 
-    // Create FormData for API submission
-    const submissionData = new FormData();
-    submissionData.append("title", formData.title);
-    submissionData.append("file", formData.file);
-    submissionData.append("tags", JSON.stringify(formData.tags));
-    submissionData.append("category", JSON.stringify(formData.categories));
-    submissionData.append("size", JSON.stringify(formData.size));
-
-    // Log FormData contents (FormData doesn't show contents with console.log)
-    console.log("=== FORM DATA CONTENTS ===");
-    for (const [key, value] of submissionData.entries()) {
-      if (value instanceof File) {
-        console.log(`${key}:`, {
-          name: value.name,
-          size: value.size,
-          type: value.type,
-          lastModified: value.lastModified,
-        });
-      } else {
-        console.log(`${key}:`, value);
-      }
+    const data = await hanndleUploadAsset(uploadData);
+    if (data.status === 200) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+      router.push("/explore");
+    } else if (data.status === 500) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    } else {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={`An error occurred`} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
     }
-    console.log("=== END FORM DATA ===");
-
-    // Mutation goes here
-    // TODO: Implement API call
   };
 
   return (
