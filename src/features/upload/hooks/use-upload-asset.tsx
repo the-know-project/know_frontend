@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
 import { useTokenStore } from "../../auth/state/store";
 import { uploadAsset } from "../api/upload/route";
@@ -9,6 +9,7 @@ import { transformCustomMetadata } from "../utils/form-data.utils";
 
 export const useUploadAsset = () => {
   const id = useTokenStore((state) => state.user?.id);
+  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: [`upload-asset-${id}`],
     mutationFn: async (ctx: IUploadAssetClient) => {
@@ -19,7 +20,9 @@ export const useUploadAsset = () => {
         size: ctx.size,
         categories: ctx.categories,
         tags: ctx.tags,
-        customMetadata: ctx.customMetadata ? transformCustomMetadata(ctx.customMetadata) : undefined,
+        customMetadata: ctx.customMetadata
+          ? transformCustomMetadata(ctx.customMetadata)
+          : undefined,
       };
 
       const result = await ResultAsync.fromPromise(
@@ -41,8 +44,7 @@ export const useUploadAsset = () => {
       return result.value;
     },
     onSuccess: () => {
-      // Invalidate art explorer query
-      // queryClient.invalidateQueries({ queryKey: ["your-query-key"] });
+      queryClient.invalidateQueries({ queryKey: ["fetch-explore-asset"] });
     },
   });
 };
