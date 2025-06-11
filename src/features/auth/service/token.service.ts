@@ -124,6 +124,8 @@ export class TokenService {
       return {
         id: validation.payload.sub || validation.payload.userId,
         email: validation.payload.email,
+        firstName: validation.payload.firstName,
+        imageUrl: validation.payload.imageUrl,
       };
     } catch (error) {
       console.error("User extraction error:", error);

@@ -23,7 +23,7 @@ interface RouteMetadata {
 
 export interface RouteProtectionConfig {
   level: RouteProtectionLevel;
-  requiredRoles?: UserRole[];
+  requiredRoles?: string[];
   redirectTo?: string;
   fallbackComponent?: React.ComponentType;
 }

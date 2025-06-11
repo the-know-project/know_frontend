@@ -22,7 +22,12 @@ export const useAuth = () => {
       login: (
         accessToken: string,
         refreshToken: string,
-        user: { id: string; email: string },
+        user: {
+          id: string;
+          email: string;
+          firstName: string;
+          imageUrl: string;
+        },
         role: IRole,
       ) => {
         tokenStore.setTokens(accessToken, refreshToken, user);

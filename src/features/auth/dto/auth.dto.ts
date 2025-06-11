@@ -7,6 +7,8 @@ const AuthSuccessDataDto = z.object({
   refreshToken: z.string(),
   accessToken: z.string(),
   role: RoleSchema,
+  firstName: z.string().min(1).max(100),
+  imageUrl: z.string().url().min(1).max(100),
   isFirstTime: z.boolean(),
 });
 

@@ -9,6 +9,8 @@ export interface IRoleState {
 export interface IUser {
   id: string;
   email: string;
+  firstName: string;
+  imageUrl: string;
   role?: string;
 }
 

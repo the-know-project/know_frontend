@@ -13,6 +13,8 @@ export interface ILoginSuccess {
   user: {
     id: string;
     email: string;
+    firstName: string;
+    imageUrl: string;
   };
   tokens: {
     accessToken: string;

@@ -1,4 +1,6 @@
 import { googleLogin } from "../api/google-login/route";
+import { useRoleStore } from "../state/store";
+import { IRole } from "../types/auth.types";
 
 // interface LoginSuccess {
 //   status: number;
@@ -15,9 +17,10 @@ import { googleLogin } from "../api/google-login/route";
 // }
 
 export const useGoogleLogin = () => {
+  const role = useRoleStore((state) => state.role);
   return {
     mutate: () => {
-      googleLogin();
+      googleLogin(role as IRole);
     },
     isPending: false,
     isError: false,

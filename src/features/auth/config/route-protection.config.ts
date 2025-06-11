@@ -125,7 +125,8 @@ export const PROTECTED_ROUTES: ProtectedRoute[] = [
     name: "Upload",
     protection: {
       level: RouteProtectionLevel.AUTHENTICATED,
-      redirectTo: ROUTE_PATHS.AUTH.LOGIN,
+      redirectTo: ROUTE_PATHS.EXPLORE,
+      requiredRoles: [UserRole.ARTIST],
     },
     metadata: {
       title: "Upload - KNOW",
@@ -140,6 +141,7 @@ export const PROTECTED_ROUTES: ProtectedRoute[] = [
     protection: {
       level: RouteProtectionLevel.AUTHENTICATED,
       redirectTo: ROUTE_PATHS.AUTH.LOGIN,
+      requiredRoles: [UserRole.ARTIST],
     },
     metadata: {
       title: "Artist Profile - KNOW",

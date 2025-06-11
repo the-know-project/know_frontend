@@ -1,5 +1,6 @@
 "use client";
 
+import { useTokenStore } from "../state/store";
 import { AuthGuard } from "./AuthGuard";
 
 interface PageAuthGuardProps {
@@ -15,8 +16,13 @@ export const PageAuthGuard: React.FC<PageAuthGuardProps> = ({
   requiresAuth = false,
   guestOnly = false,
   customFallback,
+  requiredRoles,
 }) => {
-  if (!requiresAuth && !guestOnly) {
+  const user = useTokenStore((state) => state.user);
+  const isRoleAllowed = requiredRoles
+    ? requiredRoles.includes(user?.role || "")
+    : true;
+  if (!requiresAuth && !guestOnly && isRoleAllowed) {
     return <>{children}</>;
   }
 

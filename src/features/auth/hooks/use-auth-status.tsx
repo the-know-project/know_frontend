@@ -7,7 +7,12 @@ import { useTokenRefresh } from "./use-token-refresh";
 interface AuthStatus {
   isAuthenticated: boolean;
   isLoading: boolean;
-  user: { id: string; email: string } | null;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    imageUrl: string;
+  } | null;
   role: string;
 }
 
