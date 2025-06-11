@@ -49,7 +49,6 @@ const useFilterDebounce = (value: string[], delay: number) => {
 const ExploreCategories = ({
   debounceMs = 800,
 }: ExploreCategoriesProps = {}) => {
-
   const { data, isLoading, error } = useGetCategories();
   const [activeButton, setActiveButton] = useState<"for-you" | "following">(
     "for-you",
@@ -175,29 +174,32 @@ const ExploreCategories = ({
           <div className="relative flex items-center rounded-lg bg-neutral-100 p-1">
             {/* Sliding background */}
             <div
-              className={`absolute top-1 bottom-1 rounded-lg bg-black px-2 transition-all duration-300 ease-in-out ${activeButton === "for-you"
-                ? "left-1 w-[calc(50%-6px)]"
-                : "right-1 w-[calc(50%-2px)]"
-                }`}
+              className={`absolute top-1 bottom-1 rounded-lg bg-black px-2 transition-all duration-300 ease-in-out ${
+                activeButton === "for-you"
+                  ? "left-1 w-[calc(50%-6px)]"
+                  : "right-1 w-[calc(50%-2px)]"
+              }`}
             />
 
             {/* Buttons */}
             <button
               onClick={() => setActiveButton("for-you")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${activeButton === "for-you"
-                ? "text-neutral-300"
-                : "text-neutral-700 hover:text-neutral-500"
-                }`}
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
+                activeButton === "for-you"
+                  ? "text-neutral-300"
+                  : "text-neutral-700 hover:text-neutral-500"
+              }`}
             >
               For you
             </button>
 
             <button
               onClick={() => setActiveButton("following")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${activeButton === "following"
-                ? "text-neutral-300"
-                : "text-neutral-700 hover:text-neutral-500"
-                }`}
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
+                activeButton === "following"
+                  ? "text-neutral-300"
+                  : "text-neutral-700 hover:text-neutral-500"
+              }`}
             >
               Following
             </button>
