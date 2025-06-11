@@ -5,7 +5,7 @@ import UploadForm from "./upload-form";
 import { useRouter } from "next/navigation";
 import { UploadProvider, useUploadContext } from "../context/upload-context";
 import { useUploadAsset } from "../hooks/use-upload-asset";
-import { IUploadAsset } from "../types/upload.types";
+import { IUploadAssetClient } from "../types/upload.types";
 import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
@@ -33,13 +33,13 @@ const UploadCanvasContent = () => {
       return;
     }
 
-    const uploadData: IUploadAsset = {
+    const uploadData: IUploadAssetClient = {
       fileName: formData.title,
       asset: formData.file,
       size: formData.size,
-      tags: formData.tags,
-      categories: formData.categories,
-      customMetadata: formData.tags,
+      categories: formData.categories || [],
+      tags: formData.tags || [],
+      customMetadata: formData.tags || [],
     };
 
     const data = await hanndleUploadAsset(uploadData);
