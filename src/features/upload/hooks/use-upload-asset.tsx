@@ -4,21 +4,22 @@ import { useTokenStore } from "../../auth/state/store";
 import { uploadAsset } from "../api/upload/route";
 import { UploadResponseDto } from "../dto/upload.dto";
 import { UploadError } from "../errors/upload.error";
-import { IUploadAsset } from "../types/upload.types";
+import { IUploadAssetServer, IUploadAssetClient } from "../types/upload.types";
+import { transformCustomMetadata } from "../utils/form-data.utils";
 
 export const useUploadAsset = () => {
   const id = useTokenStore((state) => state.user?.id);
   return useMutation({
     mutationKey: [`upload-asset-${id}`],
-    mutationFn: async (ctx: IUploadAsset) => {
-      const serverData = {
-        id: id!,
+    mutationFn: async (ctx: IUploadAssetClient) => {
+      const serverData: IUploadAssetServer = {
+        userId: id as string,
         fileName: ctx.fileName,
         asset: ctx.asset,
         size: ctx.size,
         categories: ctx.categories,
         tags: ctx.tags,
-        customMetadata: ctx.customMetadata,
+        customMetadata: ctx.customMetadata ? transformCustomMetadata(ctx.customMetadata) : undefined,
       };
 
       const result = await ResultAsync.fromPromise(
