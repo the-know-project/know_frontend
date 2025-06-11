@@ -38,7 +38,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               alt="logo"
               width={30}
               height={30}
-              className="object-contain object-center"
+              className="rounded-full object-contain object-center"
             />
           </div>
 
