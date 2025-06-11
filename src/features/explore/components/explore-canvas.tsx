@@ -3,6 +3,7 @@
 import ExploreCard from "./explore-card";
 import { useFetchExploreAsset } from "../hooks/use-fetch-explore-asset";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
+import { TAsset } from "../types/explore.types";
 
 const ExploreCanvas = () => {
   const { data, isLoading } = useFetchExploreAsset({});
@@ -14,8 +15,8 @@ const ExploreCanvas = () => {
   const assets = data?.data.assets ? data.data.assets : [];
   return (
     <section className="flex w-full flex-col items-center justify-center">
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {assets.map((item, index) => (
+      <div className="grid grid-cols-1 gap-5 space-y-[50px] md:grid-cols-2 lg:grid-cols-3">
+        {assets.map((item: TAsset, index: number) => (
           <div
             key={item.fileId}
             className="motion-preset-expand motion-duration-700"
