@@ -27,7 +27,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           quality={100}
           width={500}
           height={300}
-          className="object-cover"
+          className="rounded-[15px] object-cover"
         />
       </div>
       <div className="flex items-center justify-between">
