@@ -17,3 +17,7 @@ export const vibrantColors = [
   "#2980B9", // Dark Blue
   "#D35400", // Dark Orange
 ];
+
+export enum ExploreErrorMessages {
+  FAILED_TO_FETCH_ASSET = "Failed to fetch asset",
+}
