@@ -1,16 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { useTokenStore } from "../../auth/state/store";
-import { TFetchExploreAsset } from "../types/explore.types";
 import { err, ok, ResultAsync } from "neverthrow";
 import { fetchAllExploreAssets } from "../api/fetch-asset/route";
-import { ExploreError } from "../errors/explore.error";
-import { FetchExploreAssetDto } from "../dto/explore.dto";
 import { ExploreErrorMessages } from "../data/explore.data";
+import { FetchExploreAssetDto } from "../dto/explore.dto";
+import { ExploreError } from "../errors/explore.error";
+import { TFetchExploreAsset } from "../types/explore.types";
 
 export const useFetchExploreAsset = (params: TFetchExploreAsset) => {
-  const id = useTokenStore((state) => state.user?.id);
   return useQuery({
-    queryKey: [`fetch-explore-${id}-asset`, params],
+    queryKey: [`fetch-explore-asset`, params],
     queryFn: async () => {
       const result = await ResultAsync.fromPromise(
         fetchAllExploreAssets(params),
