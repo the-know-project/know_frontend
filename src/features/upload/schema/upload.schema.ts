@@ -19,7 +19,6 @@ export const UploadFormSchema = z.object({
     .optional(),
 });
 
-// Schema for submission (requires file)
 export const UploadSchema = z.object({
   title: z
     .string()
@@ -50,7 +49,7 @@ export const SizePickerSchema = z.object({
 });
 
 export const UploadAssetSchemaServer = z.object({
-  id: z.string().uuid(),
+  userId: z.string().uuid(),
   fileName: z
     .string()
     .min(1, "Title is required")
@@ -68,7 +67,7 @@ export const UploadAssetSchemaServer = z.object({
   size: SizePickerSchema,
   categories: z.array(z.string()),
   tags: z.array(z.string()),
-  customMetadata: z.array(z.string()).optional(),
+  customMetadata: z.record(z.string()).optional(),
 });
 
 export const UploadAssetSchema = z.object({
@@ -89,5 +88,5 @@ export const UploadAssetSchema = z.object({
   size: SizePickerSchema,
   categories: z.array(z.string()),
   tags: z.array(z.string()),
-  customMetadata: z.array(z.string()).optional(),
+  customMetadata: z.record(z.string()).optional(),
 });
