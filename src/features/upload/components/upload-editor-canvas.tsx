@@ -29,7 +29,7 @@ const UploadEditorCanvas = () => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="flex min-h-screen flex-col gap-5 bg-neutral-300 px-2 py-10 lg:px-8"
+              className="flex min-h-screen flex-col gap-5 rounded-tl-[15px] rounded-bl-[15px] bg-neutral-300 px-4 py-10 lg:px-8"
             >
               <motion.button
                 className="font-bebas text-whit relative hidden w-fit items-center gap-1 rounded-full bg-neutral-600 p-2 text-sm font-medium capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px] md:inline-flex"
