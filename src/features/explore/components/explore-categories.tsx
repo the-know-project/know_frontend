@@ -149,7 +149,7 @@ const ExploreCategories = ({
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
-              className={`motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !bo rder-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"} `}
+              className={`motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"} `}
               style={{
                 animationDelay: `${index * 100}ms`,
               }}
@@ -205,7 +205,7 @@ const ExploreCategories = ({
         </div>
 
         {/* Catgeories */}
-        <div className="scrollbar-hide z-50 hidden w-full max-w-[900px] overflow-x-auto sm:max-w-[300px] md:flex">
+        <div className="scrollbar-hide z-50 hidden w-full overflow-x-auto sm:max-w-[400px] md:flex lg:max-w-[900px]">
           <div className="flex min-w-fit items-center gap-2 px-4">
             {artPreferences?.map((pref, index) => (
               <button
