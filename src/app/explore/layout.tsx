@@ -1,5 +1,4 @@
 import ExploreNav from "@/src/features/explore/components/explore-nav";
-import GridBackground from "@/src/shared/components/grid-background";
 
 interface ILayout {
   children: React.ReactNode;
@@ -8,12 +7,12 @@ interface ILayout {
 const Layout: React.FC<ILayout> = ({ children }) => {
   return (
     <section className="flex w-full flex-col">
-      <GridBackground>
-        <section className="flex min-h-screen w-full flex-col">
+      <section className="flex min-h-screen w-full flex-col">
+        <div className="mt-5 flex w-full">
           <ExploreNav />
-          {children}
-        </section>
-      </GridBackground>
+        </div>
+        {children}
+      </section>
     </section>
   );
 };
