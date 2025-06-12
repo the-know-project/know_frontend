@@ -54,11 +54,11 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
     <section className="editor_container">
       <div className="space-y-4">
         {/* Tag Input */}
-        <div className="flex items-center justify-between rounded-lg bg-black p-3 text-white">
+        <div className="flex items-center justify-between rounded-lg bg-neutral-600 p-3 text-white">
           <Input
             type="text"
             placeholder="Add tags... (press Enter)"
-            className="placeholder:font-bebas font-grotesk border-none bg-transparent text-white placeholder:text-white"
+            className="placeholder:font-bricolage font-bricolage border border-white bg-transparent text-white placeholder:text-white"
             value={inputValue}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
@@ -71,7 +71,7 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
             {uploadData.tags.map((tag, index) => (
               <div
                 key={index}
-                className={`font-bebas flex transform items-center gap-2 rounded-full bg-gradient-to-r from-black to-orange-600 px-3 py-1 text-xs tracking-wide text-white transition-all duration-500 ${
+                className={`font-bricolage flex transform items-center gap-2 rounded-full bg-gradient-to-r from-black to-orange-600 px-3 py-1 text-xs tracking-wide text-white transition-all duration-500 ${
                   animatingTag === tag
                     ? "scale-110 animate-pulse shadow-lg"
                     : "scale-100 hover:scale-105"
