@@ -91,7 +91,7 @@ const UploadCanvasContent = () => {
 
   return (
     <section className="flex w-full flex-col md:flex-row md:justify-between">
-      <div className="flex w-full flex-col md:w-9/12">
+      <div className="flex w-full flex-col md:w-8/12">
         <UploadForm
           onCancel={handleGoBack}
           onSaveDraft={handleOnSave}
@@ -100,7 +100,7 @@ const UploadCanvasContent = () => {
         />
       </div>
 
-      <div className="flex w-full flex-col md:w-3/12">
+      <div className="flex w-full flex-col md:w-4/12">
         <UploadEditorCanvas />
       </div>
     </section>
