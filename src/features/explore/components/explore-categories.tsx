@@ -205,7 +205,7 @@ const ExploreCategories = ({
         </div>
 
         {/* Catgeories */}
-        <div className="scrollbar-hide z-50 hidden w-full max-w-[900px] overflow-x-auto md:flex">
+        <div className="scrollbar-hide z-50 hidden w-full max-w-[900px] overflow-x-auto sm:max-w-[300px] md:flex">
           <div className="flex min-w-fit items-center gap-2 px-4">
             {artPreferences?.map((pref, index) => (
               <button
