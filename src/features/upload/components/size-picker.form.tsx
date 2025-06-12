@@ -163,7 +163,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
     <section className="editor_container">
       <Form {...form}>
         {/* Single Row Form */}
-        <div className="flex w-full max-w-md items-center justify-between rounded-lg bg-black p-3 text-white transition-all duration-300">
+        <div className="flex w-full max-w-md items-center justify-between rounded-lg bg-neutral-600 p-3 text-white transition-all duration-300">
           {/* Custom Dimension Dropdown */}
           <div ref={dimensionDropdownRef} className="relative">
             <button
@@ -186,7 +186,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
                   <button
                     key={dim.key}
                     type="button"
-                    className="font-grotesk w-full px-2.5 py-1.5 text-left text-sm font-bold whitespace-nowrap text-white uppercase transition-colors duration-150 hover:bg-gray-600 focus:bg-gray-600 focus:outline-none"
+                    className="font-bricolage w-full px-2.5 py-1.5 text-left text-sm font-bold whitespace-nowrap text-white uppercase transition-colors duration-150 hover:bg-gray-600 focus:bg-gray-600 focus:outline-none"
                     onClick={() => {
                       setSelectedDimension(dim.key);
                       setIsDimensionDropdownOpen(false);
@@ -210,7 +210,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
           />
         </div>
 
-        <div className="mt-3 flex w-full max-w-md items-center justify-between rounded-lg bg-black p-3 text-gray-300 transition-all duration-300">
+        <div className="mt-3 flex w-full max-w-md items-center justify-between rounded-lg bg-neutral-600 p-3 text-gray-300 transition-all duration-300">
           {/* Custom Unit Dropdown */}
           <div ref={unitDropdownRef} className="relative">
             <button
