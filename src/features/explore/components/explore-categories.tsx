@@ -149,9 +149,8 @@ const ExploreCategories = ({
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
-              className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
+              className="motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px]"
               style={{
-                backgroundColor: vibrantColors[index % vibrantColors.length],
                 animationDelay: `${index * 100}ms`,
               }}
               onClick={() => handleSelection(pref)}
@@ -170,7 +169,7 @@ const ExploreCategories = ({
       </div>
       <div className="flex items-center justify-between">
         {/* Following */}
-        <div className="font-bebas motion-preset-expand motion-duration-700 motion-delay-700 relative flex items-center gap-2 tracking-wide">
+        <div className="font-bricolage motion-preset-expand motion-duration-700 motion-delay-700 relative flex items-center gap-2 tracking-wide">
           <div className="relative flex items-center rounded-lg bg-neutral-100 p-1">
             {/* Sliding background */}
             <div
@@ -207,14 +206,13 @@ const ExploreCategories = ({
         </div>
 
         {/* Catgeories */}
-        <div className="scrollbar-hide z-50 hidden w-full max-w-[500px] overflow-x-auto md:flex">
+        <div className="scrollbar-hide z-50 hidden w-full max-w-[900px] overflow-x-auto md:flex">
           <div className="flex min-w-fit items-center gap-2 px-4">
             {artPreferences?.map((pref, index) => (
               <button
                 key={index}
-                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px]"
+                className="motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px]"
                 style={{
-                  backgroundColor: vibrantColors[index % vibrantColors.length],
                   animationDelay: `${index * 100}ms`,
                 }}
                 onClick={() => handleSelection(pref)}
@@ -235,10 +233,10 @@ const ExploreCategories = ({
         {/* Filter */}
         <button
           onClick={handleToggleFilter}
-          className="motion-preset-expand motion-duration-700 motion-delay-700 flex w-fit gap-1 rounded-lg bg-black px-2 py-1 sm:px-4 sm:py-2"
+          className="motion-preset-expand motion-duration-700 motion-delay-700 border-[#666666text-black flex w-fit gap-1 rounded-lg border px-2 py-1 sm:px-4 sm:py-2"
         >
-          <IconFilter2Edit color="white" width={20} height={20} />
-          <p className="font-bebas text-sm font-medium text-neutral-300 lg:text-[16px]">
+          <IconFilter2Edit color="black" width={20} height={20} />
+          <p className="font-bricolage text-sm font-medium text-black lg:text-[16px]">
             Filter
           </p>
         </button>
@@ -265,7 +263,7 @@ const ExploreCategories = ({
                   key={ctx.id}
                   className="flex flex-shrink-0 flex-col items-start"
                 >
-                  <h3 className="font-bebas mb-2 text-sm font-medium text-neutral-700">
+                  <h3 className="font-bricolage mb-2 text-sm font-medium text-neutral-700">
                     {ctx.name}
                   </h3>
                   <div className="flex items-center gap-[3px] sm:gap-2">
@@ -274,7 +272,7 @@ const ExploreCategories = ({
                         key={item.id}
                         onClick={() => handleFilterSelection(item.name)}
                         className={cn(
-                          "font-bebas motion-preset-expand motion-duration-700 flex items-center gap-3 rounded-lg p-1 px-2.5 py-2 tracking-wide whitespace-nowrap transition-all duration-300",
+                          "font-bricolage motion-preset-expand motion-duration-700 flex items-center gap-3 rounded-lg p-1 px-2.5 py-2 tracking-wide whitespace-nowrap transition-all duration-300",
                           isFilterSelected(item.name)
                             ? "bg-black text-white transition-all duration-200"
                             : "bg-neutral-300 text-black transition-all duration-200 hover:bg-neutral-400",
