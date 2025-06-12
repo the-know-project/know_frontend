@@ -1,7 +1,7 @@
 "use client";
 
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
-import { IconNotification, IconUser } from "@tabler/icons-react";
+import { IconBell, IconNotification, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import ExploreForm from "./explore-form";
 import { useRouter } from "next/navigation";
@@ -27,12 +27,12 @@ const ExploreNav = () => {
         />
       </div>
       <div className="flex items-center justify-between px-4 sm:px-6">
-        <div className="explore_logo_wrapper">
+        <div className="flex flex-col items-start gap-1">
           <Image
             src="/Know-Logo.png"
             alt="logo"
-            width={40}
-            height={40}
+            width={50}
+            height={50}
             className="object-contain object-center"
           />
         </div>
@@ -49,34 +49,27 @@ const ExploreNav = () => {
 
         <div className="flex items-center gap-5">
           {user && role.toLowerCase() === "artist" && (
-            <NavbarButton
-              colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
-              className="w-fit"
+            <button
+              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              onClick={handleShareWork}
             >
-              <button
-                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 sm:text-[16px] hover:scale-105 active:scale-95"
-                onClick={handleShareWork}
-              >
-                <p className="block">share your work</p>
-              </button>
-            </NavbarButton>
+              <p className="block">Share your work</p>
+            </button>
           )}
 
-          <div className="explore_nav_wrapper">
-            <div className="flex items-center gap-2 bg-transparent px-2">
-              <IconNotification color="black" className="h-[30px] w-[30px]" />
-              {user?.imageUrl ? (
-                <Image
-                  alt="user profile"
-                  src={user?.imageUrl}
-                  width={30}
-                  height={30}
-                  className="rounded-full object-contain object-center"
-                />
-              ) : (
-                <IconUser color="black" className="h-[30px] w-[30px]" />
-              )}
-            </div>
+          <div className="flex items-center gap-2 bg-transparent px-2">
+            <IconBell color="black" className="h-[32px] w-[32px]" />
+            {user?.imageUrl ? (
+              <Image
+                alt="user profile"
+                src={user?.imageUrl}
+                width={32}
+                height={32}
+                className="rounded-full object-contain object-center"
+              />
+            ) : (
+              <IconUser color="black" className="h-[32px] w-[32px]" />
+            )}
           </div>
         </div>
       </div>
