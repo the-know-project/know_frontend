@@ -173,7 +173,7 @@ const ExploreCategories = ({
           <div className="relative flex items-center rounded-lg bg-neutral-100 p-1">
             {/* Sliding background */}
             <div
-              className={`absolute top-1 bottom-1 rounded-lg bg-black px-2 transition-all duration-300 ease-in-out ${
+              className={`absolute top-1 bottom-1 rounded-lg bg-[#1E3A8A] px-2 transition-all duration-300 ease-in-out ${
                 activeButton === "for-you"
                   ? "left-1 w-[calc(50%-6px)]"
                   : "right-1 w-[calc(50%-2px)]"
