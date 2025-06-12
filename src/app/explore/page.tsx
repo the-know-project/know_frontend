@@ -20,7 +20,7 @@ const Page = async () => {
   return (
     <PageAuthGuard requiresAuth>
       <section className="relative z-50 flex w-full flex-col px-6">
-        <div className="mt-4 flex w-full">
+        <div className="mt-5 flex w-full">
           <HydrationBoundary state={dehydrate(queryClient)}>
             <ExploreCategories />
           </HydrationBoundary>
