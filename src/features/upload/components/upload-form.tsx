@@ -124,37 +124,33 @@ const UploadForm = ({
         </button>
         <div className="flex gap-4">
           <button
-            className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-orange-600 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+            className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#F97316] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
             onClick={handleSaveDraft}
             type="button"
             disabled={!watchedFile}
           >
             Save as draft
           </button>
-          <NavbarButton
-            colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
-            className="w-fit"
-          >
-            {isPending ? (
-              <Spinner borderColor="border-orange-600" />
-            ) : (
-              <button
-                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
-                onClick={() => {
-                  if (watchedFile && watchedTitle) {
-                    const data: IUploadFormState = {
-                      file: watchedFile,
-                      title: watchedTitle,
-                    };
-                    onSubmit(data);
-                  }
-                }}
-                disabled={!watchedFile || !watchedTitle}
-              >
-                Continue
-              </button>
-            )}
-          </NavbarButton>
+
+          {isPending ? (
+            <Spinner borderColor="border-blue" />
+          ) : (
+            <button
+              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              onClick={() => {
+                if (watchedFile && watchedTitle) {
+                  const data: IUploadFormState = {
+                    file: watchedFile,
+                    title: watchedTitle,
+                  };
+                  onSubmit(data);
+                }
+              }}
+              disabled={!watchedFile || !watchedTitle}
+            >
+              Continue
+            </button>
+          )}
         </div>
       </div>
 
@@ -174,8 +170,8 @@ const UploadForm = ({
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="font-helvetica placeholder:font-bebas bg-transparent text-3xl text-black placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
-                    placeholder="Enter your artwork title..."
+                    className="font-bricolage placeholder:font-bricolage bg-transparent text-[32px] text-[#666666] placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
+                    placeholder="Title of your project"
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
@@ -203,7 +199,7 @@ const UploadForm = ({
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
                       htmlFor="file-upload"
-                      className={`font-grotesk flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${
+                      className={`font-bricolage flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${
                         dragging
                           ? "border-primary bg-blue-50"
                           : "border-gray-300"
@@ -225,7 +221,7 @@ const UploadForm = ({
                             />
                           ) : null}
                           <div className="bg-opacity-20 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity hover:opacity-100">
-                            <p className="font-grotesk text-sm text-white">
+                            <p className="font-bricolage text-sm text-white">
                               Click to change file
                             </p>
                           </div>
@@ -233,16 +229,16 @@ const UploadForm = ({
                       ) : (
                         <>
                           <IconFileUpload className="mb-2 text-4xl text-gray-500" />
-                          <p className="font-grotesk font-semibold text-gray-600">
+                          <p className="font-bricolage font-semibold text-gray-600">
                             Drag and drop an image, or{" "}
                             <span className="font-semibold text-blue-600 underline">
                               Browse
                             </span>
                           </p>
-                          <p className="font-grotesk mt-2 text-sm text-gray-400">
+                          <p className="font-bricolage mt-2 text-sm text-gray-400">
                             Max 120mb each (25mb for videos)
                           </p>
-                          <div className="font-grotesk mt-4 space-y-1 text-sm text-gray-500">
+                          <div className="font-bricolage mt-4 space-y-1 text-sm text-gray-500">
                             <p>- Only upload media you own the rights to</p>
                             <p>- Video (mp4)</p>
                             <p>- Upload high resolution images (png, jpg)</p>
@@ -266,7 +262,7 @@ const UploadForm = ({
 
           {/* File Preview */}
           {watchedFile && (
-            <div className="font-grotesk mt-6 text-center">
+            <div className="font-bricolage mt-6 text-center">
               <p className="text-sm text-gray-600">Selected file:</p>
               <p className="text-base font-medium">{watchedFile.name}</p>
               <p className="text-sm text-gray-400">
