@@ -158,7 +158,7 @@ const ExploreCategories = ({
               <p
                 className={cn(
                   "transition-all duration-200 group-hover:scale-105 group-active:scale-95",
-                  isItemSelected(pref) && "text-white",
+                  isItemSelected(pref) && "text-black",
                 )}
               >
                 {pref}
@@ -220,7 +220,7 @@ const ExploreCategories = ({
                 <p
                   className={cn(
                     "transition-all duration-200 group-hover:scale-105 group-active:scale-95",
-                    "text-white",
+                    "text-black",
                   )}
                 >
                   {pref}
