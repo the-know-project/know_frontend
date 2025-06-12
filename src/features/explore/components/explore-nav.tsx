@@ -58,7 +58,7 @@ const ExploreNav = () => {
           )}
 
           <div className="flex items-center gap-2 bg-transparent px-2">
-            <IconBell color="black" className="h-[32px] w-[32px]" />
+            <IconBell className="h-[32px] w-[32px] text-neutral-800" />
             {user?.imageUrl ? (
               <Image
                 alt="user profile"
