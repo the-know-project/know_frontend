@@ -28,5 +28,6 @@ export const useFetchExploreAsset = (params: TFetchExploreAsset) => {
       console.log(result);
       return result.value;
     },
+    staleTime: 5000,
   });
 };
