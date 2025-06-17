@@ -7,7 +7,7 @@ import { TFetchExploreAsset } from "../types/explore.types";
 
 export const useFetchExploreAsset = (params: TFetchExploreAsset) => {
   return useQuery({
-    queryKey: [`fetch-explore-asset`],
+    queryKey: [`fetch-explore-asset`, params],
     queryFn: async () => {
       const result = await ResultAsync.fromPromise(
         fetchAllExploreAssets(params),
