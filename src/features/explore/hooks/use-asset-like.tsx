@@ -33,10 +33,8 @@ export const useAssetLike = ({
 
   const isLiked = useIsAssetLiked(assetId);
   const currentLikeCount = useLikeCount(assetId, initialLikeCount);
-  const { addLikedAsset, removeLikedAsset, revertOptimisticUpdate } =
-    useLikedAssetsActions();
+  const { addLikedAsset, removeLikedAsset } = useLikedAssetsActions();
 
-  // Error state
   const [error, setError] = useState<string | null>(null);
 
   const toggleLike = async () => {
@@ -48,7 +46,7 @@ export const useAssetLike = ({
       if (!wasLiked) {
         addLikedAsset(assetId, initialLikeCount);
       } else {
-        removeLikedAsset(assetId, initialLikeCount);
+        removeLikedAsset(assetId);
       }
 
       // API call
@@ -59,7 +57,7 @@ export const useAssetLike = ({
       }
     } catch (apiError) {
       if (!wasLiked) {
-        removeLikedAsset(assetId, initialLikeCount);
+        removeLikedAsset(assetId);
       } else {
         addLikedAsset(assetId, initialLikeCount);
       }
