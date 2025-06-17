@@ -8,10 +8,23 @@ import { useEffect, useState } from "react";
 import ArtSelectionSkeleton from "../../personalize/components/art-selection-skeleton";
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
 import { useGetCategories } from "../../personalize/hooks";
-import { vibrantColors } from "../data/explore.data";
 
 interface ExploreCategoriesProps {
   debounceMs?: number;
+  onPreferencesChange?: (preferences: string[]) => void;
+  onFiltersChange?: (filters: {
+    priceMin?: number;
+    priceMax?: number;
+    sortBy?: "latest" | "oldest";
+    available?: boolean;
+  }) => void;
+  selectedPreferences?: string[];
+  selectedFilters?: {
+    priceMin?: number;
+    priceMax?: number;
+    sortBy?: "latest" | "oldest";
+    available?: boolean;
+  };
 }
 
 const useDebounce = (value: string[], delay: number) => {
@@ -48,12 +61,19 @@ const useFilterDebounce = (value: string[], delay: number) => {
 
 const ExploreCategories = ({
   debounceMs = 800,
+  onPreferencesChange,
+  onFiltersChange,
+  selectedPreferences: propSelectedPreferences = [],
+  selectedFilters: propSelectedFilters = {},
 }: ExploreCategoriesProps = {}) => {
   const { data, isLoading, error } = useGetCategories();
+
   const [activeButton, setActiveButton] = useState<"for-you" | "following">(
     "for-you",
   );
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
+  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
+    propSelectedPreferences,
+  );
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFilterProcessing, setIsFilterProcessing] = useState(false);
@@ -75,13 +95,54 @@ const ExploreCategories = ({
 
   const handlePreferencesChange = (preferences: string[]) => {
     console.log("User selected preferences:", preferences);
-    // TODO: Replace with mutation hook later
+    if (preferences.length > 0) {
+      onPreferencesChange?.(preferences);
+    } else {
+      onPreferencesChange?.([]);
+    }
     setIsProcessing(false);
   };
 
   const handleFiltersChange = (filters: string[]) => {
     console.log("User selected filters:", filters);
-    // TODO: Replace with filter query mutation hook later
+
+    const filterObject: {
+      priceMin?: number;
+      priceMax?: number;
+      sortBy?: "latest" | "oldest";
+      available?: boolean;
+    } = {};
+
+    if (filters.length > 0) {
+      filters.forEach((filterName) => {
+        // Handle availability filters
+        if (filterName === "For Sale") {
+          filterObject.available = true;
+        } else if (filterName === "Not For Sale") {
+          filterObject.available = false;
+        }
+
+        // Handle sort filters
+        else if (filterName === "Latest") {
+          filterObject.sortBy = "latest";
+        } else if (filterName === "Oldest") {
+          filterObject.sortBy = "oldest";
+        }
+
+        // Handle price range filters
+        else if (filterName === "$50 - $500") {
+          filterObject.priceMin = 50;
+          filterObject.priceMax = 500;
+        } else if (filterName === "$501 - $1500") {
+          filterObject.priceMin = 501;
+          filterObject.priceMax = 1500;
+        } else if (filterName === "$1500 - above") {
+          filterObject.priceMin = 1500;
+        }
+      });
+    }
+
+    onFiltersChange?.(filterObject);
     setIsFilterProcessing(false);
   };
 
@@ -89,6 +150,7 @@ const ExploreCategories = ({
     if (debouncedPreferences.length > 0) {
       handlePreferencesChange(debouncedPreferences);
     } else if (debouncedPreferences.length === 0) {
+      handlePreferencesChange([]);
       setIsProcessing(false);
     }
   }, [debouncedPreferences]);
@@ -97,7 +159,7 @@ const ExploreCategories = ({
     if (debouncedFilters.length > 0) {
       handleFiltersChange(debouncedFilters);
     } else if (debouncedFilters.length === 0) {
-      setIsFilterProcessing(false);
+      handleFiltersChange([]);
     }
   }, [debouncedFilters]);
 
@@ -144,14 +206,13 @@ const ExploreCategories = ({
   return (
     <section className="relative z-50 flex w-full flex-col gap-2 sm:px-6">
       {/* Catgeories */}
-      <div className="scrollbar-hide z-50 flex w-full overflow-x-auto md:hidden">
+      <div className="scrollbar-hide z-50 mb-2 flex w-full overflow-x-auto md:hidden">
         <div className="flex min-w-fit items-center gap-2">
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
-              className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
+              className={`motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"} `}
               style={{
-                backgroundColor: vibrantColors[index % vibrantColors.length],
                 animationDelay: `${index * 100}ms`,
               }}
               onClick={() => handleSelection(pref)}
@@ -159,7 +220,6 @@ const ExploreCategories = ({
               <p
                 className={cn(
                   "transition-all duration-200 group-hover:scale-105 group-active:scale-95",
-                  isItemSelected(pref) && "text-neutral-300 opacity-60",
                 )}
               >
                 {pref}
@@ -170,11 +230,11 @@ const ExploreCategories = ({
       </div>
       <div className="flex items-center justify-between">
         {/* Following */}
-        <div className="font-bebas motion-preset-expand motion-duration-700 motion-delay-700 relative flex items-center gap-2 tracking-wide">
+        <div className="font-bricolage motion-preset-expand motion-duration-700 motion-delay-700 relative flex items-center gap-2 tracking-wide">
           <div className="relative flex items-center rounded-lg bg-neutral-100 p-1">
             {/* Sliding background */}
             <div
-              className={`absolute top-1 bottom-1 rounded-lg bg-black px-2 transition-all duration-300 ease-in-out ${
+              className={`absolute top-1 bottom-1 rounded-lg bg-[#1E3A8A] px-2 transition-all duration-300 ease-in-out ${
                 activeButton === "for-you"
                   ? "left-1 w-[calc(50%-6px)]"
                   : "right-1 w-[calc(50%-2px)]"
@@ -207,14 +267,13 @@ const ExploreCategories = ({
         </div>
 
         {/* Catgeories */}
-        <div className="scrollbar-hide z-50 hidden w-full max-w-[500px] overflow-x-auto md:flex">
+        <div className="scrollbar-hide z-50 hidden w-full overflow-x-auto sm:max-w-[400px] md:flex lg:max-w-[900px]">
           <div className="flex min-w-fit items-center gap-2 px-4">
             {artPreferences?.map((pref, index) => (
               <button
                 key={index}
-                className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md px-2 py-1 text-sm font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px]"
+                className={`motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"}`}
                 style={{
-                  backgroundColor: vibrantColors[index % vibrantColors.length],
                   animationDelay: `${index * 100}ms`,
                 }}
                 onClick={() => handleSelection(pref)}
@@ -222,7 +281,6 @@ const ExploreCategories = ({
                 <p
                   className={cn(
                     "transition-all duration-200 group-hover:scale-105 group-active:scale-95",
-                    isItemSelected(pref) && "text-neutral-300 opacity-60",
                   )}
                 >
                   {pref}
@@ -235,10 +293,10 @@ const ExploreCategories = ({
         {/* Filter */}
         <button
           onClick={handleToggleFilter}
-          className="motion-preset-expand motion-duration-700 motion-delay-700 flex w-fit gap-1 rounded-lg bg-black px-2 py-1 sm:px-4 sm:py-2"
+          className="motion-preset-expand motion-duration-700 motion-delay-700 border-[#666666text-black flex w-fit gap-1 rounded-lg border px-2 py-1 sm:px-4 sm:py-2"
         >
-          <IconFilter2Edit color="white" width={20} height={20} />
-          <p className="font-bebas text-sm font-medium text-neutral-300 lg:text-[16px]">
+          <IconFilter2Edit color="black" width={20} height={20} />
+          <p className="font-bricolage text-sm font-medium text-black lg:text-[16px]">
             Filter
           </p>
         </button>
@@ -265,7 +323,7 @@ const ExploreCategories = ({
                   key={ctx.id}
                   className="flex flex-shrink-0 flex-col items-start"
                 >
-                  <h3 className="font-bebas mb-2 text-sm font-medium text-neutral-700">
+                  <h3 className="font-bricolage mb-2 text-sm font-medium text-neutral-700">
                     {ctx.name}
                   </h3>
                   <div className="flex items-center gap-[3px] sm:gap-2">
@@ -274,7 +332,7 @@ const ExploreCategories = ({
                         key={item.id}
                         onClick={() => handleFilterSelection(item.name)}
                         className={cn(
-                          "font-bebas motion-preset-expand motion-duration-700 flex items-center gap-3 rounded-lg p-1 px-2.5 py-2 tracking-wide whitespace-nowrap transition-all duration-300",
+                          "font-bricolage motion-preset-expand motion-duration-700 flex items-center gap-3 rounded-lg p-1 px-2.5 py-2 tracking-wide whitespace-nowrap transition-all duration-300",
                           isFilterSelected(item.name)
                             ? "bg-black text-white transition-all duration-200"
                             : "bg-neutral-300 text-black transition-all duration-200 hover:bg-neutral-400",

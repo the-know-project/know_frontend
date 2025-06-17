@@ -203,11 +203,11 @@
   }
 
   .upload_editor_button {
-    @apply font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-orange-600 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] sm:text-[16px];
+    @apply font-bricolage relative inline-flex w-fit items-center gap-1 rounded-lg bg-orange-600 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] sm:text-[16px];
   }
 
   .upload_editor_input {
-    @apply placeholder:font-grotesk font-grotesk ml-3 [appearance:textfield] bg-transparent text-right font-bold text-white outline outline-[#fff2f21f] placeholder:text-white focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none;
+    @apply placeholder:font-bricolage font-bricolage ml-3 [appearance:textfield] bg-transparent text-right font-bold text-white outline outline-[#fff2f21f] placeholder:text-white focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none;
   }
 
   .editor_container {
@@ -215,7 +215,7 @@
   }
 
   .editor_title_font {
-    @apply font-helvetica text-2xl font-black tracking-wider text-black capitalize;
+    @apply font-bricolage text-[20px] font-black tracking-wider text-black capitalize;
   }
 }
 .purple-glow {

@@ -1,4 +1,4 @@
-import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
+import { IconThumbUp, IconThumbUpFilled } from "@tabler/icons-react";
 import Image from "next/image";
 
 interface ExploreCardProps {
@@ -43,21 +43,27 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           </div>
 
           <div className="flex flex-col items-start">
-            <h3 className="font-bebas text-sm text-neutral-700">{artName}</h3>
-            <p className="font-helvetica text-[16px] font-black text-neutral-900 uppercase">
+            <p className="font-bricolage text-[20px] text-black capitalize">
               {artistName}
             </p>
+            <h3 className="font-bricolage text-sm font-semibold text-neutral-900 underline">
+              {artName}
+            </h3>
           </div>
         </div>
 
-        <div className="explore_logo_wrapper flex items-center gap-2">
+        <div className="flex items-center gap-2">
           {likeCount > 0 ? (
-            <IconHeartFilled width={30} height={30} className="text-red-600" />
+            <IconThumbUpFilled
+              width={30}
+              height={30}
+              className="text-neutral-700"
+            />
           ) : (
-            <IconHeart width={30} height={30} className="text-neutral-700" />
+            <IconThumbUp width={30} height={30} className="text-neutral-500" />
           )}
 
-          <p className="font-bebas text-[16px] font-bold text-neutral-900">
+          <p className="font-bricolage text-[16px] font-bold text-neutral-900">
             {likeCount}
           </p>
         </div>

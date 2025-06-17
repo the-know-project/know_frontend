@@ -1,3 +1,7 @@
+import { PageAuthGuard } from "@/src/features/auth/guards";
+import ExploreContainer from "@/src/features/explore/components/explore-container";
+import { getCategoriesQueryOptions } from "@/src/features/personalize/queries/get-categories.queries";
+import { getExploreAssetsQueryOptions } from "@/src/features/explore/queries/get-explore-assets.queries";
 import {
   dehydrate,
   HydrationBoundary,
@@ -11,7 +15,7 @@ const PageEnhanced = async () => {
     await queryClient.prefetchQuery(getCategoriesQueryOptions);
     await queryClient.prefetchQuery(getExploreAssetsQueryOptions({}));
 
-    // Prefetch common filter combinations for better UX
+    // Optional: Prefetch common filter combinations for better UX
     // This helps with instant loading when users apply popular filters
     const commonFilterCombinations = [
       { sortBy: "latest" as const },
@@ -20,14 +24,13 @@ const PageEnhanced = async () => {
       { sortBy: "latest" as const, available: true },
     ];
 
-    // Prefetch common filter combinations in parallel
     await Promise.allSettled(
       commonFilterCombinations.map((filters) =>
         queryClient.prefetchQuery(getExploreAssetsQueryOptions(filters)),
       ),
     );
 
-    // todo: Prefetch with popular categories leveraging analytics data when wired
+    // todo: Prefetch with popular categories leveraging analytics data
     // const popularCategories = ["Photography", "Digital Art", "Painting"];
     // await Promise.allSettled(
     //   popularCategories.map((category) =>

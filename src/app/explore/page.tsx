@@ -1,6 +1,5 @@
 import { PageAuthGuard } from "@/src/features/auth/guards";
-import ExploreCanvas from "@/src/features/explore/components/explore-canvas";
-import ExploreCategories from "@/src/features/explore/components/explore-categories";
+import ExploreContainer from "@/src/features/explore/components/explore-container";
 import { getCategoriesQueryOptions } from "@/src/features/personalize/queries/get-categories.queries";
 import { getExploreAssetsQueryOptions } from "@/src/features/explore/queries/get-explore-assets.queries";
 import {
@@ -20,15 +19,9 @@ const Page = async () => {
   return (
     <PageAuthGuard requiresAuth>
       <section className="relative z-50 flex w-full flex-col px-6">
-        <div className="mt-4 flex w-full">
+        <div className="mt-5 flex w-full flex-col gap-[50px]">
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <ExploreCategories />
-          </HydrationBoundary>
-        </div>
-
-        <div className="mt-[50px] flex w-full flex-col">
-          <HydrationBoundary state={dehydrate(queryClient)}>
-            <ExploreCanvas />
+            <ExploreContainer />
           </HydrationBoundary>
         </div>
       </section>

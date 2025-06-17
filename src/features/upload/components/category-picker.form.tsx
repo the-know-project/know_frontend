@@ -89,10 +89,10 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
               type="button"
               onClick={() => handleCategoryToggle(category)}
               className={cn(
-                "font-bebas group active:scale- inline-flex w-full rounded-lg px-2 py-2.5 text-sm font-bold text-nowrap transition-all duration-300 hover:scale-105 md:w-[80px] md:text-xs",
+                "font-bricolage group active:scale- inline-flex w-full rounded-lg px-2 py-2.5 text-sm font-bold text-wrap transition-all duration-300 hover:scale-105 md:w-full md:text-xs",
                 isCategorySelected(category)
                   ? "bg-gradient-to-r from-black to-orange-600 text-white"
-                  : "bg-black text-white hover:bg-black",
+                  : "bg-neutral-600 text-white hover:bg-black",
               )}
               style={{
                 animationDelay: `${index * 50}ms`,
