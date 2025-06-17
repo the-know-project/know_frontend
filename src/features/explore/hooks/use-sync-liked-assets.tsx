@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTokenStore } from "../../auth/state/store";
 import { useLikedAssetsActions } from "../state/liked-assets-store";
@@ -12,16 +12,18 @@ import { useLikedAssetIds } from "./use-fetch-liked-assets";
 export const useSyncLikedAssets = () => {
   const userId = useTokenStore((state) => state.user?.id);
   const { initializeLikedAssets } = useLikedAssetsActions();
+  const hasInitialized = useRef(false);
 
   // Fetch liked assets from server
   const { likedAssetIds, isLoading, error } = useLikedAssetIds();
 
-  // Sync with server data when available
+  // Sync with server data when available (only once)
   useEffect(() => {
-    if (!isLoading && likedAssetIds.length > 0) {
+    if (!isLoading && likedAssetIds.length > 0 && !hasInitialized.current) {
       initializeLikedAssets(likedAssetIds);
+      hasInitialized.current = true;
     }
-  }, [likedAssetIds, isLoading, initializeLikedAssets]);
+  }, [likedAssetIds, isLoading]); // Remove initializeLikedAssets from deps
 
   return {
     isLoading,
@@ -34,7 +36,9 @@ export const useSyncLikedAssets = () => {
  * Hook to periodically sync liked assets with server
  * Useful for keeping the local state fresh with server changes
  */
-export const usePeriodicSyncLikedAssets = (intervalMs: number = 5 * 60 * 1000) => {
+export const usePeriodicSyncLikedAssets = (
+  intervalMs: number = 5 * 60 * 1000,
+) => {
   const userId = useTokenStore((state) => state.user?.id);
   const { initializeLikedAssets } = useLikedAssetsActions();
 
@@ -66,7 +70,7 @@ export const usePeriodicSyncLikedAssets = (intervalMs: number = 5 * 60 * 1000) =
     if (data && Array.isArray(data)) {
       initializeLikedAssets(data);
     }
-  }, [data, initializeLikedAssets]);
+  }, [data]); // Remove initializeLikedAssets from deps
 
   return {
     isLoading,
