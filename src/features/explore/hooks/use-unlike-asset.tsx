@@ -7,15 +7,13 @@ import { unLikeAsset } from "../api/unlike-asset/route";
 
 export const useUnlikeAsset = () => {
   const userId = useTokenStore((state) => state.user?.id);
-  if (!userId) {
-    throw new ExploreError("User not authenticated");
-  }
+
   return useMutation({
     mutationKey: [`unlike-asset-${userId}`],
     mutationFn: async (ctx: Pick<TLikeAsset, "fileId">) => {
       const result = await ResultAsync.fromPromise(
         unLikeAsset({
-          userId,
+          userId: userId as string,
           fileId: ctx.fileId,
         }),
         (error) => new ExploreError(`Error liking asset ${error}`),
