@@ -8,8 +8,6 @@ import { useEffect, useState } from "react";
 import ArtSelectionSkeleton from "../../personalize/components/art-selection-skeleton";
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
 import { useGetCategories } from "../../personalize/hooks";
-import { vibrantColors } from "../data/explore.data";
-import { useFetchExploreAsset } from "../hooks/use-fetch-explore-asset";
 
 interface ExploreCategoriesProps {
   debounceMs?: number;
@@ -97,14 +95,17 @@ const ExploreCategories = ({
 
   const handlePreferencesChange = (preferences: string[]) => {
     console.log("User selected preferences:", preferences);
-    onPreferencesChange?.(preferences);
+    if (preferences.length > 0) {
+      onPreferencesChange?.(preferences);
+    } else {
+      onPreferencesChange?.([]);
+    }
     setIsProcessing(false);
   };
 
   const handleFiltersChange = (filters: string[]) => {
     console.log("User selected filters:", filters);
 
-    // Convert string array to filter object based on filter mappings
     const filterObject: {
       priceMin?: number;
       priceMax?: number;
@@ -112,32 +113,34 @@ const ExploreCategories = ({
       available?: boolean;
     } = {};
 
-    filters.forEach((filterName) => {
-      // Handle availability filters
-      if (filterName === "For Sale") {
-        filterObject.available = true;
-      } else if (filterName === "Not For Sale") {
-        filterObject.available = false;
-      }
+    if (filters.length > 0) {
+      filters.forEach((filterName) => {
+        // Handle availability filters
+        if (filterName === "For Sale") {
+          filterObject.available = true;
+        } else if (filterName === "Not For Sale") {
+          filterObject.available = false;
+        }
 
-      // Handle sort filters
-      else if (filterName === "Latest") {
-        filterObject.sortBy = "latest";
-      } else if (filterName === "Oldest") {
-        filterObject.sortBy = "oldest";
-      }
+        // Handle sort filters
+        else if (filterName === "Latest") {
+          filterObject.sortBy = "latest";
+        } else if (filterName === "Oldest") {
+          filterObject.sortBy = "oldest";
+        }
 
-      // Handle price range filters
-      else if (filterName === "$50 - $500") {
-        filterObject.priceMin = 50;
-        filterObject.priceMax = 500;
-      } else if (filterName === "$501 - $1500") {
-        filterObject.priceMin = 501;
-        filterObject.priceMax = 1500;
-      } else if (filterName === "$1500 - above") {
-        filterObject.priceMin = 1500;
-      }
-    });
+        // Handle price range filters
+        else if (filterName === "$50 - $500") {
+          filterObject.priceMin = 50;
+          filterObject.priceMax = 500;
+        } else if (filterName === "$501 - $1500") {
+          filterObject.priceMin = 501;
+          filterObject.priceMax = 1500;
+        } else if (filterName === "$1500 - above") {
+          filterObject.priceMin = 1500;
+        }
+      });
+    }
 
     onFiltersChange?.(filterObject);
     setIsFilterProcessing(false);
@@ -147,6 +150,7 @@ const ExploreCategories = ({
     if (debouncedPreferences.length > 0) {
       handlePreferencesChange(debouncedPreferences);
     } else if (debouncedPreferences.length === 0) {
+      handlePreferencesChange([]);
       setIsProcessing(false);
     }
   }, [debouncedPreferences]);
@@ -155,7 +159,7 @@ const ExploreCategories = ({
     if (debouncedFilters.length > 0) {
       handleFiltersChange(debouncedFilters);
     } else if (debouncedFilters.length === 0) {
-      setIsFilterProcessing(false);
+      handleFiltersChange([]);
     }
   }, [debouncedFilters]);
 
