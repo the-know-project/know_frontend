@@ -11,11 +11,11 @@ interface LikedAsset {
 
 interface LikedAssetsState {
   // Core state
-  likedAssets: Map<string | number, LikedAsset>;
+  likedAssets: Record<string | number, LikedAsset>;
 
   // Actions
   addLikedAsset: (assetId: string | number, originalCount: number) => void;
-  removeLikedAsset: (assetId: string | number, originalCount: number) => void;
+  removeLikedAsset: (assetId: string | number) => void;
   isAssetLiked: (assetId: string | number) => boolean;
   getLikeCount: (assetId: string | number, fallbackCount: number) => number;
 
@@ -35,34 +35,33 @@ interface LikedAssetsState {
 export const useLikedAssetsStore = create<LikedAssetsState>()(
   persist(
     immer((set, get) => ({
-      likedAssets: new Map(),
+      likedAssets: {},
 
       addLikedAsset: (assetId, originalCount) =>
         set((state) => {
-          state.likedAssets.set(assetId, {
+          state.likedAssets[assetId] = {
             fileId: assetId,
             likedAt: new Date(),
             originalLikeCount: originalCount,
             optimisticLikeCount: originalCount + 1,
-          });
+          };
         }),
 
-      removeLikedAsset: (assetId, originalCount) =>
+      removeLikedAsset: (assetId) =>
         set((state) => {
-          const existingAsset = state.likedAssets.get(assetId);
-          if (existingAsset) {
-            state.likedAssets.delete(assetId);
+          if (state.likedAssets[assetId]) {
+            delete state.likedAssets[assetId];
           }
         }),
 
       isAssetLiked: (assetId) => {
         const state = get();
-        return state.likedAssets.has(assetId);
+        return assetId in state.likedAssets;
       },
 
       getLikeCount: (assetId, fallbackCount) => {
         const state = get();
-        const likedAsset = state.likedAssets.get(assetId);
+        const likedAsset = state.likedAssets[assetId];
         if (likedAsset) {
           return likedAsset.optimisticLikeCount;
         }
@@ -71,7 +70,7 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
 
       updateOptimisticCount: (assetId, newCount) =>
         set((state) => {
-          const existingAsset = state.likedAssets.get(assetId);
+          const existingAsset = state.likedAssets[assetId];
           if (existingAsset) {
             existingAsset.optimisticLikeCount = newCount;
           }
@@ -79,7 +78,7 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
 
       revertOptimisticUpdate: (assetId) =>
         set((state) => {
-          const existingAsset = state.likedAssets.get(assetId);
+          const existingAsset = state.likedAssets[assetId];
           if (existingAsset) {
             existingAsset.optimisticLikeCount = existingAsset.originalLikeCount;
           }
@@ -88,30 +87,30 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
       initializeLikedAssets: (assetIds) =>
         set((state) => {
           // Clear existing and add new ones
-          state.likedAssets.clear();
+          state.likedAssets = {};
           assetIds.forEach((assetId) => {
-            state.likedAssets.set(assetId, {
+            state.likedAssets[assetId] = {
               fileId: assetId,
               likedAt: new Date(),
               originalLikeCount: 0, // Will be updated when we have actual counts
               optimisticLikeCount: 0,
-            });
+            };
           });
         }),
 
       clearLikedAssets: () =>
         set((state) => {
-          state.likedAssets.clear();
+          state.likedAssets = {};
         }),
 
       getLikedAssetIds: () => {
         const state = get();
-        return Array.from(state.likedAssets.keys());
+        return Object.keys(state.likedAssets);
       },
 
       getTotalLikedCount: () => {
         const state = get();
-        return state.likedAssets.size;
+        return Object.keys(state.likedAssets).length;
       },
     })),
     {
@@ -123,17 +122,13 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
 
           try {
             const parsed = JSON.parse(str);
-            // Convert the serialized array back to Map
+            // Convert date strings back to Date objects
             if (parsed.state && parsed.state.likedAssets) {
-              parsed.state.likedAssets = new Map(
-                parsed.state.likedAssets.map((item: any) => [
-                  item[0],
-                  {
-                    ...item[1],
-                    likedAt: new Date(item[1].likedAt),
-                  },
-                ]),
-              );
+              Object.values(parsed.state.likedAssets).forEach((asset: any) => {
+                if (asset.likedAt) {
+                  asset.likedAt = new Date(asset.likedAt);
+                }
+              });
             }
             return parsed;
           } catch (error) {
@@ -143,15 +138,8 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
         },
         setItem: (name, value) => {
           try {
-            // Convert Map to array for serialization
-            const serialized = {
-              ...value,
-              state: {
-                ...value.state,
-                likedAssets: Array.from(value.state.likedAssets.entries()),
-              },
-            };
-            localStorage.setItem(name, JSON.stringify(serialized));
+            // No special serialization needed for objects
+            localStorage.setItem(name, JSON.stringify(value));
           } catch (error) {
             console.error("Error saving liked assets to storage:", error);
           }
@@ -174,13 +162,31 @@ export const useLikeCount = (assetId: string | number, fallbackCount: number) =>
 export const useTotalLikedCount = () =>
   useLikedAssetsStore((state) => state.getTotalLikedCount());
 
-// Actions hook
-export const useLikedAssetsActions = () =>
-  useLikedAssetsStore((state) => ({
-    addLikedAsset: state.addLikedAsset,
-    removeLikedAsset: state.removeLikedAsset,
-    updateOptimisticCount: state.updateOptimisticCount,
-    revertOptimisticUpdate: state.revertOptimisticUpdate,
-    initializeLikedAssets: state.initializeLikedAssets,
-    clearLikedAssets: state.clearLikedAssets,
-  }));
+// Actions hook with stable references
+export const useLikedAssetsActions = () => {
+  const addLikedAsset = useLikedAssetsStore((state) => state.addLikedAsset);
+  const removeLikedAsset = useLikedAssetsStore(
+    (state) => state.removeLikedAsset,
+  );
+  const updateOptimisticCount = useLikedAssetsStore(
+    (state) => state.updateOptimisticCount,
+  );
+  const revertOptimisticUpdate = useLikedAssetsStore(
+    (state) => state.revertOptimisticUpdate,
+  );
+  const initializeLikedAssets = useLikedAssetsStore(
+    (state) => state.initializeLikedAssets,
+  );
+  const clearLikedAssets = useLikedAssetsStore(
+    (state) => state.clearLikedAssets,
+  );
+
+  return {
+    addLikedAsset,
+    removeLikedAsset,
+    updateOptimisticCount,
+    revertOptimisticUpdate,
+    initializeLikedAssets,
+    clearLikedAssets,
+  };
+};
