@@ -1,14 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
-import { err, ok, ResultAsync } from "neverthrow";
 import { useTokenStore } from "../../auth/state/store";
-import { unLikeAsset } from "../api/unlike-asset/route";
-import { ExploreError } from "../errors/explore.error";
+import { err, ok, ResultAsync } from "neverthrow";
 import { TLikeAsset } from "../types/explore.types";
+import { ExploreError } from "../errors/explore.error";
+import { unLikeAsset } from "../api/unlike-asset/route";
 
 export const useUnlikeAsset = () => {
   const userId = useTokenStore((state) => state.user?.id);
   if (!userId) {
-    return new ExploreError("User not authenticated");
+    throw new ExploreError("User not authenticated");
   }
   return useMutation({
     mutationKey: [`unlike-asset-${userId}`],
