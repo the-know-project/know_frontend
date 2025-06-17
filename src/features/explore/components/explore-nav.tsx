@@ -1,11 +1,10 @@
 "use client";
 
-import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
-import { IconBell, IconNotification, IconUser } from "@tabler/icons-react";
+import { IconBell, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
-import ExploreForm from "./explore-form";
 import { useRouter } from "next/navigation";
 import { useAuthStatus } from "../../auth/hooks";
+import ExploreForm from "./explore-form";
 
 const ExploreNav = () => {
   const router = useRouter();
