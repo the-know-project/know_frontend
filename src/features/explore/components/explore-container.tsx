@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ExploreCategories from "./explore-categories";
 import ExploreCanvas from "./explore-canvas";
 import { useSyncLikedAssets } from "../hooks/use-sync-liked-assets";
@@ -35,25 +35,22 @@ const ExploreContainer = ({
     ? useSyncLikedAssets()
     : { isInitialized: true };
 
+  // Update state if initial props change (useful for SSR hydration)
   useEffect(() => {
-    if (initialPreferences.length > 0) {
-      setSelectedPreferences(initialPreferences);
-    }
-  }, [initialPreferences]);
+    setSelectedPreferences(initialPreferences);
+  }, []);
 
   useEffect(() => {
-    if (Object.keys(initialFilters).length > 0) {
-      setSelectedFilters(initialFilters);
-    }
-  }, [initialFilters]);
+    setSelectedFilters(initialFilters);
+  }, []);
 
-  const handlePreferencesChange = (preferences: string[]) => {
+  const handlePreferencesChange = useCallback((preferences: string[]) => {
     setSelectedPreferences(preferences);
-  };
+  }, []);
 
-  const handleFiltersChange = (filters: typeof selectedFilters) => {
+  const handleFiltersChange = useCallback((filters: typeof selectedFilters) => {
     setSelectedFilters(filters);
-  };
+  }, []);
 
   return (
     <div className="flex w-full flex-col gap-6">
