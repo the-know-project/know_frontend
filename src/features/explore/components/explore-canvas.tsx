@@ -5,8 +5,24 @@ import { useFetchExploreAsset } from "../hooks/use-fetch-explore-asset";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import { TAsset } from "../types/explore.types";
 
-const ExploreCanvas = () => {
-  const { data, isLoading } = useFetchExploreAsset({});
+interface ExploreCanvasProps {
+  categories?: string[];
+  filters?: {
+    priceMin?: number;
+    priceMax?: number;
+    sortBy?: "latest" | "oldest";
+    available?: boolean;
+  };
+}
+
+const ExploreCanvas = ({
+  categories = [],
+  filters = {},
+}: ExploreCanvasProps) => {
+  const { data, isLoading } = useFetchExploreAsset({
+    categories: categories.length > 0 ? categories : undefined,
+    ...filters,
+  });
 
   if (isLoading) {
     return <ExploreCardSkeletonGrid />;
