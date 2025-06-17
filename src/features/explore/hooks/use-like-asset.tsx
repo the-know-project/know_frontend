@@ -7,15 +7,13 @@ import { ExploreError } from "../errors/explore.error";
 
 export const useLikeAsset = () => {
   const userId = useTokenStore((state) => state.user?.id);
-  if (!userId) {
-    throw new ExploreError("User not authenticated");
-  }
+
   return useMutation({
     mutationKey: [`like-asset-${userId}`],
     mutationFn: async (ctx: Pick<TLikeAsset, "fileId">) => {
       const result = await ResultAsync.fromPromise(
         likeAsset({
-          userId,
+          userId: userId as string,
           fileId: ctx.fileId,
         }),
         (error) => new ExploreError(`Error liking asset ${error}`),
