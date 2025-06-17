@@ -9,3 +9,8 @@ export const FetchAssetSchema = z.object({
   sortBy: z.enum(["latest", "oldest"]).optional(),
   available: z.boolean().optional(),
 });
+
+export const LikeAssetSchema = z.object({
+  userId: z.string().uuid(),
+  fileId: z.string().uuid(),
+});
