@@ -20,6 +20,14 @@ interface FetchLikedAssetsResponse {
 const fetchLikedAssets = async (
   userId: string,
 ): Promise<FetchLikedAssetsResponse> => {
+  // Return empty response if no userId to prevent unnecessary API calls
+  if (!userId) {
+    return {
+      status: 200,
+      data: { likedAssets: [] },
+    };
+  }
+
   const response = await fetch(`/api/users/${userId}/liked-assets`, {
     method: "GET",
     headers: {
