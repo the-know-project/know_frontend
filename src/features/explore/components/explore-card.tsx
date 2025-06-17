@@ -21,7 +21,6 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   artistImage,
   likeCount,
 }) => {
-  // Use the unified asset like hook
   const {
     isLiked,
     likeCount: currentLikeCount,
@@ -32,6 +31,10 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     assetId: id,
     initialLikeCount: likeCount,
   });
+
+  if (error) {
+    console.log(error);
+  }
 
   return (
     <div className="flex h-[300px] w-full max-w-[500px] flex-col gap-2 rounded-[15px] px-6 py-3">
