@@ -21,7 +21,7 @@ const Page = async () => {
       <section className="relative z-50 flex w-full flex-col px-6">
         <div className="mt-5 flex w-full flex-col gap-[50px]">
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <ExploreContainer />
+            <ExploreContainer enableServerSync={false} />
           </HydrationBoundary>
         </div>
       </section>
