@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import ExploreCategories from "./explore-categories";
 import ExploreCanvas from "./explore-canvas";
+import { useSyncLikedAssets } from "../hooks/use-sync-liked-assets";
 
 interface ExploreContainerProps {
   initialPreferences?: string[];
@@ -12,11 +13,13 @@ interface ExploreContainerProps {
     sortBy?: "latest" | "oldest";
     available?: boolean;
   };
+  enableServerSync?: boolean; // Optional server sync
 }
 
 const ExploreContainer = ({
   initialPreferences = [],
   initialFilters = {},
+  enableServerSync = true,
 }: ExploreContainerProps = {}) => {
   const [selectedPreferences, setSelectedPreferences] =
     useState<string[]>(initialPreferences);
@@ -27,7 +30,11 @@ const ExploreContainer = ({
     available?: boolean;
   }>(initialFilters);
 
-  // Update state if initial props change (useful for SSR hydration)
+  // Optional server sync for liked assets
+  const { isInitialized } = enableServerSync
+    ? useSyncLikedAssets()
+    : { isInitialized: true };
+
   useEffect(() => {
     if (initialPreferences.length > 0) {
       setSelectedPreferences(initialPreferences);
