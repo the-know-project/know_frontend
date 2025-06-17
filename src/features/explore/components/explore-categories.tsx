@@ -9,9 +9,24 @@ import ArtSelectionSkeleton from "../../personalize/components/art-selection-ske
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
 import { useGetCategories } from "../../personalize/hooks";
 import { vibrantColors } from "../data/explore.data";
+import { useFetchExploreAsset } from "../hooks/use-fetch-explore-asset";
 
 interface ExploreCategoriesProps {
   debounceMs?: number;
+  onPreferencesChange?: (preferences: string[]) => void;
+  onFiltersChange?: (filters: {
+    priceMin?: number;
+    priceMax?: number;
+    sortBy?: "latest" | "oldest";
+    available?: boolean;
+  }) => void;
+  selectedPreferences?: string[];
+  selectedFilters?: {
+    priceMin?: number;
+    priceMax?: number;
+    sortBy?: "latest" | "oldest";
+    available?: boolean;
+  };
 }
 
 const useDebounce = (value: string[], delay: number) => {
@@ -48,12 +63,19 @@ const useFilterDebounce = (value: string[], delay: number) => {
 
 const ExploreCategories = ({
   debounceMs = 800,
+  onPreferencesChange,
+  onFiltersChange,
+  selectedPreferences: propSelectedPreferences = [],
+  selectedFilters: propSelectedFilters = {},
 }: ExploreCategoriesProps = {}) => {
   const { data, isLoading, error } = useGetCategories();
+
   const [activeButton, setActiveButton] = useState<"for-you" | "following">(
     "for-you",
   );
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
+  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
+    propSelectedPreferences,
+  );
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFilterProcessing, setIsFilterProcessing] = useState(false);
@@ -75,13 +97,49 @@ const ExploreCategories = ({
 
   const handlePreferencesChange = (preferences: string[]) => {
     console.log("User selected preferences:", preferences);
-    // TODO: Replace with mutation hook later
+    onPreferencesChange?.(preferences);
     setIsProcessing(false);
   };
 
   const handleFiltersChange = (filters: string[]) => {
     console.log("User selected filters:", filters);
-    // TODO: Replace with filter query mutation hook later
+
+    // Convert string array to filter object based on filter mappings
+    const filterObject: {
+      priceMin?: number;
+      priceMax?: number;
+      sortBy?: "latest" | "oldest";
+      available?: boolean;
+    } = {};
+
+    filters.forEach((filterName) => {
+      // Handle availability filters
+      if (filterName === "For Sale") {
+        filterObject.available = true;
+      } else if (filterName === "Not For Sale") {
+        filterObject.available = false;
+      }
+
+      // Handle sort filters
+      else if (filterName === "Latest") {
+        filterObject.sortBy = "latest";
+      } else if (filterName === "Oldest") {
+        filterObject.sortBy = "oldest";
+      }
+
+      // Handle price range filters
+      else if (filterName === "$50 - $500") {
+        filterObject.priceMin = 50;
+        filterObject.priceMax = 500;
+      } else if (filterName === "$501 - $1500") {
+        filterObject.priceMin = 501;
+        filterObject.priceMax = 1500;
+      } else if (filterName === "$1500 - above") {
+        filterObject.priceMin = 1500;
+      }
+    });
+
+    onFiltersChange?.(filterObject);
     setIsFilterProcessing(false);
   };
 
@@ -144,7 +202,7 @@ const ExploreCategories = ({
   return (
     <section className="relative z-50 flex w-full flex-col gap-2 sm:px-6">
       {/* Catgeories */}
-      <div className="scrollbar-hide mb-2 z-50 flex w-full overflow-x-auto md:hidden">
+      <div className="scrollbar-hide z-50 mb-2 flex w-full overflow-x-auto md:hidden">
         <div className="flex min-w-fit items-center gap-2">
           {artPreferences?.map((pref, index) => (
             <button
