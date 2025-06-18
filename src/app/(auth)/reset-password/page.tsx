@@ -1,5 +1,5 @@
+import VerifyCode from "@/src/features/auth/components/reset-password";
 import GridBackground from "@/src/shared/components/grid-background";
-import VerifyCode from "@/src/shared/components/resetpassword";
 
 const Page = () => {
   return (
