@@ -17,6 +17,7 @@ import { IconSend } from "@tabler/icons-react";
 import { IForgotPassword } from "../types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgotPasswordSchema } from "../schema/auth.schema";
+import { forgot_password } from "@/src/assets";
 
 const ForgotPasswordForm = () => {
   const form = useForm<IForgotPassword>({
@@ -33,13 +34,15 @@ const ForgotPasswordForm = () => {
     <div className="relative z-50 grid min-h-screen grid-cols-1 md:grid-cols-2">
       <div className="flex flex-col bg-transparent px-8 py-12 md:px-16">
         <div className="mb-10 flex items-center justify-between">
-          <Image
-            src="/Know-Logo.png"
-            alt="Logo"
-            width={60}
-            height={60}
-            quality={100}
-          />
+          <Link href="/">
+            <Image
+              src="/Know-Logo.png"
+              alt="Logo"
+              width={60}
+              height={60}
+              quality={100}
+            />
+          </Link>
           <p className="font-bricolage text-sm font-medium text-neutral-600">
             {" "}
             <Link
@@ -110,8 +113,8 @@ const ForgotPasswordForm = () => {
 
       <div className="motion-preset-blur-right-lg motion-duration-700 relative hidden md:block">
         <Image
-          src="/roleselect.png"
-          alt="role_selection_image"
+          src={forgot_password}
+          alt="forgot_password"
           quality={100}
           fill
           className="h-full w-full object-cover"
