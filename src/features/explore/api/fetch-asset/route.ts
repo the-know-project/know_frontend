@@ -11,7 +11,9 @@ export async function fetchAllExploreAssets(ctx: TFetchExploreAsset) {
 
     if (value !== undefined && value !== null) {
       if (key === "categories" && Array.isArray(value)) {
-        queryParams.append(key, value.join(","));
+        value.forEach((category) => {
+          queryParams.append("categories", category);
+        });
       } else {
         queryParams.append(key, String(value));
       }
