@@ -1,6 +1,8 @@
 import { z } from "zod";
 import {
+  ForgotPasswordSchema,
   LoginSchema,
+  ResetPasswordSchema,
   RoleSchema,
   SignUpFormSchema,
   SignUpSchema,
@@ -29,3 +31,5 @@ export type ILogin = z.infer<typeof LoginSchema>;
 export type IRole = z.infer<typeof RoleSchema>;
 export type ISignUpForm = z.infer<typeof SignUpFormSchema>;
 export type ISignUpResponseDto = z.infer<typeof SignUpResponseDto>;
+export type IForgotPassword = z.infer<typeof ForgotPasswordSchema>;
+export type IResetPassword = z.infer<typeof ResetPasswordSchema>;
