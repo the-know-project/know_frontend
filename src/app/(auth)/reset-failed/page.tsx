@@ -1,12 +1,12 @@
+import ResetFailedPage from "@/src/features/auth/components/reset-failed";
 import GridBackground from "@/src/shared/components/grid-background";
-import ResetSuccessPage from "@/src/shared/components/resetsuccess";
 
 const Page = () => {
   return (
     <section className="flex w-full flex-col scroll-smooth">
       <GridBackground>
         <>
-          <ResetSuccessPage />
+          <ResetFailedPage />
         </>
       </GridBackground>
     </section>
