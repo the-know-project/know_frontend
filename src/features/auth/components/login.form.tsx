@@ -24,6 +24,7 @@ import { useLogin } from "../hooks";
 import { useGoogleLogin } from "../hooks/use-google-login";
 import { LoginSchema } from "../schema/auth.schema";
 import { ILogin, ILoginSuccess } from "../types/auth.types";
+import Link from "next/link";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -166,6 +167,9 @@ const LoginForm = () => {
                 <div className="absolute right-0 -bottom-5">
                   <FormMessage className="signup_error_message" />
                 </div>
+                <Link
+                href="/forgot-password"
+                className="ml-[300px] text-red-600 cursor-pointer">Forgot password?</Link>
               </FormItem>
             )}
           />
