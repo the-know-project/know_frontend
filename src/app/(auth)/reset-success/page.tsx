@@ -1,5 +1,5 @@
+import ResetSuccessPage from "@/src/features/auth/components/reset-success";
 import GridBackground from "@/src/shared/components/grid-background";
-import ResetSuccessPage from "@/src/shared/components/resetsuccess";
 
 const Page = () => {
   return (
