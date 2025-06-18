@@ -1,15 +1,18 @@
 import GridBackground from "@/src/shared/components/grid-background";
-import ForgotPassword from "@/src/shared/components/forgotpassword";
+import { PageAuthGuard } from "@/src/features/auth/guards";
+import ForgotPasswordForm from "@/src/features/auth/components/forgot-password-form";
 
 const Page = () => {
   return (
-    <section className="flex w-full flex-col scroll-smooth">
-      <GridBackground>
-        <>
-          <ForgotPassword />
-        </>
-      </GridBackground>
-    </section>
+    <PageAuthGuard guestOnly>
+      <section className="flex w-full flex-col scroll-smooth">
+        <GridBackground>
+          <>
+            <ForgotPasswordForm />
+          </>
+        </GridBackground>
+      </section>
+    </PageAuthGuard>
   );
 };
 
