@@ -167,9 +167,14 @@ const LoginForm = () => {
                 <div className="absolute right-0 -bottom-5">
                   <FormMessage className="signup_error_message" />
                 </div>
-                <Link
-                href="/forgot-password"
-                className="ml-[300px] text-red-600 cursor-pointer">Forgot password?</Link>
+                <div className="flex w-full flex-col items-end justify-end">
+                  <Link
+                    href="/forgot-password"
+                    className="font-bricolage flex cursor-pointer text-sm text-red-500"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </FormItem>
             )}
           />
