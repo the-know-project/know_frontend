@@ -8,7 +8,7 @@ export default function Hero() {
   return (
     <section className="flex min-h-screen w-full flex-col overflow-x-hidden bg-black">
       <div className="relative flex w-full flex-col items-center justify-center lg:flex-row lg:justify-between">
-        <div className="absolute z-20 flex w-full flex-col gap-10 pl-4 sm:pl-0 lg:relative lg:w-2/4 lg:gap-8">
+        <div className="absolute z-20 flex w-full flex-col gap-10 pl-4 lg:relative lg:w-2/4 lg:gap-8 lg:pl-0">
           <GradientText className="flex w-full p-0 md:p-6 lg:max-w-prose lg:p-0">
             <h3 className="font-bebas text-7xl font-black sm:text-8xl lg:text-8xl">
               {`Discover, Showcase & Own Art`}
