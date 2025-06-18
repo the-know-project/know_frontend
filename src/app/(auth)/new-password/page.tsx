@@ -1,12 +1,12 @@
+import NewPasswordForm from "@/src/features/auth/components/new-password.form";
 import GridBackground from "@/src/shared/components/grid-background";
-import SetNewPasswordPage from "@/src/shared/components/newpassword";
 
 const Page = () => {
   return (
     <section className="flex w-full flex-col scroll-smooth">
       <GridBackground>
         <>
-          <SetNewPasswordPage />
+          <NewPasswordForm />
         </>
       </GridBackground>
     </section>
