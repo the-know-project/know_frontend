@@ -4,6 +4,7 @@ import ExploreCard from "./explore-card";
 import { useFetchExploreAsset } from "../hooks/use-fetch-explore-asset";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import { TAsset } from "../types/explore.types";
+import { useTokenStore } from "../../auth/state/store";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -19,7 +20,10 @@ const ExploreCanvas = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
+  const userId = useTokenStore((state) => state.user?.id);
+
   const { data, isLoading } = useFetchExploreAsset({
+    userId,
     categories: categories.length > 0 ? categories : undefined,
     ...filters,
   });
@@ -28,6 +32,7 @@ const ExploreCanvas = ({
     return <ExploreCardSkeletonGrid />;
   }
 
+  console.log(data);
   const assets = data?.data.assets ? data.data.assets : [];
   return (
     <section className="flex w-full flex-col items-center justify-center">
