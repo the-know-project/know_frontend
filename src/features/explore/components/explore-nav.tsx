@@ -7,26 +7,38 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthStatus } from "../../auth/hooks";
-import ExploreForm from "./explore-form";
 import NotificationCard from "../../notifications/components/notification-card";
 import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
 import { INotificationData } from "../../notifications/types/notification.types";
+import ExploreForm from "./explore-form";
 
 const ExploreNav = () => {
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
   const [shouldShake, setShouldShake] = useState<boolean>(false);
-  const { user, role } = useAuthStatus();
+  const [notifications, setNotifications] =
+    useState<INotificationData[]>(MockNotifications);
+  const [isClient, setIsClient] = useState(false);
+  const { user, role, isLoading: authLoading } = useAuthStatus();
   const router = useRouter();
 
   const { data: notificationData } = useFetchUserNotifications();
 
-  let data: INotificationData[] = MockNotifications;
-  if (user && notificationData) {
-    console.log(`user found ${user.id}`);
-    console.log(notificationData);
-    data = notificationData.data;
-  }
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient && !authLoading) {
+      if (user && notificationData?.data) {
+        console.log(`user found ${user.id}`);
+        console.log(notificationData);
+        setNotifications(notificationData.data);
+      } else {
+        setNotifications(MockNotifications);
+      }
+    }
+  }, [isClient, user, notificationData, authLoading]);
 
   const variants = {
     hidden: { opacity: 0, y: 20 },
@@ -42,15 +54,15 @@ const ExploreNav = () => {
   };
 
   useEffect(() => {
-    if (data.length > 0) {
+    if (notifications.length > 0) {
       const interval = setInterval(() => {
         setShouldShake(true);
-        setTimeout(() => setShouldShake(false), 1000); // Stop shaking after 1 second
+        setTimeout(() => setShouldShake(false), 1000);
       }, 5000);
 
       return () => clearInterval(interval);
     }
-  }, [data.length]);
+  }, [notifications.length]);
 
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
@@ -85,7 +97,7 @@ const ExploreNav = () => {
         </div>
 
         <div className="flex items-center gap-5">
-          {user && role.toLowerCase() === "artist" && (
+          {!authLoading && user && role.toLowerCase() === "artist" && (
             <button
               className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
               onClick={handleShareWork}
@@ -99,14 +111,14 @@ const ExploreNav = () => {
               <button className="relative" onClick={handleNotificationClicked}>
                 <IconBellRinging
                   className={`h-[32px] w-[32px] cursor-pointer text-neutral-600 ${
-                    data.length > 0 && shouldShake
+                    notifications.length > 0 && shouldShake
                       ? "motion-preset-shake motion-duration-700"
                       : ""
                   }`}
                 />
-                {data.length > 0 && (
+                {notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 p-2 text-[10px] font-medium text-white">
-                    {data.length > 99 ? "99+" : data.length}
+                    {notifications.length > 99 ? "99+" : notifications.length}
                   </span>
                 )}
               </button>
@@ -124,13 +136,15 @@ const ExploreNav = () => {
                         duration: 0.09,
                       }}
                     >
-                      {data.length > 0 && <NotificationCard data={data} />}
+                      {notifications.length > 0 && (
+                        <NotificationCard data={notifications} />
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             </div>
-            {user?.imageUrl ? (
+            {!authLoading && user?.imageUrl ? (
               <Image
                 alt="user profile"
                 src={user?.imageUrl}
