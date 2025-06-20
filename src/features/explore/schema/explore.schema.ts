@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const FetchAssetSchema = z.object({
+  userId: z.string().uuid().optional(),
   page: z.number().min(1).optional(),
   limit: z.number().min(1).max(100).optional(),
   categories: z.array(z.string()).optional(),
