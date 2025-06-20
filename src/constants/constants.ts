@@ -231,3 +231,18 @@ export const ExploreDemoItem = [
     likeCount: 50,
   },
 ];
+
+export const MockNotifications = [
+  {
+    id: 1,
+    image: "/Avatar.png",
+    content: "Followed you",
+    createdAt: Date.now(),
+  },
+  {
+    id: 2,
+    image: "/Avatar.png",
+    content: "Followed you",
+    createdAt: Date.now()
+  },
+];

@@ -217,6 +217,10 @@
   .editor_title_font {
     @apply font-bricolage text-[20px] font-black tracking-wider text-black capitalize;
   }
+
+  .notification_card {
+    @apply flex min-h-[300px] min-w-[300px] flex-col rounded-[15px] border border-white/20 bg-white/10 px-2 py-4 shadow-lg backdrop-blur-md;
+  }
 }
 .purple-glow {
   filter: drop-shadow(0 0 30px rgba(128, 0, 255, 0.7));

@@ -1,17 +1,31 @@
 "use client";
 
-import { IconBell, IconUser } from "@tabler/icons-react";
+import { IconBell, IconBellRinging, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuthStatus } from "../../auth/hooks";
 import ExploreForm from "./explore-form";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import NotificationCard from "@/src/shared/components/notification-card";
 
 const ExploreNav = () => {
+  const [isNotificationClicked, setIsNotificationClicked] =
+    useState<boolean>(false);
   const router = useRouter();
   const { user, role } = useAuthStatus();
-  console.log(role);
+
+  const variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   const handleShareWork = () => {
     router.push("/upload");
+  };
+
+  const handleNotificationClicked = () => {
+    setIsNotificationClicked((prev) => !prev);
   };
 
   return (
@@ -57,7 +71,31 @@ const ExploreNav = () => {
           )}
 
           <div className="flex items-center gap-2 bg-transparent px-2">
-            <IconBell className="h-[32px] w-[32px] text-neutral-800" />
+            <div className="relative flex w-full flex-col">
+              <IconBellRinging
+                onClick={handleNotificationClicked}
+                className="motion-preset-shake motion-duration-700 h-[32px] w-[32px] text-neutral-600"
+              />
+              <div className="absolute top-[40px] right-[250px] z-50 w-full lg:right-[270px]">
+                <AnimatePresence>
+                  {isNotificationClicked && (
+                    <motion.div
+                      variants={variants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      transition={{
+                        delay: 0.05,
+                        ease: "easeInOut",
+                        duration: 0.09,
+                      }}
+                    >
+                      <NotificationCard />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
             {user?.imageUrl ? (
               <Image
                 alt="user profile"

@@ -210,10 +210,10 @@ const ExploreCategories = ({
   const artPreferences = data ? data.data : DummyArtPreferences;
 
   return (
-    <section className="relative z-50 flex w-full flex-col gap-2 sm:px-6">
+    <section className="relative flex w-full flex-col gap-2 sm:px-6">
       {/* Catgeories */}
-      <div className="scrollbar-hide z-50 mb-2 flex w-full overflow-x-auto md:hidden">
-        <div className="flex min-w-fit items-center gap-2">
+      <div className="scrollbar-hide mb-2 flex w-full overflow-x-auto md:hidden">
+        <div className="-z-50 flex min-w-fit items-center gap-2">
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
@@ -273,7 +273,7 @@ const ExploreCategories = ({
         </div>
 
         {/* Catgeories */}
-        <div className="scrollbar-hide z-50 hidden w-full overflow-x-auto sm:max-w-[400px] md:flex lg:max-w-[900px]">
+        <div className="scrollbar-hide hidden w-full overflow-x-auto sm:max-w-[400px] md:flex lg:max-w-[900px]">
           <div className="flex min-w-fit items-center gap-2 px-4">
             {artPreferences?.map((pref, index) => (
               <button

@@ -18,7 +18,7 @@ const Page = async () => {
   }
   return (
     <PageAuthGuard requiresAuth>
-      <section className="relative z-50 flex w-full flex-col px-6">
+      <section className="flex w-full flex-col px-6">
         <div className="mt-5 flex w-full flex-col gap-[50px]">
           <HydrationBoundary state={dehydrate(queryClient)}>
             <ExploreContainer enableServerSync={false} />
