@@ -4,11 +4,17 @@ import { fetchUserNotifications } from "../api/fetch-notifications/route";
 import { NOTIFICATION_ERROR_MESSAGES } from "../data/notifications.data";
 import { NotificationError } from "../error/notification.error";
 import { useTokenStore } from "../../auth/state/store";
+import { MockNotifications } from "@/src/constants/constants";
 
 export const useFetchUserNotifications = () => {
   const user = useTokenStore((state) => state.user);
   if (!user) {
-    throw new Error("User is not authenticated");
+    return {
+      data: MockNotifications,
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
   }
   return useQuery({
     queryKey: [`fetch-user-notifications-${user.id}`],
