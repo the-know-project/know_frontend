@@ -36,7 +36,7 @@ const ExploreNav = () => {
       const interval = setInterval(() => {
         setShouldShake(true);
         setTimeout(() => setShouldShake(false), 1000); // Stop shaking after 1 second
-      }, 5000); // Shake every 5 seconds
+      }, 5000);
 
       return () => clearInterval(interval);
     }
