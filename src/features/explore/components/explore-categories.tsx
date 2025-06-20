@@ -213,7 +213,7 @@ const ExploreCategories = ({
     <section className="relative flex w-full flex-col gap-2 sm:px-6">
       {/* Catgeories */}
       <div className="scrollbar-hide mb-2 flex w-full overflow-x-auto md:hidden">
-        <div className="-z-50 flex min-w-fit items-center gap-2">
+        <div className="flex min-w-fit items-center gap-2">
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
