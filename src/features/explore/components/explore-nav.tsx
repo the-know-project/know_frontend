@@ -1,7 +1,6 @@
 "use client";
 
 import { MockNotifications } from "@/src/constants/constants";
-import NotificationCard from "@/src/shared/components/notification-card";
 import { IconBellRinging, IconUser } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -9,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthStatus } from "../../auth/hooks";
 import ExploreForm from "./explore-form";
+import NotificationCard from "../../notifications/components/notification-card";
 
 const ExploreNav = () => {
   const [isNotificationClicked, setIsNotificationClicked] =
