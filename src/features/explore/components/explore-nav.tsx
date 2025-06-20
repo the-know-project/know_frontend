@@ -1,19 +1,22 @@
 "use client";
 
-import { IconBell, IconBellRinging, IconUser } from "@tabler/icons-react";
+import { MockNotifications } from "@/src/constants/constants";
+import NotificationCard from "@/src/shared/components/notification-card";
+import { IconBellRinging, IconUser } from "@tabler/icons-react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useAuthStatus } from "../../auth/hooks";
 import ExploreForm from "./explore-form";
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import NotificationCard from "@/src/shared/components/notification-card";
 
 const ExploreNav = () => {
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
+  const [shouldShake, setShouldShake] = useState<boolean>(false);
   const router = useRouter();
   const { user, role } = useAuthStatus();
+  const data = MockNotifications;
 
   const variants = {
     hidden: { opacity: 0, y: 20 },
@@ -27,6 +30,17 @@ const ExploreNav = () => {
   const handleNotificationClicked = () => {
     setIsNotificationClicked((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (data.length > 0) {
+      const interval = setInterval(() => {
+        setShouldShake(true);
+        setTimeout(() => setShouldShake(false), 1000); // Stop shaking after 1 second
+      }, 5000); // Shake every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [data.length]);
 
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
@@ -72,11 +86,22 @@ const ExploreNav = () => {
 
           <div className="flex items-center gap-2 bg-transparent px-2">
             <div className="relative flex w-full flex-col">
-              <IconBellRinging
-                onClick={handleNotificationClicked}
-                className="motion-preset-shake motion-duration-700 h-[32px] w-[32px] text-neutral-600"
-              />
-              <div className="absolute top-[40px] right-[250px] z-50 w-full lg:right-[270px]">
+              <div className="relative">
+                <IconBellRinging
+                  onClick={handleNotificationClicked}
+                  className={`h-[32px] w-[32px] cursor-pointer text-neutral-600 ${
+                    data.length > 0 && shouldShake
+                      ? "motion-preset-shake motion-duration-700"
+                      : ""
+                  }`}
+                />
+                {data.length > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 p-2 pt-4 text-[10px] font-medium text-white">
+                    {data.length > 99 ? "99+" : data.length}
+                  </span>
+                )}
+              </div>
+              <div className="absolute top-[50px] right-[250px] z-50 w-full lg:right-[270px]">
                 <AnimatePresence>
                   {isNotificationClicked && (
                     <motion.div
@@ -90,7 +115,7 @@ const ExploreNav = () => {
                         duration: 0.09,
                       }}
                     >
-                      <NotificationCard />
+                      <NotificationCard data={data} />
                     </motion.div>
                   )}
                 </AnimatePresence>
