@@ -10,7 +10,9 @@ export async function fetchAllExploreAssets(ctx: TFetchExploreAsset) {
     const value = ctx[key as keyof TFetchExploreAsset];
 
     if (value !== undefined && value !== null) {
-      if (key === "categories" && Array.isArray(value)) {
+      if (key === "userId") {
+        queryParams.append("userId", String(value));
+      } else if (key === "categories" && Array.isArray(value)) {
         value.forEach((category) => {
           queryParams.append("categories", category);
         });
