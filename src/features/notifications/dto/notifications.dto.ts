@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-const NotificationData = z.object({
+export const NotificationData = z.object({
   userId: z.string().uuid(),
   id: z.string().uuid(),
-  image: z.string().url().optional(),
+  image: z.string().url(),
   type: z.string().min(1).max(255),
   content: z.string().min(1).max(255),
   createdAt: z.number(),
