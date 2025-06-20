@@ -14,7 +14,7 @@ interface INotificationCard {
 
 const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
   return (
-    <section className="relative flex min-h-[300px] min-w-[300px] flex-col overflow-hidden rounded-[15px] border border-white/20 bg-white px-2 py-4 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)]">
+    <section className="relative flex min-h-[300px] min-w-[300px] flex-col overflow-hidden rounded-[15px] border border-white/20 bg-white px-2 py-4 opacity-95 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)]">
       <div className="relative z-10 flex w-full flex-col gap-5">
         {data.map((notification, index) => (
           <div className="flex w-full flex-col gap-2" key={notification.id}>
