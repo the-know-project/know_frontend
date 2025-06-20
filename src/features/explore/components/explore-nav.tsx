@@ -96,7 +96,7 @@ const ExploreNav = () => {
                   }`}
                 />
                 {data.length > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 p-2 pt-4 text-[10px] font-medium text-white">
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 p-2 text-[10px] font-medium text-white">
                     {data.length > 99 ? "99+" : data.length}
                   </span>
                 )}
