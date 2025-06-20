@@ -26,8 +26,6 @@ const ExploreNav = () => {
     console.log(`user found ${user.id}`);
     console.log(notificationData);
     data = notificationData.data;
-  } else {
-    console.log(data);
   }
 
   const variants = {
