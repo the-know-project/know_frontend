@@ -9,14 +9,26 @@ import { useEffect, useState } from "react";
 import { useAuthStatus } from "../../auth/hooks";
 import ExploreForm from "./explore-form";
 import NotificationCard from "../../notifications/components/notification-card";
+import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
+import { INotificationData } from "../../notifications/types/notification.types";
 
 const ExploreNav = () => {
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
   const [shouldShake, setShouldShake] = useState<boolean>(false);
-  const router = useRouter();
   const { user, role } = useAuthStatus();
-  const data = MockNotifications;
+  const router = useRouter();
+
+  const { data: notificationData } = useFetchUserNotifications();
+
+  let data: INotificationData[] = MockNotifications;
+  if (user && notificationData) {
+    console.log(`user found ${user.id}`);
+    console.log(notificationData);
+    data = notificationData.data;
+  } else {
+    console.log(data);
+  }
 
   const variants = {
     hidden: { opacity: 0, y: 20 },
@@ -86,9 +98,8 @@ const ExploreNav = () => {
 
           <div className="flex items-center gap-2 bg-transparent px-2">
             <div className="relative flex w-full flex-col">
-              <div className="relative">
+              <button className="relative" onClick={handleNotificationClicked}>
                 <IconBellRinging
-                  onClick={handleNotificationClicked}
                   className={`h-[32px] w-[32px] cursor-pointer text-neutral-600 ${
                     data.length > 0 && shouldShake
                       ? "motion-preset-shake motion-duration-700"
@@ -100,7 +111,7 @@ const ExploreNav = () => {
                     {data.length > 99 ? "99+" : data.length}
                   </span>
                 )}
-              </div>
+              </button>
               <div className="absolute top-[50px] right-[250px] z-50 w-full lg:right-[270px]">
                 <AnimatePresence>
                   {isNotificationClicked && (
@@ -115,7 +126,7 @@ const ExploreNav = () => {
                         duration: 0.09,
                       }}
                     >
-                      <NotificationCard data={data} />
+                      {data.length > 0 && <NotificationCard data={data} />}
                     </motion.div>
                   )}
                 </AnimatePresence>
