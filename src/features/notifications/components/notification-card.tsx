@@ -44,13 +44,13 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
           onClick={handleDeleteAll}
           disabled={isPending}
         >
-          <p className="font-grotesk text-xs text-gray-400 capitalize">
+          <div className="font-grotesk text-xs text-gray-400 capitalize">
             {isPending ? (
               <Spinner borderColor="border-blue-600" />
             ) : (
-              "mark all as read"
+              <p>Mark all as read</p>
             )}
-          </p>
+          </div>
           <IconChecks
             width={20}
             height={20}
