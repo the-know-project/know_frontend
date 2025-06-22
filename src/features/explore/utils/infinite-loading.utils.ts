@@ -1,4 +1,4 @@
-import { TAsset } from '../types/explore.types';
+import { TAsset } from "../types/explore.types";
 
 /**
  * Utility functions for managing infinite loading state and operations
@@ -26,7 +26,10 @@ export const deduplicateAssets = (assets: TAsset[]): TAsset[] => {
  * @param newAssets - New assets to merge
  * @returns Merged and deduplicated array of assets
  */
-export const mergeAssets = (existingAssets: TAsset[], newAssets: TAsset[]): TAsset[] => {
+export const mergeAssets = (
+  existingAssets: TAsset[],
+  newAssets: TAsset[],
+): TAsset[] => {
   const combined = [...existingAssets, ...newAssets];
   return deduplicateAssets(combined);
 };
@@ -37,7 +40,10 @@ export const mergeAssets = (existingAssets: TAsset[], newAssets: TAsset[]): TAss
  * @param totalPages - Total number of pages
  * @returns Whether there are more pages to load
  */
-export const hasMorePages = (currentPage: number, totalPages: number): boolean => {
+export const hasMorePages = (
+  currentPage: number,
+  totalPages: number,
+): boolean => {
   return currentPage < totalPages;
 };
 
@@ -47,7 +53,10 @@ export const hasMorePages = (currentPage: number, totalPages: number): boolean =
  * @param totalPages - Total number of pages
  * @returns Next page number or null if no more pages
  */
-export const getNextPage = (currentPage: number, totalPages: number): number | null => {
+export const getNextPage = (
+  currentPage: number,
+  totalPages: number,
+): number | null => {
   return hasMorePages(currentPage, totalPages) ? currentPage + 1 : null;
 };
 
@@ -69,7 +78,7 @@ export const filtersChanged = (oldFilters: any, newFilters: any): boolean => {
  */
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -86,7 +95,7 @@ export const debounce = <T extends (...args: any[]) => any>(
  */
 export const throttle = <T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): ((...args: Parameters<T>) => void) => {
   let inThrottle: boolean;
   return (...args: Parameters<T>) => {
@@ -121,7 +130,10 @@ export const getScrollProgress = (element?: HTMLElement): number => {
  * @param threshold - Distance from bottom in pixels (default: 200)
  * @returns Whether the element is near the bottom
  */
-export const isNearBottom = (element?: HTMLElement, threshold: number = 200): boolean => {
+export const isNearBottom = (
+  element?: HTMLElement,
+  threshold: number = 200,
+): boolean => {
   const target = element || document.documentElement;
   const { scrollTop, scrollHeight, clientHeight } = target;
 
@@ -133,7 +145,10 @@ export const isNearBottom = (element?: HTMLElement, threshold: number = 200): bo
  * @param element - Element to scroll (defaults to window)
  * @param behavior - Scroll behavior ('smooth' or 'auto')
  */
-export const scrollToTop = (element?: HTMLElement, behavior: ScrollBehavior = 'smooth'): void => {
+export const scrollToTop = (
+  element?: HTMLElement,
+  behavior: ScrollBehavior = "smooth",
+): void => {
   if (element) {
     element.scrollTo({ top: 0, behavior });
   } else {
@@ -148,13 +163,13 @@ export const getLoadingMessage = (
   isInitialLoading: boolean,
   isLoadingMore: boolean,
   hasError: boolean,
-  isEmpty: boolean
+  isEmpty: boolean,
 ): string => {
-  if (hasError) return 'Failed to load content';
-  if (isInitialLoading) return 'Loading...';
-  if (isLoadingMore) return 'Loading more...';
-  if (isEmpty) return 'No content available';
-  return '';
+  if (hasError) return "Failed to load content";
+  if (isInitialLoading) return "Loading...";
+  if (isLoadingMore) return "Loading more...";
+  if (isEmpty) return "No content available";
+  return "";
 };
 
 /**
@@ -163,5 +178,5 @@ export const getLoadingMessage = (
  * @returns Promise that resolves after the delay
  */
 export const delay = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
