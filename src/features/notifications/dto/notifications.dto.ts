@@ -9,8 +9,19 @@ export const NotificationData = z.object({
   createdAt: z.number(),
 });
 
+const DeleteNotificationsData = z.object({
+  deletedCount: z.number(),
+  deletedIds: z.array(z.string().uuid()).min(1),
+});
+
 export const NotificationResponseDto = z.object({
   status: z.number(),
   message: z.string(),
   data: z.array(NotificationData).optional(),
+});
+
+export const DeleteNotificationsResponseDto = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: DeleteNotificationsData.optional(),
 });
