@@ -69,14 +69,10 @@ const ExploreCanvas = ({
   if (isEmpty) {
     return (
       <section className="flex w-full flex-col items-center justify-center py-20">
-        <div className="text-center">
-          <p className="font-bricolage text-lg text-gray-500">
-            No assets found matching your criteria.
-          </p>
-        </div>
+        <div className="text-center"></div>
       </section>
     );
-  }
+  } 
 
   return (
     <section className="flex w-full flex-col items-center justify-center">
