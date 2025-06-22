@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
+import { useTokenStore } from "../../auth/state/store";
 import { fetchUserNotifications } from "../api/fetch-notifications/route";
 import { NOTIFICATION_ERROR_MESSAGES } from "../data/notifications.data";
 import { NotificationError } from "../error/notification.error";
-import { useTokenStore } from "../../auth/state/store";
-import { NotificationResponseDto } from "../dto/notifications.dto";
 
 export const useFetchUserNotifications = () => {
   const user = useTokenStore((state) => state.user);
@@ -37,8 +36,7 @@ export const useFetchUserNotifications = () => {
         throw result.error;
       }
 
-      const validatedData = NotificationResponseDto.parse(result.value);
-      return validatedData;
+      return result.value;
     },
     staleTime: 10000,
   });
