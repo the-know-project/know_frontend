@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTokenStore } from "../../auth/state/store";
 import { err, ok, ResultAsync } from "neverthrow";
 import { likeAsset } from "../api/like-asset/route";
@@ -6,6 +6,7 @@ import { TLikeAsset } from "../types/explore.types";
 import { ExploreError } from "../errors/explore.error";
 
 export const useLikeAsset = () => {
+  const queryClient = useQueryClient();
   const userId = useTokenStore((state) => state.user?.id);
 
   return useMutation({
@@ -31,6 +32,11 @@ export const useLikeAsset = () => {
 
       console.log(result);
       return result.value;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`fetch-user-notifications-${userId}`],
+      });
     },
   });
 };
