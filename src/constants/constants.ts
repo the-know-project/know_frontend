@@ -234,15 +234,19 @@ export const ExploreDemoItem = [
 
 export const MockNotifications = [
   {
-    id: 1,
+    userId: "randomuserid",
+    id: "1",
     image: "/Avatar.png",
     content: "Followed you",
+    type: "asset",
     createdAt: Date.now(),
   },
   {
-    id: 2,
+    userId: "randomuserid",
+    id: "2",
     image: "/Avatar.png",
     content: "Followed you",
-    createdAt: Date.now()
+    type: "asset",
+    createdAt: Date.now(),
   },
 ];

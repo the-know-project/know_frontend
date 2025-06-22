@@ -44,7 +44,9 @@ export const useUploadAsset = () => {
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fetch-explore-asset"] });
+      queryClient.invalidateQueries({
+        queryKey: ["fetch-explore-asset", `fetch-user-notifications-${id}`],
+      });
     },
   });
 };

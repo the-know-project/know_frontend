@@ -213,7 +213,7 @@ const ExploreCategories = ({
     <section className="relative flex w-full flex-col gap-2 sm:px-6">
       {/* Catgeories */}
       <div className="scrollbar-hide mb-2 flex w-full overflow-x-auto md:hidden">
-        <div className="-z-50 flex min-w-fit items-center gap-2">
+        <div className="flex min-w-fit items-center gap-2">
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
@@ -299,7 +299,7 @@ const ExploreCategories = ({
         {/* Filter */}
         <button
           onClick={handleToggleFilter}
-          className="motion-preset-expand motion-duration-700 motion-delay-700 border-[#666666text-black flex w-fit gap-1 rounded-lg border px-2 py-1 sm:px-4 sm:py-2"
+          className="motion-preset-expand motion-duration-700 motion-delay-700 flex w-fit gap-1 rounded-lg border bg-neutral-100 px-2 py-1 text-black transition-all hover:scale-105 active:scale-95 sm:px-4 sm:py-2"
         >
           <IconFilter2Edit color="black" width={20} height={20} />
           <p className="font-bricolage text-sm font-medium text-black lg:text-[16px]">
@@ -340,7 +340,7 @@ const ExploreCategories = ({
                         className={cn(
                           "font-bricolage motion-preset-expand motion-duration-700 flex items-center gap-3 rounded-lg p-1 px-2.5 py-2 tracking-wide whitespace-nowrap transition-all duration-300",
                           isFilterSelected(item.name)
-                            ? "bg-black text-white transition-all duration-200"
+                            ? "bg-[#1E3A8A] text-white transition-all duration-200"
                             : "bg-neutral-300 text-black transition-all duration-200 hover:bg-neutral-400",
                         )}
                         style={{

@@ -10,12 +10,16 @@ import {
 
 const Page = async () => {
   const queryClient = new QueryClient();
-  try {
-    await queryClient.prefetchQuery(getCategoriesQueryOptions);
-    await queryClient.prefetchQuery(getExploreAssetsQueryOptions({}));
-  } catch (error) {
-    return <p>Failed to load data: {(error as Error).message}</p>;
-  }
+  await Promise.all([
+    queryClient.prefetchQuery(getCategoriesQueryOptions),
+    queryClient.prefetchQuery(getExploreAssetsQueryOptions({})),
+  ]);
+  // try {
+  //   await queryClient.prefetchQuery(getCategoriesQueryOptions);
+  //   await queryClient.prefetchQuery(getExploreAssetsQueryOptions({}));
+  // } catch (error) {
+  //   return <p>Failed to load data: {(error as Error).message}</p>;
+  // }
   return (
     <PageAuthGuard requiresAuth>
       <section className="flex w-full flex-col px-6">
