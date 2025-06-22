@@ -11,6 +11,7 @@ import NotificationCard from "../../notifications/components/notification-card";
 import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
 import { INotificationData } from "../../notifications/types/notification.types";
 import ExploreForm from "./explore-form";
+import Link from "next/link";
 
 const ExploreNav = () => {
   const [isNotificationClicked, setIsNotificationClicked] =
@@ -31,8 +32,6 @@ const ExploreNav = () => {
   useEffect(() => {
     if (isClient && !authLoading) {
       if (user && notificationData?.data) {
-        console.log(`user found ${user.id}`);
-        console.log(notificationData);
         setNotifications(notificationData.data);
       } else {
         setNotifications(MockNotifications);
@@ -76,7 +75,7 @@ const ExploreNav = () => {
         />
       </div>
       <div className="flex items-center justify-between px-4 sm:px-6">
-        <div className="flex flex-col items-start gap-1">
+        <Link href={"/"} className="flex flex-col items-start gap-1">
           <Image
             src="/Know-Logo.png"
             alt="logo"
@@ -84,7 +83,7 @@ const ExploreNav = () => {
             height={50}
             className="object-contain object-center"
           />
-        </div>
+        </Link>
 
         <div className="hidden w-full max-w-[300px] sm:flex">
           <ExploreForm
