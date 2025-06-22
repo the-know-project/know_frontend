@@ -14,7 +14,10 @@ export const useDeleteUserNotifications = () => {
     mutationKey: [`delete-user-notifications-${user?.id}`],
     mutationFn: async (ctx: Omit<IDeleteNotifications, "userId">) => {
       const result = await ResultAsync.fromPromise(
-        deleteNotifications(ctx),
+        deleteNotifications({
+          userId: user?.id,
+          notificationIds: ctx.notificationIds,
+        }),
         (error: any) =>
           new NotificationError(`Error deleting notifications: ${error}`),
       ).andThen((data) => {
