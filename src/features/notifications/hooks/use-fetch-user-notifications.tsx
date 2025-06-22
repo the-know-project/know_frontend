@@ -4,6 +4,7 @@ import { fetchUserNotifications } from "../api/fetch-notifications/route";
 import { NOTIFICATION_ERROR_MESSAGES } from "../data/notifications.data";
 import { NotificationError } from "../error/notification.error";
 import { useTokenStore } from "../../auth/state/store";
+import { NotificationResponseDto } from "../dto/notifications.dto";
 
 export const useFetchUserNotifications = () => {
   const user = useTokenStore((state) => state.user);
@@ -36,8 +37,8 @@ export const useFetchUserNotifications = () => {
         throw result.error;
       }
 
-      console.log(result.value);
-      return result.value;
+      const validatedData = NotificationResponseDto.parse(result.value);
+      return validatedData;
     },
     staleTime: 10000,
   });
