@@ -1,5 +1,8 @@
+"use client";
+
 import { formatTimestampToReadable } from "@/src/utils/date";
 import Image from "next/image";
+import { useDeleteUserNotifications } from "../hooks/use-delete-user-notifications";
 
 interface NotificationProps {
   id: string | number;
@@ -13,6 +16,15 @@ interface INotificationCard {
 }
 
 const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
+  const { mutateAsync: deleteNotifications, isPending } =
+    useDeleteUserNotifications();
+
+  const handleDeleteNotifications = async (notificationIds: string[]) => {
+    deleteNotifications({
+      notificationIds,
+    });
+  };
+
   return (
     <section className="relative flex max-h-[600px] min-h-[300px] min-w-[300px] flex-col overflow-auto scroll-smooth rounded-[15px] border border-white/20 bg-white px-2 py-4 opacity-95 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)]">
       <div className="relative z-10 flex w-full flex-col gap-5">
