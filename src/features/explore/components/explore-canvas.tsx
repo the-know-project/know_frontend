@@ -3,7 +3,7 @@
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import { TAsset } from "../types/explore.types";
-import { useInfiniteExploreAssets } from "../hooks/use-infinite-explore-assets";
+import { useSimpleInfiniteAssets } from "../hooks/use-simple-infinite-assets";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import InfiniteLoadingIndicator from "./infinite-loading-indicator";
 
@@ -30,7 +30,7 @@ const ExploreCanvas = ({
     loadMore,
     isEmpty,
     canLoadMore,
-  } = useInfiniteExploreAssets({
+  } = useSimpleInfiniteAssets({
     categories,
     filters,
     limit: 12,
@@ -72,7 +72,7 @@ const ExploreCanvas = ({
         <div className="text-center"></div>
       </section>
     );
-  } 
+  }
 
   return (
     <section className="flex w-full flex-col items-center justify-center">
@@ -107,7 +107,6 @@ const ExploreCanvas = ({
         />
       )}
 
-      {/* End of results indicator */}
       {!hasNextPage && assets.length > 0 && (
         <div className="mt-8 w-full py-8 text-center">
           <p className="font-bricolage text-sm text-gray-400">
