@@ -41,7 +41,7 @@ const initialState = {
 };
 
 export const useInfiniteExploreStore = create<InfiniteExploreState>()(
-  subscribeWithSelector((set, get) => ({
+  subscribeWithSelector((set) => ({
     ...initialState,
 
     setAssets: (assets) => set({ assets }),
@@ -70,7 +70,6 @@ export const useInfiniteExploreStore = create<InfiniteExploreState>()(
 
     setFilters: (filters) =>
       set((state) => {
-        // If filters changed, reset pagination
         const filtersChanged =
           JSON.stringify(state.filters) !== JSON.stringify(filters);
         if (filtersChanged) {
@@ -80,6 +79,8 @@ export const useInfiniteExploreStore = create<InfiniteExploreState>()(
             assets: [],
             hasNextPage: true,
             error: null,
+            isLoading: false,
+            isLoadingMore: false,
           };
         }
         return { filters };
@@ -105,7 +106,6 @@ export const useInfiniteExploreSelectors = {
   isLoadingMore: () => useInfiniteExploreStore((state) => state.isLoadingMore),
   error: () => useInfiniteExploreStore((state) => state.error),
   filters: () => useInfiniteExploreStore((state) => state.filters),
-
   isEmpty: () => useInfiniteExploreStore((state) => state.assets.length === 0),
   canLoadMore: () =>
     useInfiniteExploreStore(
