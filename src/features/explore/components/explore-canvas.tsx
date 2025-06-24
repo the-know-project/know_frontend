@@ -92,6 +92,7 @@ const ExploreCanvas = ({
               artistImage={item.imageUrl}
               artistName={`${item.firstName} ${item.lastName}`}
               likeCount={item.numOfLikes}
+              isListed={item.isListed}
             />
           </div>
         ))}
