@@ -38,17 +38,17 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       // Disable Ctrl+S, Ctrl+Shift+I, F12, etc.
       if (
-        (e.ctrlKey && e.key === 's') ||
-        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-        e.key === 'F12'
+        (e.ctrlKey && e.key === "s") ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        e.key === "F12"
       ) {
         e.preventDefault();
         return false;
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -70,7 +70,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       className="flex h-[300px] w-full max-w-[500px] flex-col gap-2 rounded-[15px] px-6 py-3"
       onContextMenu={handleContextMenu}
     >
-      <div className="flex w-full flex-col rounded-[15px] shadow-sm relative">
+      <div className="relative flex w-full flex-col rounded-[15px] shadow-sm">
         {/* Invisible overlay to prevent interaction */}
         <div
           className="absolute inset-0 z-10 bg-transparent"
@@ -86,12 +86,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           height={300}
           className="rounded-[15px] object-cover select-none"
           style={{
-            WebkitUserDrag: 'none',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            msUserSelect: 'none',
-            userSelect: 'none',
-            pointerEvents: 'none'
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
+            userSelect: "none",
+            pointerEvents: "none",
           }}
           onContextMenu={handleContextMenu}
           onDragStart={handleDragStart}
@@ -109,8 +108,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               height={30}
               className="rounded-full object-contain object-center select-none"
               style={{
-                WebkitUserDrag: 'none',
-                userSelect: 'none'
+                userSelect: "none",
               }}
               onContextMenu={handleContextMenu}
               onDragStart={handleDragStart}
