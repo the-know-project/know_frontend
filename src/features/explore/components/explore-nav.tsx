@@ -44,8 +44,12 @@ const ExploreNav = () => {
     visible: { opacity: 1, y: 0 },
   };
 
-  const handleShareWork = () => {
-    router.push("/upload");
+  const handleCtaNavigate = () => {
+    if (role.toLowerCase() === "artist") {
+      router.push("/upload");
+    } else if (role.toLowerCase() === "buyer") {
+      router.push("/cart");
+    }
   };
 
   const handleNotificationClicked = () => {
@@ -96,12 +100,26 @@ const ExploreNav = () => {
         </div>
 
         <div className="flex items-center gap-5">
-          {!authLoading && user && role.toLowerCase() === "artist" && (
+          {!authLoading && user && role.toLowerCase() === "artist" ? (
             <button
               className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
-              onClick={handleShareWork}
+              onClick={handleCtaNavigate}
             >
               <p className="block">Share your work</p>
+            </button>
+          ) : !authLoading && user && role.toLowerCase() === "buyer" ? (
+            <button
+              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              onClick={handleCtaNavigate}
+            >
+              <p className="block">View cart</p>
+            </button>
+          ) : (
+            <button
+              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              onClick={handleCtaNavigate}
+            >
+              <p className="block">View cart</p>
             </button>
           )}
 
