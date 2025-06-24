@@ -1,9 +1,14 @@
 "use client";
 
-import { IconThumbUp, IconThumbUpFilled } from "@tabler/icons-react";
+import {
+  IconShoppingCart,
+  IconThumbUp,
+  IconThumbUpFilled,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import { useAssetLike } from "../hooks/use-asset-like";
 import { useEffect } from "react";
+import { useAuthStatus } from "../../auth/hooks";
 
 interface ExploreCardProps {
   id: number | string;
@@ -12,6 +17,7 @@ interface ExploreCardProps {
   artWork: string;
   artistImage: string;
   likeCount: number;
+  isListed: boolean;
 }
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
@@ -21,6 +27,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   artWork,
   artistImage,
   likeCount,
+  isListed,
 }) => {
   const {
     isLiked,
@@ -32,6 +39,8 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     assetId: id,
     initialLikeCount: likeCount,
   });
+
+  const { role } = useAuthStatus();
 
   // Disable keyboard shortcuts for saving
   useEffect(() => {
@@ -126,6 +135,15 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
+          {role.toLowerCase() === "buyer" && isListed && (
+            <button className="group">
+              <IconShoppingCart
+                width={30}
+                height={30}
+                className="text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
+              />
+            </button>
+          )}
           <button
             onClick={toggleLike}
             disabled={isLoading}
