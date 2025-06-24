@@ -3,6 +3,7 @@
 import { IconThumbUp, IconThumbUpFilled } from "@tabler/icons-react";
 import Image from "next/image";
 import { useAssetLike } from "../hooks/use-asset-like";
+import { useEffect } from "react";
 
 interface ExploreCardProps {
   id: number | string;
@@ -32,22 +33,72 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     initialLikeCount: likeCount,
   });
 
+  // Disable keyboard shortcuts for saving
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Disable Ctrl+S, Ctrl+Shift+I, F12, etc.
+      if (
+        (e.ctrlKey && e.key === 's') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+        e.key === 'F12'
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
   if (error) {
     console.log(error);
   }
 
   return (
-    <div className="flex h-[300px] w-full max-w-[500px] flex-col gap-2 rounded-[15px] px-6 py-3">
-      <div className="flex w-full flex-col rounded-[15px] shadow-sm">
+    <div
+      className="flex h-[300px] w-full max-w-[500px] flex-col gap-2 rounded-[15px] px-6 py-3"
+      onContextMenu={handleContextMenu}
+    >
+      <div className="flex w-full flex-col rounded-[15px] shadow-sm relative">
+        {/* Invisible overlay to prevent interaction */}
+        <div
+          className="absolute inset-0 z-10 bg-transparent"
+          onContextMenu={handleContextMenu}
+          onDragStart={handleDragStart}
+        />
+
         <Image
           src={artWork}
           alt="Artwork"
           quality={100}
           width={500}
           height={300}
-          className="rounded-[15px] object-cover"
+          className="rounded-[15px] object-cover select-none"
+          style={{
+            WebkitUserDrag: 'none',
+            WebkitUserSelect: 'none',
+            MozUserSelect: 'none',
+            msUserSelect: 'none',
+            userSelect: 'none',
+            pointerEvents: 'none'
+          }}
+          onContextMenu={handleContextMenu}
+          onDragStart={handleDragStart}
+          priority
         />
       </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="explore_logo_wrapper">
@@ -56,7 +107,13 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               alt="logo"
               width={30}
               height={30}
-              className="rounded-full object-contain object-center"
+              className="rounded-full object-contain object-center select-none"
+              style={{
+                WebkitUserDrag: 'none',
+                userSelect: 'none'
+              }}
+              onContextMenu={handleContextMenu}
+              onDragStart={handleDragStart}
             />
           </div>
 
