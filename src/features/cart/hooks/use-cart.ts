@@ -69,7 +69,7 @@ export const useItemInCart = (fileId: string) => {
   return isItemInCart;
 };
 
-export const useBulkCartActins = () => {
+export const useBulkCartActions = () => {
   const { initializeCart, clearCartItems } = useCartActions();
 
   const initCart = (ctx: TCart[]) => {
