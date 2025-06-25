@@ -1,14 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { useTokenStore } from "../../auth/state/store";
 import { err, ok, ResultAsync } from "neverthrow";
+import { useTokenStore } from "../../auth/state/store";
 import { fetchUserCart } from "../api/fetch-user-cart/route";
 import { CartError } from "../error/cart.error";
 
 export const useFetchUserCart = () => {
   const userId = useTokenStore((state) => state.user?.id);
   if (!userId) {
-    return [];
+    return {
+      data: [],
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
   }
+
   return useQuery({
     queryKey: [`fetch-user-cart-${userId}`],
     queryFn: async () => {
