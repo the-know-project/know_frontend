@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useAssetLike } from "../hooks/use-asset-like";
 import { useEffect } from "react";
 import { useAuthStatus } from "../../auth/hooks";
+import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 
 interface ExploreCardProps {
   id: number | string;
@@ -41,8 +42,9 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   });
 
   const { role } = useAuthStatus();
+  const { data: cartItems } = useFetchUserCart();
+  console.log(`User cart items: ${cartItems}`);
 
-  // Disable keyboard shortcuts for saving
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Disable Ctrl+S, Ctrl+Shift+I, F12, etc.
@@ -75,10 +77,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   }
 
   return (
-    <div
-      className="flex h-[300px] w-full max-w-[500px] flex-col gap-2 rounded-[15px] px-6 py-3"
-      onContextMenu={handleContextMenu}
-    >
+    <div className="explore_card_wrapper" onContextMenu={handleContextMenu}>
       <div className="relative flex w-full flex-col rounded-[15px] shadow-sm">
         {/* Invisible overlay to prevent interaction */}
         <div
