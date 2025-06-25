@@ -3,10 +3,16 @@ import { TCart } from "../types/cart.types";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-interface CartState {
-  cart: Record<string, TCart>;
+interface ICartItems {
+  fileId: string;
+  quantity: number;
+  createdAt: number;
+}
 
-  addToCart: (ctx: TCart) => void;
+interface CartState {
+  cart: Record<string, ICartItems>;
+
+  addToCart: (fileId: string) => void;
   removeFromCart: (fileId: string) => void;
   isItemInCart: (fileId: string) => boolean;
   getItemQuantity: (fileId: string) => number;
@@ -24,16 +30,12 @@ export const useCartStore = create<CartState>()(
     immer((set, get) => ({
       cart: {},
 
-      addToCart: (ctx: TCart) =>
+      addToCart: (fileId) =>
         set((state) => {
-          state.cart[ctx.fileId] = {
-            id: ctx.id,
-            userId: ctx.userId,
-            fileId: ctx.fileId,
-            quantity: ctx.quantity,
-            price: ctx.price,
-            createdAt: ctx.createdAt,
-            updatedAt: ctx.updatedAt,
+          state.cart[fileId] = {
+            fileId: fileId,
+            quantity: 1,
+            createdAt: Date.now(),
           };
         }),
 
@@ -76,13 +78,9 @@ export const useCartStore = create<CartState>()(
           state.cart = {};
           ctx.forEach((item) => {
             state.cart[item.fileId] = {
-              id: item.id,
-              userId: item.userId,
               fileId: item.fileId,
               quantity: item.quantity,
-              price: item.price,
               createdAt: item.createdAt,
-              updatedAt: item.updatedAt,
             };
           });
         }),
