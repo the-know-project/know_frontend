@@ -67,12 +67,12 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
                 animationDelay: `${index * 100}ms`,
               }}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 mask-auto p-2">
+              <div className="flex w-fit items-center justify-center rounded-full bg-gray-200 mask-auto p-2">
                 <Image
                   src={notification.image}
                   alt={`notification_image`}
-                  width={30}
-                  height={30}
+                  width={50}
+                  height={50}
                   className="rounded-full object-cover"
                 />
               </div>
