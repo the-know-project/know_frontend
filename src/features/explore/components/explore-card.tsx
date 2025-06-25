@@ -2,6 +2,7 @@
 
 import {
   IconShoppingCart,
+  IconShoppingCartFilled,
   IconThumbUp,
   IconThumbUpFilled,
 } from "@tabler/icons-react";
@@ -9,7 +10,7 @@ import Image from "next/image";
 import { useAssetLike } from "../hooks/use-asset-like";
 import { useEffect } from "react";
 import { useAuthStatus } from "../../auth/hooks";
-import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
+import { useCart } from "../../cart/hooks/use-cart";
 
 interface ExploreCardProps {
   id: number | string;
@@ -30,6 +31,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   likeCount,
   isListed,
 }) => {
+  const { role } = useAuthStatus();
   const {
     isLiked,
     likeCount: currentLikeCount,
@@ -41,9 +43,9 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     initialLikeCount: likeCount,
   });
 
-  const { role } = useAuthStatus();
-  const { data: cartItems } = useFetchUserCart();
-  console.log(`User cart items: ${cartItems}`);
+  const { isItemInCart } = useCart({
+    fileId: id as string,
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -136,11 +138,19 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
         <div className="flex items-center gap-2">
           {role.toLowerCase() === "buyer" && isListed && (
             <button className="group">
-              <IconShoppingCart
-                width={30}
-                height={30}
-                className="text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
-              />
+              {isItemInCart ? (
+                <IconShoppingCartFilled
+                  width={30}
+                  height={30}
+                  className="text-purple-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
+                />
+              ) : (
+                <IconShoppingCart
+                  width={30}
+                  height={30}
+                  className="text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
+                />
+              )}
             </button>
           )}
           <button
