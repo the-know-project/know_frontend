@@ -1,11 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import { TAsset } from "../types/explore.types";
 import { useSimpleInfiniteAssets } from "../hooks/use-simple-infinite-assets";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import InfiniteLoadingIndicator from "./infinite-loading-indicator";
+import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
+import { useBulkCartActions } from "../../cart/hooks/use-cart";
+import { TCart } from "../../cart/types/cart.types";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -30,11 +34,14 @@ const ExploreCanvas = ({
     loadMore,
     isEmpty,
     canLoadMore,
+    role,
   } = useSimpleInfiniteAssets({
     categories,
     filters,
     limit: 12,
   });
+  const { initCart } = useBulkCartActions();
+  const { isLoading: isCartLoading, data: cartData } = useFetchUserCart();
 
   const { sentinelRef } = useInfiniteScroll({
     onLoadMore: loadMore,
@@ -44,10 +51,25 @@ const ExploreCanvas = ({
     enabled: true,
   });
 
-  if (isLoading && assets.length === 0) {
+  // Initialize cart when cart data is loaded
+  useEffect(() => {
+    if (!isCartLoading && cartData?.data) {
+      console.log(`Cart data loaded: ${JSON.stringify(cartData.data)}`);
+
+      // Transform cart data to match store interface
+      const transformedCartData = cartData.data.map((item: TCart) => ({
+        fileId: item.fileId,
+        quantity: item.quantity,
+      }));
+
+      console.log(`Transformed Data: ${JSON.stringify(transformedCartData)}`);
+      initCart(transformedCartData);
+    }
+  }, [isCartLoading, cartData?.data, initCart]);
+
+  if (isLoading && assets.length === 0 && isCartLoading) {
     return <ExploreCardSkeletonGrid />;
   }
-
   if (error && assets.length === 0) {
     return (
       <section className="flex w-full flex-col items-center justify-center py-20">
@@ -59,7 +81,7 @@ const ExploreCanvas = ({
             onClick={() => window.location.reload()}
             className="button_base px-4 py-2"
           >
-            Try Again
+            Try Againid
           </button>
         </div>
       </section>
@@ -93,6 +115,7 @@ const ExploreCanvas = ({
               artistName={`${item.firstName} ${item.lastName}`}
               likeCount={item.numOfLikes}
               isListed={item.isListed}
+              role={role!}
             />
           </div>
         ))}
