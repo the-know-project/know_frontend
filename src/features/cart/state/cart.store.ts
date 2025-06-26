@@ -1,12 +1,10 @@
 import { create } from "zustand";
-import { TCart } from "../types/cart.types";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-interface ICartItems {
+export interface ICartItems {
   fileId: string;
   quantity: number;
-  createdAt: number;
 }
 
 interface CartState {
@@ -16,7 +14,7 @@ interface CartState {
   removeFromCart: (fileId: string) => void;
   isItemInCart: (fileId: string) => boolean;
   getItemQuantity: (fileId: string) => number;
-  initializeCart: (items: TCart[]) => void;
+  initializeCart: (items: ICartItems[]) => void;
   clearCartItems: () => void;
   incrementItemQuantity: (fileId: string) => void;
   decrementItemQuantity: (fileId: string) => void;
@@ -35,7 +33,6 @@ export const useCartStore = create<CartState>()(
           state.cart[fileId] = {
             fileId: fileId,
             quantity: 1,
-            createdAt: Date.now(),
           };
         }),
 
@@ -80,7 +77,6 @@ export const useCartStore = create<CartState>()(
             state.cart[item.fileId] = {
               fileId: item.fileId,
               quantity: item.quantity,
-              createdAt: item.createdAt,
             };
           });
         }),
