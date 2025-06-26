@@ -1,12 +1,12 @@
 import { useState } from "react";
 import {
+  ICartItems,
   useCartActions,
   useGetTotalItemsCount,
   useIsItemInCart,
 } from "../state/cart.store";
 import { useAddToCart } from "./use-add-to-cart";
 import { useRemoveFromCart } from "./use-remove-from-cart";
-import { TCart } from "../types/cart.types";
 
 interface IUseCartProps {
   fileId: string;
@@ -72,7 +72,7 @@ export const useItemInCart = (fileId: string) => {
 export const useBulkCartActions = () => {
   const { initializeCart, clearCartItems } = useCartActions();
 
-  const initCart = (ctx: TCart[]) => {
+  const initCart = (ctx: ICartItems[]) => {
     initializeCart(ctx);
   };
 
