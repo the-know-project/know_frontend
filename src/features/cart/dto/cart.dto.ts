@@ -6,12 +6,12 @@ export const CartData = z.object({
   fileId: z.string(),
   quantity: z.number().min(1).max(100),
   price: z.number().min(0).max(1000),
-  createdAt: z.number(),
-  updatedAt: z.number(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
 export const CartResponseDto = z.object({
   status: z.number(),
   message: z.string(),
-  data: z.array(CartData),
+  data: z.array(CartData).optional(),
 });
