@@ -3,7 +3,6 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { useTokenStore } from "../../auth/state/store";
 import { fetchUserCart } from "../api/fetch-user-cart/route";
 import { CartError } from "../error/cart.error";
-import { useBulkCartActions } from "./use-cart";
 
 export const useFetchUserCart = () => {
   const userId = useTokenStore((state) => state.user?.id);
@@ -15,7 +14,6 @@ export const useFetchUserCart = () => {
       error: null,
     };
   }
-  const { initCart } = useBulkCartActions();
 
   return useQuery({
     queryKey: [`fetch-user-cart-${userId}`],
@@ -37,7 +35,6 @@ export const useFetchUserCart = () => {
         throw result.error;
       }
 
-      initCart(result.value.data);
       return result.value;
     },
     staleTime: 5000,
