@@ -20,6 +20,7 @@ interface ExploreCardProps {
   artistImage: string;
   likeCount: number;
   isListed: boolean;
+  role: string;
 }
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
@@ -30,8 +31,8 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   artistImage,
   likeCount,
   isListed,
+  role,
 }) => {
-  const { role } = useAuthStatus();
   const {
     isLiked,
     likeCount: currentLikeCount,
@@ -43,7 +44,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     initialLikeCount: likeCount,
   });
 
-  const { isItemInCart } = useCart({
+  const { isItemInCart, toggleCart } = useCart({
     fileId: id as string,
   });
 
@@ -137,7 +138,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
 
         <div className="flex items-center gap-2">
           {role.toLowerCase() === "buyer" && isListed && (
-            <button className="group">
+            <button onClick={toggleCart} className="group">
               {isItemInCart ? (
                 <IconShoppingCartFilled
                   width={30}
