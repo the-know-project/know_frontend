@@ -2,10 +2,10 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { RouteProtectionResult } from "../types/route-protection.types";
-import { useAuthStatus } from "./use-auth-status";
 import { useEffect, useState } from "react";
 import { RouteProtectionUtils } from "../utils/route-protection.utils";
 import { useRoleStore } from "../state/store";
+import { useStableAuthStatus } from "./use-stable-auth-status";
 
 interface UseAuthGuardOptions {
   redirectOnUnauthorized?: boolean;
@@ -26,7 +26,11 @@ export const useAuthGuard = (options: UseAuthGuardOptions = {}) => {
 
   const router = useRouter();
   const pathName = usePathname();
-  const { isAuthenticated, isLoading: authLoading, user } = useAuthStatus();
+  const {
+    isAuthenticated,
+    isLoading: authLoading,
+    user,
+  } = useStableAuthStatus();
   const role = useRoleStore((state) => state.role);
 
   const [guardState, setGuardState] = useState<AuthGuardState>({
