@@ -151,14 +151,14 @@ export const PROTECTED_ROUTES: ProtectedRoute[] = [
   },
 
   {
-    path: ROUTE_PATHS.USER.PROFILE,
-    name: "Profile",
+    path: ROUTE_PATHS.BUYER_PROFILE,
+    name: "Buyer Profile",
     protection: {
       level: RouteProtectionLevel.AUTHENTICATED,
       redirectTo: ROUTE_PATHS.AUTH.LOGIN,
     },
     metadata: {
-      title: "My Profile - KNOW",
+      title: "Buyer Profile - KNOW",
       showInNavigation: false,
     },
   },
@@ -208,6 +208,7 @@ export const ROUTE_GROUPS = {
     ROUTE_PATHS.PUBLISH,
     ROUTE_PATHS.UPLOAD,
     ROUTE_PATHS.ARTIST_PROFILE,
+    ROUTE_PATHS.BUYER_PROFILE,
     ...Object.values(ROUTE_PATHS.USER),
   ],
   ADMIN: Object.values(ROUTE_PATHS.ADMIN),
