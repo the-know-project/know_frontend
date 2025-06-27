@@ -10,6 +10,7 @@ import InfiniteLoadingIndicator from "./infinite-loading-indicator";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { TCart } from "../../cart/types/cart.types";
+import { AuthErrorBoundary } from "../../auth/components/auth-error-boundary";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -22,7 +23,7 @@ interface ExploreCanvasProps {
   isInitialized?: boolean;
 }
 
-const ExploreCanvas = ({
+const ExploreCanvasContent = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
@@ -52,12 +53,10 @@ const ExploreCanvas = ({
     enabled: true,
   });
 
-  // Initialize cart when cart data is loaded
   useEffect(() => {
     if (!isCartLoading && cartData?.data) {
       console.log(`Cart data loaded: ${JSON.stringify(cartData.data)}`);
 
-      // Transform cart data to match store interface
       const transformedCartData = cartData.data.map((item: TCart) => ({
         fileId: item.fileId,
         quantity: item.quantity,
@@ -82,7 +81,7 @@ const ExploreCanvas = ({
             onClick={() => window.location.reload()}
             className="button_base px-4 py-2"
           >
-            Try Againid
+            Try Again
           </button>
         </div>
       </section>
@@ -140,6 +139,14 @@ const ExploreCanvas = ({
         </div>
       )}
     </section>
+  );
+};
+
+const ExploreCanvas = (props: ExploreCanvasProps) => {
+  return (
+    <AuthErrorBoundary redirectTo="/login">
+      <ExploreCanvasContent {...props} />
+    </AuthErrorBoundary>
   );
 };
 
