@@ -30,7 +30,6 @@ const ExploreContainer = ({
     available?: boolean;
   }>(initialFilters);
 
-  // Optional server sync for liked assets
   const { isInitialized } = enableServerSync
     ? useSyncLikedAssets()
     : { isInitialized: true };
