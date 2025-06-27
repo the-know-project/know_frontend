@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAuthStatus } from "../../auth/hooks";
+import { useSafeAuthStatus } from "../../auth/hooks";
 import NotificationCard from "../../notifications/components/notification-card";
 import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
 import { INotificationData } from "../../notifications/types/notification.types";
@@ -22,7 +22,7 @@ const ExploreNav = () => {
   const [notifications, setNotifications] =
     useState<INotificationData[]>(MockNotifications);
   const [isClient, setIsClient] = useState(false);
-  const { user, role, isLoading: authLoading } = useAuthStatus();
+  const { user, role, isLoading: authLoading } = useSafeAuthStatus();
   const router = useRouter();
 
   const { data: notificationData } = useFetchUserNotifications();
@@ -181,7 +181,7 @@ const ExploreNav = () => {
                   />
                 </button>
 
-                <div className="absolute top-[80px] right-[50px] z-50 w-fit">
+                <div className="absolute top-[100px] right-[50px] z-50 w-fit sm:top-[80px]">
                   <AnimatePresence>
                     {isProfileClicked && (
                       <motion.div
@@ -195,7 +195,12 @@ const ExploreNav = () => {
                           duration: 0.09,
                         }}
                       >
-                        <ProfileModal />
+                        <ProfileModal
+                          firstName={user.firstName}
+                          emailAddress={user.email}
+                          imageUrl={user.imageUrl}
+                          role={role}
+                        />
                       </motion.div>
                     )}
                   </AnimatePresence>
