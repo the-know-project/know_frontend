@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import { TAsset } from "../types/explore.types";
@@ -10,7 +11,8 @@ import InfiniteLoadingIndicator from "./infinite-loading-indicator";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { TCart } from "../../cart/types/cart.types";
-import { AuthErrorBoundary } from "../../auth/components/auth-error-boundary";
+import { useTokenStore } from "../../auth/state/store";
+import { useRoleStore } from "../../auth/state/store";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -23,46 +25,93 @@ interface ExploreCanvasProps {
   isInitialized?: boolean;
 }
 
+const AuthLoadingState = ({ message = "Loading..." }: { message?: string }) => (
+  <section className="flex w-full flex-col items-center justify-center py-20">
+    <div className="text-center">
+      <div className="mb-4">
+        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+      </div>
+      <p className="font-bricolage text-sm text-gray-600">{message}</p>
+    </div>
+  </section>
+);
+
+const useAuthCheck = () => {
+  const router = useRouter();
+  const tokenStore = useTokenStore();
+  const roleStore = useRoleStore();
+
+  return useMemo(() => {
+    const isAuthenticated = tokenStore.isAuthenticated;
+    const isExpired = tokenStore.isTokenExpired();
+
+    if (!isAuthenticated || isExpired) {
+      tokenStore.clearTokens();
+      roleStore.clearRole();
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 100);
+
+      return { isValid: false, shouldRedirect: true };
+    }
+
+    return { isValid: true, shouldRedirect: false };
+  }, [
+    tokenStore.isAuthenticated,
+    tokenStore.accessToken,
+    router,
+    tokenStore,
+    roleStore,
+  ]);
+};
+
 const ExploreCanvasContent = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
+  const assetsHookResult = useSimpleInfiniteAssets({
+    categories,
+    filters,
+    limit: 12,
+  });
+
+  const cartActions = useBulkCartActions();
+  const cartData = useFetchUserCart();
+
+  const infiniteScrollResult = useInfiniteScroll({
+    onLoadMore: assetsHookResult.loadMore,
+    hasNextPage: assetsHookResult.hasNextPage,
+    isLoadingMore: assetsHookResult.isLoadingMore,
+    threshold: 200,
+    enabled: true,
+  });
+
   const {
     assets,
     isLoading,
     isLoadingMore,
     hasNextPage,
     error,
-    loadMore,
     isEmpty,
     canLoadMore,
     role,
-  } = useSimpleInfiniteAssets({
-    categories,
-    filters,
-    limit: 12,
-  });
-  const { initCart } = useBulkCartActions();
-  const { isLoading: isCartLoading, data: cartData } = useFetchUserCart();
+  } = assetsHookResult;
 
-  const { sentinelRef } = useInfiniteScroll({
-    onLoadMore: loadMore,
-    hasNextPage,
-    isLoadingMore,
-    threshold: 200,
-    enabled: true,
-  });
+  const { initCart } = cartActions;
+  const { isLoading: isCartLoading, data: cartDataResult } = cartData;
+  const { sentinelRef } = infiniteScrollResult;
 
   useEffect(() => {
-    if (!isCartLoading && cartData?.data) {
-      const transformedCartData = cartData.data.map((item: TCart) => ({
+    if (!isCartLoading && cartDataResult?.data) {
+      const transformedCartData = cartDataResult.data.map((item: TCart) => ({
         fileId: item.fileId,
         quantity: item.quantity,
       }));
 
       initCart(transformedCartData);
     }
-  }, [isCartLoading, cartData?.data, initCart]);
+  }, [isCartLoading, cartDataResult?.data, initCart]);
 
   if (isLoading && assets.length === 0 && isCartLoading) {
     return <ExploreCardSkeletonGrid />;
@@ -140,11 +189,33 @@ const ExploreCanvasContent = ({
 };
 
 const ExploreCanvas = (props: ExploreCanvasProps) => {
-  return (
-    <AuthErrorBoundary redirectTo="/login">
-      <ExploreCanvasContent {...props} />
-    </AuthErrorBoundary>
-  );
+  const authCheck = useAuthCheck();
+
+  if (!authCheck.isValid) {
+    if (authCheck.shouldRedirect) {
+      return (
+        <AuthLoadingState message="Session expired, redirecting to login..." />
+      );
+    }
+
+    return (
+      <section className="flex w-full flex-col items-center justify-center py-20">
+        <div className="text-center">
+          <p className="font-bricolage mb-4 text-gray-500">
+            Please log in to view content
+          </p>
+          <button
+            onClick={() => (window.location.href = "/login")}
+            className="button_base px-4 py-2"
+          >
+            Go to Login
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  return <ExploreCanvasContent {...props} />;
 };
 
 export default ExploreCanvas;
