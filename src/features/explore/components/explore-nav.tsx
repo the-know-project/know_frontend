@@ -12,10 +12,12 @@ import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-u
 import { INotificationData } from "../../notifications/types/notification.types";
 import ExploreForm from "./explore-form";
 import Link from "next/link";
+import ProfileModal from "../../profile/components/profile-modal";
 
 const ExploreNav = () => {
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
+  const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
   const [shouldShake, setShouldShake] = useState<boolean>(false);
   const [notifications, setNotifications] =
     useState<INotificationData[]>(MockNotifications);
@@ -54,6 +56,12 @@ const ExploreNav = () => {
 
   const handleNotificationClicked = () => {
     setIsNotificationClicked((prev) => !prev);
+    setIsProfileClicked(false);
+  };
+
+  const handleProfileClicked = () => {
+    setIsProfileClicked((prev) => !prev);
+    setIsNotificationClicked(false);
   };
 
   useEffect(() => {
@@ -162,13 +170,37 @@ const ExploreNav = () => {
               </div>
             </div>
             {!authLoading && user?.imageUrl ? (
-              <Image
-                alt="user profile"
-                src={user?.imageUrl}
-                width={32}
-                height={32}
-                className="rounded-full object-contain object-center"
-              />
+              <div className="flex w-full flex-col">
+                <button onClick={handleProfileClicked}>
+                  <Image
+                    alt="user profile"
+                    src={user?.imageUrl}
+                    width={32}
+                    height={32}
+                    className="rounded-full object-contain object-center"
+                  />
+                </button>
+
+                <div className="absolute top-[80px] right-[50px] z-50 w-fit">
+                  <AnimatePresence>
+                    {isProfileClicked && (
+                      <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        transition={{
+                          delay: 0.05,
+                          ease: "easeInOut",
+                          duration: 0.09,
+                        }}
+                      >
+                        <ProfileModal />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
             ) : (
               <IconUser color="black" className="h-[32px] w-[32px]" />
             )}
