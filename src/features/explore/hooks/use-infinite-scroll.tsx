@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from "react";
 
 interface UseInfiniteScrollProps {
   /**
@@ -71,7 +71,6 @@ export const useInfiniteScroll = ({
     }
   }, [enabled, hasNextPage, isLoadingMore, threshold, target, handleLoadMore]);
 
-  // Intersection Observer setup for sentinel element
   useEffect(() => {
     if (!enabled || !sentinelRef.current) {
       return;
@@ -90,7 +89,7 @@ export const useInfiniteScroll = ({
         root: target?.current || null,
         rootMargin: `${threshold}px`,
         threshold: 0.1,
-      }
+      },
     );
 
     observerRef.current.observe(sentinel);
@@ -102,7 +101,6 @@ export const useInfiniteScroll = ({
     };
   }, [enabled, hasNextPage, isLoadingMore, threshold, target, handleLoadMore]);
 
-  // Scroll event listener setup
   useEffect(() => {
     if (!enabled) {
       return;
@@ -110,14 +108,13 @@ export const useInfiniteScroll = ({
 
     const element = target?.current || window;
 
-    element.addEventListener('scroll', handleScroll, { passive: true });
+    element.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      element.removeEventListener('scroll', handleScroll);
+      element.removeEventListener("scroll", handleScroll);
     };
   }, [enabled, handleScroll, target]);
 
-  // Cleanup observer on unmount
   useEffect(() => {
     return () => {
       if (observerRef.current) {
