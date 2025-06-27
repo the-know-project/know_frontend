@@ -55,14 +55,11 @@ const ExploreCanvasContent = ({
 
   useEffect(() => {
     if (!isCartLoading && cartData?.data) {
-      console.log(`Cart data loaded: ${JSON.stringify(cartData.data)}`);
-
       const transformedCartData = cartData.data.map((item: TCart) => ({
         fileId: item.fileId,
         quantity: item.quantity,
       }));
 
-      console.log(`Transformed Data: ${JSON.stringify(transformedCartData)}`);
       initCart(transformedCartData);
     }
   }, [isCartLoading, cartData?.data, initCart]);
