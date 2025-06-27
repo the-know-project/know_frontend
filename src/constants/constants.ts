@@ -250,3 +250,61 @@ export const MockNotifications = [
     createdAt: Date.now(),
   },
 ];
+
+export const ProfileModalItemsBuyer = [
+  {
+    id: 1,
+    title: "My Profile",
+  },
+  {
+    id: 2,
+    title: "Switch to Artist",
+  },
+  {
+    id: 3,
+    title: "Payment Information",
+  },
+  {
+    id: 4,
+    title: "Transaction History",
+  },
+  {
+    id: 5,
+    title: "Settings",
+  },
+  {
+    id: 6,
+    title: "Sign Out",
+  },
+];
+
+export const ProfileModalItemsArtist = [
+  {
+    id: 1,
+    title: "My Profile",
+  },
+  {
+    id: 2,
+    title: "Switch to Buyer",
+  },
+  {
+    id: 3,
+    title: "Auctioned Works",
+  },
+  {
+    id: 4,
+    title: "Payment Information",
+  },
+  {
+    id: 5,
+    title: "Settings",
+  },
+  {
+    id: 6,
+    title: "Help",
+  },
+  {
+    id: 7,
+    title: "Sign Out",
+  },
+];
