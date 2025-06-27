@@ -31,7 +31,6 @@ export const useFetchLikedAssets = () => {
         throw result.error;
       }
 
-      console.log(result.value);
       return result.value;
     },
     enabled: !!userId,
@@ -40,13 +39,13 @@ export const useFetchLikedAssets = () => {
   });
 };
 
-export const useLikedAssetIds = () => {
+export const useLikedAssetsWithCounts = () => {
   const { data, isLoading, error } = useFetchLikedAssets();
 
-  const likedAssetIds = data?.data || [];
+  const likedAssetsWithCounts = data?.data || [];
 
   return {
-    likedAssetIds,
+    likedAssetsWithCounts,
     isLoading,
     error,
   };

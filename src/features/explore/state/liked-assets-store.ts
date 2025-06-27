@@ -7,7 +7,8 @@ interface LikedAsset {
   likedAt: Date;
   originalLikeCount: number;
   optimisticLikeCount: number;
-  isServerSynced: boolean; // Track if this came from server or local action
+  isServerSynced: boolean;
+  serverLikeCount?: number;
 }
 
 interface LikedAssetsState {
@@ -21,7 +22,9 @@ interface LikedAssetsState {
   updateOptimisticCount: (assetId: string | number, newCount: number) => void;
   revertOptimisticUpdate: (assetId: string | number) => void;
 
-  initializeLikedAssets: (assetIds: (string | number)[]) => void;
+  initializeLikedAssetsWithCounts: (
+    assets: Array<{ fileId: string; numOfLikes: number }>,
+  ) => void;
   clearLikedAssets: () => void;
 
   getLikedAssetIds: () => (string | number)[];
@@ -60,11 +63,13 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
         const state = get();
         const likedAsset = state.likedAssets[assetId];
         if (likedAsset) {
-          // If it's server synced, return fallback count (server has correct count)
-          // If it's local action, return optimistic count
-          return likedAsset.isServerSynced
-            ? fallbackCount
-            : likedAsset.optimisticLikeCount;
+          if (
+            likedAsset.isServerSynced &&
+            likedAsset.serverLikeCount !== undefined
+          ) {
+            return likedAsset.serverLikeCount;
+          }
+          return likedAsset.optimisticLikeCount;
         }
         return fallbackCount;
       },
@@ -85,19 +90,18 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
           }
         }),
 
-      initializeLikedAssets: (assetIds) =>
+      initializeLikedAssetsWithCounts: (assets) =>
         set((state) => {
-          // Only add server-synced assets that aren't already locally liked
-          assetIds.forEach((assetId) => {
-            const existingAsset = state.likedAssets[assetId];
-            // Don't overwrite local like actions with server sync
+          assets.forEach(({ fileId, numOfLikes }) => {
+            const existingAsset = state.likedAssets[fileId];
             if (!existingAsset || existingAsset.isServerSynced) {
-              state.likedAssets[assetId] = {
-                fileId: assetId,
+              state.likedAssets[fileId] = {
+                fileId,
                 likedAt: new Date(),
-                originalLikeCount: 0,
-                optimisticLikeCount: 0,
-                isServerSynced: true, // This came from server
+                originalLikeCount: numOfLikes,
+                optimisticLikeCount: numOfLikes,
+                isServerSynced: true,
+                serverLikeCount: numOfLikes,
               };
             }
           });
@@ -127,7 +131,6 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
 
           try {
             const parsed = JSON.parse(str);
-            // Convert date strings back to Date objects
             if (parsed.state && parsed.state.likedAssets) {
               Object.values(parsed.state.likedAssets).forEach((asset: any) => {
                 if (asset.likedAt) {
@@ -143,7 +146,6 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
         },
         setItem: (name, value) => {
           try {
-            // No special serialization needed for objects
             localStorage.setItem(name, JSON.stringify(value));
           } catch (error) {
             console.error("Error saving liked assets to storage:", error);
@@ -167,7 +169,6 @@ export const useLikeCount = (assetId: string | number, fallbackCount: number) =>
 export const useTotalLikedCount = () =>
   useLikedAssetsStore((state) => state.getTotalLikedCount());
 
-// Actions hook with stable references
 export const useLikedAssetsActions = () => {
   const addLikedAsset = useLikedAssetsStore((state) => state.addLikedAsset);
   const removeLikedAsset = useLikedAssetsStore(
@@ -179,8 +180,9 @@ export const useLikedAssetsActions = () => {
   const revertOptimisticUpdate = useLikedAssetsStore(
     (state) => state.revertOptimisticUpdate,
   );
-  const initializeLikedAssets = useLikedAssetsStore(
-    (state) => state.initializeLikedAssets,
+
+  const initializeLikedAssetsWithCounts = useLikedAssetsStore(
+    (state) => state.initializeLikedAssetsWithCounts,
   );
   const clearLikedAssets = useLikedAssetsStore(
     (state) => state.clearLikedAssets,
@@ -191,7 +193,7 @@ export const useLikedAssetsActions = () => {
     removeLikedAsset,
     updateOptimisticCount,
     revertOptimisticUpdate,
-    initializeLikedAssets,
+    initializeLikedAssetsWithCounts,
     clearLikedAssets,
   };
 };

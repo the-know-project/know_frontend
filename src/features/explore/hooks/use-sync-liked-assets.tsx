@@ -1,28 +1,29 @@
-import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { err, ok, ResultAsync } from "neverthrow";
+import { useEffect, useRef } from "react";
 import { useTokenStore } from "../../auth/state/store";
+import { fetchUserLikes } from "../api/fetch-user-likes/route";
+import { ExploreError } from "../errors/explore.error";
 import { useLikedAssetsActions } from "../state/liked-assets-store";
-import { useLikedAssetIds } from "./use-fetch-liked-assets";
+import { useLikedAssetsWithCounts } from "./use-fetch-liked-assets";
 
-/**
- * Hook to sync the Zustand liked assets store with server data
- * This runs automatically when the component mounts and initializes
- * the store with the user's liked assets from the server
- */
 export const useSyncLikedAssets = () => {
-  const { initializeLikedAssets } = useLikedAssetsActions();
+  const { initializeLikedAssetsWithCounts } = useLikedAssetsActions();
   const hasInitialized = useRef(false);
 
-  // Fetch liked assets from server
-  const { likedAssetIds, isLoading, error } = useLikedAssetIds();
+  const { likedAssetsWithCounts, isLoading, error } =
+    useLikedAssetsWithCounts();
 
-  // Sync with server data when available (only once)
   useEffect(() => {
-    if (!isLoading && likedAssetIds.length > 0 && !hasInitialized.current) {
-      initializeLikedAssets(likedAssetIds);
+    if (
+      !isLoading &&
+      likedAssetsWithCounts.length > 0 &&
+      !hasInitialized.current
+    ) {
+      initializeLikedAssetsWithCounts(likedAssetsWithCounts);
       hasInitialized.current = true;
     }
-  }, [likedAssetIds, isLoading]);
+  }, [likedAssetsWithCounts, isLoading, initializeLikedAssetsWithCounts]);
 
   return {
     isLoading,
@@ -31,45 +32,46 @@ export const useSyncLikedAssets = () => {
   };
 };
 
-/**
- * Hook to periodically sync liked assets with server
- * Useful for keeping the local state fresh with server changes
- */
 export const usePeriodicSyncLikedAssets = (
   intervalMs: number = 5 * 60 * 1000,
 ) => {
   const userId = useTokenStore((state) => state.user?.id);
-  const { initializeLikedAssets } = useLikedAssetsActions();
+  const { initializeLikedAssetsWithCounts } = useLikedAssetsActions();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["liked-assets-sync", userId],
     queryFn: async () => {
       if (!userId) return null;
 
-      const response = await fetch(`/api/users/${userId}/liked-assets`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const result = await ResultAsync.fromPromise(
+        fetchUserLikes(userId),
+        (error) => new ExploreError(`Error fetching liked assets: ${error}`),
+      ).andThen((data) => {
+        if (data.status === 200) {
+          return ok(data);
+        } else {
+          return err(
+            new ExploreError(`Failed to fetch liked assets: ${data.status}`),
+          );
+        }
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to sync liked assets: ${response.statusText}`);
+      if (result.isErr()) {
+        throw result.error;
       }
 
-      const result = await response.json();
-      return result.data.likedAssets.map((asset: any) => asset.fileId);
+      return result.value;
     },
     enabled: !!userId,
     refetchInterval: intervalMs,
-    staleTime: intervalMs / 2, // Half of the refetch interval
+    staleTime: intervalMs / 2,
   });
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
-      initializeLikedAssets(data);
+      initializeLikedAssetsWithCounts(data);
     }
-  }, [data]); // Remove initializeLikedAssets from deps
+  }, [data, initializeLikedAssetsWithCounts]);
 
   return {
     isLoading,

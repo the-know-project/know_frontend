@@ -6,6 +6,8 @@ import {
   useLikeCount,
   useLikedAssetsActions,
 } from "../state/liked-assets-store";
+import { useQueryClient } from "@tanstack/react-query";
+import { useTokenStore } from "../../auth/state/store";
 
 interface UseAssetLikeProps {
   assetId: string | number;
@@ -20,10 +22,6 @@ interface UseAssetLikeReturn {
   error: string | null;
 }
 
-/**
- * Unified hook for managing asset likes with Zustand store integration
- * Handles optimistic updates, error recovery, and loading states
- */
 export const useAssetLike = ({
   assetId,
   initialLikeCount,
@@ -33,8 +31,11 @@ export const useAssetLike = ({
 
   const isLiked = useIsAssetLiked(assetId);
   const currentLikeCount = useLikeCount(assetId, initialLikeCount);
-  const { addLikedAsset, removeLikedAsset } = useLikedAssetsActions();
+  const { addLikedAsset, removeLikedAsset, initializeLikedAssetsWithCounts } =
+    useLikedAssetsActions();
 
+  const queryClient = useQueryClient();
+  const userId = useTokenStore((state) => state.user?.id);
   const [error, setError] = useState<string | null>(null);
 
   const toggleLike = async () => {
@@ -50,13 +51,24 @@ export const useAssetLike = ({
       }
 
       // API call
+      let serverResponse;
       if (!wasLiked) {
-        await handleLike({ fileId: assetId as string });
+        serverResponse = await handleLike({ fileId: assetId as string });
       } else {
-        await handleUnlike({ fileId: assetId as string });
+        serverResponse = await handleUnlike({ fileId: assetId as string });
       }
+
+      if (serverResponse && serverResponse.data) {
+        const { fileId, numOfLikes } = serverResponse.data;
+        if (fileId && typeof numOfLikes === "number") {
+          initializeLikedAssetsWithCounts([{ fileId, numOfLikes }]);
+        }
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["liked-assets", userId],
+      });
     } catch (apiError) {
-      // Rollback optimistic update
       if (!wasLiked) {
         removeLikedAsset(assetId);
       } else {
@@ -94,10 +106,13 @@ export const useAssetLikeCount = (
 };
 
 export const useBulkLikeActions = () => {
-  const { initializeLikedAssets, clearLikedAssets } = useLikedAssetsActions();
+  const { initializeLikedAssetsWithCounts, clearLikedAssets } =
+    useLikedAssetsActions();
 
-  const initializeLikes = (assetIds: (string | number)[]) => {
-    initializeLikedAssets(assetIds);
+  const initializeLikesWithCounts = (
+    assets: Array<{ fileId: string; numOfLikes: number }>,
+  ) => {
+    initializeLikedAssetsWithCounts(assets);
   };
 
   const clearAllLikes = () => {
@@ -105,7 +120,7 @@ export const useBulkLikeActions = () => {
   };
 
   return {
-    initializeLikes,
+    initializeLikesWithCounts,
     clearAllLikes,
   };
 };

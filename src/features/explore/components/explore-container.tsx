@@ -13,7 +13,7 @@ interface ExploreContainerProps {
     sortBy?: "latest" | "oldest";
     available?: boolean;
   };
-  enableServerSync?: boolean; // Optional server sync
+  enableServerSync?: boolean;
 }
 
 const ExploreContainer = ({
@@ -34,7 +34,6 @@ const ExploreContainer = ({
     ? useSyncLikedAssets()
     : { isInitialized: true };
 
-  // Update state if initial props change (useful for SSR hydration)
   useEffect(() => {
     setSelectedPreferences(initialPreferences);
   }, []);
