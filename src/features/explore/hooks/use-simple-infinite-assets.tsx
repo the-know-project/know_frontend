@@ -6,7 +6,7 @@ import { ExploreErrorMessages } from "../data/explore.data";
 import { ExploreError } from "../errors/explore.error";
 import { TFetchExploreAsset, TAsset } from "../types/explore.types";
 import { useTokenStore } from "../../auth/state/store";
-import { useSafeAuthStatus } from "../../auth/hooks/use-safe-auth-status";
+import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 
 interface UseSimpleInfiniteAssetsProps {
   categories?: string[];
@@ -29,7 +29,7 @@ export const useSimpleInfiniteAssets = ({
     role,
     isAuthenticated,
     error: authError,
-  } = useSafeAuthStatus({
+  } = useStableAuthStatus({
     redirectOnExpiry: true,
     redirectTo: "/login",
   });
@@ -70,7 +70,7 @@ export const useSimpleInfiniteAssets = ({
       return result.value;
     },
     staleTime: 5000,
-    enabled: isAuthenticated && !authError, // Only run query if authenticated
+    enabled: isAuthenticated && !authError && !!userId, // Only run query if authenticated and user exists
   });
 
   useEffect(() => {
