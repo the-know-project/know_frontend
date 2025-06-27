@@ -56,6 +56,7 @@ export const useAssetLike = ({
         await handleUnlike({ fileId: assetId as string });
       }
     } catch (apiError) {
+      // Rollback optimistic update
       if (!wasLiked) {
         removeLikedAsset(assetId);
       } else {
