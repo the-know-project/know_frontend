@@ -10,7 +10,6 @@ import { useLikedAssetIds } from "./use-fetch-liked-assets";
  * the store with the user's liked assets from the server
  */
 export const useSyncLikedAssets = () => {
-  const userId = useTokenStore((state) => state.user?.id);
   const { initializeLikedAssets } = useLikedAssetsActions();
   const hasInitialized = useRef(false);
 
@@ -23,7 +22,7 @@ export const useSyncLikedAssets = () => {
       initializeLikedAssets(likedAssetIds);
       hasInitialized.current = true;
     }
-  }, [likedAssetIds, isLoading]); // Remove initializeLikedAssets from deps
+  }, [likedAssetIds, isLoading]);
 
   return {
     isLoading,
