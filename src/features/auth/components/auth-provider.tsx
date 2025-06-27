@@ -2,7 +2,7 @@
 
 import { useEffect, useState, createContext, useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useSafeAuthStatus } from "../hooks/use-safe-auth-status";
+import { useStableAuthStatus } from "../hooks/use-stable-auth-status";
 import { useTokenStore } from "../state/store";
 import { useRoleStore } from "../state/store";
 
@@ -15,7 +15,7 @@ interface AuthContextValue {
     firstName: string;
     imageUrl: string;
   } | null;
-  role: string;
+  role: string | null;
   error: string | null;
   isTokenExpired: boolean;
   retry: () => void;
@@ -79,13 +79,13 @@ const DefaultAuthFallback: React.FC<{
         <div className="space-x-3">
           <button
             onClick={retry}
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
           >
             Try Again
           </button>
           <button
-            onClick={() => window.location.href = "/login"}
-            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            onClick={() => (window.location.href = "/login")}
+            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
           >
             Go to Login
           </button>
@@ -109,24 +109,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   const [retryKey, setRetryKey] = useState(0);
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  const {
-    isAuthenticated,
-    isLoading,
-    user,
-    role,
-    error,
-    isTokenExpired,
-  } = useSafeAuthStatus({
-    redirectOnExpiry: false, // Handle redirection manually
-    redirectTo,
-    maxRetries: 3,
-    onAuthError: (errorMessage) => {
-      console.error("Auth Provider Error:", errorMessage);
-    },
-  });
+  // Handle auth errors
+  const handleAuthError = (errorMessage: string) => {
+    console.error("Auth Provider Error:", errorMessage);
+  };
+
+  const { isAuthenticated, isLoading, user, role, error, isTokenExpired } =
+    useStableAuthStatus({
+      redirectOnExpiry: false, // Handle redirection manually
+      redirectTo,
+      onAuthError: handleAuthError,
+    });
 
   // Check if current route is public
-  const isPublicRoute = publicRoutes.some(route => {
+  const isPublicRoute = publicRoutes.some((route) => {
     if (route === "/") return pathname === "/";
     return pathname.startsWith(route);
   });
@@ -142,7 +138,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
     // If on a protected route and not authenticated
     if (!isPublicRoute && !isAuthenticated && !isLoading) {
-      console.log("Redirecting to login - not authenticated on protected route");
+      console.log(
+        "Redirecting to login - not authenticated on protected route",
+      );
       router.push(redirectTo);
       return;
     }
@@ -155,7 +153,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       router.push(redirectTo);
       return;
     }
-
   }, [
     isAuthenticated,
     isLoading,
@@ -170,36 +167,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
   // Retry handler
   const handleRetry = () => {
-    setRetryKey(prev => prev + 1);
+    setRetryKey((prev) => prev + 1);
   };
 
   // Show fallback for auth errors on protected routes
   if (!isPublicRoute && error && hasInitialized) {
-    return (
-      <Fallback
-        error={error}
-        retry={handleRetry}
-        isLoading={isLoading}
-      />
-    );
+    return <Fallback error={error} retry={handleRetry} isLoading={isLoading} />;
   }
 
   // Show loading state for protected routes while checking auth
   if (!isPublicRoute && (isLoading || !hasInitialized)) {
-    return (
-      <Fallback
-        error={null}
-        retry={handleRetry}
-        isLoading={true}
-      />
-    );
+    return <Fallback error={null} retry={handleRetry} isLoading={true} />;
   }
 
   const contextValue: AuthContextValue = {
     isAuthenticated,
     isLoading,
     user,
-    role,
+    role: role,
     error,
     isTokenExpired,
     retry: handleRetry,
@@ -207,9 +192,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
   return (
     <AuthContext.Provider value={contextValue}>
-      <div key={retryKey}>
-        {children}
-      </div>
+      <div key={retryKey}>{children}</div>
     </AuthContext.Provider>
   );
 };
