@@ -7,10 +7,9 @@ import {
   IconThumbUpFilled,
 } from "@tabler/icons-react";
 import Image from "next/image";
-import { useAssetLike } from "../hooks/use-asset-like";
 import { useEffect } from "react";
-import { useAuthStatus } from "../../auth/hooks";
 import { useCart } from "../../cart/hooks/use-cart";
+import { useAssetLike } from "../hooks/use-asset-like";
 
 interface ExploreCardProps {
   id: number | string;
