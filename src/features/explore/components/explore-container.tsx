@@ -62,6 +62,7 @@ const ExploreContainer = ({
       <ExploreCanvas
         categories={selectedPreferences}
         filters={selectedFilters}
+        isInitialized={isInitialized}
       />
     </div>
   );
