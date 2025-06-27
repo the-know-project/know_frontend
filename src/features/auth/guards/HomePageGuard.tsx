@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useAuthStatus } from "../hooks";
 import { AUTH_REDIRECT_CONFIG } from "../config/route-protection.config";
 import { useEffect } from "react";
 import GradientText from "@/src/shared/components/gradient-text";
+import { useAuthStatus } from "../hooks/use-auth-status";
 
 interface HomePageGuardProps {
   children: React.ReactNode;
