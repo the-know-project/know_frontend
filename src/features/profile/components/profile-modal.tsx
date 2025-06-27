@@ -1,8 +1,11 @@
+"use client";
+
 import {
   ProfileModalItemsArtist,
   ProfileModalItemsBuyer,
 } from "@/src/constants/constants";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface ProfileModalProps {
   firstName: string;
@@ -17,10 +20,22 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   emailAddress,
   role,
 }) => {
+  const router = useRouter();
   const userNavigationData =
     role.toLowerCase() === "buyer"
       ? ProfileModalItemsBuyer
       : ProfileModalItemsArtist;
+
+  const handleNavigation = (ctx: string) => {
+    console.log(ctx);
+    if (ctx.toLowerCase() === "my profile") {
+      if (role.toLowerCase() === "buyer") {
+        router.push("/buyer-profile");
+      } else if (role.toLowerCase() === "artist") {
+        router.push("/artist-profile");
+      }
+    }
+  };
 
   return (
     <section className="scrollbar-hide relative flex min-h-[300px] min-w-[300px] scroll-m-2 flex-col overflow-auto scroll-smooth rounded-[15px] border border-white/20 bg-white px-2 py-4 opacity-95 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)] backdrop-blur-2xl">
@@ -53,6 +68,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             style={{
               animationDelay: `${index * 100}ms`,
             }}
+            onClick={() => handleNavigation(item.title)}
           >
             <p className="font-bricolage text-sm text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
               {item.title}
