@@ -19,6 +19,7 @@ interface ExploreCanvasProps {
     sortBy?: "latest" | "oldest";
     available?: boolean;
   };
+  isInitialized?: boolean;
 }
 
 const ExploreCanvas = ({
