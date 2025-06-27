@@ -10,24 +10,19 @@ interface LikedAsset {
 }
 
 interface LikedAssetsState {
-  // Core state
   likedAssets: Record<string | number, LikedAsset>;
 
-  // Actions
   addLikedAsset: (assetId: string | number, originalCount: number) => void;
   removeLikedAsset: (assetId: string | number) => void;
   isAssetLiked: (assetId: string | number) => boolean;
   getLikeCount: (assetId: string | number, fallbackCount: number) => number;
 
-  // Optimistic update management
   updateOptimisticCount: (assetId: string | number, newCount: number) => void;
   revertOptimisticUpdate: (assetId: string | number) => void;
 
-  // Bulk operations
   initializeLikedAssets: (assetIds: (string | number)[]) => void;
   clearLikedAssets: () => void;
 
-  // Utility
   getLikedAssetIds: () => (string | number)[];
   getTotalLikedCount: () => number;
 }
