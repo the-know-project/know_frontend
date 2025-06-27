@@ -2,45 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
 import { useTokenStore } from "../../auth/state/store";
 import { ExploreError } from "../errors/explore.error";
-
-// Define the API response type for liked assets
-interface LikedAsset {
-  fileId: string;
-  userId: string;
-  likedAt: string;
-}
-
-interface FetchLikedAssetsResponse {
-  status: number;
-  data: {
-    likedAssets: LikedAsset[];
-  };
-}
-
-const fetchLikedAssets = async (
-  userId: string,
-): Promise<FetchLikedAssetsResponse> => {
-  // Return empty response if no userId to prevent unnecessary API calls
-  if (!userId) {
-    return {
-      status: 200,
-      data: { likedAssets: [] },
-    };
-  }
-
-  const response = await fetch(`/api/users/${userId}/liked-assets`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch liked assets: ${response.statusText}`);
-  }
-
-  return response.json();
-};
+import { fetchUserLikes } from "../api/fetch-user-likes/route";
 
 export const useFetchLikedAssets = () => {
   const userId = useTokenStore((state) => state.user?.id);
@@ -53,7 +15,7 @@ export const useFetchLikedAssets = () => {
       }
 
       const result = await ResultAsync.fromPromise(
-        fetchLikedAssets(userId),
+        fetchUserLikes(userId),
         (error) => new ExploreError(`Error fetching liked assets: ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {
@@ -69,6 +31,7 @@ export const useFetchLikedAssets = () => {
         throw result.error;
       }
 
+      console.log(result.value);
       return result.value;
     },
     enabled: !!userId,
@@ -77,12 +40,10 @@ export const useFetchLikedAssets = () => {
   });
 };
 
-// Helper hook to get just the liked asset IDs
 export const useLikedAssetIds = () => {
   const { data, isLoading, error } = useFetchLikedAssets();
 
-  const likedAssetIds =
-    data?.data.likedAssets.map((asset) => asset.fileId) || [];
+  const likedAssetIds = data?.data || [];
 
   return {
     likedAssetIds,
