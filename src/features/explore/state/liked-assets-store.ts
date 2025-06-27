@@ -7,6 +7,7 @@ interface LikedAsset {
   likedAt: Date;
   originalLikeCount: number;
   optimisticLikeCount: number;
+  isServerSynced: boolean; // Track if this came from server or local action
 }
 
 interface LikedAssetsState {
@@ -39,6 +40,7 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
             likedAt: new Date(),
             originalLikeCount: originalCount,
             optimisticLikeCount: originalCount + 1,
+            isServerSynced: false, // This is a local like action
           };
         }),
 
@@ -58,7 +60,11 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
         const state = get();
         const likedAsset = state.likedAssets[assetId];
         if (likedAsset) {
-          return likedAsset.optimisticLikeCount;
+          // If it's server synced, return fallback count (server has correct count)
+          // If it's local action, return optimistic count
+          return likedAsset.isServerSynced
+            ? fallbackCount
+            : likedAsset.optimisticLikeCount;
         }
         return fallbackCount;
       },
@@ -81,15 +87,19 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
 
       initializeLikedAssets: (assetIds) =>
         set((state) => {
-          // Clear existing and add new ones
-          state.likedAssets = {};
+          // Only add server-synced assets that aren't already locally liked
           assetIds.forEach((assetId) => {
-            state.likedAssets[assetId] = {
-              fileId: assetId,
-              likedAt: new Date(),
-              originalLikeCount: 0, // Will be updated when we have actual counts
-              optimisticLikeCount: 0,
-            };
+            const existingAsset = state.likedAssets[assetId];
+            // Don't overwrite local like actions with server sync
+            if (!existingAsset || existingAsset.isServerSynced) {
+              state.likedAssets[assetId] = {
+                fileId: assetId,
+                likedAt: new Date(),
+                originalLikeCount: 0,
+                optimisticLikeCount: 0,
+                isServerSynced: true, // This came from server
+              };
+            }
           });
         }),
 
