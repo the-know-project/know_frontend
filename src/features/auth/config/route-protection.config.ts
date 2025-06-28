@@ -65,6 +65,32 @@ export const PROTECTED_ROUTES: ProtectedRoute[] = [
     },
   },
   {
+    path: ROUTE_PATHS.AUTH.ROLE,
+    name: "Role",
+    description: "Role Page",
+    protection: {
+      level: RouteProtectionLevel.GUEST_ONLY,
+      redirectTo: ROUTE_PATHS.EXPLORE,
+    },
+    metadata: {
+      title: "Select a Role - KNOW",
+      showInNavigation: false,
+    },
+  },
+  {
+    path: ROUTE_PATHS.AUTH.REGISTER,
+    name: "Signup",
+    description: "Signup Page",
+    protection: {
+      level: RouteProtectionLevel.GUEST_ONLY,
+      redirectTo: ROUTE_PATHS.EXPLORE,
+    },
+    metadata: {
+      title: "Signup - KNOW",
+      showInNavigation: false,
+    },
+  },
+  {
     path: ROUTE_PATHS.AUTH.FORGOT_PASSWORD,
     name: "Forgot Password",
     protection: {
@@ -156,6 +182,7 @@ export const PROTECTED_ROUTES: ProtectedRoute[] = [
     protection: {
       level: RouteProtectionLevel.AUTHENTICATED,
       redirectTo: ROUTE_PATHS.AUTH.LOGIN,
+      requiredRoles: [UserRole.BUYER],
     },
     metadata: {
       title: "Buyer Profile - KNOW",
@@ -209,6 +236,7 @@ export const ROUTE_GROUPS = {
     ROUTE_PATHS.UPLOAD,
     ROUTE_PATHS.ARTIST_PROFILE,
     ROUTE_PATHS.BUYER_PROFILE,
+    ROUTE_PATHS.USER,
     ...Object.values(ROUTE_PATHS.USER),
   ],
   ADMIN: Object.values(ROUTE_PATHS.ADMIN),
