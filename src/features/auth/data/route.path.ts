@@ -5,6 +5,7 @@ export const ROUTE_PATHS = {
   AUTH: {
     LOGIN: "/login",
     REGISTER: "/register",
+    ROLE: "/role",
     RESET_PASSWORD: "/reset-password",
     VERIFY_EMAIL: "/verify-email",
     FORGOT_PASSWORD: "/forgot-password",
