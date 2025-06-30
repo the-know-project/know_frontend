@@ -24,6 +24,7 @@ export const useTokenStore = create<ITokenState>()(
         refreshToken: null,
         user: null,
         isAuthenticated: false,
+        hasHydrated: false,
 
         setTokens: (accessToken: string, refreshToken: string, user: IUser) => {
           set({
@@ -85,9 +86,15 @@ export const useTokenStore = create<ITokenState>()(
               refreshToken: null,
               user: null,
               isAuthenticated: false,
+              hasHydrated: false,
             };
           }
           return persistedState;
+        },
+        onRehydrateStorage: () => (state) => {
+          if (state) {
+            state.hasHydrated = true;
+          }
         },
       },
     ),
