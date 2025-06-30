@@ -4,7 +4,7 @@ import SelectRole from "@/src/shared/components/role-selection";
 
 const Page = () => {
   return (
-    <PageAuthGuard guestOnly>
+    <PageAuthGuard guestOnly={false}>
       <section className="flex w-full flex-col scroll-smooth">
         <GridBackground>
           <>
