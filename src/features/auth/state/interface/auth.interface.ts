@@ -2,6 +2,7 @@ import { IRole } from "../../types/auth.types";
 
 export interface IRoleState {
   role: IRole;
+  hasHydrated: boolean;
   setRole: (role: IRole) => void;
   clearRole: () => void;
 }
@@ -19,6 +20,7 @@ export interface ITokenState {
   refreshToken: string | null;
   user: IUser | null;
   isAuthenticated: boolean;
+  hasHydrated: boolean;
 
   setTokens: (accessToken: string, refreshToken: string, user: IUser) => void;
   updateAccessToken: (accessToken: string) => void;
