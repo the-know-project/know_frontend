@@ -17,6 +17,7 @@ interface StableAuthStatus {
   role: string | null;
   error: string | null;
   isTokenExpired: boolean;
+  isRehydrated: boolean;
 }
 
 interface UseStableAuthStatusOptions {
@@ -42,14 +43,19 @@ export const useStableAuthStatus = (
   const tokenStore = useTokenStore();
   const roleStore = useRoleStore();
 
-  // Stable state that doesn't change hook order
+  // Check if stores have rehydrated
+  const isTokenStoreRehydrated = tokenStore.hasHydrated;
+  const isRoleStoreRehydrated = roleStore.hasHydrated;
+  const isRehydrated = isTokenStoreRehydrated && isRoleStoreRehydrated;
+
   const [authState, setAuthState] = useState<StableAuthStatus>(() => ({
-    isAuthenticated: tokenStore.isAuthenticated,
+    isAuthenticated: false,
     isLoading: true,
-    user: tokenStore.user,
-    role: roleStore.role,
+    user: null,
+    role: null,
     error: null,
-    isTokenExpired: tokenStore.isTokenExpired(),
+    isTokenExpired: false,
+    isRehydrated: false,
   }));
 
   // Prevent multiple simultaneous auth checks
@@ -57,7 +63,7 @@ export const useStableAuthStatus = (
   const hasRedirected = useRef(false);
 
   const checkAuthStatus = useCallback(() => {
-    if (checkInProgress.current || hasRedirected.current) {
+    if (checkInProgress.current || hasRedirected.current || !isRehydrated) {
       return;
     }
 
@@ -77,15 +83,16 @@ export const useStableAuthStatus = (
           role,
           error: null,
           isTokenExpired: isExpired,
+          isRehydrated: true,
         };
 
-        // Only update if state actually changed
         if (
           prevState.isAuthenticated !== newState.isAuthenticated ||
           prevState.isTokenExpired !== newState.isTokenExpired ||
           prevState.isLoading !== newState.isLoading ||
           prevState.user?.id !== newState.user?.id ||
-          prevState.role !== newState.role
+          prevState.role !== newState.role ||
+          prevState.isRehydrated !== newState.isRehydrated
         ) {
           return newState;
         }
@@ -111,6 +118,7 @@ export const useStableAuthStatus = (
             error: "Session expired",
             isAuthenticated: false,
             isTokenExpired: true,
+            isRehydrated: true,
           }));
 
           setTimeout(() => {
@@ -119,7 +127,6 @@ export const useStableAuthStatus = (
         }
       }
 
-      // Handle authentication loss
       if (!isAuthenticated && !hasRedirected.current) {
         console.warn("Authentication lost");
 
@@ -137,6 +144,7 @@ export const useStableAuthStatus = (
             ...prevState,
             error: "Authentication required",
             isAuthenticated: false,
+            isRehydrated: true,
           }));
 
           setTimeout(() => {
@@ -154,6 +162,7 @@ export const useStableAuthStatus = (
         ...prevState,
         error: errorMessage,
         isLoading: false,
+        isRehydrated: true,
       }));
 
       if (onAuthError) {
@@ -170,14 +179,16 @@ export const useStableAuthStatus = (
     redirectOnExpiry,
     onAuthError,
     onTokenExpired,
+    isRehydrated,
   ]);
 
-  // Initial auth check
+  // Initial auth check - only after rehydration
   useEffect(() => {
-    checkAuthStatus();
-  }, [checkAuthStatus]);
+    if (isRehydrated) {
+      checkAuthStatus();
+    }
+  }, [checkAuthStatus, isRehydrated]);
 
-  // Periodic auth checks
   useEffect(() => {
     if (hasRedirected.current) {
       return;
@@ -192,7 +203,6 @@ export const useStableAuthStatus = (
     return () => clearInterval(interval);
   }, [checkAuthStatus, checkInterval]);
 
-  // Subscribe to token store changes
   useEffect(() => {
     if (hasRedirected.current) {
       return;
@@ -221,7 +231,6 @@ export const useStableAuthStatus = (
     return unsubscribe;
   }, [checkAuthStatus, tokenStore.isAuthenticated]);
 
-  // Subscribe to role store changes
   useEffect(() => {
     if (hasRedirected.current) {
       return;
@@ -241,6 +250,7 @@ export const useStableAuthStatus = (
         setAuthState((prevState) => ({
           ...prevState,
           role: currentRole,
+          isRehydrated: true,
         }));
       }
 
