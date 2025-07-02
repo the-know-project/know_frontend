@@ -5,25 +5,27 @@ import { IUploadFormState, ISizePickerForm } from "../types/upload.types";
 
 // Define the complete upload data structure
 export interface ICompleteUploadForm {
-  // Basic upload data
   title: string;
+
   file: File | null;
 
-  // Size data
+  description: string;
+
   size: ISizePickerForm;
 
-  // Tags data
   tags: string[];
 
-  // Category data
   categories: string[];
 }
 
 interface UploadContextType {
   uploadData: ICompleteUploadForm;
+  isEditorOpen: boolean;
+  setIsEditorOpen: (isOpen: boolean) => void;
   updateBasicInfo: (data: Partial<IUploadFormState>) => void;
   updateSizeInfo: (data: Partial<ISizePickerForm>) => void;
   updateTags: (tags: string[]) => void;
+  updateDescription: (description: string) => void;
   updateCategories: (categories: string[]) => void;
   getAllFormData: () => ICompleteUploadForm;
   resetForm: () => void;
@@ -32,6 +34,7 @@ interface UploadContextType {
 const defaultUploadData: ICompleteUploadForm = {
   title: "",
   file: null,
+  description: "",
   size: {
     width: undefined,
     height: undefined,
@@ -54,6 +57,7 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [uploadData, setUploadData] =
     useState<ICompleteUploadForm>(defaultUploadData);
+  const [isEditorOpen, setIsEditorOpen] = useState<boolean>(true);
 
   const updateBasicInfo = (data: Partial<IUploadFormState>) => {
     setUploadData((prev) => {
@@ -76,6 +80,20 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
         },
       };
       console.log("Context: New upload data after size update:", updated);
+      return updated;
+    });
+  };
+
+  const updateDescription = (description: string) => {
+    setUploadData((prev) => {
+      const updated = {
+        ...prev,
+        description,
+      };
+      console.log(
+        "Context: New upload data after description update:",
+        updated,
+      );
       return updated;
     });
   };
@@ -112,7 +130,10 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
 
   const value: UploadContextType = {
     uploadData,
+    isEditorOpen,
+    setIsEditorOpen,
     updateBasicInfo,
+    updateDescription,
     updateSizeInfo,
     updateTags,
     updateCategories,
