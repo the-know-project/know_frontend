@@ -54,11 +54,11 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
     <section className="editor_container">
       <div className="space-y-4">
         {/* Tag Input */}
-        <div className="flex items-center justify-between rounded-lg bg-neutral-600 p-3 text-white">
+        <div className="flex items-center justify-between rounded-lg bg-transparent p-3">
           <Input
             type="text"
-            placeholder="Add tags... (press Enter)"
-            className="placeholder:font-bricolage font-bricolage border border-white bg-transparent text-white placeholder:text-white"
+            placeholder="Add tags"
+            className="placeholder:font-bricolage font-bricolage border border-neutral-500 bg-transparent text-neutral-800 placeholder:text-neutral-500"
             value={inputValue}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
@@ -71,7 +71,7 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
             {uploadData.tags.map((tag, index) => (
               <div
                 key={index}
-                className={`font-bricolage flex transform items-center gap-2 rounded-full bg-gradient-to-r from-black to-orange-600 px-3 py-1 text-xs tracking-wide text-white transition-all duration-500 ${
+                className={`font-bricolage flex transform items-center gap-2 rounded-full px-3 py-1 text-xs tracking-wide text-neutral-800 capitalize shadow-md transition-all duration-500 ${
                   animatingTag === tag
                     ? "scale-110 animate-pulse shadow-lg"
                     : "scale-100 hover:scale-105"
@@ -91,7 +91,7 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
         )}
 
         {/* Tag Count */}
-        <div className="font-bebas text-xs text-orange-600">
+        <div className="font-bebas text-xs text-neutral-800">
           {uploadData.tags.length} tag{uploadData.tags.length !== 1 ? "s" : ""}{" "}
           added
         </div>
