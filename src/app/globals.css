@@ -211,11 +211,11 @@
   }
 
   .editor_container {
-    @apply flex w-[300px] max-w-[500px] flex-col items-center justify-center self-center rounded-md bg-neutral-700 px-2 py-4 shadow-sm md:w-fit md:max-w-[200px] md:items-start md:justify-normal md:self-start;
+    @apply flex w-full flex-col items-start justify-normal self-start bg-transparent px-2 py-4;
   }
 
   .editor_title_font {
-    @apply font-bricolage text-[20px] font-black tracking-wider text-black capitalize;
+    @apply font-bricolage text-[20px] font-bold tracking-wider text-neutral-900 capitalize;
   }
 
   .notification_card {
