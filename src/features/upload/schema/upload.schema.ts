@@ -54,6 +54,7 @@ export const UploadAssetSchemaServer = z.object({
     .string()
     .min(1, "Title is required")
     .max(100, "Title must be less than 100 characters"),
+  description: z.string().optional(),
   asset: z
     .instanceof(File, { message: "Please select a file" })
     .refine(

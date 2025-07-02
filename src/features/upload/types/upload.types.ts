@@ -16,7 +16,8 @@ export type IUploadAsset = z.infer<typeof UploadAssetSchema>;
 export type IUploadAssetServer = z.infer<typeof UploadAssetSchemaServer>;
 
 // Client-side type that accepts customMetadata as string array
-export type IUploadAssetClient = Omit<IUploadAsset, 'customMetadata'> & {
+export type IUploadAssetClient = Omit<IUploadAsset, "customMetadata"> & {
+  description?: string;
   customMetadata?: string[];
 };
 

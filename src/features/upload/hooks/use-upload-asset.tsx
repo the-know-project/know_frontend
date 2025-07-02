@@ -16,6 +16,7 @@ export const useUploadAsset = () => {
       const serverData: IUploadAssetServer = {
         userId: id as string,
         fileName: ctx.fileName,
+        description: ctx.description,
         asset: ctx.asset,
         size: ctx.size,
         categories: ctx.categories,

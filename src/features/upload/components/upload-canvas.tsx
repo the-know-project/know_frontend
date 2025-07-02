@@ -35,6 +35,7 @@ const UploadCanvasContent = () => {
 
     const uploadData: IUploadAssetClient = {
       fileName: formData.title,
+      description: formData.description,
       asset: formData.file,
       size: formData.size,
       categories: formData.categories || [],
