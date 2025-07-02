@@ -2,11 +2,11 @@
 
 import { IconCaretLeft, IconCaretRight } from "@tabler/icons-react";
 import UploadEditor from "./upload-editor";
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useUploadContext } from "../context/upload-context";
 
 const UploadEditorCanvas = () => {
-  const [isEditorOpen, setIsEditorOpen] = useState<boolean>(true);
+  const { isEditorOpen, setIsEditorOpen } = useUploadContext();
   const variants = {
     hidden: { opacity: 0, x: 20 },
     visible: { opacity: 1, x: 0 },
@@ -14,9 +14,7 @@ const UploadEditorCanvas = () => {
 
   return (
     <section className="flex w-full flex-col">
-      <div
-        className={`hidden flex-col md:flex ${isEditorOpen ? "flex" : "hidden"}`}
-      >
+      <div className={`flex flex-col ${isEditorOpen ? "flex" : "hidden"}`}>
         <AnimatePresence>
           {isEditorOpen && (
             <motion.div
@@ -32,7 +30,7 @@ const UploadEditorCanvas = () => {
               className="flex min-h-screen flex-col gap-5 rounded-tl-[15px] rounded-bl-[15px] bg-neutral-300 px-4 py-10 lg:px-8"
             >
               <motion.button
-                className="font-bebas text-whit relative hidden w-fit items-center gap-1 rounded-full bg-neutral-600 p-2 text-sm font-medium capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px] md:inline-flex"
+                className="font-bebas text-whit relative flex w-fit items-center gap-1 rounded-full bg-neutral-600 p-2 text-sm font-medium capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
                 type="button"
                 onClick={() => setIsEditorOpen(false)}
               >
@@ -45,7 +43,7 @@ const UploadEditorCanvas = () => {
       </div>
 
       {!isEditorOpen && (
-        <div className="hidden items-end justify-end px-2 py-10 md:flex">
+        <div className="flex items-end justify-end py-10">
           <motion.button
             variants={variants}
             initial="hidden"
@@ -56,7 +54,7 @@ const UploadEditorCanvas = () => {
               ease: "easeInOut",
               duration: 0.3,
             }}
-            className="font-bebas text-whit relative hidden w-fit items-center gap-1 rounded-full bg-neutral-600 p-2 text-sm font-medium capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px] md:inline-flex"
+            className="font-bebas text-whit relative flex w-fit items-center gap-1 rounded-full bg-neutral-600 p-2 text-sm font-medium capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
             type="button"
             onClick={() => setIsEditorOpen(true)}
           >
@@ -64,10 +62,6 @@ const UploadEditorCanvas = () => {
           </motion.button>
         </div>
       )}
-
-      <div className="flex w-full flex-col gap-5 bg-neutral-300 px-2 py-10 md:hidden">
-        <UploadEditor />
-      </div>
     </section>
   );
 };
