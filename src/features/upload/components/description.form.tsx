@@ -45,7 +45,7 @@ const DescriptionForm: React.FC<DescriptionFormProps> = ({ onSaveDraft }) => {
             value={localDescription}
             onChange={(e) => handleDescriptionChange(e.target.value)}
             placeholder={`Add description (max ${maxWords} words)`}
-            className="font-bricolage min-h-[120px] w-full resize-none rounded-md bg-white px-3 py-3 text-sm font-light text-neutral-800 placeholder-neutral-500 placeholder:font-light focus:border-gray-400 focus:ring-0 focus:outline-none"
+            className="font-bricolage min-h-[200px] w-full min-w-[300px] resize-none rounded-md bg-white px-3 py-3 text-sm font-light text-neutral-800 placeholder-neutral-500 placeholder:font-light focus:border-gray-400 focus:ring-0 focus:outline-none"
           />
 
           {/* Word count indicator */}

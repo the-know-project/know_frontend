@@ -122,7 +122,7 @@ const UploadForm = ({
         >
           <IconX width={20} height={20} color="white" />
         </button>
-        <div className="flex gap-4 lg:px-[50px]">
+        <div className="flex gap-4 px-[50px]">
           <button
             className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#F97316] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
             onClick={handleSaveDraft}
