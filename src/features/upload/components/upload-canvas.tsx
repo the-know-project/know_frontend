@@ -90,18 +90,41 @@ const UploadCanvasContent = () => {
   };
 
   return (
-    <section className="flex w-full flex-col md:flex-row md:justify-between">
-      <div className="flex w-full flex-col md:w-8/12">
-        <UploadForm
-          onCancel={handleGoBack}
-          onSaveDraft={handleOnSave}
-          onContinue={handleOnContinue}
-          isPending={isPending}
-        />
+    <UploadCanvasLayout>
+      <UploadForm
+        onCancel={handleGoBack}
+        onSaveDraft={handleOnSave}
+        onContinue={handleOnContinue}
+        isPending={isPending}
+      />
+      <UploadEditorCanvas />
+    </UploadCanvasLayout>
+  );
+};
+
+const UploadCanvasLayout = ({
+  children,
+}: {
+  children: [React.ReactNode, React.ReactNode];
+}) => {
+  const { isEditorOpen } = useUploadContext();
+
+  return (
+    <section className="flex w-full flex-row justify-between">
+      <div
+        className={`flex flex-col transition-all duration-300 ${
+          isEditorOpen ? "hidden md:flex md:w-7/12 lg:w-8/12" : "w-full"
+        }`}
+      >
+        {children[0]}
       </div>
 
-      <div className="flex w-full flex-col md:w-4/12">
-        <UploadEditorCanvas />
+      <div
+        className={`flex flex-col transition-all duration-300 ${
+          isEditorOpen ? "w-full md:w-5/12 lg:w-4/12" : "w-0"
+        }`}
+      >
+        {children[1]}
       </div>
     </section>
   );
