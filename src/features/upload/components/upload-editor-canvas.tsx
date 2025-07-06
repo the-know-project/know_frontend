@@ -43,16 +43,16 @@ const UploadEditorCanvas = () => {
       </div>
 
       {!isEditorOpen && (
-        <div className="flex items-end justify-end py-10">
+        <div className="flex w-full items-end justify-end py-[47px]">
           <motion.button
             variants={variants}
             initial="hidden"
             animate="visible"
             exit="hidden"
             transition={{
-              delay: 0.35,
-              ease: "easeInOut",
-              duration: 0.3,
+              delay: 0,
+              ease: "easeIn",
+              duration: 0.2,
             }}
             className="font-bebas text-whit relative flex w-fit items-center gap-1 rounded-full bg-neutral-600 p-2 text-sm font-medium capitalize outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
             type="button"
