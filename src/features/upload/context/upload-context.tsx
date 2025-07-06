@@ -57,7 +57,7 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [uploadData, setUploadData] =
     useState<ICompleteUploadForm>(defaultUploadData);
-  const [isEditorOpen, setIsEditorOpen] = useState<boolean>(true);
+  const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false);
 
   const updateBasicInfo = (data: Partial<IUploadFormState>) => {
     setUploadData((prev) => {
