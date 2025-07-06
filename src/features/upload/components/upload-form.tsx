@@ -1,5 +1,6 @@
 "use client";
 
+import Spinner from "@/src/shared/components/spinner";
 import {
   Form,
   FormControl,
@@ -9,15 +10,19 @@ import {
   FormMessage,
 } from "@/src/shared/ui/form";
 import { Input } from "@/src/shared/ui/input";
-import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconFileUpload, IconX } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconCloudDownload,
+  IconDevicesDown,
+  IconFileUpload,
+  IconX,
+} from "@tabler/icons-react";
 import React, { DragEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useUploadContext } from "../context/upload-context";
 import { UploadFormSchema } from "../schema/upload.schema";
 import { IUploadFormState } from "../types/upload.types";
-import Spinner from "@/src/shared/components/spinner";
 
 interface UploadFormProps {
   onSaveDraft?: (data: IUploadFormState) => void;
@@ -129,7 +134,8 @@ const UploadForm = ({
             type="button"
             disabled={!watchedFile}
           >
-            Save as draft
+            <p className="hidden sm:block">Save as draft</p>
+            <IconCloudDownload className="flex sm:hidden" />
           </button>
 
           {isPending ? (
@@ -148,7 +154,8 @@ const UploadForm = ({
               }}
               disabled={!watchedFile || !watchedTitle}
             >
-              Continue
+              <p className="hidden sm:flex">Continue</p>
+              <IconCheck className="flex sm:hidden" />
             </button>
           )}
         </div>
