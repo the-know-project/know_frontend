@@ -308,3 +308,6 @@ export const ProfileModalItemsArtist = [
     title: "Sign Out",
   },
 ];
+
+export const BlankProfilePicture =
+  "https://www.kravemarketingllc.com/wp-content/uploads/2018/09/placeholder-user-500x500.png";
