@@ -38,7 +38,7 @@ const Sidebar = () => {
           <div className="mt-2 flex gap-2 text-sm text-neutral-700">
             <IconLocation />
             <p className="font-bricolage text-sm font-medium capitalize">
-              Nigeriaborder-b
+              Nigeria
             </p>
           </div>
           <button className="font-bricolage relative mt-5 inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95">
