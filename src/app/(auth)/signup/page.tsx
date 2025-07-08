@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const SignUp = () => {
   return (
-    <PageAuthGuard guestOnly>
+    <PageAuthGuard guestOnly={false}>
       <section className="relative z-50 flex w-full flex-col">
         <div className="flex items-center justify-between">
           <Image
@@ -36,7 +36,6 @@ const SignUp = () => {
           </div>
         </div>
       </section>
-
     </PageAuthGuard>
   );
 };
