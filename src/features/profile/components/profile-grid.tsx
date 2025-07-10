@@ -1,7 +1,7 @@
 "use client";
 import { ArtistProfileToggle, posts } from "@/src/constants/constants";
-import ProfileCard from "./profile-card";
 import { useState } from "react";
+import ProfileCard from "./profile-card";
 
 export const ProfileGrid = () => {
   const [activeToggle, setActiveToggle] = useState<string>("posts");
@@ -45,7 +45,6 @@ export const ProfileGrid = () => {
             id={post.id}
             title={post.title}
             views={post.views}
-            comments={post.comments}
             createdAt={post.createdAt}
             image={post.image}
           />
