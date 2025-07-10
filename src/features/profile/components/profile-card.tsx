@@ -1,15 +1,10 @@
-// import { Eye, MessageCircle, Edit2 } from "luci";
-import { FaEye } from "react-icons/fa";
-import { FaRegMessage } from "react-icons/fa6";
-import { CiEdit } from "react-icons/ci";
-import Image from "next/image";
 import { IconEye, IconPencil } from "@tabler/icons-react";
+import Image from "next/image";
 
 interface IProfileCard {
   id: number | string;
   title: string;
   views: string;
-  comments: number;
   createdAt: string;
   image: string;
 }
@@ -18,7 +13,6 @@ const ProfileCard: React.FC<IProfileCard> = ({
   id,
   title,
   views,
-  comments,
   createdAt,
   image,
 }) => {
