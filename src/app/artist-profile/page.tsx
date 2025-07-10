@@ -1,5 +1,5 @@
 import { PageAuthGuard } from "@/src/features/auth/guards";
-import PostGrid from "@/src/shared/components/postgrid";
+import { ProfileGrid } from "@/src/features/profile/components/profile-grid";
 
 export default function Page() {
   return (
@@ -7,7 +7,7 @@ export default function Page() {
       <div className="flex min-h-screen">
         <div className="flex flex-1 flex-col">
           <main className="p-6">
-            <PostGrid />
+            <ProfileGrid />
           </main>
         </div>
       </div>
