@@ -3,6 +3,7 @@ import { z } from "zod";
 export const MetricsData = z.object({
   id: z.string().uuid(),
   followerCount: z.number(),
+  followingCount: z.number(),
   totalSalesValue: z.number(),
   itemsSold: z.number(),
   activeListings: z.number(),
