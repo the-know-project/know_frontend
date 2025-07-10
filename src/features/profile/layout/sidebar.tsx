@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 import { IconLocation } from "@tabler/icons-react";
 import { BlankProfilePicture } from "@/src/constants/constants";
+import { useFetchArtistMetrics } from "../artist/hooks/use-fetch-artist-metrics";
 
 const Sidebar = () => {
   const { user, role, isLoading } = useStableAuthStatus({
@@ -10,9 +11,36 @@ const Sidebar = () => {
     redirectTo: "/login",
   });
 
+  const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
+
+  const formatNumber = (num: number): string => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(0)}k`;
+    }
+    return num.toString();
+  };
+
+  const isValidMetrics =
+    metrics && typeof metrics === "object" && "data" in metrics;
+  const postViews = metricsLoading
+    ? 0
+    : isValidMetrics
+      ? (metrics.data?.postViews ?? 0)
+      : 0;
+  const followers = metricsLoading
+    ? 0
+    : isValidMetrics
+      ? (metrics.data?.followerCount ?? 0)
+      : 0;
+  const following = metricsLoading
+    ? 0
+    : isValidMetrics
+      ? (metrics.data?.followingCount ?? 0)
+      : 0;
+
   const profilePicture = isLoading
     ? BlankProfilePicture
-    : (user?.imageUrl as string);
+    : (user?.imageUrl ?? BlankProfilePicture);
   return (
     <aside className="w-72 p-4">
       <div className="flex flex-col items-center">
@@ -48,13 +76,16 @@ const Sidebar = () => {
           <div className="mt-4 w-full">
             <ul className="font-bricolage text-sm text-neutral-700 capitalize">
               <li className="flex justify-between py-1">
-                Post Views <span className="font-semibold">15M</span>
+                Post Views{" "}
+                <span className="font-semibold">{formatNumber(postViews)}</span>
               </li>
               <li className="flex justify-between py-1">
-                Followers <span className="font-semibold">1.3K</span>
+                Followers{" "}
+                <span className="font-semibold">{formatNumber(followers)}</span>
               </li>
               <li className="flex justify-between py-1">
-                Following <span className="font-semibold">382</span>
+                Following{" "}
+                <span className="font-semibold">{formatNumber(following)}</span>
               </li>
             </ul>
           </div>
