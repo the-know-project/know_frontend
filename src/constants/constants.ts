@@ -311,3 +311,37 @@ export const ProfileModalItemsArtist = [
 
 export const BlankProfilePicture =
   "https://www.kravemarketingllc.com/wp-content/uploads/2018/09/placeholder-user-500x500.png";
+
+export const ArtistProfileToggle = [
+  {
+    id: 1,
+    name: "posts",
+  },
+  {
+    id: 2,
+    name: "stats",
+  },
+  {
+    id: 3,
+    name: "drafts",
+  },
+];
+
+export const posts = [
+  {
+    id: 1,
+    title: "Soul Eyes",
+    views: "700K",
+    comments: 0,
+    createdAt: "3 weeks ago",
+    image: "/Art2.png",
+  },
+  {
+    id: 2,
+    title: "Introspection",
+    views: "39K",
+    comments: 2,
+    createdAt: "1 month ago",
+    image: "/Art2.png",
+  },
+];
