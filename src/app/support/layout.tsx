@@ -1,9 +1,7 @@
-// app/orders/layout.tsx
-
 import Sidebar from "../../features/profile/layout/buyer-sidebar";
 import ExploreNav from "@/src/features/explore/components/explore-nav";
 
-export default function OrdersLayout({
+export default function SupportLayout({
   children,
 }: {
   children: React.ReactNode;
