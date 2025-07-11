@@ -63,3 +63,9 @@ export const ArtistAssetDto = z.object({
     pagination: Pagination,
   }),
 });
+
+export const FetchUserAsset = z.object({
+  userId: z.string().uuid(),
+  page: z.number().optional().default(1),
+  limit: z.number().min(1).optional().default(12),
+});
