@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { useCart } from "../../cart/hooks/use-cart";
 import { useAssetLike } from "../hooks/use-asset-like";
+import { formatViewCount } from "@/src/utils/number-format";
 
 interface ExploreCardProps {
   id: number | string;
@@ -174,7 +175,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           </button>
 
           <p className="font-bricolage text-[16px] font-bold text-neutral-900">
-            {currentLikeCount}
+            {formatViewCount(currentLikeCount)}
           </p>
         </div>
       </div>
