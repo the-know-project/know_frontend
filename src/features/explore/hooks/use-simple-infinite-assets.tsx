@@ -4,7 +4,11 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { fetchAllExploreAssets } from "../api/fetch-asset/route";
 import { ExploreErrorMessages } from "../data/explore.data";
 import { ExploreError } from "../errors/explore.error";
-import { TFetchExploreAsset, TAsset } from "../types/explore.types";
+import {
+  TFetchExploreAsset,
+  TAsset,
+  TExploreAssetDto,
+} from "../types/explore.types";
 import { useTokenStore } from "../../auth/state/store";
 import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 
@@ -67,7 +71,7 @@ export const useSimpleInfiniteAssets = ({
         throw result.error;
       }
 
-      return result.value;
+      return result.value as TExploreAssetDto;
     },
     staleTime: 5000,
     enabled: isAuthenticated && !authError && !!userId, // Only run query if authenticated and user exists
@@ -83,7 +87,8 @@ export const useSimpleInfiniteAssets = ({
 
   useEffect(() => {
     if (data?.data) {
-      const { assets: newAssets, totalPages: newTotalPages } = data.data;
+      const { assets: newAssets } = data.data;
+      const { totalPages: newTotalPages } = data.data.pagination;
 
       setTotalPages(newTotalPages || 0);
       setHasNextPage(currentPage < (newTotalPages || 0));
