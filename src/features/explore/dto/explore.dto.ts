@@ -14,7 +14,19 @@ export const Asset = z.object({
   isListed: z.boolean(),
   isLocked: z.boolean(),
   url: z.string().url(),
+  size: z.object({
+    width: z.number(),
+    height: z.number(),
+    weight: z.number(),
+    depth: z.number().optional(),
+    diameter: z.number().optional(),
+    length: z.number().optional(),
+    weightUnit: z.string().optional(),
+    dimensionUnit: z.string().optional(),
+  }),
   numOfLikes: z.number().min(0),
+  numOfViews: z.number().min(0),
+  tags: z.array(z.string()).optional(),
 });
 
 export const Pagination = z.object({
@@ -37,7 +49,7 @@ export const FetchExploreAssetDto = z.object({
   status: z.number().min(0).max(1),
   data: z.object({
     assets: z.array(Asset),
+    pagination: Pagination,
+    filters: Filters,
   }),
-  pagination: Pagination,
-  filters: Filters,
 });
