@@ -24,7 +24,7 @@ export const UserAssetData = z.object({
   categories: z.array(z.string()),
   createdAt: z.date(),
   isListed: z.boolean(),
-  isLocal: z.boolean(),
+  isLocked: z.boolean(),
   url: z.string().url(),
   size: z.object({
     width: z.number(),
@@ -38,6 +38,7 @@ export const UserAssetData = z.object({
   }),
   tags: z.array(z.string()),
   numOfLikes: z.number(),
+  numOfViews: z.number(),
 });
 
 export const Pagination = z.object({
@@ -69,3 +70,5 @@ export const FetchUserAsset = z.object({
   page: z.number().optional().default(1),
   limit: z.number().min(1).optional().default(12),
 });
+
+export type TUserAssetData = z.infer<typeof UserAssetData>;
