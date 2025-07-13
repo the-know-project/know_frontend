@@ -21,14 +21,10 @@
 // //   shipping: () => <ShippingInfo />,
 // };
 
-// export default function CheckoutStepPage({
-//   params,
-// }: {
-//   params: { step: string };
-// }) {
-//   const StepComponent = stepMap[params.step];
-
-//   if (!StepComponent) return notFound();
-
-//   return <StepComponent />;
-// }
+export default function Page() {
+  return (
+    <div>
+      <p>Checkout Page</p>
+    </div>
+  );
+}
