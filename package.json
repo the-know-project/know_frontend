@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
@@ -20,6 +21,7 @@
     "clsx": "^2.1.1",
     "formik": "^2.4.6",
     "framer-motion": "^12.12.2",
+    "headlessui": "^0.0.0",
     "lucide-react": "^0.511.0",
     "motion": "^12.12.2",
     "neverthrow": "^8.2.0",
