@@ -1,10 +1,9 @@
 "use client";
 import { PageAuthGuard } from "@/src/features/auth/guards";
-import { useState, useEffect } from "react";
-import Sidebar from "../../features/profile/layout/buyer-sidebar";
+import { mockOrders } from "@/src/features/profile/buyer/data/mock-data";
 import { Eye, ShoppingCart } from "lucide-react";
-import { mockOrders } from "@/src/features/profile/components/mock-data";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type Order = {
   id: string;
