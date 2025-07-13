@@ -1,9 +1,9 @@
 // app/checkout/components/PaymentMethodForm.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
 import { RadioGroup } from "@headlessui/react";
-import { CreditCard, Banknote, Bitcoin } from "lucide-react";
+import { Banknote, Bitcoin, CreditCard } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const methods = [
   {
@@ -67,7 +67,7 @@ export const PaymentMethodForm = () => {
 
       <button
         onClick={handleProceed}
-        className="w-full rounded-lg cursor-pointer bg-blue-800 py-3 font-semibold text-white"
+        className="w-full cursor-pointer rounded-lg bg-blue-800 py-3 font-semibold text-white"
       >
         Proceed
       </button>
