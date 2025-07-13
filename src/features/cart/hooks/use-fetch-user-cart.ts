@@ -3,6 +3,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { useTokenStore } from "../../auth/state/store";
 import { fetchUserCart } from "../api/fetch-user-cart/route";
 import { CartError } from "../error/cart.error";
+import { IUserCart } from "../types/cart.types";
 
 export const useFetchUserCart = () => {
   const userId = useTokenStore((state) => state.user?.id);
@@ -35,7 +36,7 @@ export const useFetchUserCart = () => {
         throw result.error;
       }
 
-      return result.value;
+      return result.value as IUserCart;
     },
     staleTime: 5000,
   });
