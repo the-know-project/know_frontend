@@ -14,7 +14,7 @@ export const MetricsData = z.object({
 
 export const UserAssetData = z.object({
   fileId: z.string(),
-  fileName: z.string(),
+  name: z.string(),
   description: z.string().max(255).optional(),
   fileType: z.string(),
   firstName: z.string().max(255).optional(),
