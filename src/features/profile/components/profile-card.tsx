@@ -21,7 +21,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
     <div className="flex h-[400px] w-[500px] flex-col">
       <Image
         src={image}
-        alt={title}
+        alt="user_asset"
         quality={100}
         width={500}
         height={300}
