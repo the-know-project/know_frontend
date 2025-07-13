@@ -8,6 +8,7 @@ import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
 import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
 import InfiniteLoadingIndicator from "../../../explore/components/infinite-loading-indicator";
 import { TUserAssetData } from "../dto/artist.dto";
+import { formatDateToReadable } from "@/src/utils/date";
 
 interface ArtistProfileGridProps {
   userId?: string;
@@ -109,9 +110,9 @@ const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
             >
               <ProfileCard
                 id={post.fileId}
-                title={post.fileName}
+                title={post.name}
                 views={post.numOfViews}
-                createdAt={post.createdAt.toISOString()}
+                createdAt={formatDateToReadable(post.createdAt.toString())}
                 image={post.url}
               />
             </motion.div>
