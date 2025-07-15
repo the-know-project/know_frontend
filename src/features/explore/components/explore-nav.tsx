@@ -1,7 +1,13 @@
 "use client";
 
 import { MockNotifications } from "@/src/constants/constants";
-import { IconBellRinging, IconUser } from "@tabler/icons-react";
+import {
+  IconBellRinging,
+  IconPlus,
+  IconSearch,
+  IconUpload,
+  IconUser,
+} from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,7 +20,13 @@ import ExploreForm from "./explore-form";
 import Link from "next/link";
 import ProfileModal from "../../profile/components/profile-modal";
 
-const ExploreNav = () => {
+interface IExploreNavOptions {
+  toggleShareButton?: boolean;
+}
+
+const ExploreNav: React.FC<IExploreNavOptions> = ({
+  toggleShareButton = true,
+}) => {
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
   const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
@@ -31,6 +43,7 @@ const ExploreNav = () => {
     redirectTo: "/login",
   });
   const router = useRouter();
+  const [isSearchToggled, setIsSearchToggled] = useState<boolean>(false);
 
   const { data: notificationData } = useFetchUserNotifications();
 
@@ -53,6 +66,11 @@ const ExploreNav = () => {
     visible: { opacity: 1, y: 0 },
   };
 
+  const searchVariants = {
+    hidden: { opacity: 0, y: -20, height: 0 },
+    visible: { opacity: 1, y: 0, height: "auto" },
+  };
+
   const handleCtaNavigate = () => {
     if (role?.toLowerCase() === "artist") {
       router.push("/upload");
@@ -71,6 +89,10 @@ const ExploreNav = () => {
     setIsNotificationClicked(false);
   };
 
+  const handleSearchToggled = () => {
+    setIsSearchToggled((prev) => !prev);
+  };
+
   useEffect(() => {
     if (notifications.length > 0) {
       const interval = setInterval(() => {
@@ -85,13 +107,29 @@ const ExploreNav = () => {
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
       <div className="flex w-full px-4 sm:hidden">
-        <ExploreForm
-          onSearch={(query) => {
-            console.log(`Searching for ${query}`);
-          }}
-          placeholder="Explore"
-          debounceMs={300}
-        />
+        <AnimatePresence>
+          {isSearchToggled && (
+            <motion.div
+              variants={searchVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{
+                delay: 0.05,
+                ease: "easeInOut",
+                duration: 0.3,
+              }}
+            >
+              <ExploreForm
+                onSearch={(query) => {
+                  console.log(`Searching for ${query}`);
+                }}
+                placeholder="Explore"
+                debounceMs={300}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <div className="flex items-center justify-between px-4 sm:px-6">
         <Link href={"/"} className="flex flex-col items-start gap-1">
@@ -114,8 +152,11 @@ const ExploreNav = () => {
           />
         </div>
 
-        <div className="flex items-center gap-5">
-          {!authLoading && user && role?.toLowerCase() === "artist" ? (
+        <div className="flex items-center gap-4 sm:gap-5">
+          {!authLoading &&
+          user &&
+          role?.toLowerCase() === "artist" &&
+          toggleShareButton ? (
             <button
               className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
               onClick={handleCtaNavigate}
@@ -124,21 +165,19 @@ const ExploreNav = () => {
             </button>
           ) : !authLoading && user && role?.toLowerCase() === "buyer" ? (
             <button
-              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#1E3A8A] sm:text-[16px]"
               onClick={handleCtaNavigate}
             >
               <p className="block">View cart</p>
             </button>
           ) : (
-            <button
-              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
-              onClick={handleCtaNavigate}
-            >
-              <p className="block">View cart</p>
-            </button>
+            <></>
           )}
 
           <div className="flex items-center gap-2 bg-transparent px-2">
+            <button className="flex sm:hidden" onClick={handleSearchToggled}>
+              <IconSearch width={32} height={32} className="text-neutral-600" />
+            </button>
             <div className="relative flex w-full flex-col">
               <button className="relative" onClick={handleNotificationClicked}>
                 <IconBellRinging
@@ -178,7 +217,7 @@ const ExploreNav = () => {
             </div>
             {!authLoading && user?.imageUrl ? (
               <div className="flex w-full flex-col">
-                <button onClick={handleProfileClicked}>
+                <button onClick={handleProfileClicked} className="-mt-1">
                   <Image
                     alt="user profile"
                     src={user?.imageUrl}
