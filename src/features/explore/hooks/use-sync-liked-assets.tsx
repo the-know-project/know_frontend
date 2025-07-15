@@ -69,6 +69,7 @@ export const usePeriodicSyncLikedAssets = (
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
+      console.log("data", data);
       initializeLikedAssetsWithCounts(data);
     }
   }, [data, initializeLikedAssetsWithCounts]);
