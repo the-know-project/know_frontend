@@ -127,7 +127,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           </div>
 
           <div className="flex flex-col items-start">
-            <p className="font-helvetica text-[18px] font-black text-neutral-800 capitalize">
+            <p className="font-bricolage text-[18px] font-black text-neutral-800 capitalize">
               {artistName}
             </p>
             <h3 className="font-bricolage text-sm font-semibold text-neutral-700 underline">
