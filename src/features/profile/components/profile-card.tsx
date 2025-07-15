@@ -1,10 +1,11 @@
 import { IconEye, IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
+import { formatViewCount } from "@/src/utils/number-format";
 
 interface IProfileCard {
   id: number | string;
   title: string;
-  views: string;
+  views: string | number;
   createdAt: string;
   image: string;
 }
@@ -20,7 +21,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
     <div className="flex h-[400px] w-[500px] flex-col">
       <Image
         src={image}
-        alt={title}
+        alt="user_asset"
         quality={100}
         width={500}
         height={300}
@@ -36,7 +37,9 @@ const ProfileCard: React.FC<IProfileCard> = ({
         <div className="flex items-center gap-3 text-black">
           <div className="flex items-center gap-1">
             <IconEye width={15} height={15} />
-            <p className="font-bricolage text-sm capitalize">{views}</p>
+            <p className="font-bricolage text-sm capitalize">
+              {formatViewCount(views)}
+            </p>
           </div>
           <div className="flex items-center gap-1">
             <IconPencil width={15} height={15} />

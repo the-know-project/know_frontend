@@ -59,7 +59,7 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
         </button>
       </div>
       <div className="relative z-10 flex w-full flex-col gap-5">
-        {data.map((notification, index) => (
+        {data.map((notification: NotificationProps, index) => (
           <div className="flex w-full flex-col gap-2" key={notification.id}>
             <div
               className="motion-preset-blur-down motion-duration-700 flex items-center gap-5"

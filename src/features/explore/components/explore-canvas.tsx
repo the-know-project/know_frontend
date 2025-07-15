@@ -103,7 +103,14 @@ const ExploreCanvasContent = ({
   const { sentinelRef } = infiniteScrollResult;
 
   useEffect(() => {
-    if (!isCartLoading && cartDataResult?.data) {
+    if (
+      !isCartLoading &&
+      cartDataResult &&
+      typeof cartDataResult === "object" &&
+      !Array.isArray(cartDataResult) &&
+      "data" in cartDataResult &&
+      cartDataResult.data
+    ) {
       const transformedCartData = cartDataResult.data.map((item: TCart) => ({
         fileId: item.fileId,
         quantity: item.quantity,
@@ -111,7 +118,7 @@ const ExploreCanvasContent = ({
 
       initCart(transformedCartData);
     }
-  }, [isCartLoading, cartDataResult?.data, initCart]);
+  }, [isCartLoading, cartDataResult, initCart]);
 
   if (isLoading && assets.length === 0 && isCartLoading) {
     return <ExploreCardSkeletonGrid />;
