@@ -6,7 +6,7 @@ export default function Page() {
     <PageAuthGuard requiredRoles={["ARTIST"]} requiresAuth={true}>
       <div className="flex min-h-screen">
         <div className="flex flex-1 flex-col">
-          <main className="p-6">
+          <main className="px-6">
             <ProfileGrid />
           </main>
         </div>
