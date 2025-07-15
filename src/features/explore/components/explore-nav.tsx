@@ -136,9 +136,9 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
           <Image
             src="/Know-Logo.png"
             alt="logo"
-            width={50}
-            height={50}
-            className="object-contain object-center"
+            width={70}
+            height={70}
+            className="object-cover object-center"
           />
         </Link>
 
