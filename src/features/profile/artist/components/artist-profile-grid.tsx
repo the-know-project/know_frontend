@@ -107,7 +107,7 @@ const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="w-full max-w-sm gap-[150px] lg:max-w-none"
+              className="flex w-full max-w-sm space-y-[50px] lg:max-w-none"
             >
               <ProfileCard
                 id={post.fileId}
