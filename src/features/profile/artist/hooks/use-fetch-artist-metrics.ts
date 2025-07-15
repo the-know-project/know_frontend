@@ -7,18 +7,14 @@ import { IArtistMetricsDto } from "../../types/profile.types";
 
 export const useFetchArtistMetrics = () => {
   const userId = useTokenStore((state) => state.user?.id);
-  if (!userId) {
-    return {
-      data: null,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: () => Promise.resolve(),
-    };
-  }
+
   return useQuery({
     queryKey: [`artist-${userId}-metrics`],
     queryFn: async () => {
+      if (!userId) {
+        throw new ArtistError("User ID is required to fetch artist metrics");
+      }
+
       const result = await ResultAsync.fromPromise(
         fetchArtistMetrics(userId),
         (error) => new ArtistError(`Error fetching artist metrics ${error}`),
@@ -38,5 +34,6 @@ export const useFetchArtistMetrics = () => {
 
       return result.value as IArtistMetricsDto;
     },
+    enabled: !!userId,
   });
 };
