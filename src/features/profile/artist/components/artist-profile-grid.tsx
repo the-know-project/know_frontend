@@ -1,23 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { ArtistProfileToggle } from "@/src/constants/constants";
-import ProfileCard from "../../components/profile-card";
-import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
-import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
-import InfiniteLoadingIndicator from "../../../explore/components/infinite-loading-indicator";
-import { TUserAssetData } from "../dto/artist.dto";
 import { formatDateToReadable } from "@/src/utils/date";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import InfiniteLoadingIndicator from "../../../explore/components/infinite-loading-indicator";
+import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
+import ProfileCard from "../../components/profile-card";
+import { TUserAssetData } from "../dto/artist.dto";
+import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
 
 interface ArtistProfileGridProps {
   userId?: string;
 }
 
 const ProfileCardSkeletonGrid = () => (
-  <div className="grid grid-cols-2 gap-4">
+  <div className="flex flex-col items-center gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
     {Array.from({ length: 8 }).map((_, index) => (
-      <div key={index} className="animate-pulse">
+      <div key={index} className="w-full max-w-sm animate-pulse lg:max-w-none">
         <div className="mb-2 aspect-square rounded-lg bg-gray-200"></div>
         <div className="mb-1 h-4 rounded bg-gray-200"></div>
         <div className="h-3 w-3/4 rounded bg-gray-200"></div>
@@ -107,6 +107,7 @@ const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
+              className="w-full max-w-sm gap-[150px] lg:max-w-none"
             >
               <ProfileCard
                 id={post.fileId}
@@ -120,7 +121,7 @@ const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
         </AnimatePresence>
 
         {isLoadingMore && (
-          <div className="col-span-2 flex justify-center py-4">
+          <div className="flex w-full justify-center py-4 lg:col-span-2">
             <InfiniteLoadingIndicator />
           </div>
         )}
@@ -129,12 +130,12 @@ const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
         {canLoadMore && (
           <div
             ref={sentinelRef}
-            className="col-span-2 flex h-10 items-center justify-center"
+            className="flex h-10 w-full items-center justify-center lg:col-span-2"
           />
         )}
 
         {!hasNextPage && posts.length > 0 && (
-          <div className="col-span-2 py-8 text-center">
+          <div className="w-full py-8 text-center lg:col-span-2">
             <p className="font-bricolage text-sm text-gray-400">
               You've reached the end of the posts
             </p>
@@ -145,47 +146,49 @@ const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
   };
 
   return (
-    <section className="flex w-full flex-col">
-      <div className="relative flex flex-row items-center justify-between">
-        {ArtistProfileToggle.map((toggle) => (
-          <button
-            key={toggle.id}
-            className="flex flex-1 flex-col items-start"
-            onClick={() => setActiveToggle(toggle.name)}
-          >
-            <p
-              className={`font-bricolage capitalize hover:scale-105 active:scale-95 ${
-                activeToggle === toggle.name
-                  ? "font-semibold text-black transition-colors duration-300"
-                  : "text-neutral-500"
-              }`}
+    <section className="flex w-full flex-col px-4 lg:px-6">
+      <div className="w-full items-center justify-center">
+        <div className="relative flex flex-row items-center justify-between">
+          {ArtistProfileToggle.map((toggle) => (
+            <button
+              key={toggle.id}
+              className="flex flex-1 flex-col items-center"
+              onClick={() => setActiveToggle(toggle.name)}
             >
-              {toggle.name}
-            </p>
-          </button>
-        ))}
-        {/* Continuous line background */}
-        <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-gray-300"></div>
-        {/* Active section highlight */}
-        <div
-          className={`absolute bottom-0 h-[2px] bg-black transition-all duration-300 ${
-            activeToggle === "posts"
-              ? "left-0 w-1/4 rounded-[15px]"
-              : activeToggle === "stats"
-                ? "left-1/4 w-1/4 rounded-[15px]"
-                : "left-[67%] w-[33%] rounded-[15px]"
-          }`}
-        ></div>
+              <p
+                className={`font-bricolage lg:text-normal text-sm capitalize hover:scale-105 active:scale-95 ${
+                  activeToggle === toggle.name
+                    ? "font-semibold text-black transition-colors duration-300"
+                    : "text-neutral-500"
+                }`}
+              >
+                {toggle.name}
+              </p>
+            </button>
+          ))}
+          {/* Continuous line background */}
+          <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-gray-300"></div>
+          {/* Active section highlight */}
+          <div
+            className={`absolute bottom-0 h-[2px] bg-black transition-all duration-300 ${
+              activeToggle === "posts"
+                ? "left-0 w-1/3 rounded-[15px]"
+                : activeToggle === "stats"
+                  ? "left-1/3 w-1/3 rounded-[15px]"
+                  : "left-2/3 w-1/3 rounded-[15px]"
+            }`}
+          ></div>
+        </div>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-4 bg-white">
+      <div className="mt-4 flex w-full flex-col items-center justify-center gap-4 bg-white lg:grid lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
-          <div className="col-span-2 flex flex-col items-center justify-center py-20">
+          <div className="flex w-full flex-col items-center justify-center py-20 lg:col-span-2">
             <p className="font-bricolage text-gray-500">Stats coming soon...</p>
           </div>
         )}
         {activeToggle === "drafts" && (
-          <div className="col-span-2 flex flex-col items-center justify-center py-20">
+          <div className="flex w-full flex-col items-center justify-center py-20 lg:col-span-2">
             <p className="font-bricolage text-gray-500">
               Collections coming soon...
             </p>
