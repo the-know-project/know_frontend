@@ -31,7 +31,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
 
         <div className="mt-2 flex w-full max-w-[400px] justify-between">
           <div className="flex flex-col items-start font-medium text-neutral-600">
-            <h3 className="font-bricolage sm:text-normal text-sm capitalize">
+            <h3 className="font-bricolage sm:text-normal text-sm text-neutral-800 capitalize">
               {title}
             </h3>
             <p className="font-bricolage text-xs capitalize sm:text-sm">
