@@ -83,7 +83,7 @@ const JoinCtaForm = () => {
     }
   };
   return (
-    <section className="flex w-full flex-row items-center justify-start sm:justify-center">
+    <section className="flex w-full flex-row items-center justify-start">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleCtaAction)}

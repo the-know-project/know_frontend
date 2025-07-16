@@ -171,7 +171,7 @@
   }
 
   .accordion_title {
-    @apply font-helvetica ml-2 text-nowrap text-zinc-950 capitalize sm:text-lg lg:text-xl dark:text-zinc-50;
+    @apply font-bricolage ml-2 font-bold text-nowrap text-zinc-950 capitalize sm:text-lg lg:text-xl dark:text-zinc-50;
   }
 
   .accordion_content {

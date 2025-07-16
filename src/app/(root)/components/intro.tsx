@@ -12,7 +12,7 @@ const Intro = () => {
     <div className="z-50 flex w-full flex-col px-6 py-12">
       <div className="flex w-full flex-col gap-5 lg:flex-row-reverse lg:items-center lg:justify-between">
         <TitleText textStyles={`w-full max-w-prose`}>
-          <h3 className="font-helvetica text-2xl font-black text-neutral-400 capitalize md:text-3xl">
+          <h3 className="font-bricolage text-2xl font-black text-neutral-400 capitalize md:text-3xl">
             the <span className="text-neutral-950">all-in-one</span> platform to{" "}
             <span className="text-neutral-950"> create, earn </span> and{" "}
             <span className="text-neutral-950">grow</span>

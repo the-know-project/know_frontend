@@ -28,12 +28,12 @@ export default function TiltSection({
         reverse ? "md:flex-row-reverse" : ""
       }`}
     >
-      <div className="flex-1">
+      <div className="flex flex-col items-start">
         <TitleText textStyles={`w-full max-w-prose`}>
           <p className="font-bebas text-lg text-neutral-400 uppercase">
             {role}
           </p>
-          <h2 className="font-helvetica mb-4 text-2xl font-medium capitalize md:text-3xl">
+          <h2 className="font-bricolage mb-4 text-2xl font-medium capitalize md:text-3xl">
             {title}
           </h2>
           <p className="about_content_text">{subtitle}</p>
