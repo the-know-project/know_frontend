@@ -2,9 +2,10 @@
 
 import { useEffect, useState, createContext, useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useStableAuthStatus } from "../hooks/use-stable-auth-status";
+import { useEnhancedAuthStatus } from "../hooks/use-enhanced-auth-status";
 import { useTokenStore } from "../state/store";
 import { useRoleStore } from "../state/store";
+import { EnhancedTokenUtils } from "../utils/enhanced-token.utils";
 
 interface AuthContextValue {
   isAuthenticated: boolean;
@@ -18,6 +19,9 @@ interface AuthContextValue {
   role: string | null;
   error: string | null;
   isTokenExpired: boolean;
+  tokenInfo: ReturnType<typeof EnhancedTokenUtils.getTokenInfo>;
+  refreshTokens: () => Promise<void>;
+  clearError: () => void;
   retry: () => void;
 }
 
@@ -32,6 +36,9 @@ interface AuthProviderProps {
   }>;
   publicRoutes?: string[];
   redirectTo?: string;
+  enableAutoRefresh?: boolean;
+  refreshThresholdMinutes?: number;
+  checkInterval?: number;
 }
 
 const DefaultAuthFallback: React.FC<{
@@ -100,6 +107,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   fallback: Fallback = DefaultAuthFallback,
   publicRoutes = ["/login", "/register", "/", "/about", "/contact"],
   redirectTo = "/login",
+  enableAutoRefresh = true,
+  refreshThresholdMinutes = 15,
+  checkInterval = 60000, // 1 minute
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -111,15 +121,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
   // Handle auth errors
   const handleAuthError = (errorMessage: string) => {
-    console.error("Auth Provider Error:", errorMessage);
+    console.error("🚨 Enhanced Auth Provider Error:", errorMessage);
   };
 
-  const { isAuthenticated, isLoading, user, role, error, isTokenExpired } =
-    useStableAuthStatus({
-      redirectOnExpiry: false, // Handle redirection manually
-      redirectTo,
-      onAuthError: handleAuthError,
-    });
+  const handleTokenRefreshed = () => {
+    console.log("✅ Token refreshed successfully");
+    // Clear any retry keys to reset error states
+    setRetryKey((prev) => prev + 1);
+  };
+
+  const {
+    isAuthenticated,
+    isLoading,
+    user,
+    role,
+    error,
+    isTokenExpired,
+    tokenInfo,
+    refreshTokens,
+    clearError,
+    retry,
+  } = useEnhancedAuthStatus({
+    redirectOnAuthFailure: false, // Handle redirection manually
+    redirectTo,
+    onAuthError: handleAuthError,
+    onTokenRefreshed: handleTokenRefreshed,
+    enableAutoRefresh,
+    refreshThresholdMinutes,
+    checkInterval,
+  });
 
   // Check if current route is public
   const isPublicRoute = publicRoutes.some((route) => {
@@ -139,15 +169,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     // If on a protected route and not authenticated
     if (!isPublicRoute && !isAuthenticated && !isLoading) {
       console.log(
-        "Redirecting to login - not authenticated on protected route",
+        "🔄 Redirecting to login - not authenticated on protected route",
       );
       router.push(redirectTo);
       return;
     }
 
-    // If token is expired and we have critical auth errors
-    if (isTokenExpired && error && error.includes("refresh_token_invalid")) {
-      console.log("Critical auth error, clearing state and redirecting");
+    // Handle critical errors that require logout
+    if (error && error.includes("refresh_token_invalid")) {
+      console.log("🚨 Critical auth error, clearing state and redirecting");
       tokenStore.clearTokens();
       roleStore.clearRole();
       router.push(redirectTo);
@@ -163,19 +193,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     router,
     redirectTo,
     hasInitialized,
+    tokenStore,
+    roleStore,
   ]);
 
-  // Retry handler
-  const handleRetry = () => {
+  const handleRetry = async () => {
+    clearError();
     setRetryKey((prev) => prev + 1);
+    await retry();
   };
 
   // Show fallback for auth errors on protected routes
-  if (!isPublicRoute && error && hasInitialized) {
+  // But be more lenient - only show for critical errors
+  const shouldShowFallback =
+    !isPublicRoute &&
+    error &&
+    hasInitialized &&
+    (error.includes("refresh_token_invalid") ||
+      error.includes("No authentication token") ||
+      error.includes("Session expired"));
+
+  if (shouldShowFallback) {
     return <Fallback error={error} retry={handleRetry} isLoading={isLoading} />;
   }
 
-  // Show loading state for protected routes while checking auth
   if (!isPublicRoute && (isLoading || !hasInitialized)) {
     return <Fallback error={null} retry={handleRetry} isLoading={true} />;
   }
@@ -187,13 +228,66 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     role: role,
     error,
     isTokenExpired,
+    tokenInfo,
+    refreshTokens,
+    clearError,
     retry: handleRetry,
   };
 
   return (
     <AuthContext.Provider value={contextValue}>
-      <div key={retryKey}>{children}</div>
+      <div key={retryKey}>
+        {children}
+        {process.env.NODE_ENV === "development" && (
+          <DebugAuthInfo tokenInfo={tokenInfo} />
+        )}
+      </div>
     </AuthContext.Provider>
+  );
+};
+
+const DebugAuthInfo: React.FC<{
+  tokenInfo: ReturnType<typeof EnhancedTokenUtils.getTokenInfo>;
+}> = ({ tokenInfo }) => {
+  const [showDebug, setShowDebug] = useState(false);
+
+  if (!showDebug) {
+    return (
+      <button
+        onClick={() => setShowDebug(true)}
+        className="fixed right-4 bottom-4 z-50 rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-50 hover:opacity-100"
+      >
+        🔐
+      </button>
+    );
+  }
+
+  return (
+    <div className="fixed right-4 bottom-4 z-50 max-w-sm rounded bg-gray-800 p-3 text-xs text-white shadow-lg">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="font-medium">Auth Debug</span>
+        <button
+          onClick={() => setShowDebug(false)}
+          className="text-gray-400 hover:text-white"
+        >
+          ×
+        </button>
+      </div>
+      <div className="space-y-1">
+        <div>Token: {tokenInfo.hasToken ? "✅" : "❌"}</div>
+        <div>Valid: {tokenInfo.isValid ? "✅" : "❌"}</div>
+        <div>Expires in: {tokenInfo.timeUntilExpiryMinutes || 0}m</div>
+        <div>Will expire soon: {tokenInfo.willExpireSoon ? "⚠️" : "✅"}</div>
+        <div>User active: {tokenInfo.isUserActive ? "✅" : "💤"}</div>
+        <div>Refresh count: {tokenInfo.refreshCount || 0}</div>
+      </div>
+      <button
+        onClick={() => EnhancedTokenUtils.debugTokenState()}
+        className="mt-2 w-full rounded bg-blue-600 px-2 py-1 text-xs hover:bg-blue-700"
+      >
+        Log Full State
+      </button>
+    </div>
   );
 };
 
