@@ -11,8 +11,7 @@ import InfiniteLoadingIndicator from "./infinite-loading-indicator";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { TCart } from "../../cart/types/cart.types";
-import { useTokenStore } from "../../auth/state/store";
-import { useRoleStore } from "../../auth/state/store";
+import { useEnhancedAuthContext } from "../../auth/components/enhanced-auth-provider";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -38,17 +37,17 @@ const AuthLoadingState = ({ message = "Loading..." }: { message?: string }) => (
 
 const useAuthCheck = () => {
   const router = useRouter();
-  const tokenStore = useTokenStore();
-  const roleStore = useRoleStore();
+  const { isAuthenticated, isTokenExpired, tokenInfo, error } =
+    useEnhancedAuthContext();
 
   return useMemo(() => {
-    const isAuthenticated = tokenStore.isAuthenticated;
-    const isExpired = tokenStore.isTokenExpired();
-
-    if (!isAuthenticated || isExpired) {
-      tokenStore.clearTokens();
-      roleStore.clearRole();
-
+    if (
+      !isAuthenticated &&
+      error &&
+      (error.includes("No authentication token") ||
+        error.includes("refresh_token_invalid") ||
+        error.includes("Session expired"))
+    ) {
       setTimeout(() => {
         router.push("/login");
       }, 100);
@@ -56,13 +55,17 @@ const useAuthCheck = () => {
       return { isValid: false, shouldRedirect: true };
     }
 
-    return { isValid: true, shouldRedirect: false };
+    if (isTokenExpired && tokenInfo.hasRefreshToken) {
+      return { isValid: true, shouldRedirect: false };
+    }
+
+    return { isValid: isAuthenticated, shouldRedirect: false };
   }, [
-    tokenStore.isAuthenticated,
-    tokenStore.accessToken,
+    isAuthenticated,
+    isTokenExpired,
+    tokenInfo.hasRefreshToken,
+    error,
     router,
-    tokenStore,
-    roleStore,
   ]);
 };
 
