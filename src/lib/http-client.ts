@@ -8,7 +8,7 @@ import axios, {
 import { isProduction } from "../config/environment";
 import { env } from "../config/schemas/env";
 import { useTokenStore } from "../features/auth/state/store";
-import { tokenService } from "../features/auth/service/token.service";
+import { EnhancedTokenUtils } from "../features/auth/utils/enhanced-token.utils";
 
 interface QueuedRequest {
   resolve: (value: any) => void;
@@ -79,8 +79,8 @@ class HttpClient {
           this.isRefreshing = true;
 
           try {
-            const success = await this.refreshToken();
-            if (success) {
+            const refreshResult = await this.attemptRefresh();
+            if (refreshResult.success) {
               this.processQueue(null);
 
               const token = useTokenStore.getState().getAccessToken();
@@ -90,13 +90,26 @@ class HttpClient {
 
               return this.axiosInstance(originalRequest);
             } else {
-              this.processQueue(new Error("Token refresh failes"));
-              this.handleAuthFailure();
+              this.processQueue(
+                new Error(refreshResult.error || "Token refresh failed"),
+              );
+
+              // Only clear tokens if refresh token is actually invalid
+              if (refreshResult.shouldLogout) {
+                this.handleAuthFailure();
+              }
+
               return Promise.reject(error);
             }
           } catch (refreshError) {
             this.processQueue(refreshError);
-            this.handleAuthFailure();
+
+            // Don't immediately logout on network errors
+            const isNetworkError =
+              !refreshError || !(refreshError as any)?.response;
+            if (!isNetworkError) {
+              this.handleAuthFailure();
+            }
           } finally {
             this.isRefreshing = false;
           }
@@ -120,32 +133,21 @@ class HttpClient {
     return !skipAuthPaths.some((path) => url.includes(path));
   }
 
-  private async refreshToken(): Promise<boolean> {
+  private async attemptRefresh(): Promise<{
+    success: boolean;
+    error?: string;
+    shouldLogout?: boolean;
+  }> {
     try {
-      const tokenStore = useTokenStore.getState();
-      const refreshToken = tokenStore.getRefreshToken();
-      const user = tokenStore.user;
-
-      if (!refreshToken || !user) {
-        return false;
-      }
-
-      const response = await tokenService.refreshAccessToken(refreshToken);
-
-      if (response.status === 200 && response.data) {
-        const {
-          accessToken,
-          refreshToken: newRefreshToken,
-          user: updatedUser,
-        } = response.data;
-        tokenStore.setTokens(accessToken, newRefreshToken, updatedUser);
-        return true;
-      }
-
-      return false;
+      console.log("🔄 HTTP Client: Attempting token refresh...");
+      return await EnhancedTokenUtils.attemptRefresh(true);
     } catch (error) {
-      console.error("Token refresh failed in HTTP client:", error);
-      return false;
+      console.error("❌ HTTP Client: Token refresh failed:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown refresh error",
+        shouldLogout: false,
+      };
     }
   }
 
@@ -162,9 +164,12 @@ class HttpClient {
   }
 
   private handleAuthFailure(): void {
-    useTokenStore.getState().clearTokens();
+    console.warn(
+      "🚨 HTTP Client: Critical authentication failure, clearing tokens",
+    );
 
-    console.warn("Authentication failed, tokens cleared");
+    // Use enhanced utils for proper cleanup
+    EnhancedTokenUtils.logout();
   }
 
   public get<T = any>(
