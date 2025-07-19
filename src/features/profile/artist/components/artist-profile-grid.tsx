@@ -18,9 +18,9 @@ const ProfileCardSkeletonGrid = () => (
   <div className="flex flex-col items-center gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
     {Array.from({ length: 8 }).map((_, index) => (
       <div key={index} className="w-full max-w-sm animate-pulse lg:max-w-none">
-        <div className="mb-2 aspect-square rounded-lg bg-gray-200"></div>
-        <div className="mb-1 h-4 rounded bg-gray-200"></div>
-        <div className="h-3 w-3/4 rounded bg-gray-200"></div>
+        <div className="mb-2 aspect-square rounded-lg bg-gray-300"></div>
+        <div className="mb-1 h-4 rounded bg-gray-300"></div>
+        <div className="h-3 w-3/4 rounded bg-gray-300"></div>
       </div>
     ))}
   </div>
