@@ -18,7 +18,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
   image,
 }) => {
   return (
-    <div className="mt-[30px] flex w-full flex-col px-4">
+    <div className={`mt-[30px] flex w-full flex-col px-4`}>
       <div className="flex flex-col">
         <Image
           src={image}
