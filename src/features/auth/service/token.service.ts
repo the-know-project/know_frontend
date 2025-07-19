@@ -51,7 +51,7 @@ export class TokenService {
 
   public willExpireSoon(
     token: string | null,
-    thresholdMinutes: number = 5,
+    thresholdMinutes: number = 15,
   ): boolean {
     const validation = this.validateToken(token);
     if (!validation.isValid || !validation.payload) return true;
@@ -80,7 +80,7 @@ export class TokenService {
 
   public async refreshWithRetry(
     refreshToken: string,
-    maxRetries: number = 2,
+    maxRetries: number = 3,
   ): Promise<RefreshTokenResponse> {
     let lastError: Error;
 
@@ -98,7 +98,10 @@ export class TokenService {
 
         // Wait before retrying (exponential backoff)
         if (attempt < maxRetries) {
-          const delay = Math.pow(2, attempt) * 1000;
+          const delay = Math.min(Math.pow(2, attempt) * 1000, 10000); // Cap at 10 seconds
+          console.log(
+            `🔄 Retrying token refresh in ${delay}ms (attempt ${attempt}/${maxRetries})`,
+          );
           await this.delay(delay);
         }
       }
@@ -111,8 +114,10 @@ export class TokenService {
     try {
       const url = this.buildLogoutUrl();
       await ApiClient.post(url, { refreshToken });
+      console.log("✅ Token revocation successful");
     } catch (error) {
-      console.error("Token revocation error:", error);
+      console.error("❌ Token revocation error:", error);
+      // Don't throw error - logout should continue even if server revocation fails
     }
   }
 
