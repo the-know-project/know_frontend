@@ -79,16 +79,16 @@ const ExploreForm = ({
             control={form.control}
             name="query"
             render={({ field }) => (
-              <FormItem className="w-full">
+              <FormItem className="flex w-full flex-col">
                 <FormControl>
-                  <div className="relative w-full">
+                  <div className="relative flex w-full">
                     <IconSearch
                       width={20}
                       height={20}
                       className="absolute top-1/2 left-3 -translate-y-1/2 transform text-neutral-500"
                     />
                     <Input
-                      className="font-bricolage placeholder:font-bricolage !important flex w-[350px] rounded-lg bg-neutral-100 pr-10 pl-10 text-neutral-700 placeholder:text-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0 lg:w-[500px]"
+                      className="font-bricolage placeholder:font-bricolage !important flex w-full rounded-lg bg-neutral-100 pr-10 pl-10 text-neutral-700 placeholder:text-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
                       placeholder={placeholder}
                       {...field}
                     />
