@@ -106,7 +106,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
 
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
-      <div className="flex w-full px-4 sm:hidden">
+      <div className="flex w-full items-center justify-center sm:hidden">
         <AnimatePresence>
           {isSearchToggled && (
             <motion.div
@@ -142,7 +142,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
           />
         </Link>
 
-        <div className="hidden w-full max-w-[300px] sm:flex">
+        <div className="hidden w-full max-w-[500px] sm:flex">
           <ExploreForm
             onSearch={(query) => {
               console.log(`Searching for ${query}`);
