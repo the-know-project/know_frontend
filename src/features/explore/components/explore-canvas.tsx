@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef } from "react";
+import { useEnhancedAuthContext } from "../../auth/components/enhanced-auth-provider";
+import { useBulkCartActions } from "../../cart/hooks/use-cart";
+import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
+import { TCart } from "../../cart/types/cart.types";
+import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
+import { useSimpleInfiniteAssets } from "../hooks/use-simple-infinite-assets";
+import { TAsset } from "../types/explore.types";
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
-import { TAsset } from "../types/explore.types";
-import { useSimpleInfiniteAssets } from "../hooks/use-simple-infinite-assets";
-import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import InfiniteLoadingIndicator from "./infinite-loading-indicator";
-import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
-import { useBulkCartActions } from "../../cart/hooks/use-cart";
-import { TCart } from "../../cart/types/cart.types";
-import { useEnhancedAuthContext } from "../../auth/components/enhanced-auth-provider";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -37,36 +37,44 @@ const AuthLoadingState = ({ message = "Loading..." }: { message?: string }) => (
 
 const useAuthCheck = () => {
   const router = useRouter();
+  const hasRedirected = useRef(false);
   const { isAuthenticated, isTokenExpired, tokenInfo, error } =
     useEnhancedAuthContext();
 
-  return useMemo(() => {
-    if (
+  const hasCriticalError = useMemo(() => {
+    return (
       !isAuthenticated &&
       error &&
       (error.includes("No authentication token") ||
         error.includes("refresh_token_invalid") ||
         error.includes("Session expired"))
-    ) {
-      setTimeout(() => {
-        router.push("/login");
-      }, 100);
+    );
+  }, [isAuthenticated, error]);
 
+  const hasRefreshToken = useMemo(() => {
+    return tokenInfo?.hasRefreshToken || false;
+  }, [tokenInfo?.hasRefreshToken]);
+
+  useEffect(() => {
+    if (hasCriticalError && !hasRedirected.current) {
+      hasRedirected.current = true;
+      router.push("/login");
+    }
+  }, [hasCriticalError, router]);
+
+  return useMemo(() => {
+    if (hasCriticalError) {
       return { isValid: false, shouldRedirect: true };
     }
 
-    if (isTokenExpired && tokenInfo.hasRefreshToken) {
+    // If token is expired but we have a refresh token, consider it valid
+    // The enhanced system will handle the refresh automatically
+    if (isTokenExpired && hasRefreshToken) {
       return { isValid: true, shouldRedirect: false };
     }
 
     return { isValid: isAuthenticated, shouldRedirect: false };
-  }, [
-    isAuthenticated,
-    isTokenExpired,
-    tokenInfo.hasRefreshToken,
-    error,
-    router,
-  ]);
+  }, [isAuthenticated, isTokenExpired, hasRefreshToken, hasCriticalError]);
 };
 
 const ExploreCanvasContent = ({
