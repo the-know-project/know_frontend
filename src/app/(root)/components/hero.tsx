@@ -11,7 +11,7 @@ export default function Hero() {
         <div className="absolute z-20 flex w-full flex-col gap-10 pl-4 lg:relative lg:w-2/4 lg:gap-8 lg:pl-0">
           {/* Hero Text Wrapper */}
           <div className="flex w-full flex-col items-start px-6">
-            <GradientText className="flex w-full p-0 md:p-6 lg:max-w-prose lg:p-0">
+            <GradientText className="flex w-full p-0 lg:max-w-prose">
               <h3 className="font-bebas text-7xl font-black sm:text-8xl lg:text-8xl">
                 {`Discover, Showcase & Own Art`}
               </h3>
