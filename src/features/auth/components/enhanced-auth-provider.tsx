@@ -107,11 +107,11 @@ const DefaultAuthFallback: React.FC<{
 export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
   children,
   fallback: Fallback = DefaultAuthFallback,
-  publicRoutes = ["/login", "/register", "/", "/about", "/contact"],
+  publicRoutes = ["/login", "/register", "/", "/role", "/about", "/contact"],
   redirectTo = "/login",
   enableAutoRefresh = true,
-  refreshThresholdMinutes = 15,
-  checkInterval = 60000, // 1 minute
+  refreshThresholdMinutes = 30,
+  checkInterval = 1800000, // 30 minutes
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -128,7 +128,6 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
 
   const handleTokenRefreshed = () => {
     console.log("✅ Token refreshed successfully");
-    // Clear any retry keys to reset error states
     setRetryKey((prev) => prev + 1);
   };
 
@@ -261,7 +260,7 @@ const DebugAuthInfo: React.FC<{
     return (
       <button
         onClick={() => setShowDebug(true)}
-        className="fixed bottom-4 right-4 z-50 rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-50 hover:opacity-100"
+        className="fixed right-4 bottom-4 z-50 rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-50 hover:opacity-100"
       >
         🔐
       </button>
@@ -269,7 +268,7 @@ const DebugAuthInfo: React.FC<{
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-sm rounded bg-gray-800 p-3 text-xs text-white shadow-lg">
+    <div className="fixed right-4 bottom-4 z-50 max-w-sm rounded bg-gray-800 p-3 text-xs text-white shadow-lg">
       <div className="mb-2 flex items-center justify-between">
         <span className="font-medium">Auth Debug</span>
         <button
@@ -282,15 +281,9 @@ const DebugAuthInfo: React.FC<{
       <div className="space-y-1">
         <div>Token: {tokenInfo.hasToken ? "✅" : "❌"}</div>
         <div>Valid: {tokenInfo.isValid ? "✅" : "❌"}</div>
-        <div>
-          Expires in: {tokenInfo.timeUntilExpiryMinutes || 0}m
-        </div>
-        <div>
-          Will expire soon: {tokenInfo.willExpireSoon ? "⚠️" : "✅"}
-        </div>
-        <div>
-          User active: {tokenInfo.isUserActive ? "✅" : "💤"}
-        </div>
+        <div>Expires in: {tokenInfo.timeUntilExpiryMinutes || 0}m</div>
+        <div>Will expire soon: {tokenInfo.willExpireSoon ? "⚠️" : "✅"}</div>
+        <div>User active: {tokenInfo.isUserActive ? "✅" : "💤"}</div>
         <div>Refresh count: {tokenInfo.refreshCount || 0}</div>
       </div>
       <button
