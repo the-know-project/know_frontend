@@ -90,12 +90,24 @@ class HttpClient {
 
               return this.axiosInstance(originalRequest);
             } else {
+              if (refreshResult.retryable) {
+                console.warn(
+                  "🔄 Token refresh failed but will retry in background",
+                );
+                // For retryable failures, just reject the original request
+                // The enhanced token utils will retry automatically
+                return Promise.reject(error);
+              }
+
               this.processQueue(
                 new Error(refreshResult.error || "Token refresh failed"),
               );
 
               // Only clear tokens if refresh token is actually invalid
               if (refreshResult.shouldLogout) {
+                console.warn(
+                  "🚨 HTTP Client: Authentication failed, logging out",
+                );
                 this.handleAuthFailure();
               }
 
@@ -104,11 +116,17 @@ class HttpClient {
           } catch (refreshError) {
             this.processQueue(refreshError);
 
-            // Don't immediately logout on network errors
-            const isNetworkError =
-              !refreshError || !(refreshError as any)?.response;
-            if (!isNetworkError) {
+            const isAuthError =
+              (refreshError as any)?.response?.status === 401 ||
+              (refreshError as any)?.response?.status === 403;
+
+            if (isAuthError) {
+              console.warn("🚨 HTTP Client: Authentication error, logging out");
               this.handleAuthFailure();
+            } else {
+              console.warn(
+                "🔄 HTTP Client: Network/server error, will retry automatically",
+              );
             }
           } finally {
             this.isRefreshing = false;
@@ -137,16 +155,20 @@ class HttpClient {
     success: boolean;
     error?: string;
     shouldLogout?: boolean;
+    retryable?: boolean;
+    errorType?: string;
   }> {
     try {
-      console.log("🔄 HTTP Client: Attempting token refresh...");
+      console.log("🔄 HTTP Client: Attempting token refresh silently...");
       return await EnhancedTokenUtils.attemptRefresh(true);
     } catch (error) {
-      console.error("❌ HTTP Client: Token refresh failed:", error);
+      console.warn("⚠️ HTTP Client: Token refresh encountered error:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown refresh error",
         shouldLogout: false,
+        retryable: true,
+        errorType: "unknown",
       };
     }
   }
@@ -164,12 +186,17 @@ class HttpClient {
   }
 
   private handleAuthFailure(): void {
-    console.warn(
-      "🚨 HTTP Client: Critical authentication failure, clearing tokens",
-    );
+    console.warn("🚨 HTTP Client: Critical authentication failure detected");
 
     // Use enhanced utils for proper cleanup
-    EnhancedTokenUtils.logout();
+    // This will handle server logout and local cleanup
+    EnhancedTokenUtils.logout()
+      .then(() => {
+        console.log("✅ HTTP Client: Auth cleanup completed");
+      })
+      .catch((error) => {
+        console.error("❌ HTTP Client: Cleanup error:", error);
+      });
   }
 
   public get<T = any>(
