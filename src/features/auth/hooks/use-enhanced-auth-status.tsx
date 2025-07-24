@@ -1,9 +1,8 @@
 "use client";
-
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useTokenStore } from "../state/store";
-import { useRoleStore } from "../state/store";
+import { toast } from "sonner";
+import { useRoleStore, useTokenStore } from "../state/store";
 import { EnhancedTokenUtils } from "../utils/enhanced-token.utils";
 
 interface EnhancedAuthStatus {
@@ -42,11 +41,11 @@ export const useEnhancedAuthStatus = (
   const {
     redirectOnAuthFailure = true,
     redirectTo = "/login",
-    checkInterval = 60000, // Check every minute instead of 30 seconds
+    checkInterval = 1800000, // Check every 30 minutes instead of 30 seconds
     onAuthError,
     onTokenRefreshed,
     enableAutoRefresh = true,
-    refreshThresholdMinutes = 15, // More generous threshold
+    refreshThresholdMinutes = 30, // More generous threshold
   } = options;
 
   const router = useRouter();
@@ -58,16 +57,19 @@ export const useEnhancedAuthStatus = (
   const isRoleStoreRehydrated = roleStore.hasHydrated;
   const isRehydrated = isTokenStoreRehydrated && isRoleStoreRehydrated;
 
-  const [authState, setAuthState] = useState<EnhancedAuthStatus>(() => ({
-    isAuthenticated: false,
-    isLoading: true,
-    user: null,
-    role: null,
-    error: null,
-    isTokenExpired: false,
-    isRehydrated: false,
-    tokenInfo: { hasToken: false },
-  }));
+  const [authState, setAuthState] = useState<EnhancedAuthStatus>(() => {
+    const initialTokenInfo = EnhancedTokenUtils.getTokenInfo();
+    return {
+      isAuthenticated: false,
+      isLoading: true,
+      user: null,
+      role: null,
+      error: null,
+      isTokenExpired: false,
+      isRehydrated: false,
+      tokenInfo: initialTokenInfo,
+    };
+  });
 
   // Prevent multiple simultaneous operations
   const operationInProgress = useRef(false);
@@ -84,34 +86,54 @@ export const useEnhancedAuthStatus = (
     const role = roleStore.role;
     const tokenInfo = EnhancedTokenUtils.getTokenInfo();
 
+    // If user exists but has no ID, trigger logout
+    if (user && !user.id && isAuthenticated) {
+      handleAuthFailure("No user ID found", true);
+      return;
+    }
+
     setAuthState((prevState) => {
-      const newState: EnhancedAuthStatus = {
-        isAuthenticated:
-          isAuthenticated && tokenInfo.isValid ? tokenInfo.isValid : false,
-        isLoading: false,
-        user,
-        role,
-        error: null,
-        isTokenExpired: tokenInfo.isExpired || false,
-        isRehydrated: true,
-        tokenInfo,
-      };
+      const newIsAuthenticated = Boolean(
+        isAuthenticated && tokenInfo.isValid && user?.id,
+      );
+      const newIsTokenExpired = tokenInfo.isExpired || false;
+      const newUserId = user?.id;
 
       // Only update if something actually changed
       if (
-        prevState.isAuthenticated !== newState.isAuthenticated ||
-        prevState.isTokenExpired !== newState.isTokenExpired ||
-        prevState.isLoading !== newState.isLoading ||
-        prevState.user?.id !== newState.user?.id ||
-        prevState.role !== newState.role ||
-        prevState.isRehydrated !== newState.isRehydrated
+        prevState.isAuthenticated !== newIsAuthenticated ||
+        prevState.isTokenExpired !== newIsTokenExpired ||
+        prevState.isLoading !== false ||
+        prevState.user?.id !== newUserId ||
+        prevState.role !== role ||
+        prevState.isRehydrated !== true ||
+        prevState.error !== null
       ) {
-        return newState;
+        return {
+          isAuthenticated: newIsAuthenticated,
+          isLoading: false,
+          user,
+          role,
+          error: null,
+          isTokenExpired: newIsTokenExpired,
+          isRehydrated: true,
+          tokenInfo,
+        };
       }
 
-      return { ...prevState, tokenInfo: newState.tokenInfo };
+      // Only update tokenInfo if it actually changed
+      if (JSON.stringify(prevState.tokenInfo) !== JSON.stringify(tokenInfo)) {
+        return { ...prevState, tokenInfo };
+      }
+
+      return prevState;
     });
-  }, [isRehydrated, tokenStore, roleStore]);
+  }, [
+    isRehydrated,
+    tokenStore.isAuthenticated,
+    tokenStore.user,
+    roleStore.role,
+  ]);
 
   const handleAuthFailure = useCallback(
     async (error: string, shouldLogout = true) => {
@@ -128,6 +150,12 @@ export const useEnhancedAuthStatus = (
       if (shouldLogout) {
         hasRedirected.current = true;
 
+        // Show user-friendly notification
+        toast.error("Session Expired", {
+          description: "Your session has expired. Please log in again.",
+          duration: 4000,
+        });
+
         // Clear tokens and redirect
         await EnhancedTokenUtils.logout();
         roleStore.clearRole();
@@ -143,7 +171,7 @@ export const useEnhancedAuthStatus = (
         if (redirectOnAuthFailure) {
           setTimeout(() => {
             router.push(redirectTo);
-          }, 100);
+          }, 2000); // Give user time to read the notification
         }
       } else {
         setAuthState((prevState) => ({
@@ -181,40 +209,65 @@ export const useEnhancedAuthStatus = (
           onTokenRefreshed();
         }
 
-        // Clear any previous errors
-        setAuthState((prevState) => ({
-          ...prevState,
-          error: null,
-        }));
+        // Clear any previous errors and update state
+        setAuthState((prevState) => {
+          if (prevState.error === null) {
+            return prevState;
+          }
+          return {
+            ...prevState,
+            error: null,
+          };
+        });
 
         updateAuthState();
       } else {
-        console.error("❌ Token refresh failed:", refreshResult.error);
-
+        // Handle different types of refresh failures
         if (refreshResult.shouldLogout) {
+          console.error(
+            "❌ Token refresh failed - authentication required:",
+            refreshResult.error,
+          );
           await handleAuthFailure(
-            refreshResult.error || "Session expired",
+            "Your session has expired and could not be renewed",
             true,
           );
+        } else if (refreshResult.retryable) {
+          // For retryable failures, log silently and don't update UI state
+          // The enhanced token utils will retry automatically in the background
+          console.log(
+            "🔄 Token refresh failed but will retry silently:",
+            refreshResult.error,
+          );
+          // Don't update error state for retryable failures to avoid user confusion
         } else {
-          // Don't logout for network errors, just log the error
-          setAuthState((prevState) => ({
-            ...prevState,
-            error: refreshResult.error || "Token refresh failed",
-          }));
+          // Non-retryable but also not requiring logout (rare case)
+          console.warn("⚠️ Token refresh failed:", refreshResult.error);
+          const errorMessage = refreshResult.error || "Token refresh failed";
+          setAuthState((prevState) => {
+            if (prevState.error === errorMessage) {
+              return prevState;
+            }
+            return {
+              ...prevState,
+              error: errorMessage,
+            };
+          });
         }
       }
     } catch (error) {
-      console.error("❌ Unexpected error during token refresh:", error);
+      console.warn(
+        "⚠️ Unexpected error during token refresh (will retry silently):",
+        error,
+      );
 
+      // For unexpected errors, don't update UI state as the system will retry
+      // Only log for debugging purposes
       const errorMessage =
         error instanceof Error ? error.message : "Unexpected refresh error";
 
-      // Don't logout for unexpected errors
-      setAuthState((prevState) => ({
-        ...prevState,
-        error: errorMessage,
-      }));
+      // Don't show errors to user for unexpected failures
+      // The retry mechanism will handle this automatically
     } finally {
       operationInProgress.current = false;
     }
@@ -226,11 +279,18 @@ export const useEnhancedAuthStatus = (
     }
 
     try {
+      const user = tokenStore.user;
       const tokenInfo = EnhancedTokenUtils.getTokenInfo();
 
       // If no token exists, handle as auth failure
       if (!tokenInfo.hasToken) {
         await handleAuthFailure("No authentication token", true);
+        return;
+      }
+
+      // If user exists but has no ID, handle as auth failure
+      if (!user || !user.id) {
+        await handleAuthFailure("No user ID found", true);
         return;
       }
 
@@ -262,12 +322,21 @@ export const useEnhancedAuthStatus = (
       const errorMessage =
         error instanceof Error ? error.message : "Auth check failed";
 
-      setAuthState((prevState) => ({
-        ...prevState,
-        error: errorMessage,
-        isLoading: false,
-        isRehydrated: true,
-      }));
+      setAuthState((prevState) => {
+        if (
+          prevState.error === errorMessage &&
+          prevState.isLoading === false &&
+          prevState.isRehydrated === true
+        ) {
+          return prevState;
+        }
+        return {
+          ...prevState,
+          error: errorMessage,
+          isLoading: false,
+          isRehydrated: true,
+        };
+      });
     }
   }, [
     isRehydrated,
@@ -280,10 +349,10 @@ export const useEnhancedAuthStatus = (
 
   // Initial auth check - only after rehydration
   useEffect(() => {
-    if (isRehydrated) {
+    if (isRehydrated && !operationInProgress.current) {
       checkAuthStatus();
     }
-  }, [checkAuthStatus, isRehydrated]);
+  }, [isRehydrated]);
 
   // Periodic auth status checks
   useEffect(() => {
@@ -292,13 +361,13 @@ export const useEnhancedAuthStatus = (
     }
 
     const interval = setInterval(() => {
-      if (!hasRedirected.current) {
+      if (!hasRedirected.current && !operationInProgress.current) {
         checkAuthStatus();
       }
     }, checkInterval);
 
     return () => clearInterval(interval);
-  }, [checkAuthStatus, checkInterval, enableAutoRefresh]);
+  }, [checkInterval, enableAutoRefresh]);
 
   // Listen to token store changes
   useEffect(() => {
@@ -353,11 +422,19 @@ export const useEnhancedAuthStatus = (
           currentRole,
         });
 
-        setAuthState((prevState) => ({
-          ...prevState,
-          role: currentRole,
-          isRehydrated: true,
-        }));
+        setAuthState((prevState) => {
+          if (
+            prevState.role === currentRole &&
+            prevState.isRehydrated === true
+          ) {
+            return prevState;
+          }
+          return {
+            ...prevState,
+            role: currentRole,
+            isRehydrated: true,
+          };
+        });
       }
 
       previousRole = currentRole;
@@ -373,10 +450,15 @@ export const useEnhancedAuthStatus = (
 
   // Reset error function
   const clearError = useCallback(() => {
-    setAuthState((prevState) => ({
-      ...prevState,
-      error: null,
-    }));
+    setAuthState((prevState) => {
+      if (prevState.error === null) {
+        return prevState;
+      }
+      return {
+        ...prevState,
+        error: null,
+      };
+    });
   }, []);
 
   return {
