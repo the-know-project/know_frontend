@@ -1,24 +1,18 @@
 "use client";
 
 import { MockNotifications } from "@/src/constants/constants";
-import {
-  IconBellRinging,
-  IconPlus,
-  IconSearch,
-  IconUpload,
-  IconUser,
-} from "@tabler/icons-react";
+import { IconBellRinging, IconSearch, IconUser } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 import NotificationCard from "../../notifications/components/notification-card";
 import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
 import { INotificationData } from "../../notifications/types/notification.types";
-import ExploreForm from "./explore-form";
-import Link from "next/link";
 import ProfileModal from "../../profile/components/profile-modal";
+import ExploreForm from "./explore-form";
 
 interface IExploreNavOptions {
   toggleShareButton?: boolean;
@@ -142,7 +136,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
           />
         </Link>
 
-        <div className="hidden w-full max-w-[500px] sm:flex">
+        <div className="hidden w-full sm:flex sm:max-w-[300px] lg:max-w-[500px]">
           <ExploreForm
             onSearch={(query) => {
               console.log(`Searching for ${query}`);
