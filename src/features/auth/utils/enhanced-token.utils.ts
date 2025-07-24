@@ -5,6 +5,8 @@ interface RefreshResult {
   success: boolean;
   error?: string;
   shouldLogout?: boolean;
+  retryable?: boolean;
+  errorType?: "auth" | "network" | "server" | "unknown";
 }
 
 interface ActivityTracker {
@@ -12,6 +14,8 @@ interface ActivityTracker {
   lastRefresh: number;
   refreshCount: number;
   isUserActive: boolean;
+  retryCount: number;
+  lastRetryTime: number;
 }
 
 export class EnhancedTokenUtils {
@@ -23,33 +27,47 @@ export class EnhancedTokenUtils {
     lastRefresh: 0,
     refreshCount: 0,
     isUserActive: true,
+    retryCount: 0,
+    lastRetryTime: 0,
   };
 
   // Track user activity
   static initActivityTracking() {
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    const events = [
+      "mousedown",
+      "mousemove",
+      "keypress",
+      "scroll",
+      "touchstart",
+      "click",
+    ];
 
     const updateActivity = () => {
       this.activityTracker.lastActivity = Date.now();
       this.activityTracker.isUserActive = true;
     };
 
-    events.forEach(event => {
+    events.forEach((event) => {
       document.addEventListener(event, updateActivity, { passive: true });
     });
 
     // Check if user is inactive after 5 minutes of no activity
-    setInterval(() => {
-      const timeSinceActivity = Date.now() - this.activityTracker.lastActivity;
-      this.activityTracker.isUserActive = timeSinceActivity < 5 * 60 * 1000; // 5 minutes
-    }, 60000); // Check every minute
+    setInterval(
+      () => {
+        const timeSinceActivity =
+          Date.now() - this.activityTracker.lastActivity;
+        this.activityTracker.isUserActive = timeSinceActivity < 30 * 60 * 1000; // 30 minutes
+      },
+      15 * 60 * 1000,
+    ); // Check every 15 minutes
   }
 
   static isAuthenticated(): boolean {
     const accessToken = this.tokenStore.getAccessToken();
     const refreshToken = this.tokenStore.getRefreshToken();
+    const user = this.tokenStore.user;
 
-    if (!accessToken || !refreshToken) return false;
+    if (!accessToken || !refreshToken || !user || !user.id) return false;
 
     const validation = tokenService.validateToken(accessToken);
     return validation.isValid;
@@ -60,7 +78,7 @@ export class EnhancedTokenUtils {
     const refreshToken = this.tokenStore.getRefreshToken();
     const user = this.tokenStore.user;
 
-    if (!accessToken || !refreshToken || !user) {
+    if (!accessToken || !refreshToken || !user || !user.id) {
       return null;
     }
 
@@ -90,8 +108,14 @@ export class EnhancedTokenUtils {
     const refreshToken = this.tokenStore.getRefreshToken();
     const user = this.tokenStore.user;
 
-    if (!refreshToken || !user) {
-      return { success: false, error: "No refresh token available", shouldLogout: true };
+    if (!refreshToken || !user || !user.id) {
+      return {
+        success: false,
+        error: !user?.id ? "No user ID found" : "No refresh token available",
+        shouldLogout: true,
+        retryable: false,
+        errorType: "auth",
+      };
     }
 
     // Check if we need to refresh
@@ -105,7 +129,7 @@ export class EnhancedTokenUtils {
     // Prevent multiple simultaneous refresh attempts
     this.isRefreshing = true;
 
-    this.refreshPromise = this.performRefresh(refreshToken);
+    this.refreshPromise = this.performRefreshWithRetry(refreshToken);
 
     try {
       const result = await this.refreshPromise;
@@ -116,11 +140,66 @@ export class EnhancedTokenUtils {
     }
   }
 
-  private static async performRefresh(refreshToken: string): Promise<RefreshResult> {
-    try {
-      console.log('🔄 Attempting token refresh...');
+  private static async performRefreshWithRetry(
+    refreshToken: string,
+  ): Promise<RefreshResult> {
+    const maxRetries = 3;
+    const baseDelay = 1000; // 1 second
+    const maxDelay = 10000; // 10 seconds
 
-      const refreshResponse = await tokenService.refreshWithRetry(refreshToken, 3);
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const result = await this.performRefresh(refreshToken);
+
+      if (result.success) {
+        return result;
+      }
+
+      // If not retryable (auth errors), return immediately
+      if (!result.retryable || result.shouldLogout) {
+        return result;
+      }
+
+      if (attempt === maxRetries) {
+        console.warn(
+          `❌ Token refresh failed after ${maxRetries} attempts - logout required`,
+        );
+        return {
+          ...result,
+          shouldLogout: true,
+          error: `Token refresh failed after ${maxRetries} attempts`,
+        };
+      }
+
+      // Calculate delay with exponential backoff
+      const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), maxDelay);
+      console.log(
+        `⏳ Retrying token refresh in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`,
+      );
+
+      // Wait before retry
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+
+    // This should never be reached, but just in case
+    return {
+      success: false,
+      error: "Unexpected error in retry logic",
+      shouldLogout: true,
+      retryable: false,
+      errorType: "unknown",
+    };
+  }
+
+  private static async performRefresh(
+    refreshToken: string,
+  ): Promise<RefreshResult> {
+    try {
+      console.log("🔄 Attempting token refresh silently...");
+
+      const refreshResponse = await tokenService.refreshWithRetry(
+        refreshToken,
+        3,
+      );
 
       if (refreshResponse.status === 200 && refreshResponse.data) {
         const {
@@ -133,34 +212,83 @@ export class EnhancedTokenUtils {
 
         this.activityTracker.lastRefresh = Date.now();
         this.activityTracker.refreshCount++;
+        this.activityTracker.retryCount = 0; // Reset retry count on success
 
-        console.log('✅ Token refresh successful');
-        return { success: true };
+        console.log("✅ Token refresh successful (silent)");
+        return {
+          success: true,
+          errorType: undefined,
+        };
       } else {
-        console.error('❌ Token refresh failed: Invalid response');
+        console.warn(
+          "⚠️ Token refresh failed: Invalid response (will retry silently)",
+        );
         return {
           success: false,
           error: "Invalid refresh response",
-          shouldLogout: true
+          shouldLogout: false,
+          retryable: true,
+          errorType: "server",
         };
       }
     } catch (error: any) {
-      console.error('❌ Token refresh failed:', error);
+      const errorStatus = error.response?.status;
+      const errorMessage = error.message || "Unknown error during refresh";
 
-      // Check if it's an authentication error (refresh token expired)
-      if (error.response?.status === 401 || error.response?.status === 403) {
+      // Determine error type and whether we should logout
+      if (errorStatus === 401 || errorStatus === 403) {
+        console.error("❌ Refresh token expired or invalid - logout required");
         return {
           success: false,
           error: "Refresh token expired",
-          shouldLogout: true
+          shouldLogout: true,
+          retryable: false,
+          errorType: "auth",
         };
       }
 
-      // For network errors or other issues, don't logout immediately
+      // Network errors or 5xx server errors - retryable
+      if (
+        !errorStatus ||
+        errorStatus >= 500 ||
+        error.code === "NETWORK_ERROR"
+      ) {
+        console.warn(
+          "⚠️ Network/server error during token refresh (will retry silently)",
+        );
+        return {
+          success: false,
+          error: errorMessage,
+          shouldLogout: false,
+          retryable: true,
+          errorType: "network",
+        };
+      }
+
+      // Other 4xx errors (except 401/403) - might be retryable
+      if (errorStatus >= 400 && errorStatus < 500) {
+        console.warn(
+          "⚠️ Client error during token refresh (will retry silently)",
+        );
+        return {
+          success: false,
+          error: errorMessage,
+          shouldLogout: false,
+          retryable: true,
+          errorType: "server",
+        };
+      }
+
+      // Unknown errors - treat as retryable initially
+      console.warn(
+        "⚠️ Unknown error during token refresh (will retry silently)",
+      );
       return {
         success: false,
-        error: error.message || "Network error during refresh",
-        shouldLogout: false
+        error: errorMessage,
+        shouldLogout: false,
+        retryable: true,
+        errorType: "unknown",
       };
     }
   }
@@ -168,9 +296,16 @@ export class EnhancedTokenUtils {
   static async smartRefresh(): Promise<RefreshResult> {
     const accessToken = this.tokenStore.getAccessToken();
     const refreshToken = this.tokenStore.getRefreshToken();
+    const user = this.tokenStore.user;
 
-    if (!accessToken || !refreshToken) {
-      return { success: false, error: "No tokens available", shouldLogout: true };
+    if (!accessToken || !refreshToken || !user || !user.id) {
+      return {
+        success: false,
+        error: !user?.id ? "No user ID found" : "No tokens available",
+        shouldLogout: true,
+        retryable: false,
+        errorType: "auth",
+      };
     }
 
     // Only refresh if user is active or token will expire soon
@@ -199,9 +334,9 @@ export class EnhancedTokenUtils {
     if (refreshToken) {
       try {
         await tokenService.revokeRefreshToken(refreshToken);
-        console.log('✅ Server logout successful');
+        console.log("✅ Server logout successful");
       } catch (error) {
-        console.error('❌ Server logout failed:', error);
+        console.error("❌ Server logout failed:", error);
         // Continue with local logout even if server logout fails
       }
     }
@@ -212,16 +347,19 @@ export class EnhancedTokenUtils {
       lastRefresh: 0,
       refreshCount: 0,
       isUserActive: true,
+      retryCount: 0,
+      lastRetryTime: 0,
     };
 
-    console.log('🚪 Local logout completed');
+    console.log("🚪 Local logout completed");
   }
 
   static shouldAttemptRefresh(): boolean {
     const accessToken = this.tokenStore.getAccessToken();
     const refreshToken = this.tokenStore.getRefreshToken();
+    const user = this.tokenStore.user;
 
-    if (!accessToken || !refreshToken) {
+    if (!accessToken || !refreshToken || !user || !user.id) {
       return false;
     }
 
@@ -245,12 +383,26 @@ export class EnhancedTokenUtils {
     const refreshToken = this.tokenStore.getRefreshToken();
 
     if (!accessToken) {
-      return { hasToken: false };
+      return {
+        hasToken: false,
+        isValid: false,
+        isExpired: true,
+        timeUntilExpirySeconds: 0,
+        timeUntilExpiryMinutes: 0,
+        hasRefreshToken: !!refreshToken,
+        willExpireSoon: false,
+        lastRefresh: this.activityTracker.lastRefresh,
+        refreshCount: this.activityTracker.refreshCount,
+        isUserActive: this.activityTracker.isUserActive,
+        retryCount: this.activityTracker.retryCount,
+        lastRetryTime: this.activityTracker.lastRetryTime,
+      };
     }
 
     const validation = tokenService.validateToken(accessToken);
-    const timeUntilExpiry = validation.payload ?
-      Math.max(0, validation.payload.exp - Date.now() / 1000) : 0;
+    const timeUntilExpiry = validation.payload
+      ? Math.max(0, validation.payload.exp - Date.now() / 1000)
+      : 0;
 
     return {
       hasToken: true,
@@ -263,6 +415,8 @@ export class EnhancedTokenUtils {
       lastRefresh: this.activityTracker.lastRefresh,
       refreshCount: this.activityTracker.refreshCount,
       isUserActive: this.activityTracker.isUserActive,
+      retryCount: this.activityTracker.retryCount,
+      lastRetryTime: this.activityTracker.lastRetryTime,
     };
   }
 
@@ -275,6 +429,6 @@ export class EnhancedTokenUtils {
 }
 
 // Initialize activity tracking when the module loads
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   EnhancedTokenUtils.initActivityTracking();
 }
