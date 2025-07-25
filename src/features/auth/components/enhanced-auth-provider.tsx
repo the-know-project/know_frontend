@@ -6,6 +6,7 @@ import { useEnhancedAuthStatus } from "../hooks/use-enhanced-auth-status";
 import { useTokenStore } from "../state/store";
 import { useRoleStore } from "../state/store";
 import { EnhancedTokenUtils } from "../utils/enhanced-token.utils";
+import GradientText from "@/src/shared/components/gradient-text";
 
 interface EnhancedAuthContextValue {
   isAuthenticated: boolean;
@@ -50,12 +51,13 @@ const DefaultAuthFallback: React.FC<{
 }> = ({ error, retry, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="mb-4">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
-          </div>
-          <p className="text-sm text-gray-600">Authenticating...</p>
+      <div className="flex min-h-screen items-center justify-center bg-neutral-900">
+        <div className="gradient-glow text-center">
+          <GradientText>
+            <h3 className="font-bebas text-4xl tracking-wider">
+              Are you in the know?
+            </h3>
+          </GradientText>
         </div>
       </div>
     );
@@ -123,7 +125,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
 
   // Handle auth errors
   const handleAuthError = (errorMessage: string) => {
-    console.error("🚨 Enhanced Auth Provider Error:", errorMessage);
+    router.push("/login");
   };
 
   const handleTokenRefreshed = () => {
