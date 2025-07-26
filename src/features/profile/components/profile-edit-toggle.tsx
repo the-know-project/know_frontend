@@ -26,7 +26,6 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
     setEditToggled((prev) => !prev);
   };
 
-  // Handle click outside to close popup
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
