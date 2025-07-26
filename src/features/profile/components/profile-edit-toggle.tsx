@@ -5,7 +5,8 @@ import {
   IconSettingsFilled,
 } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { ProfileToggleData } from "../data/profile.data";
 
 interface IProfileEditToggle {
   id: string;
@@ -14,6 +15,8 @@ interface IProfileEditToggle {
 
 const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
   const [editToggled, setEditToggled] = useState(false);
+  const toggleRef = useRef<HTMLDivElement>(null);
+
   const variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
@@ -23,9 +26,29 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
     setEditToggled((prev) => !prev);
   };
 
+  // Handle click outside to close popup
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        toggleRef.current &&
+        !toggleRef.current.contains(event.target as Node)
+      ) {
+        setEditToggled(false);
+      }
+    };
+
+    if (editToggled) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [editToggled]);
+
   return (
     <section className="flex w-full flex-col">
-      <div className="relative flex flex-col">
+      <div ref={toggleRef} className="relative flex flex-col gap-1">
         <button
           onClick={toggleEdit}
           type="button"
@@ -40,7 +63,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
           />
         </button>
 
-        <div className="aboslute top-1 flex w-full px-4">
+        <div className="aboslute flex w-full px-4">
           <AnimatePresence>
             {editToggled && (
               <motion.div
@@ -54,7 +77,21 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                   duration: 0.3,
                 }}
               >
-                <p className="text-black">Edit drop down goes here</p>
+                <div className="flex w-[138px] touch-manipulation flex-col gap-[8px] rounded-[9px] bg-[#F4F4F4] px-4 pt-[12px] pb-[12px] sm:gap-[16px]">
+                  {ProfileToggleData.map((item, index) => (
+                    <button
+                      key={item.id}
+                      style={{
+                        animationDelay: `${index * 100}ms`,
+                      }}
+                      className="motion-preset-blur-down motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
+                    >
+                      <p className="font-bricolage text-[12px] font-bold text-black transition-all duration-200 group-hover:scale-105 group-active:scale-95 sm:text-sm">
+                        {item.name}
+                      </p>
+                    </button>
+                  ))}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
