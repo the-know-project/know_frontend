@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useRoleStore, useTokenStore } from "../state/store";
 import { EnhancedTokenUtils } from "../utils/enhanced-token.utils";
+import ToastIcon from "@/src/shared/components/toast-icon";
 
 interface EnhancedAuthStatus {
   isAuthenticated: boolean;
@@ -150,10 +151,14 @@ export const useEnhancedAuthStatus = (
       if (shouldLogout) {
         hasRedirected.current = true;
 
-        // Show user-friendly notification
         toast.error("Session Expired", {
+          icon: <ToastIcon />,
           description: "Your session has expired. Please log in again.",
           duration: 4000,
+          style: {
+            fontSize: "15px",
+            font: "Space Grotesk",
+          },
         });
 
         // Clear tokens and redirect
