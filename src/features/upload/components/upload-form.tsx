@@ -129,20 +129,22 @@ const UploadForm = ({
         </button>
         <div className="flex gap-4 px-[50px]">
           <button
-            className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#F97316] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+            className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#F97316] sm:text-[16px]"
             onClick={handleSaveDraft}
             type="button"
             disabled={!watchedFile}
           >
             <p className="hidden sm:block">Save as draft</p>
-            <IconCloudDownload className="flex sm:hidden" />
+            <div className="flex items-center justify-center rounded-full bg-orange-200 p-2 sm:hidden">
+              <IconCloudDownload className="flex text-[#F97316]" />
+            </div>
           </button>
 
           {isPending ? (
             <Spinner borderColor="border-blue" />
           ) : (
             <button
-              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              className="font-bricolage sm: relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#1E3A8A] sm:text-[16px]"
               onClick={() => {
                 if (watchedFile && watchedTitle) {
                   const data: IUploadFormState = {
@@ -155,7 +157,9 @@ const UploadForm = ({
               disabled={!watchedFile || !watchedTitle}
             >
               <p className="hidden sm:flex">Continue</p>
-              <IconCheck className="flex sm:hidden" />
+              <div className="flex items-center justify-center rounded-full bg-blue-200 p-2 sm:hidden">
+                <IconCheck className="flex text-[#1E3A8A]" />
+              </div>
             </button>
           )}
         </div>
