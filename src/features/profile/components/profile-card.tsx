@@ -1,6 +1,10 @@
+"use client";
+
 import { IconEye, IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import { formatViewCount } from "@/src/utils/number-format";
+import ExploreEditToggle from "../../explore/components/explore-edit-toggle";
+import { useRoleStore, useTokenStore } from "../../auth/state/store";
 
 interface IProfileCard {
   id: number | string;
@@ -8,6 +12,7 @@ interface IProfileCard {
   views: string | number;
   createdAt: string;
   image: string;
+  role?: string;
 }
 
 const ProfileCard: React.FC<IProfileCard> = ({
@@ -17,8 +22,14 @@ const ProfileCard: React.FC<IProfileCard> = ({
   createdAt,
   image,
 }) => {
+  const role = useRoleStore((state) => state.role);
   return (
-    <div className={`mt-[30px] flex w-full flex-col px-4`}>
+    <div className={`relative mt-[30px] flex w-full flex-col px-4`}>
+      <div className="absolute top-1 z-20 px-2">
+        {role === "ARTIST" && (
+          <ExploreEditToggle id={id as string} role={role} />
+        )}
+      </div>
       <div className="flex flex-col">
         <Image
           src={image}
