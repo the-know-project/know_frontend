@@ -19,7 +19,9 @@ interface ActivityTracker {
 }
 
 export class EnhancedTokenUtils {
-  private static tokenStore = useTokenStore.getState();
+  private static getTokenStore() {
+    return useTokenStore.getState();
+  }
   private static isRefreshing = false;
   private static refreshPromise: Promise<RefreshResult> | null = null;
   private static activityTracker: ActivityTracker = {
@@ -63,9 +65,10 @@ export class EnhancedTokenUtils {
   }
 
   static isAuthenticated(): boolean {
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
+    const tokenStore = this.getTokenStore();
+    const accessToken = tokenStore.getAccessToken();
+    const refreshToken = tokenStore.getRefreshToken();
+    const user = tokenStore.user;
 
     if (!accessToken || !refreshToken || !user || !user.id) return false;
 
@@ -74,9 +77,10 @@ export class EnhancedTokenUtils {
   }
 
   static async getValidAccessToken(): Promise<string | null> {
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
+    const tokenStore = this.getTokenStore();
+    const accessToken = tokenStore.getAccessToken();
+    const refreshToken = tokenStore.getRefreshToken();
+    const user = tokenStore.user;
 
     if (!accessToken || !refreshToken || !user || !user.id) {
       return null;
@@ -92,7 +96,7 @@ export class EnhancedTokenUtils {
     const refreshResult = await this.attemptRefresh();
 
     if (refreshResult.success) {
-      return this.tokenStore.getAccessToken();
+      return this.getTokenStore().getAccessToken();
     }
 
     return null;
@@ -104,9 +108,10 @@ export class EnhancedTokenUtils {
       return this.refreshPromise;
     }
 
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
+    const tokenStore = this.getTokenStore();
+    const accessToken = tokenStore.getAccessToken();
+    const refreshToken = tokenStore.getRefreshToken();
+    const user = tokenStore.user;
 
     if (!refreshToken || !user || !user.id) {
       return {
@@ -208,7 +213,11 @@ export class EnhancedTokenUtils {
           user: updatedUser,
         } = refreshResponse.data;
 
-        this.tokenStore.setTokens(newAccessToken, newRefreshToken, updatedUser);
+        this.getTokenStore().setTokens(
+          newAccessToken,
+          newRefreshToken,
+          updatedUser,
+        );
 
         this.activityTracker.lastRefresh = Date.now();
         this.activityTracker.refreshCount++;
@@ -294,9 +303,10 @@ export class EnhancedTokenUtils {
   }
 
   static async smartRefresh(): Promise<RefreshResult> {
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
+    const tokenStore = this.getTokenStore();
+    const accessToken = tokenStore.getAccessToken();
+    const refreshToken = tokenStore.getRefreshToken();
+    const user = tokenStore.user;
 
     if (!accessToken || !refreshToken || !user || !user.id) {
       return {
@@ -329,7 +339,7 @@ export class EnhancedTokenUtils {
   }
 
   static async logout(): Promise<void> {
-    const refreshToken = this.tokenStore.getRefreshToken();
+    const refreshToken = this.getTokenStore().getRefreshToken();
 
     if (refreshToken) {
       try {
@@ -341,7 +351,7 @@ export class EnhancedTokenUtils {
       }
     }
 
-    this.tokenStore.clearTokens();
+    this.getTokenStore().clearTokens();
     this.activityTracker = {
       lastActivity: Date.now(),
       lastRefresh: 0,
@@ -355,9 +365,10 @@ export class EnhancedTokenUtils {
   }
 
   static shouldAttemptRefresh(): boolean {
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
+    const tokenStore = this.getTokenStore();
+    const accessToken = tokenStore.getAccessToken();
+    const refreshToken = tokenStore.getRefreshToken();
+    const user = tokenStore.user;
 
     if (!accessToken || !refreshToken || !user || !user.id) {
       return false;
@@ -379,8 +390,9 @@ export class EnhancedTokenUtils {
   }
 
   static getTokenInfo() {
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
+    const tokenStore = this.getTokenStore();
+    const accessToken = tokenStore.getAccessToken();
+    const refreshToken = tokenStore.getRefreshToken();
 
     if (!accessToken) {
       return {
