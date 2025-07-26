@@ -46,7 +46,7 @@ export const useEnhancedAuthStatus = (
     onAuthError,
     onTokenRefreshed,
     enableAutoRefresh = true,
-    refreshThresholdMinutes = 30, // More generous threshold
+    refreshThresholdMinutes = 30,
   } = options;
 
   const router = useRouter();
@@ -72,13 +72,23 @@ export const useEnhancedAuthStatus = (
     };
   });
 
+  const [rehydrationTimeout, setRehydrationTimeout] = useState(false);
+
   // Prevent multiple simultaneous operations
   const operationInProgress = useRef(false);
   const hasRedirected = useRef(false);
   const lastRefreshAttempt = useRef(0);
 
+  // Use refs to store latest function references and break circular dependencies
+  const updateAuthStateRef = useRef<() => void>(() => {});
+  const handleAuthFailureRef = useRef<
+    (error: string, shouldLogout?: boolean) => Promise<void>
+  >(async () => {});
+  const attemptTokenRefreshRef = useRef<() => Promise<void>>(async () => {});
+  const checkAuthStatusRef = useRef<() => Promise<void>>(async () => {});
+
   const updateAuthState = useCallback(() => {
-    if (!isRehydrated) {
+    if (!isRehydrated && !rehydrationTimeout) {
       return;
     }
 
@@ -88,8 +98,8 @@ export const useEnhancedAuthStatus = (
     const tokenInfo = EnhancedTokenUtils.getTokenInfo();
 
     // If user exists but has no ID, trigger logout
-    if (user && !user.id && isAuthenticated) {
-      handleAuthFailure("No user ID found", true);
+    if (user && !user.id && isAuthenticated && handleAuthFailureRef.current) {
+      handleAuthFailureRef.current("No user ID found", true);
       return;
     }
 
@@ -99,6 +109,7 @@ export const useEnhancedAuthStatus = (
       );
       const newIsTokenExpired = tokenInfo.isExpired || false;
       const newUserId = user?.id;
+      const effectivelyRehydrated = isRehydrated || rehydrationTimeout;
 
       // Only update if something actually changed
       if (
@@ -107,7 +118,7 @@ export const useEnhancedAuthStatus = (
         prevState.isLoading !== false ||
         prevState.user?.id !== newUserId ||
         prevState.role !== role ||
-        prevState.isRehydrated !== true ||
+        prevState.isRehydrated !== effectivelyRehydrated ||
         prevState.error !== null
       ) {
         return {
@@ -117,7 +128,7 @@ export const useEnhancedAuthStatus = (
           role,
           error: null,
           isTokenExpired: newIsTokenExpired,
-          isRehydrated: true,
+          isRehydrated: effectivelyRehydrated,
           tokenInfo,
         };
       }
@@ -131,10 +142,14 @@ export const useEnhancedAuthStatus = (
     });
   }, [
     isRehydrated,
+    rehydrationTimeout,
     tokenStore.isAuthenticated,
     tokenStore.user,
     roleStore.role,
   ]);
+
+  // Update ref whenever function changes
+  updateAuthStateRef.current = updateAuthState;
 
   const handleAuthFailure = useCallback(
     async (error: string, shouldLogout = true) => {
@@ -188,6 +203,9 @@ export const useEnhancedAuthStatus = (
     [onAuthError, roleStore, redirectOnAuthFailure, redirectTo, router],
   );
 
+  // Update ref whenever function changes
+  handleAuthFailureRef.current = handleAuthFailure;
+
   const attemptTokenRefresh = useCallback(async () => {
     if (operationInProgress.current || hasRedirected.current) {
       return;
@@ -227,7 +245,9 @@ export const useEnhancedAuthStatus = (
 
         // Use setTimeout to ensure the token store has been updated
         setTimeout(() => {
-          updateAuthState();
+          if (updateAuthStateRef.current) {
+            updateAuthStateRef.current();
+          }
         }, 0);
       } else {
         // Handle different types of refresh failures
@@ -236,10 +256,12 @@ export const useEnhancedAuthStatus = (
             "❌ Token refresh failed - authentication required:",
             refreshResult.error,
           );
-          await handleAuthFailure(
-            "Your session has expired and could not be renewed",
-            true,
-          );
+          if (handleAuthFailureRef.current) {
+            await handleAuthFailureRef.current(
+              "Your session has expired and could not be renewed",
+              true,
+            );
+          }
         } else if (refreshResult.retryable) {
           // For retryable failures, log silently and don't update UI state
           // The enhanced token utils will retry automatically in the background
@@ -279,10 +301,17 @@ export const useEnhancedAuthStatus = (
     } finally {
       operationInProgress.current = false;
     }
-  }, [updateAuthState, handleAuthFailure, onTokenRefreshed]);
+  }, [onTokenRefreshed]);
+
+  // Update ref whenever function changes
+  attemptTokenRefreshRef.current = attemptTokenRefresh;
 
   const checkAuthStatus = useCallback(async () => {
-    if (operationInProgress.current || hasRedirected.current || !isRehydrated) {
+    if (
+      operationInProgress.current ||
+      hasRedirected.current ||
+      (!isRehydrated && !rehydrationTimeout)
+    ) {
       return;
     }
 
@@ -292,20 +321,26 @@ export const useEnhancedAuthStatus = (
 
       // If no token exists, handle as auth failure
       if (!tokenInfo.hasToken) {
-        await handleAuthFailure("No authentication token", true);
+        if (handleAuthFailureRef.current) {
+          await handleAuthFailureRef.current("No authentication token", true);
+        }
         return;
       }
 
       // If user exists but has no ID, handle as auth failure
       if (!user || !user.id) {
-        await handleAuthFailure("No user ID found", true);
+        if (handleAuthFailureRef.current) {
+          await handleAuthFailureRef.current("No user ID found", true);
+        }
         return;
       }
 
       // If token is expired, attempt refresh
       if (tokenInfo.isExpired) {
         console.log("🔄 Token expired, attempting refresh...");
-        await attemptTokenRefresh();
+        if (attemptTokenRefreshRef.current) {
+          await attemptTokenRefreshRef.current();
+        }
         return;
       }
 
@@ -318,12 +353,16 @@ export const useEnhancedAuthStatus = (
         console.log(
           `🔄 Token expiring in ${tokenInfo.timeUntilExpiryMinutes} minutes, refreshing proactively...`,
         );
-        await attemptTokenRefresh();
+        if (attemptTokenRefreshRef.current) {
+          await attemptTokenRefreshRef.current();
+        }
         return;
       }
 
       // Everything is fine, just update state
-      updateAuthState();
+      if (updateAuthStateRef.current) {
+        updateAuthStateRef.current();
+      }
     } catch (error) {
       console.error("❌ Auth status check failed:", error);
 
@@ -348,19 +387,34 @@ export const useEnhancedAuthStatus = (
     }
   }, [
     isRehydrated,
-    handleAuthFailure,
-    attemptTokenRefresh,
+    rehydrationTimeout,
     enableAutoRefresh,
     refreshThresholdMinutes,
-    updateAuthState,
   ]);
 
-  // Initial auth check - only after rehydration
+  // Update ref whenever function changes
+  checkAuthStatusRef.current = checkAuthStatus;
+
+  // Rehydration timeout mechanism
   useEffect(() => {
-    if (isRehydrated && !operationInProgress.current) {
-      checkAuthStatus();
-    }
+    const timeout = setTimeout(() => {
+      if (!isRehydrated) {
+        console.warn("⚠️ Store rehydration timeout reached, proceeding anyway");
+        setRehydrationTimeout(true);
+      }
+    }, 5000); // 5 second timeout for rehydration
+
+    return () => clearTimeout(timeout);
   }, [isRehydrated]);
+
+  // Initial auth check - only after rehydration or timeout
+  useEffect(() => {
+    if ((isRehydrated || rehydrationTimeout) && !operationInProgress.current) {
+      if (checkAuthStatusRef.current) {
+        checkAuthStatusRef.current();
+      }
+    }
+  }, [isRehydrated, rehydrationTimeout]);
 
   // Periodic auth status checks
   useEffect(() => {
@@ -370,7 +424,9 @@ export const useEnhancedAuthStatus = (
 
     const interval = setInterval(() => {
       if (!hasRedirected.current && !operationInProgress.current) {
-        checkAuthStatus();
+        if (checkAuthStatusRef.current) {
+          checkAuthStatusRef.current();
+        }
       }
     }, checkInterval);
 
@@ -400,14 +456,16 @@ export const useEnhancedAuthStatus = (
         });
 
         // Update state immediately for auth changes
-        updateAuthState();
+        if (updateAuthStateRef.current) {
+          updateAuthStateRef.current();
+        }
       }
 
       previousAuth = currentAuth;
     });
 
     return unsubscribe;
-  }, [updateAuthState, tokenStore.isAuthenticated]);
+  }, []);
 
   // Listen to role store changes
   useEffect(() => {
@@ -449,12 +507,14 @@ export const useEnhancedAuthStatus = (
     });
 
     return unsubscribe;
-  }, [roleStore.role]);
+  }, []);
 
   // Manual refresh function
   const refreshTokens = useCallback(async () => {
-    await attemptTokenRefresh();
-  }, [attemptTokenRefresh]);
+    if (attemptTokenRefreshRef.current) {
+      await attemptTokenRefreshRef.current();
+    }
+  }, []);
 
   // Reset error function
   const clearError = useCallback(() => {
@@ -473,6 +533,11 @@ export const useEnhancedAuthStatus = (
     ...authState,
     refreshTokens,
     clearError,
-    retry: checkAuthStatus,
+    retry: () => {
+      if (checkAuthStatusRef.current) {
+        return checkAuthStatusRef.current();
+      }
+      return Promise.resolve();
+    },
   };
 };
