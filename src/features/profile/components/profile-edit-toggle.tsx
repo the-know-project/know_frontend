@@ -29,7 +29,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
         <button
           onClick={toggleEdit}
           type="button"
-          className="flex w-full max-w-[90px] touch-manipulation flex-row items-center gap-[24px] rounded-[36px] bg-white px-4 py-2 opacity-25 hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 active:opacity-100"
+          className="flex w-full max-w-[90px] touch-manipulation flex-row items-center gap-[24px] rounded-[36px] bg-white px-4 py-2 opacity-25 shadow-sm backdrop-blur-md hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 active:opacity-100"
         >
           <IconSettingsFilled color="black" width={20} height={20} />
           <IconArrowRightCircleFilled
