@@ -220,7 +220,10 @@ export const useEnhancedAuthStatus = (
           };
         });
 
-        updateAuthState();
+        // Use setTimeout to ensure the token store has been updated
+        setTimeout(() => {
+          updateAuthState();
+        }, 0);
       } else {
         // Handle different types of refresh failures
         if (refreshResult.shouldLogout) {
