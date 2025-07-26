@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "../lib/react-query-client";
 import { Toaster } from "../shared/ui/sonner";
-import { EnhancedAuthProvider } from "../features/auth/components/enhanced-auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,13 +43,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
         >
-          <EnhancedAuthProvider
-            enableAutoRefresh={true}
-            refreshThresholdMinutes={20}
-            checkInterval={1600000}
-          >
-            <main>{children}</main>
-          </EnhancedAuthProvider>
+          <main>{children}</main>
 
           <Toaster />
         </body>
