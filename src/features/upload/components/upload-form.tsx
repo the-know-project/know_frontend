@@ -14,7 +14,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconCheck,
   IconCloudDownload,
-  IconDevicesDown,
   IconFileUpload,
   IconX,
 } from "@tabler/icons-react";
