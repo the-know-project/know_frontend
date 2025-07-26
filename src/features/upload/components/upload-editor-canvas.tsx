@@ -43,7 +43,7 @@ const UploadEditorCanvas = () => {
       </div>
 
       {!isEditorOpen && (
-        <div className="flex w-full items-end justify-end py-[47px]">
+        <div className="flex w-full items-end justify-end py-[55px]">
           <motion.button
             variants={variants}
             initial="hidden"
