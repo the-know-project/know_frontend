@@ -9,9 +9,10 @@ import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
 import ProfileCard from "../../components/profile-card";
 import { TUserAssetData } from "../dto/artist.dto";
 import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
+import { IUser } from "@/src/features/auth/state/interface/auth.interface";
 
 interface ArtistProfileGridProps {
-  userId?: string;
+  user: IUser;
 }
 
 const ProfileCardSkeletonGrid = () => (
@@ -53,11 +54,11 @@ const ProfileCardSkeletonGrid = () => (
   </div>
 );
 
-const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
+const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const [activeToggle, setActiveToggle] = useState<string>("posts");
 
   const postsHookResult = useSimpleInfiniteUserPosts({
-    userId,
+    userId: user.id,
     limit: 12,
   });
 
@@ -142,6 +143,7 @@ const ArtistProfileGrid = ({ userId }: ArtistProfileGridProps) => {
                 views={post.numOfViews}
                 createdAt={formatDateToReadable(post.createdAt.toString())}
                 image={post.url}
+                role={user.role as string}
               />
             </motion.div>
           ))}
