@@ -122,6 +122,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
 
   const [retryKey, setRetryKey] = useState(0);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [forceShowContent, setForceShowContent] = useState(false);
 
   // Handle auth errors
   const handleAuthError = (errorMessage: string) => {
@@ -160,6 +161,21 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
     return pathname.startsWith(route);
   });
 
+  // Add timeout mechanism to prevent infinite loading
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading && !hasInitialized) {
+        console.warn(
+          "⚠️ Auth loading timeout reached, forcing content display",
+        );
+        setForceShowContent(true);
+        setHasInitialized(true);
+      }
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, hasInitialized]);
+
   // Handle auth state changes
   useEffect(() => {
     if (!hasInitialized && !isLoading) {
@@ -167,7 +183,7 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
       return;
     }
 
-    if (!hasInitialized) return;
+    if (!hasInitialized && !forceShowContent) return;
 
     // If on a protected route and not authenticated
     if (!isPublicRoute && !isAuthenticated && !isLoading) {
@@ -222,7 +238,8 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
   }
 
   // Show loading state for protected routes while checking auth
-  if (!isPublicRoute && (isLoading || !hasInitialized)) {
+  // But don't show loading indefinitely - use timeout mechanism
+  if (!isPublicRoute && (isLoading || !hasInitialized) && !forceShowContent) {
     return <Fallback error={null} retry={handleRetry} isLoading={true} />;
   }
 
@@ -245,7 +262,14 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
         {children}
         {/* Debug info in development */}
         {process.env.NODE_ENV === "development" && (
-          <DebugAuthInfo tokenInfo={tokenInfo} />
+          <DebugAuthInfo
+            tokenInfo={tokenInfo}
+            isTokenStoreRehydrated={tokenStore.hasHydrated}
+            isRoleStoreRehydrated={roleStore.hasHydrated}
+            hasInitialized={hasInitialized}
+            forceShowContent={forceShowContent}
+            isLoading={isLoading}
+          />
         )}
       </div>
     </EnhancedAuthContext.Provider>
@@ -255,7 +279,19 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
 // Debug component for development
 const DebugAuthInfo: React.FC<{
   tokenInfo: ReturnType<typeof EnhancedTokenUtils.getTokenInfo>;
-}> = ({ tokenInfo }) => {
+  isTokenStoreRehydrated: boolean;
+  isRoleStoreRehydrated: boolean;
+  hasInitialized: boolean;
+  forceShowContent: boolean;
+  isLoading: boolean;
+}> = ({
+  tokenInfo,
+  isTokenStoreRehydrated,
+  isRoleStoreRehydrated,
+  hasInitialized,
+  forceShowContent,
+  isLoading,
+}) => {
   const [showDebug, setShowDebug] = useState(false);
 
   if (!showDebug) {
@@ -287,6 +323,13 @@ const DebugAuthInfo: React.FC<{
         <div>Will expire soon: {tokenInfo.willExpireSoon ? "⚠️" : "✅"}</div>
         <div>User active: {tokenInfo.isUserActive ? "✅" : "💤"}</div>
         <div>Refresh count: {tokenInfo.refreshCount || 0}</div>
+        <div className="mt-2 border-t border-gray-600 pt-2">
+          <div>Token Store: {isTokenStoreRehydrated ? "✅" : "❌"}</div>
+          <div>Role Store: {isRoleStoreRehydrated ? "✅" : "❌"}</div>
+          <div>Initialized: {hasInitialized ? "✅" : "❌"}</div>
+          <div>Force Show: {forceShowContent ? "⚠️" : "❌"}</div>
+          <div>Loading: {isLoading ? "🔄" : "✅"}</div>
+        </div>
       </div>
       <button
         onClick={() => EnhancedTokenUtils.debugTokenState()}
