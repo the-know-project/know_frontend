@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 import NotificationCard from "../../notifications/components/notification-card";
 import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
@@ -28,6 +28,10 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   const [notifications, setNotifications] =
     useState<INotificationData[]>(MockNotifications);
   const [isClient, setIsClient] = useState(false);
+
+  // Refs for click outside detection
+  const notificationRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
   const {
     user,
     role,
@@ -54,6 +58,33 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
       }
     }
   }, [isClient, user, notificationData, authLoading]);
+
+  // Click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setIsNotificationClicked(false);
+      }
+
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileClicked(false);
+      }
+    };
+
+    if (isNotificationClicked || isProfileClicked) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isNotificationClicked, isProfileClicked]);
 
   const variants = {
     hidden: { opacity: 0, y: 20 },
@@ -172,7 +203,10 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
             <button className="flex sm:hidden" onClick={handleSearchToggled}>
               <IconSearch width={32} height={32} className="text-neutral-600" />
             </button>
-            <div className="relative flex w-full flex-col">
+            <div
+              className="relative flex w-full flex-col"
+              ref={notificationRef}
+            >
               <button className="relative" onClick={handleNotificationClicked}>
                 <IconBellRinging
                   className={`h-[32px] w-[32px] cursor-pointer text-neutral-600 ${
@@ -210,7 +244,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
               </div>
             </div>
             {!authLoading && user?.imageUrl ? (
-              <div className="flex w-full flex-col">
+              <div className="flex w-full flex-col" ref={profileRef}>
                 <button onClick={handleProfileClicked} className="-mt-1">
                   <Image
                     alt="user profile"
