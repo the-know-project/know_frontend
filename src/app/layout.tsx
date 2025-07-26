@@ -46,8 +46,8 @@ export default function RootLayout({
         >
           <EnhancedAuthProvider
             enableAutoRefresh={true}
-            refreshThresholdMinutes={30}
-            checkInterval={1800000}
+            refreshThresholdMinutes={20}
+            checkInterval={1600000}
           >
             <main>{children}</main>
           </EnhancedAuthProvider>
