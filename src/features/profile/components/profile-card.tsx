@@ -3,8 +3,8 @@
 import { IconEye, IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import { formatViewCount } from "@/src/utils/number-format";
-import ExploreEditToggle from "../../explore/components/explore-edit-toggle";
-import { useRoleStore, useTokenStore } from "../../auth/state/store";
+import { useRoleStore } from "../../auth/state/store";
+import ProfileEditToggle from "./profile-edit-toggle";
 
 interface IProfileCard {
   id: number | string;
@@ -27,7 +27,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
     <div className={`relative mt-[30px] flex w-full flex-col px-4`}>
       <div className="absolute top-1 z-20 px-2">
         {role === "ARTIST" && (
-          <ExploreEditToggle id={id as string} role={role} />
+          <ProfileEditToggle id={id as string} role={role} />
         )}
       </div>
       <div className="flex flex-col">
