@@ -1,9 +1,10 @@
 "use client";
 import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
+import { IUser } from "../../auth/state/interface/auth.interface";
 import ArtistProfileGrid from "../artist/components/artist-profile-grid";
 
 export const ProfileGrid = () => {
-  const { role, isLoading } = useStableAuthStatus({
+  const { role, isLoading, user } = useStableAuthStatus({
     redirectOnExpiry: true,
     redirectTo: "/login",
   });
@@ -22,7 +23,7 @@ export const ProfileGrid = () => {
   return (
     <>
       {role === "ARTIST" ? (
-        <ArtistProfileGrid />
+        <ArtistProfileGrid user={user as IUser} />
       ) : role === "BUYER" ? (
         <div>
           <p>Buyer profile grid should be implemented here</p>
