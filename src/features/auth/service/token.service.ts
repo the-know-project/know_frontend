@@ -87,6 +87,7 @@ export class TokenService {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         const result = await this.refreshAccessToken(refreshToken);
+        console.log(`Refresh result`);
         return result;
       } catch (error: any) {
         lastError = error;
