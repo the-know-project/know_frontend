@@ -5,6 +5,7 @@ import Image from "next/image";
 import { formatViewCount } from "@/src/utils/number-format";
 import { useRoleStore } from "../../auth/state/store";
 import ProfileEditToggle from "./profile-edit-toggle";
+import { useIsEditProfileToggled } from "../artist/store/artist-profile.store";
 
 interface IProfileCard {
   id: number | string;
@@ -23,6 +24,8 @@ const ProfileCard: React.FC<IProfileCard> = ({
   image,
 }) => {
   const role = useRoleStore((state) => state.role);
+  const isEditProfileToggled = useIsEditProfileToggled(id as string);
+
   return (
     <div className={`relative mt-[30px] flex w-full flex-col px-4`}>
       <div className="absolute top-1 z-20 px-2">
@@ -31,14 +34,18 @@ const ProfileCard: React.FC<IProfileCard> = ({
         )}
       </div>
       <div className="flex flex-col">
-        <Image
-          src={image}
-          alt="user_asset"
-          quality={100}
-          width={400}
-          height={300}
-          className="rounded-[15px] object-contain select-none"
-        />
+        <div className="relative">
+          <Image
+            src={image}
+            alt="user_asset"
+            quality={100}
+            width={400}
+            height={300}
+            className={`rounded-[15px] object-contain transition-all duration-300 select-none ${
+              isEditProfileToggled ? "blur-xs" : ""
+            }`}
+          />
+        </div>
 
         <div className="mt-2 flex w-full max-w-[400px] justify-between">
           <div className="flex flex-col items-start font-medium text-neutral-600">
