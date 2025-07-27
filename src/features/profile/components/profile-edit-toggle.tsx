@@ -7,6 +7,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { ProfileToggleData } from "../data/profile.data";
+import { useToggleEditProfile } from "../artist/store/artist-profile.store";
 
 interface IProfileEditToggle {
   id: string;
@@ -14,6 +15,7 @@ interface IProfileEditToggle {
 }
 
 const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
+  const toggleEditProfile = useToggleEditProfile();
   const [editToggled, setEditToggled] = useState(false);
   const toggleRef = useRef<HTMLDivElement>(null);
 
@@ -24,6 +26,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
 
   const toggleEdit = () => {
     setEditToggled((prev) => !prev);
+    toggleEditProfile(id);
   };
 
   useEffect(() => {
@@ -76,7 +79,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                   duration: 0.3,
                 }}
               >
-                <div className="flex w-[138px] touch-manipulation flex-col gap-[8px] rounded-[9px] bg-[#F4F4F4] px-4 pt-[12px] pb-[12px] sm:gap-[16px]">
+                <div className="flex w-[138px] touch-manipulation flex-col gap-[8px] rounded-[9px] bg-[#F4F4F4] px-4 pt-[12px] pb-[12px] opacity-70 sm:gap-[16px]">
                   {ProfileToggleData.map((item, index) => (
                     <button
                       key={item.id}
