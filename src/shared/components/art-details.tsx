@@ -4,15 +4,12 @@ import {
   useIsExploreContentToggled,
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
+import { IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const ArtDetails = () => {
-  const { isExploreContentToggled, toggledContentId, viewportPosition } =
-    useIsExploreContentToggled();
+  const { toggledContentId, viewportPosition } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
-  console.log(
-    `is content toggled: ${isExploreContentToggled} : ${toggledContentId}`,
-  );
 
   const variants = {
     hidden: { opacity: 0, y: 20 },
@@ -25,11 +22,15 @@ const ArtDetails = () => {
         <>
           {/* Backdrop */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 backdrop-blur-md"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            transition={{
+              delay: 0.05,
+              ease: "easeInOut",
+              duration: 0.3,
+            }}
+            className="fixed inset-0 z-40"
             style={{
               top: 0,
               left: 0,
@@ -37,7 +38,8 @@ const ArtDetails = () => {
               height: "100%",
               position: "fixed",
               inset: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              backdropFilter: "blur(5px)",
+              backgroundColor: "rgba(0, 0, 0, 0.95)",
             }}
             onClick={() => toggleExploreContent(toggledContentId as string)}
           />
@@ -53,7 +55,7 @@ const ArtDetails = () => {
               ease: "easeInOut",
               duration: 0.3,
             }}
-            className="absolute z-50 rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl"
+            className="absolute z-50 rounded-2xl bg-transparent shadow-2xl"
             style={{
               top: viewportPosition
                 ? viewportPosition.scrollY +
@@ -63,7 +65,7 @@ const ArtDetails = () => {
                   : 0,
               left:
                 typeof window !== "undefined" && window.innerWidth < 768
-                  ? "2.5vw"
+                  ? "-3vw"
                   : "10vw",
               width:
                 typeof window !== "undefined" && window.innerWidth < 768
@@ -78,16 +80,16 @@ const ArtDetails = () => {
           >
             <div className="flex h-full w-full flex-col">
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-gray-700 px-6 py-4">
+              <div className="flex items-center justify-between px-6 py-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
                     <span className="text-sm font-bold text-white">A</span>
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-white">
+                    <h1 className="font-bricolage text-lg font-bold text-white">
                       Angels of Thanopeleus
                     </h1>
-                    <p className="text-sm text-gray-400">
+                    <p className="font-bricolage text-xs text-gray-400 sm:text-sm">
                       Victoria Ingleby • Follow
                     </p>
                   </div>
@@ -96,20 +98,20 @@ const ArtDetails = () => {
                   onClick={() =>
                     toggleExploreContent(toggledContentId as string)
                   }
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
+                  className="flex h-8 w-8 max-w-fit items-center justify-center rounded-full bg-white p-2"
                 >
-                  ✕
+                  <IconX width={20} height={20} className="text-black" />
                 </button>
               </div>
 
               {/* Content */}
-              <div className="flex-1 overflow-auto p-6">
+              <div className="custom-scrollbar flex-1 overflow-auto rounded-2xl bg-[#141414]">
                 <div className="space-y-6">
-                  <div>
-                    <h2 className="mb-4 text-2xl font-bold text-white">
+                  <div className="p-6">
+                    <h2 className="font-bricolage mb-4 text-2xl font-bold text-white">
                       Angels of Thanopeleus
                     </h2>
-                    <p className="leading-relaxed text-gray-300">
+                    <p className="font-bricolage max-w-prose text-xs leading-relaxed text-neutral-300 sm:text-sm">
                       This painting is special to me because it came from a
                       dream I couldn't shake, a vision of celestial beings
                       standing guard over a forgotten city at the edge of
@@ -119,27 +121,9 @@ const ArtDetails = () => {
                     </p>
                   </div>
 
-                  <div>
-                    <p className="leading-relaxed text-gray-300">
-                      When I work, I ask myself these questions: can a painting
-                      be ancient and unnerving, Guardians of things we've lost
-                      but still carry. Each stroke felt like an inquiry into the
-                      mysteries of existence, the gold tones illuminated
-                      whispers of transcendence that refuse to stay silent. This
-                      work is about presence in absence. About how feeling can
-                      exist in our minds.
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="leading-relaxed text-gray-300">
-                      It's an offering. A meaning. A prayer in paint.
-                    </p>
-                  </div>
-
                   {/* Artwork Image */}
-                  <div className="mt-8">
-                    <div className="relative overflow-hidden rounded-lg bg-gray-800">
+                  <div className="mt-8 flex w-full">
+                    <div className="relative w-full overflow-hidden">
                       <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
                         <p className="text-lg text-gray-600">Artwork Preview</p>
                       </div>
