@@ -1,5 +1,7 @@
 "use client";
 
+import ArtDetails from "@/src/shared/components/art-details";
+import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef } from "react";
 import { useEnhancedAuthContext } from "../../auth/components/enhanced-auth-provider";
@@ -8,6 +10,10 @@ import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { TCart } from "../../cart/types/cart.types";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import { useSimpleInfiniteAssets } from "../hooks/use-simple-infinite-assets";
+import {
+  useIsExploreContentToggled,
+  useToggleExploreContent,
+} from "../state/explore-content.store";
 import { TAsset } from "../types/explore.types";
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
@@ -87,6 +93,34 @@ const ExploreCanvasContent = ({
     limit: 12,
   });
 
+  const { isExploreContentToggled, toggledContentId } =
+    useIsExploreContentToggled();
+  const toggleExploreContent = useToggleExploreContent();
+  console.log(
+    `is content toggled: ${isExploreContentToggled} : ${toggledContentId}`,
+  );
+
+  // ESC key handler to close popup
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (
+        event.key === "Escape" &&
+        isExploreContentToggled &&
+        toggledContentId
+      ) {
+        toggleExploreContent(toggledContentId);
+      }
+    };
+
+    if (isExploreContentToggled) {
+      document.addEventListener("keydown", handleEscKey);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, [isExploreContentToggled, toggledContentId, toggleExploreContent]);
+
   const cartActions = useBulkCartActions();
   const cartData = useFetchUserCart();
 
@@ -134,6 +168,7 @@ const ExploreCanvasContent = ({
   if (isLoading && assets.length === 0 && isCartLoading) {
     return <ExploreCardSkeletonGrid />;
   }
+
   if (error && assets.length === 0) {
     return (
       <section className="flex w-full flex-col items-center justify-center py-20">
@@ -161,47 +196,52 @@ const ExploreCanvasContent = ({
   }
 
   return (
-    <section className="flex w-full flex-col items-center justify-center">
-      <div className="grid grid-cols-1 gap-5 space-y-[50px] md:grid-cols-2 lg:grid-cols-3">
-        {assets.map((item: TAsset, index: number) => (
-          <div
-            key={item.fileId}
-            className="motion-preset-expand motion-duration-700"
-            style={{
-              animationDelay: `${Math.min(index, 20) * 50}ms`,
-            }}
-          >
-            <ExploreCard
-              id={item.fileId}
-              artWork={item.url}
-              artName={item.fileName}
-              artistImage={item.imageUrl}
-              artistName={`${item.firstName} ${item.lastName}`}
-              likeCount={item.numOfLikes}
-              isListed={item.isListed}
-              role={role!}
-            />
-          </div>
-        ))}
-      </div>
-
-      {isLoadingMore && <InfiniteLoadingIndicator className="mt-8" />}
-
-      {/* Sentinel element for intersection observer */}
-      {canLoadMore && (
-        <div
-          ref={sentinelRef}
-          className="mt-8 flex h-10 w-full items-center justify-center"
-        />
-      )}
-
-      {!hasNextPage && assets.length > 0 && (
-        <div className="mt-8 w-full py-8 text-center">
-          <p className="font-bricolage text-sm text-gray-400">
-            You've reached the end of the gallery
-          </p>
+    <section className="relative flex w-full flex-col items-center">
+      <AnimatePresence>
+        {isExploreContentToggled && <ArtDetails />}
+      </AnimatePresence>
+      <section className="flex w-full flex-col items-center justify-center">
+        <div className="grid grid-cols-1 gap-5 space-y-[50px] md:grid-cols-2 lg:grid-cols-3">
+          {assets.map((item: TAsset, index: number) => (
+            <div
+              key={item.fileId}
+              className="motion-preset-expand motion-duration-700"
+              style={{
+                animationDelay: `${Math.min(index, 20) * 50}ms`,
+              }}
+            >
+              <ExploreCard
+                id={item.fileId}
+                artWork={item.url}
+                artName={item.fileName}
+                artistImage={item.imageUrl}
+                artistName={`${item.firstName} ${item.lastName}`}
+                likeCount={item.numOfLikes}
+                isListed={item.isListed}
+                role={role!}
+              />
+            </div>
+          ))}
         </div>
-      )}
+
+        {isLoadingMore && <InfiniteLoadingIndicator className="mt-8" />}
+
+        {/* Sentinel element for intersection observer */}
+        {canLoadMore && (
+          <div
+            ref={sentinelRef}
+            className="mt-8 flex h-10 w-full items-center justify-center"
+          />
+        )}
+
+        {!hasNextPage && assets.length > 0 && (
+          <div className="mt-8 w-full py-8 text-center">
+            <p className="font-bricolage text-sm text-gray-400">
+              You've reached the end of the gallery
+            </p>
+          </div>
+        )}
+      </section>
     </section>
   );
 };
