@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { useCart } from "../../cart/hooks/use-cart";
 import { useAssetLike } from "../hooks/use-asset-like";
 import { formatViewCount } from "@/src/utils/number-format";
+import { useToggleExploreContent } from "../state/explore-content.store";
 
 interface ExploreCardProps {
   id: number | string;
@@ -47,6 +48,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   const { isItemInCart, toggleCart } = useCart({
     fileId: id as string,
   });
+  const toggleExploreContent = useToggleExploreContent();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -80,14 +82,14 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   }
 
   return (
-    <div className="explore_card_wrapper" onContextMenu={handleContextMenu}>
+    <section className="explore_card_wrapper" onContextMenu={handleContextMenu}>
       <div className="relative flex w-full flex-col rounded-[15px] shadow-sm">
         {/* Invisible overlay to prevent interaction */}
-        <div
+        {/* <div
           className="absolute inset-0 z-10 bg-transparent"
           onContextMenu={handleContextMenu}
           onDragStart={handleDragStart}
-        />
+        /> */}
 
         <Image
           src={artWork}
@@ -96,15 +98,21 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           width={500}
           height={300}
           className="rounded-[15px] object-cover select-none"
-          style={{
-            WebkitUserSelect: "none",
-            MozUserSelect: "none",
-            msUserSelect: "none",
-            userSelect: "none",
-            pointerEvents: "none",
+          // style={{
+          //   WebkitUserSelect: "none",
+          //   MozUserSelect: "none",
+          //   msUserSelect: "none",
+          //   userSelect: "none",
+          // }}
+          // onContextMenu={handleContextMenu}
+          // onDragStart={handleDragStart}
+          onClick={() => {
+            const viewportPosition = {
+              scrollY: window.scrollY,
+              viewportHeight: window.innerHeight,
+            };
+            toggleExploreContent(id as string, viewportPosition);
           }}
-          onContextMenu={handleContextMenu}
-          onDragStart={handleDragStart}
           priority
         />
       </div>
@@ -179,7 +187,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           </p>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
