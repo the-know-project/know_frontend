@@ -8,7 +8,8 @@ import { IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const ArtDetails = () => {
-  const { toggledContentId, viewportPosition } = useIsExploreContentToggled();
+  const { toggledContentId, viewportPosition, exploreContent } =
+    useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
 
   const variants = {
@@ -43,7 +44,9 @@ const ArtDetails = () => {
               backdropFilter: "blur(5px)",
               backgroundColor: "rgba(0, 0, 0, 0.95)",
             }}
-            onClick={() => toggleExploreContent(toggledContentId as string)}
+            onClick={() =>
+              toggleExploreContent(toggledContentId as string, null)
+            }
           />
 
           {/* Popup */}
@@ -98,7 +101,7 @@ const ArtDetails = () => {
                 </div>
                 <button
                   onClick={() =>
-                    toggleExploreContent(toggledContentId as string)
+                    toggleExploreContent(toggledContentId as string, null)
                   }
                   className="flex h-8 w-8 max-w-fit items-center justify-center rounded-full bg-white p-2"
                 >

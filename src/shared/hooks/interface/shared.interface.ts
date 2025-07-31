@@ -1,4 +1,5 @@
-export interface IAssetPopup {
+export interface IExploreContent {
+  id: string;
   creatorProfileUrl: string;
   creatorName: string;
   artName: string;
