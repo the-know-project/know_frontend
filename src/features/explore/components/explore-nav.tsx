@@ -186,7 +186,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
               className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
               onClick={handleCtaNavigate}
             >
-              <p className="block">Share your work</p>
+              <p className="block">Share works</p>
             </button>
           ) : !authLoading && user && role?.toLowerCase() === "buyer" ? (
             <button
