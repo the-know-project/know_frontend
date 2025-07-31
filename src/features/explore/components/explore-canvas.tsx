@@ -18,6 +18,7 @@ import { TAsset } from "../types/explore.types";
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import InfiniteLoadingIndicator from "./infinite-loading-indicator";
+import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -93,7 +94,7 @@ const ExploreCanvasContent = ({
     limit: 12,
   });
 
-  const { isExploreContentToggled, toggledContentId } =
+  const { isExploreContentToggled, toggledContentId, exploreContent } =
     useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
   console.log(
@@ -108,7 +109,10 @@ const ExploreCanvasContent = ({
         isExploreContentToggled &&
         toggledContentId
       ) {
-        toggleExploreContent(toggledContentId);
+        toggleExploreContent(
+          toggledContentId,
+          exploreContent as IExploreContent,
+        );
       }
     };
 
@@ -214,6 +218,7 @@ const ExploreCanvasContent = ({
                 id={item.fileId}
                 artWork={item.url}
                 artName={item.fileName}
+                description={item.description}
                 artistImage={item.imageUrl}
                 artistName={`${item.firstName} ${item.lastName}`}
                 likeCount={item.numOfLikes}
