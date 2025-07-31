@@ -22,6 +22,7 @@ interface ExploreCardProps {
   likeCount: number;
   isListed: boolean;
   role: string;
+  description: string | null;
 }
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
@@ -29,6 +30,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   artistName,
   artName,
   artWork,
+  description,
   artistImage,
   likeCount,
   isListed,
@@ -111,7 +113,18 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               scrollY: window.scrollY,
               viewportHeight: window.innerHeight,
             };
-            toggleExploreContent(id as string, viewportPosition);
+            toggleExploreContent(
+              id as string,
+              {
+                id: id as string,
+                artName,
+                artWorkUrl: artWork,
+                description,
+                creatorProfileUrl: artistImage,
+                creatorName: artistName,
+              },
+              viewportPosition,
+            );
           }}
           priority
         />
