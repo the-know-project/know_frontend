@@ -38,6 +38,8 @@ const ArtDetails = () => {
               height: "100%",
               position: "fixed",
               inset: 0,
+              transitionBehavior: "normal",
+              transitionDuration: "300s",
               backdropFilter: "blur(5px)",
               backgroundColor: "rgba(0, 0, 0, 0.95)",
             }}
@@ -64,9 +66,9 @@ const ArtDetails = () => {
                   ? window.scrollY + window.innerHeight * 0.1
                   : 0,
               left:
-                typeof window !== "undefined" && window.innerWidth < 768
-                  ? "-3vw"
-                  : "10vw",
+                typeof window !== "undefined" && window.innerWidth > 400
+                  ? "-1vw"
+                  : "-3vw",
               width:
                 typeof window !== "undefined" && window.innerWidth < 768
                   ? "95vw"
