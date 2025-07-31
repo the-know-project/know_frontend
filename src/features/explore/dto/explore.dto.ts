@@ -14,7 +14,7 @@ export const Asset = z.object({
   isListed: z.boolean(),
   isLocked: z.boolean(),
   url: z.string().url(),
-  description: z.string().optional(),
+  description: z.string().nullable(),
   size: z.object({
     width: z.number(),
     height: z.number(),
