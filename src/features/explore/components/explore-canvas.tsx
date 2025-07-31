@@ -109,10 +109,7 @@ const ExploreCanvasContent = ({
         isExploreContentToggled &&
         toggledContentId
       ) {
-        toggleExploreContent(
-          toggledContentId,
-          exploreContent as IExploreContent,
-        );
+        toggleExploreContent(toggledContentId, exploreContent);
       }
     };
 
