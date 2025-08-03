@@ -84,15 +84,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   }
 
   return (
-    <section className="explore_card_wrapper" onContextMenu={handleContextMenu}>
+    <section
+      className="explore_card_wrapper transition-all duration-300 hover:scale-105 active:scale-95"
+      onContextMenu={handleContextMenu}
+    >
       <div className="relative flex w-full flex-col rounded-[15px] shadow-sm">
-        {/* Invisible overlay to prevent interaction */}
-        {/* <div
-          className="absolute inset-0 z-10 bg-transparent"
-          onContextMenu={handleContextMenu}
-          onDragStart={handleDragStart}
-        /> */}
-
         <Image
           src={artWork}
           alt="Artwork"
@@ -100,14 +96,6 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           width={500}
           height={300}
           className="rounded-[15px] object-cover select-none"
-          // style={{
-          //   WebkitUserSelect: "none",
-          //   MozUserSelect: "none",
-          //   msUserSelect: "none",
-          //   userSelect: "none",
-          // }}
-          // onContextMenu={handleContextMenu}
-          // onDragStart={handleDragStart}
           onClick={() => {
             const viewportPosition = {
               scrollY: window.scrollY,
