@@ -23,6 +23,8 @@ interface ExploreCardProps {
   isListed: boolean;
   role: string;
   description: string | null;
+  categories: string[];
+  tags: string[] | undefined;
 }
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
@@ -35,6 +37,8 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   likeCount,
   isListed,
   role,
+  categories,
+  tags,
 }) => {
   const {
     isLiked,
@@ -110,6 +114,8 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
                 description,
                 creatorProfileUrl: artistImage,
                 creatorName: artistName,
+                categories,
+                tags,
               },
               viewportPosition,
             );
