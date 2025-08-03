@@ -219,6 +219,8 @@ const ExploreCanvasContent = ({
                 likeCount={item.numOfLikes}
                 isListed={item.isListed}
                 role={role!}
+                categories={item.categories}
+                tags={item.tags}
               />
             </div>
           ))}
