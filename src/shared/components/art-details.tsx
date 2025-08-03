@@ -10,52 +10,75 @@ import { showLog } from "@/src/utils/logger";
 import { IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { useEffect } from "react";
 
 const ArtDetails = () => {
-  const { toggledContentId, viewportPosition, exploreContent } =
-    useIsExploreContentToggled();
+  const {
+    toggledContentId,
+    viewportPosition,
+    exploreContent,
+    isExploreContentToggled,
+  } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
+
+  /**
+   * @Note: This effect prevents body scrolling when the modal is open.
+   */
+  useEffect(() => {
+    if (isExploreContentToggled) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isExploreContentToggled]);
 
   showLog({
     context: "Art-Details",
     data: exploreContent,
   });
 
-  const variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
   };
 
-  const variant2 = {
-    hidden: { y: -20 },
-    visible: { y: 0 },
+  const popupVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -20, scale: 0.95 },
   };
 
   return (
-    <>
-      <AnimatePresence>
-        <>
+    <AnimatePresence mode="wait">
+      {isExploreContentToggled && toggledContentId && (
+        <div key={`modal-${toggledContentId}`}>
           {/* Backdrop */}
           <motion.div
-            variants={variant2}
+            variants={backdropVariants}
             initial="hidden"
             animate="visible"
-            exit="hidden"
+            exit="exit"
             transition={{
-              delay: 0.07,
+              duration: 0.3,
               ease: "easeInOut",
-              duration: 1.5,
             }}
-            className="fixed inset-0 z-40 min-h-screen"
+            className="fixed inset-0 z-40"
             style={{
               top: 0,
               left: 0,
-              width: "100%",
-              height: "100%",
+              width: "100vw",
+              height: Math.max(
+                typeof window !== "undefined"
+                  ? document.documentElement.scrollHeight
+                  : 0,
+                typeof window !== "undefined" ? window.innerHeight : 0,
+              ),
               position: "fixed",
-              inset: 0,
-              transitionBehavior: "normal",
-              transitionDuration: "300s",
               backdropFilter: "blur(5px)",
               backgroundColor: "rgba(0, 0, 0, 0.95)",
             }}
@@ -66,16 +89,16 @@ const ArtDetails = () => {
 
           {/* Popup */}
           <motion.div
-            variants={variants}
+            variants={popupVariants}
             initial="hidden"
             animate="visible"
-            exit="hidden"
+            exit="exit"
             transition={{
-              delay: 0.05,
-              ease: "easeInOut",
               duration: 0.3,
+              ease: "easeInOut",
+              delay: 0.05,
             }}
-            className="absolute z-50 rounded-2xl bg-transparent shadow-2xl"
+            className="fixed z-50 mt-[50px] rounded-2xl bg-transparent shadow-2xl"
             style={{
               top: viewportPosition
                 ? viewportPosition.scrollY +
@@ -83,14 +106,18 @@ const ArtDetails = () => {
                 : typeof window !== "undefined"
                   ? window.scrollY + window.innerHeight * 0.1
                   : 0,
+              left:
+                typeof window !== "undefined" && window.innerWidth < 768
+                  ? "2.5vw"
+                  : "10vw",
               width:
                 typeof window !== "undefined" && window.innerWidth < 768
                   ? "95vw"
                   : "80vw",
               height:
                 typeof window !== "undefined" && window.innerWidth < 768
-                  ? "95vh"
-                  : "95vh",
+                  ? "83vh"
+                  : "83vh",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -163,9 +190,9 @@ const ArtDetails = () => {
               </div>
             </div>
           </motion.div>
-        </>
-      </AnimatePresence>
-    </>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };
 
