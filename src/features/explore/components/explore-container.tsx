@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import ExploreCategories from "./explore-categories";
 import ExploreCanvas from "./explore-canvas";
 import { useSyncLikedAssets } from "../hooks/use-sync-liked-assets";
+import ExploreViewTracker from "./explore-view-tracker";
 
 interface ExploreContainerProps {
   initialPreferences?: string[];
@@ -63,6 +64,7 @@ const ExploreContainer = ({
         filters={selectedFilters}
         isInitialized={isInitialized}
       />
+      <ExploreViewTracker />
     </div>
   );
 };
