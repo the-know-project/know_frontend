@@ -19,7 +19,6 @@ const ExploreViewTracker = () => {
     }
   }, [toggledContentId, incrementView]);
 
-  // This component doesn't render anything
   return null;
 };
 
