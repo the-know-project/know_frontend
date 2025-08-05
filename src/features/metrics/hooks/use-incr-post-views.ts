@@ -1,11 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTokenStore } from "../../auth/state/store";
 import { IIncrementViewCount } from "../types/metrics.types";
 import { err, ok, ResultAsync } from "neverthrow";
 import { incrementViewCount } from "../api/route";
 import { MetricsError } from "../error/metrics.error";
+import { showLog } from "@/src/utils/logger";
 
 export const useIncrementPostViews = () => {
+  const queryClient = useQueryClient();
   const userId = useTokenStore((state) => state.user?.id);
   return useMutation({
     mutationKey: [`increment-post-view-${userId}`],
@@ -30,7 +32,27 @@ export const useIncrementPostViews = () => {
         return result.error;
       }
 
+      showLog({
+        context: "useIncrementViewCount",
+        data: result.value,
+      });
+
       return result.value;
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          `user-${userId}-posts`,
+          {
+            userId,
+            page: 1,
+            limit: 12,
+          },
+          `fetch-explore-asset`,
+          `artist-${userId}-metrics`,
+        ],
+      });
     },
   });
 };
