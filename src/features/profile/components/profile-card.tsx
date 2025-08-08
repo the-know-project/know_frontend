@@ -52,7 +52,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
             <h3 className="font-bricolage sm:text-normal text-sm text-neutral-800 capitalize">
               {title}
             </h3>
-            <p className="font-bricolage text-xs capitalize sm:text-sm">
+            <p className="font-bricolage text-xs font-light text-[#666666] capitalize sm:text-sm">
               {createdAt}
             </p>
           </div>
