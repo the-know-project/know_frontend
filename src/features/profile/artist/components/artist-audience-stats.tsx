@@ -12,10 +12,13 @@ const ArtistAudienceStats = () => {
   return (
     <div className="flex w-full flex-col items-center py-9 md:flex-row">
       <div className="flex w-full flex-col items-center gap-[20px] md:flex-row md:gap-0">
-        {audienceMetrics.map((metric) => (
+        {audienceMetrics.map((metric, index) => (
           <div
             key={metric.id}
-            className="flex w-full flex-row-reverse items-start justify-between md:flex-col md:items-center"
+            className="motion-preset-expand motion-duration-200 flex w-full flex-row-reverse items-start justify-between md:flex-col md:items-center"
+            style={{
+              animationDelay: `${index * 100}ms`,
+            }}
           >
             <h4 className="font-bricolage text-[20px] font-semibold text-neutral-800 capitalize md:text-[32px]">
               {metric.value}
