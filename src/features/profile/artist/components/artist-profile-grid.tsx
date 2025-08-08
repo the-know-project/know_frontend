@@ -10,6 +10,7 @@ import ProfileCard from "../../components/profile-card";
 import { TUserAssetData } from "../dto/artist.dto";
 import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
 import { IUser } from "@/src/features/auth/state/interface/auth.interface";
+import Stats from "./artist-stats";
 
 interface ArtistProfileGridProps {
   user: IUser;
@@ -213,7 +214,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
           <div className="flex w-full flex-col items-center justify-center py-20 lg:col-span-2">
-            <p className="font-bricolage text-gray-500">Stats coming soon...</p>
+            <Stats />
           </div>
         )}
         {activeToggle === "drafts" && (
