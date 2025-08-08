@@ -18,6 +18,7 @@ import know_logo2 from "./know_logo2.png";
 import forgot_password from "./forgot_password.jpeg";
 import know_artist from "./know_artist.jpg";
 import empty from "./empty.png";
+import audience from "./icons/audience.png";
 
 export {
   hero1,
@@ -40,4 +41,5 @@ export {
   forgot_password,
   know_artist,
   empty,
+  audience,
 };
