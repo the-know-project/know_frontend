@@ -11,49 +11,11 @@ import { TUserAssetData } from "../dto/artist.dto";
 import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
 import { IUser } from "@/src/features/auth/state/interface/auth.interface";
 import Stats from "./artist-stats";
+import ProfileCardSkeletonGrid from "../../layout/profile-card-skeleton";
 
 interface ArtistProfileGridProps {
   user: IUser;
 }
-
-const ProfileCardSkeletonGrid = () => (
-  <div className="flex w-full flex-col items-center gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
-    {Array.from({ length: 8 }).map((_, index) => (
-      <div
-        key={index}
-        className="mt-[30px] flex w-full animate-pulse flex-col px-4"
-      >
-        <div className="flex flex-col">
-          {/* Image skeleton */}
-          <div className="aspect-[4/3] w-full rounded-[15px] bg-gray-300"></div>
-
-          {/* Content skeleton */}
-          <div className="mt-2 flex w-full max-w-[400px] justify-between">
-            <div className="flex flex-col items-start gap-1">
-              {/* Title skeleton */}
-              <div className="h-4 w-24 rounded bg-gray-300"></div>
-              {/* Date skeleton */}
-              <div className="h-3 w-16 rounded bg-gray-300"></div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {/* Eye icon + views skeleton */}
-              <div className="flex items-center gap-1">
-                <div className="h-4 w-4 rounded bg-gray-300"></div>
-                <div className="h-3 w-8 rounded bg-gray-300"></div>
-              </div>
-              {/* Edit icon + text skeleton */}
-              <div className="flex items-center gap-1">
-                <div className="h-4 w-4 rounded bg-gray-300"></div>
-                <div className="h-3 w-6 rounded bg-gray-300"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-);
 
 const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const [activeToggle, setActiveToggle] = useState<string>("posts");
@@ -176,7 +138,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   };
 
   return (
-    <section className="flex w-full flex-col px-4 lg:px-6">
+    <section className="lg:px- -mt-[50px] flex w-full flex-col px-4">
       <div className="w-full items-center justify-center">
         <div className="relative flex flex-row items-center justify-between">
           {ArtistProfileToggle.map((toggle) => (
@@ -213,7 +175,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
       <div className="mt-4 flex w-full flex-col items-center justify-center gap-4 bg-white lg:grid lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
-          <div className="flex w-full flex-col items-center justify-center py-20 lg:col-span-2">
+          <div className="flex w-full flex-col items-center justify-center lg:col-span-2">
             <Stats />
           </div>
         )}
