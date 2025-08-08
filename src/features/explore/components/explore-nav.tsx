@@ -183,7 +183,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
           role?.toLowerCase() === "artist" &&
           toggleShareButton ? (
             <button
-              className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:text-[16px]"
+              className="font-bricolage relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
               onClick={handleCtaNavigate}
             >
               <p className="block">Share works</p>
