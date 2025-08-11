@@ -9,7 +9,6 @@ export const ProfileGrid = () => {
     redirectTo: "/login",
   });
 
-  // Always render the same component structure to maintain hook order
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
