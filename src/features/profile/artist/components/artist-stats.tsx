@@ -1,6 +1,7 @@
 import { audience } from "@/src/assets";
 import Image from "next/image";
 import ArtistAudienceStats from "./artist-audience-stats";
+import EngagementInsights from "./engagement-insights";
 
 const Stats = () => {
   return (
@@ -17,11 +18,14 @@ const Stats = () => {
             priority
             className="object-center"
           />
-          <h3 className="font-bricolage text-[20px] font-bold text-neutral-800 capitalize md:text-[24px]">
-            Your audience
-          </h3>
+          <h3 className="stats_title">Your audience</h3>
         </div>
         <ArtistAudienceStats />
+      </div>
+
+      {/*Engagement Insights*/}
+      <div className="flex w-full flex-col">
+        <EngagementInsights />
       </div>
     </section>
   );
