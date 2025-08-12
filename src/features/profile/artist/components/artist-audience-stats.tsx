@@ -23,13 +23,11 @@ const ArtistAudienceStats = () => {
             <h4 className="font-bricolage text-[20px] font-semibold text-neutral-800 capitalize md:text-[32px]">
               {metric.value}
             </h4>
-            <p className="font-bricolage font-light text-[#666666] capitalize">
-              {metric.context}
-            </p>
-            <hr className="mt-5 hidden w-full border-t border-neutral-200 md:block" />
+            <p className="stats_content">{metric.context}</p>
+            <hr className="mt-7 hidden w-full border-t border-neutral-200 md:block" />
           </div>
         ))}
-        <hr className="mt-5 block w-full border-t border-neutral-200 md:hidden" />
+        <hr className="mt-7 block w-full border-t border-neutral-200 md:hidden" />
       </div>
     </div>
   );
