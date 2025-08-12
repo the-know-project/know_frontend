@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useTokenStore } from "../state/store";
 import { useRoleStore } from "../state/store";
 
@@ -28,8 +28,12 @@ interface UseStableAuthStatusOptions {
   onTokenExpired?: () => void;
 }
 
-const guestAllowed = ["/forgot-password", "/reset-password", "/login", "/signup"];
-const pathname = window.location.pathname
+const guestAllowed = [
+  "/forgot-password",
+  "/reset-password",
+  "/login",
+  "/signup",
+];
 
 export const useStableAuthStatus = (
   options: UseStableAuthStatusOptions = {},
@@ -43,6 +47,7 @@ export const useStableAuthStatus = (
   } = options;
 
   const router = useRouter();
+  const pathname = usePathname();
   const tokenStore = useTokenStore();
   const roleStore = useRoleStore();
 
@@ -130,7 +135,11 @@ export const useStableAuthStatus = (
         }
       }
 
-      if (!isAuthenticated && !hasRedirected.current && !guestAllowed.includes(pathname)) {
+      if (
+        !isAuthenticated &&
+        !hasRedirected.current &&
+        !guestAllowed.includes(pathname)
+      ) {
         console.warn("Authentication lost");
 
         if (onAuthError) {

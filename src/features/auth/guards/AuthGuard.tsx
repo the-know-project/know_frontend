@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useAuthGuard } from "../hooks/use-auth-guard";
 import { RouteProtectionResult } from "../types/route-protection.types";
 
@@ -75,19 +76,23 @@ const AuthLoadingFallback: React.FC = () => (
 
 const AuthUnauthorizedFallback: React.FC<{
   result: RouteProtectionResult | null;
-}> = ({ result }) => (
-  <div className="flex min-h-screen items-center justify-center">
-    <div className="text-center">
-      <h1 className="mb-4 text-2xl font-bold text-gray-800">Access Denied</h1>
-      <p className="mb-4 text-gray-600">
-        {result?.reason || "You do not have permission to access this page."}
-      </p>
-      <button
-        onClick={() => window.history.back()}
-        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-      >
-        Go Back
-      </button>
+}> = ({ result }) => {
+  const router = useRouter();
+
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <h1 className="mb-4 text-2xl font-bold text-gray-800">Access Denied</h1>
+        <p className="mb-4 text-gray-600">
+          {result?.reason || "You do not have permission to access this page."}
+        </p>
+        <button
+          onClick={() => router.back()}
+          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+        >
+          Go Back
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
