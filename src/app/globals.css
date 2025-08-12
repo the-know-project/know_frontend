@@ -229,6 +229,10 @@
   .stats_title {
     @apply font-bricolage text-[20px] font-bold text-neutral-800 capitalize md:text-[24px];
   }
+
+  .stats_content {
+    @apply font-bricolage text-[14px] font-light text-[#666666] capitalize sm:text-[16px];
+  }
 }
 .purple-glow {
   filter: drop-shadow(0 0 30px rgba(128, 0, 255, 0.7));
