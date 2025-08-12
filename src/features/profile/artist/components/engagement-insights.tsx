@@ -1,106 +1,87 @@
 import { TrendingUp } from "lucide-react";
 
 const EngagementInsights = () => {
-  const topInterestedBuyers = 70;
-  const conversionRate = 30;
+  const topInterestedBuyers = 80;
+  const conversionRate = 20;
 
-  // Calculate arc paths for the semi-circular gauge
-  const radius = 90;
-  const strokeWidth = 30;
-  const center = { x: 120, y: 120 };
+  const radius = 80;
+  const strokeWidth = 20;
 
-  const percentageToAngle = (percentage: number) => {
-    return (percentage / 100) * 180 - 90; // -90 to start from left
-  };
+  const semicircleLength = Math.PI * radius;
 
-  const createArcPath = (
-    startAngle: number,
-    endAngle: number,
-    isLargeArc: boolean = false,
-  ) => {
-    const startRad = (startAngle * Math.PI) / 180;
-    const endRad = (endAngle * Math.PI) / 180;
+  const topInterestedLength = (topInterestedBuyers / 100) * semicircleLength;
+  const conversionLength = (conversionRate / 100) * semicircleLength;
 
-    const x1 = center.x + radius * Math.cos(startRad);
-    const y1 = center.y + radius * Math.sin(startRad);
-    const x2 = center.x + radius * Math.cos(endRad);
-    const y2 = center.y + radius * Math.sin(endRad);
-
-    const largeArcFlag = isLargeArc ? 1 : 0;
-
-    return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`;
-  };
-
-  const topInterestedArc = createArcPath(
-    -90,
-    percentageToAngle(topInterestedBuyers),
-    true,
-  );
-  const conversionArc = createArcPath(
-    percentageToAngle(topInterestedBuyers),
-    90,
-  );
+  const topInterestedStrokeDashArray = `${topInterestedLength} ${semicircleLength}`;
+  const conversionStrokeDashArray = `${conversionLength} ${semicircleLength}`;
+  const conversionStrokeDashOffset = -topInterestedLength;
 
   return (
-    <section className="rounded-lg bg-white p-6 shadow-sm">
+    <section className="bg-white">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-2">
-        <TrendingUp className="h-5 w-5 text-orange-500" />
+      <div className="mb-6 flex items-center gap-8">
+        <div className="rounded-full bg-orange-100 p-2">
+          <TrendingUp className="h-5 w-5 text-orange-500" />
+        </div>
         <h2 className="stats_title">Buyer Engagement Insights</h2>
       </div>
 
       {/* Main Content */}
-      <div className="flex items-center justify-between gap-8">
+      <div className="flex items-center gap-4 sm:gap-8">
         {/* Gauge Chart */}
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <svg
-            width="240"
-            height="140"
-            viewBox="0 0 240 140"
-            className="h-auto w-full"
+            width="200"
+            height="120"
+            viewBox="0 0 200 120"
+            className="h-auto w-full max-w-[150px] sm:max-w-[200px]"
             role="img"
             aria-label="Engagement insights gauge chart"
           >
             {/* Background arc */}
             <path
-              d={createArcPath(-90, 90, true)}
+              d={`M ${100 - radius} 100 A ${radius} ${radius} 0 0 1 ${100 + radius} 100`}
               fill="none"
               stroke="#f3f4f6"
               strokeWidth={strokeWidth}
               strokeLinecap="round"
             />
 
-            {/* Top Interested Buyers arc */}
+            {/* Top Interested Buyers arc  */}
             <path
-              d={topInterestedArc}
+              d={`M ${100 - radius} 100 A ${radius} ${radius} 0 0 1 ${100 + radius} 100`}
               fill="none"
-              stroke="#fb923c"
+              stroke="#F97316"
               strokeWidth={strokeWidth}
               strokeLinecap="round"
-              className="transition-all duration-500 ease-out"
+              strokeDasharray={topInterestedStrokeDashArray}
+              strokeDashoffset="0"
+              className="transition-all duration-700 ease-out"
             />
 
             {/* Conversion Rate arc */}
             <path
-              d={conversionArc}
+              d={`M ${100 - radius} 100 A ${radius} ${radius} 0 0 1 ${100 + radius} 100`}
               fill="none"
-              stroke="#22c55e"
+              stroke="#34A853"
               strokeWidth={strokeWidth}
               strokeLinecap="round"
-              className="transition-all duration-500 ease-out"
+              strokeDasharray={conversionStrokeDashArray}
+              strokeDashoffset={conversionStrokeDashOffset}
+              className="transition-all duration-700 ease-out"
             />
 
             {/* Center text */}
             <text
-              x="120"
-              y="110"
+              x="100"
+              y="85"
               textAnchor="middle"
-              className="fill-gray-700 text-sm font-medium"
+              className="hidden fill-black md:block"
             >
-              <tspan x="120" dy="0">
+              <tspan x="100" className="stats_content !font-medium">
                 Engagement
               </tspan>
-              <tspan x="120" dy="20">
+              <tspan x="100" dy="16" className="stats_content !font-medium">
                 Insights
               </tspan>
             </text>
@@ -108,30 +89,26 @@ const EngagementInsights = () => {
         </div>
 
         {/* Legend */}
-        <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
           {/* Top Interested Buyers */}
           <div className="flex items-center gap-3">
-            <div className="h-3 w-3 flex-shrink-0 rounded-full bg-orange-400" />
-            <div className="min-w-0">
-              <p className="text-sm text-gray-600">Top Interested Buyers</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {topInterestedBuyers}%
-              </p>
-            </div>
+            <div className="h-3 w-3 rounded-full bg-[#F97316]" />
+            <span className="stats_content">
+              Top Interested Buyers ({topInterestedBuyers}%)
+            </span>
           </div>
 
           {/* Conversion Rate */}
           <div className="flex items-center gap-3">
-            <div className="h-3 w-3 flex-shrink-0 rounded-full bg-green-500" />
-            <div className="min-w-0">
-              <p className="text-sm text-gray-600">Conversion Rate</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {conversionRate}%
-              </p>
-            </div>
+            <div className="bg-[] h-3 w-3 rounded-full" />
+            <span className="stats_content">
+              Conversion Rate ({conversionRate}%)
+            </span>
           </div>
         </div>
       </div>
+
+      <hr className="mt-5 block w-full border-t border-neutral-200" />
     </section>
   );
 };
