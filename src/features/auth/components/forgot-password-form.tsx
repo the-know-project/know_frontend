@@ -14,12 +14,21 @@ import {
 import { TitleText } from "@/src/shared/layout/header";
 import { Input } from "@/src/shared/ui/input";
 import { IconSend } from "@tabler/icons-react";
-import { IForgotPassword } from "../types/auth.types";
+import { IForgotPassword, IForgotPasswordSuccess } from "../types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgotPasswordSchema } from "../schema/auth.schema";
 import { forgot_password } from "@/src/assets";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
+import { toast } from "sonner";
+import { useForgotPassword } from "../hooks/use-forgot-password";
+import { useRouter } from "next/navigation";
+import Spinner from "@/src/shared/components/spinner";
 
 const ForgotPasswordForm = () => {
+  const router = useRouter()
+  const { mutateAsync: handleForgotPassword, isPending } = useForgotPassword()
+
   const form = useForm<IForgotPassword>({
     resolver: zodResolver(ForgotPasswordSchema),
     defaultValues: {
@@ -27,8 +36,56 @@ const ForgotPasswordForm = () => {
     },
   });
 
+  const handleToast = (data: IForgotPasswordSuccess) => {
+    if (data.status === 200) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+      router.push("/reset-password")
+    } else if (data.status === 401) {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    } else {
+      toast("", {
+        icon: <ToastIcon />,
+        description: <ToastDescription description={`An error occurred`} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
+  };
+
   const onSubmit = async (ctx: IForgotPassword) => {
-    console.log(ctx.email);
+    const res = await handleForgotPassword(ctx)
+    handleToast(res)
   };
   return (
     <div className="relative z-50 grid min-h-screen grid-cols-1 md:grid-cols-2">
@@ -90,25 +147,30 @@ const ForgotPasswordForm = () => {
                 )}
               />
             </div>
+            <div>
+              <button
+                className="font-bebas text-md group relative mt-10 inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
+                type="submit"
+              >
+                {isPending ? (
+                  <div className="flex w-full items-center justify-center">
+                    <Spinner />
+                  </div>
+                ) : (
+                <div className="flex w-full items-center justify-center gap-2">
+                  Send 6 Digit Code
+                  <IconSend
+                    width={20}
+                    height={20}
+                    color="white"
+                    className="transiton-all -mt-1 duration-200 group-hover:translate-x-1 group-hover:-translate-y-1"
+                  />
+                </div>
+                )}
+              </button>
+            </div>
           </form>
         </Form>
-
-        <Link href="/reset-password">
-          <button
-            className="font-bebas text-md group relative mt-10 inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
-            type="submit"
-          >
-            <div className="flex w-full items-center justify-center gap-2">
-              Send 4 Digit Code
-              <IconSend
-                width={20}
-                height={20}
-                color="white"
-                className="transiton-all -mt-1 duration-200 group-hover:translate-x-1 group-hover:-translate-y-1"
-              />
-            </div>
-          </button>
-        </Link>
       </div>
 
       <div className="motion-preset-blur-right-lg motion-duration-700 relative hidden md:block">

@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   ForgotPasswordSchema,
   LoginSchema,
+  OtpFormSchema,
   ResetPasswordSchema,
   RoleSchema,
   SignUpFormSchema,
@@ -26,10 +27,20 @@ export interface ILoginSuccess {
   isFirstTime: boolean;
 }
 
+export interface IForgotPasswordSuccess {
+  status: number;
+  message: string;
+  // tokens: {
+  //   accessToken: string;
+  //   refreshToken: string;
+  // };
+}
+
 export type ISignUp = z.infer<typeof SignUpSchema>;
 export type ILogin = z.infer<typeof LoginSchema>;
 export type IRole = z.infer<typeof RoleSchema>;
 export type ISignUpForm = z.infer<typeof SignUpFormSchema>;
 export type ISignUpResponseDto = z.infer<typeof SignUpResponseDto>;
+export type IOtpForm = z.infer<typeof OtpFormSchema>;
 export type IForgotPassword = z.infer<typeof ForgotPasswordSchema>;
 export type IResetPassword = z.infer<typeof ResetPasswordSchema>;

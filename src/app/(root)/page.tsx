@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <HomePageGuard>
       <div className="relative">
-        <div className="absolute w-full">
+        <div className="w-full">
           <Nav />
         </div>
         <Hero />

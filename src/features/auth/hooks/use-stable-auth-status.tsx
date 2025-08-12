@@ -28,6 +28,9 @@ interface UseStableAuthStatusOptions {
   onTokenExpired?: () => void;
 }
 
+const guestAllowed = ["/forgot-password", "/reset-password", "/login", "/signup"];
+const pathname = window.location.pathname
+
 export const useStableAuthStatus = (
   options: UseStableAuthStatusOptions = {},
 ) => {
@@ -127,7 +130,7 @@ export const useStableAuthStatus = (
         }
       }
 
-      if (!isAuthenticated && !hasRedirected.current) {
+      if (!isAuthenticated && !hasRedirected.current && !guestAllowed.includes(pathname)) {
         console.warn("Authentication lost");
 
         if (onAuthError) {

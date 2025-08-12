@@ -24,6 +24,11 @@ export const LoginSchema = z.object({
   password: z.string().min(6, "at least 6 characters").max(100),
 });
 
+export const OtpFormSchema = z.object({
+  // email: z.string().email(),
+  otp: z.string().length(6, "OTP must be exactly 6 digits"),
+});
+
 export const ForgotPasswordSchema = z.object({
   email: z.string().email(),
 });

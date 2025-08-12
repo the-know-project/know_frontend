@@ -12,6 +12,24 @@ const AuthSuccessDataDto = z.object({
   isFirstTime: z.boolean(),
 });
 
+export const SendOtpResponseDto = z.object({
+  status: z.number(),
+  message: z.string().min(1).max(100),
+  data: z.string().min(1).max(100).optional(),
+});
+
+export const ValidateOtpResponseDto = z.object({
+  status: z.number(),
+  message: z.string().min(1).max(100),
+  data: z.string().min(1).max(100).optional(),
+});
+
+export const ResetPasswordResponseDto = z.object({
+  status: z.number(),
+  message: z.string().min(1).max(100),
+  data: AuthSuccessDataDto.optional(),
+});
+
 export const SignUpResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
@@ -19,6 +37,12 @@ export const SignUpResponseDto = z.object({
 });
 
 export const LoginResponseDto = z.object({
+  status: z.number(),
+  message: z.string().min(1).max(100),
+  data: AuthSuccessDataDto.optional(),
+});
+
+export const ForgotPasswordResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
   data: AuthSuccessDataDto.optional(),
