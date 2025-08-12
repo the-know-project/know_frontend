@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 
 const EngagementInsights = () => {
   const [isAnimated, setIsAnimated] = useState(false);
-  const topInterestedBuyers = 70;
-  const conversionRate = 30;
+  const topInterestedBuyers = 80;
+  const conversionRate = 20;
 
   useEffect(() => {
     const timer = setTimeout(() => {
