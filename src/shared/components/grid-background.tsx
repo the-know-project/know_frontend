@@ -28,13 +28,13 @@ const GridBackground: React.FC<IGridBackground> = ({
 
   return (
     <div
-      className={`relative flex h-fit w-full flex-col ${variant === "default" ? "bg-white dark:bg-stone-500" : ""} ${className}`}
+      className={`relative flex h-fit w-full flex-col ${variant === "default" ? "bg-white dark:bg-black" : ""} ${className}`}
     >
       {/* Grid pattern background */}
       <div
         className={cn(
           "absolute inset-0 z-0",
-          "[background-size:80px_80px]",
+          "[background-size:20px_20px]",
           getGridStyles(),
         )}
       />
