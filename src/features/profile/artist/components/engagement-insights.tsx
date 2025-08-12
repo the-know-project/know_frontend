@@ -1,8 +1,17 @@
 import { TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const EngagementInsights = () => {
-  const topInterestedBuyers = 80;
-  const conversionRate = 20;
+  const [isAnimated, setIsAnimated] = useState(false);
+  const topInterestedBuyers = 70;
+  const conversionRate = 30;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAnimated(true);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   const radius = 80;
   const strokeWidth = 20;
@@ -12,9 +21,13 @@ const EngagementInsights = () => {
   const topInterestedLength = (topInterestedBuyers / 100) * semicircleLength;
   const conversionLength = (conversionRate / 100) * semicircleLength;
 
-  const topInterestedStrokeDashArray = `${topInterestedLength} ${semicircleLength}`;
-  const conversionStrokeDashArray = `${conversionLength} ${semicircleLength}`;
-  const conversionStrokeDashOffset = -topInterestedLength;
+  const topInterestedStrokeDashArray = isAnimated
+    ? `${topInterestedLength} ${semicircleLength}`
+    : `0 ${semicircleLength}`;
+  const conversionStrokeDashArray = isAnimated
+    ? `${conversionLength} ${semicircleLength}`
+    : `0 ${semicircleLength}`;
+  const conversionStrokeDashOffset = isAnimated ? -topInterestedLength : 0;
 
   return (
     <section className="bg-white">
@@ -56,7 +69,7 @@ const EngagementInsights = () => {
               strokeLinecap="round"
               strokeDasharray={topInterestedStrokeDashArray}
               strokeDashoffset="0"
-              className="transition-all duration-700 ease-out"
+              className="transition-all duration-1000 ease-out"
             />
 
             {/* Conversion Rate arc */}
@@ -68,7 +81,8 @@ const EngagementInsights = () => {
               strokeLinecap="round"
               strokeDasharray={conversionStrokeDashArray}
               strokeDashoffset={conversionStrokeDashOffset}
-              className="transition-all duration-700 ease-out"
+              className="transition-all duration-1000 ease-out"
+              style={{ transitionDelay: "300ms" }}
             />
 
             {/* Center text */}
@@ -93,15 +107,15 @@ const EngagementInsights = () => {
           {/* Top Interested Buyers */}
           <div className="flex items-center gap-3">
             <div className="h-3 w-3 rounded-full bg-[#F97316]" />
-            <span className="stats_content">
+            <span className="stats_content motion-preset-expand motion-duration-300">
               Top Interested Buyers ({topInterestedBuyers}%)
             </span>
           </div>
 
           {/* Conversion Rate */}
           <div className="flex items-center gap-3">
-            <div className="bg-[] h-3 w-3 rounded-full" />
-            <span className="stats_content">
+            <div className="h-3 w-3 rounded-full bg-[#34A853]" />
+            <span className="stats_content motion-preset-expand motion-duration-300">
               Conversion Rate ({conversionRate}%)
             </span>
           </div>
