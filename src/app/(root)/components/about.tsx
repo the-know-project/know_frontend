@@ -6,7 +6,7 @@ import Intro from "./intro";
 const About = () => {
   return (
     <section id="about" className="flex w-full flex-col scroll-smooth">
-      <GridBackground>
+      {/* <GridBackground> */}
         <>
           <Intro />
 
@@ -33,7 +33,7 @@ const About = () => {
             glow_color="animated-blue-glow"
           />
         </>
-      </GridBackground>
+      {/* </GridBackground> */}
     </section>
   );
 };

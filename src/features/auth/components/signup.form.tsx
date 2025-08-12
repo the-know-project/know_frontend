@@ -20,15 +20,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useSignUp } from "../hooks/use-sign-up";
 import { SignUpFormSchema } from "../schema/auth.schema";
 import { ISignUpForm, ISignUpResponseDto } from "../types/auth.types";
 import { useGoogleLogin } from "../hooks/use-google-login";
+import { useSendOtp } from "../hooks/use-send-otp";
 
 const SignupForm = () => {
-  const { mutateAsync: handleSignUp, isPending } = useSignUp();
-  const { mutate: handleGoogleLogin, isPending: isGooglePending } =
-    useGoogleLogin();
+  const { mutateAsync: handleSendOtp, isPending } = useSendOtp()
+  const { mutate: handleGoogleLogin, isPending: isGooglePending } = useGoogleLogin();
   const router = useRouter();
   const [activeButton, setActiveButton] = useState<
     "regular" | "google" | "discord" | null
@@ -60,7 +59,7 @@ const SignupForm = () => {
           fontWeight: "bolder",
         },
       });
-      router.push("/login");
+      router.push("/otp")
     } else if (data.status === 409) {
       toast("", {
         icon: <ToastIcon />,
@@ -90,7 +89,8 @@ const SignupForm = () => {
           fontWeight: "bolder",
         },
       });
-      router.push("/explore");
+      // router.push("/explore");
+      router.push("/otp")
     } else if (data.status === 401) {
       toast("", {
         icon: <ToastIcon />,
@@ -124,7 +124,7 @@ const SignupForm = () => {
 
   const onSubmit = async (ctx: ISignUpForm) => {
     setActiveButton("regular");
-    const data = await handleSignUp(ctx);
+    const data = await handleSendOtp(ctx)
     handleToast(data);
     setActiveButton(null);
   };

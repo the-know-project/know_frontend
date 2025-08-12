@@ -5,14 +5,53 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
+import { useValidateOtp } from "../hooks/use-validate-otp";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
+import { IOtpForm } from "../types/auth.types";
+import { useRouter } from "next/navigation";
+import { useForgotPassword } from "../hooks/use-forgot-password";
+import Spinner from "@/src/shared/components/spinner";
 
 const VerifyCode = () => {
+  const router = useRouter()
+  const { mutateAsync: handleValidateOtp, isPending } = useValidateOtp()
+  const { mutateAsync: handleForgotPassword } = useForgotPassword()
   const { register, handleSubmit, setValue } = useForm();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const onSubmit = (data: any) => {
-    const code = Object.values(data).join("");
+  const handleToast = (success: boolean, message: string) => {
+    toast("", {
+      icon: <ToastIcon />,
+      description: <ToastDescription description={message} />,
+      style: {
+        backdropFilter: "-moz-initial",
+        opacity: "-moz-initial",
+        backgroundColor: success 
+          ? "oklch(62.7% 0.194 149.214)" 
+          : "oklch(62.8% 0.258 29.234)",
+        fontSize: "15px",
+        font: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "bolder",
+      },
+    });
+  };
+
+  const onSubmit = async (data: any) => {
+    const code: IOtpForm = { otp: Object.values(data).join("") };
     console.log("Verification code:", code);
+    try {
+      const result = await handleValidateOtp(code)
+
+      if (result.status == 200){
+        handleToast(true, result.message);
+        router.push("/new-password");
+      } 
+    } catch (error) {
+      handleToast(false, "Invalid OTP. Please try again.");
+    } 
   };
 
   const handleInputChange = (
@@ -38,6 +77,20 @@ const VerifyCode = () => {
     }
   };
 
+  const resendOtp = async () => {
+    const email = sessionStorage.getItem("email")
+    
+    if (!email) {
+      handleToast(false, "Couldn't fetch email.");
+    } else {
+      try {
+        const res = await handleForgotPassword({ email })
+        handleToast(true, res.message)        
+      } catch (error) {
+        handleToast(false, "Could not resend otp.");
+      }
+    }     
+  }
   return (
     <div className="relative grid min-h-screen grid-cols-1 md:grid-cols-2">
       {/* Left Form Section */}
@@ -57,10 +110,7 @@ const VerifyCode = () => {
         <div className="mb-8 flex flex-col gap-2">
           <h1 className="text-3xl font-semibold text-black">Password Reset</h1>
           <p className="text-sm text-neutral-600">
-            We sent a code to{" "}
-            <span className="font-medium text-blue-600">
-              preshj*****@gmail.com
-            </span>
+            We sent a code to your email
           </p>
         </div>
 
@@ -81,22 +131,30 @@ const VerifyCode = () => {
             ))}
           </div>
 
-          <p className="text-center text-xs text-gray-500">
+          <p className="text-center text-xs text-gray-500" onClick={resendOtp}>
             Didn't get the mail?{" "}
             <button type="button" className="text-blue-600 hover:underline">
               Click to resend
             </button>
           </p>
 
-          <Link href="/new-password">
+          <div>
             <button
               type="submit"
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-2 font-medium text-white transition hover:bg-blue-700"
             >
-              Continue
-              <IconSend width={20} height={20} color="white" />
+              {isPending ? (
+                <div className="flex w-full items-center justify-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <p>Continue</p>
+                  <IconSend width={20} height={20} color="white" />                  
+                </div>
+              )}
             </button>
-          </Link>
+          </div>
         </form>
       </div>
 

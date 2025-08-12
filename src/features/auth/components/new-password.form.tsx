@@ -15,8 +15,17 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { ResetPasswordSchema } from "../schema/auth.schema";
 import { IResetPassword } from "../types/auth.types";
+import { useCreateNewPassword } from "../hooks/use-new-password";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
+import { useRouter } from "next/navigation";
+import Spinner from "@/src/shared/components/spinner";
 
 const NewPasswordForm = () => {
+  const router = useRouter()
+  const { mutateAsync: handleCreateNewPassword, isPending } = useCreateNewPassword()
+
   const form = useForm<IResetPassword>({
     resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
@@ -24,9 +33,35 @@ const NewPasswordForm = () => {
       confirmPassword: "",
     },
   });
+  const handleToast = (success: boolean, message: string) => {
+    toast("", {
+      icon: <ToastIcon />,
+      description: <ToastDescription description={message} />,
+      style: {
+        backdropFilter: "-moz-initial",
+        opacity: "-moz-initial",
+        backgroundColor: success 
+          ? "oklch(62.7% 0.194 149.214)" 
+          : "oklch(62.8% 0.258 29.234)",
+        fontSize: "15px",
+        font: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "bolder",
+      },
+    });
+  };
+  const onSubmit = async(ctx: IResetPassword) => {
+    try {
+      const result = await handleCreateNewPassword(ctx)
 
-  const onSubmit = (ctx: IResetPassword) => {
-    console.log("Resetting password to:", ctx.password);
+      if (result.status == 200){
+        handleToast(true, result.message);
+        router.push("/reset-success");
+        router.push("/login")
+      } 
+    } catch (error) {
+      handleToast(false, "Failed to change password. Please try again.");
+    } 
   };
 
   return (
@@ -99,14 +134,20 @@ const NewPasswordForm = () => {
             />
 
             {/* Submit Button */}
-            <Link href="/reset-success">
+            <div>
               <button
                 type="submit"
                 className="w-full rounded-lg bg-blue-600 py-2 font-medium text-white transition hover:bg-blue-700"
               >
-                Reset password
+                {isPending ? (
+                  <div className="flex w-full items-center justify-center">
+                    <Spinner />
+                  </div>
+                ) : (
+                <p>Reset password</p>
+                )}
               </button>
-            </Link>
+            </div>
           </form>
         </Form>
       </div>

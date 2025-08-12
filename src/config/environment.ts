@@ -1,5 +1,6 @@
 export const isProduction = () => {
   return process.env.NODE_ENV === "production";
+  // return true;
 };
 
 export const isDevelopment = () => {

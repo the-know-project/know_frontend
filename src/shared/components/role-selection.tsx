@@ -45,8 +45,8 @@ export default function SelectRole() {
 
         <div className="mb-8 flex max-w-prose flex-col gap-2">
           <TitleText textStyles={`w-full`}>
-            <h1 className="font-helvetica text-3xl font-semibold text-black capitalize">
-              Select a role
+            <h1 className="font-helvetica text-3xl font-semibold text-black ">
+              Select a Role
             </h1>
           </TitleText>
           <p className="font-bricolage motion-preset-expand motion-duration-700 text-sm text-neutral-500">

@@ -58,7 +58,7 @@ export default function Nav() {
           <NavbarButton colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}>
             <button
               onClick={handleGetStarted}
-              className="button_base group py-1.5"
+              className="button_base group py-1.5 cursor-pointer"
             >
               Get Started{" "}
               <IconArrowRight width={20} height={20} className="button_icon" />
