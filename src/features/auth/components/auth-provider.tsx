@@ -119,14 +119,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   const [retryKey, setRetryKey] = useState(0);
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Handle auth errors
   const handleAuthError = (errorMessage: string) => {
     console.error("🚨 Enhanced Auth Provider Error:", errorMessage);
   };
 
   const handleTokenRefreshed = () => {
     console.log("✅ Token refreshed successfully");
-    // Clear any retry keys to reset error states
     setRetryKey((prev) => prev + 1);
   };
 
@@ -142,7 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     clearError,
     retry,
   } = useEnhancedAuthStatus({
-    redirectOnAuthFailure: false, // Handle redirection manually
+    redirectOnAuthFailure: false,
     redirectTo,
     onAuthError: handleAuthError,
     onTokenRefreshed: handleTokenRefreshed,
@@ -151,13 +149,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     checkInterval,
   });
 
-  // Check if current route is public
   const isPublicRoute = publicRoutes.some((route) => {
     if (route === "/") return pathname === "/";
     return pathname.startsWith(route);
   });
 
-  // Handle auth state changes
   useEffect(() => {
     if (!hasInitialized && !isLoading) {
       setHasInitialized(true);
@@ -166,7 +162,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
     if (!hasInitialized) return;
 
-    // If on a protected route and not authenticated
     if (!isPublicRoute && !isAuthenticated && !isLoading) {
       console.log(
         "🔄 Redirecting to login - not authenticated on protected route",
@@ -175,10 +170,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       return;
     }
 
-    // Handle critical errors that require logout
     if (error && error.includes("refresh_token_invalid")) {
       console.log("🚨 Critical auth error, clearing state and redirecting");
-      tokenStore.clearTokens();
+      tokenStore.clearAuth();
       roleStore.clearRole();
       router.push(redirectTo);
       return;
@@ -203,8 +197,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     await retry();
   };
 
-  // Show fallback for auth errors on protected routes
-  // But be more lenient - only show for critical errors
   const shouldShowFallback =
     !isPublicRoute &&
     error &&
