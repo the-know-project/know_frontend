@@ -49,12 +49,7 @@ export const useLogin = () => {
     },
 
     onSuccess: (data) => {
-      auth.login(
-        data.tokens.accessToken,
-        data.tokens.refreshToken,
-        data.user,
-        data.role || "NONE",
-      );
+      auth.login(data.tokens.accessToken, data.user, data.role || "NONE");
     },
     onError: (error) => {
       auth.logout();
