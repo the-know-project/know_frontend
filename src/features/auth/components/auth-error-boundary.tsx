@@ -98,8 +98,8 @@ export const AuthErrorBoundary: React.FC<AuthErrorBoundaryProps> = ({
     if (!tokenStore.isAuthenticated) return;
 
     const checkTokenExpiration = () => {
-      if (tokenStore.isTokenExpired() && tokenStore.isAuthenticated) {
-        console.warn("Token expired detected");
+      if (!tokenStore.accessToken && tokenStore.isAuthenticated) {
+        console.warn("Token missing detected");
         setErrorState({
           hasError: true,
           errorType: "token_expired",
@@ -123,7 +123,7 @@ export const AuthErrorBoundary: React.FC<AuthErrorBoundaryProps> = ({
 
     if (errorState.retryCount >= maxRetries) {
       // Clear auth state and redirect to login
-      tokenStore.clearTokens();
+      tokenStore.clearAuth();
       roleStore.clearRole();
       router.push(redirectTo);
       return;
@@ -134,14 +134,8 @@ export const AuthErrorBoundary: React.FC<AuthErrorBoundaryProps> = ({
 
     try {
       // Try to refresh the token
-      const refreshToken = tokenStore.getRefreshToken();
-
-      if (!refreshToken) {
-        throw new Error("No refresh token available");
-      }
-
-      // If we have a refresh token, the TokenUtils will handle the refresh
-      // For now, just reset the error state and let the auth system handle it
+      // Token refresh is now handled by HTTP interceptors
+      // Just reset error state and let the interceptors handle it
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Brief delay
 
       setErrorState({
@@ -154,7 +148,7 @@ export const AuthErrorBoundary: React.FC<AuthErrorBoundaryProps> = ({
 
       if (errorState.retryCount + 1 >= maxRetries) {
         // Final attempt failed, redirect to login
-        tokenStore.clearTokens();
+        tokenStore.clearAuth();
         roleStore.clearRole();
         router.push(redirectTo);
       } else {
@@ -168,7 +162,7 @@ export const AuthErrorBoundary: React.FC<AuthErrorBoundaryProps> = ({
 
   // Reset error state when successfully authenticated
   useEffect(() => {
-    if (tokenStore.isAuthenticated && !tokenStore.isTokenExpired()) {
+    if (tokenStore.isAuthenticated && tokenStore.accessToken) {
       setErrorState({
         hasError: false,
         errorType: "unknown",
