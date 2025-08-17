@@ -40,7 +40,6 @@ export default function CallbackPage() {
           ) {
             auth.login(
               accessToken,
-              refreshToken,
               { id: userId, email, firstName, imageUrl },
               role ? (role as IRole) : "BUYER",
             );
