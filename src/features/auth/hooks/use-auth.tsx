@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useRoleStore, useTokenStore } from "../state/store";
 import { IRole } from "../types/auth.types";
+import { httpClient } from "../../../lib/http-client";
 
 export const useAuth = () => {
   const tokenStore = useTokenStore();
@@ -8,20 +9,17 @@ export const useAuth = () => {
 
   const authState = useMemo(
     () => ({
-      isAuthenticated:
-        tokenStore.isAuthenticated && !tokenStore.isTokenExpired(),
-      isLoading: false, // will be implemented later with token refresh
+      isAuthenticated: tokenStore.isAuthenticated && !!tokenStore.accessToken,
+      isLoading: false,
 
       user: tokenStore.user,
       role: roleStore.role,
 
       accessToken: tokenStore.accessToken,
-      hasValidToken: () =>
-        tokenStore.accessToken && !tokenStore.isTokenExpired(),
+      hasValidToken: () => !!tokenStore.accessToken,
 
       login: (
         accessToken: string,
-        refreshToken: string,
         user: {
           id: string;
           email: string;
@@ -30,13 +28,18 @@ export const useAuth = () => {
         },
         role: IRole,
       ) => {
-        tokenStore.setTokens(accessToken, refreshToken, user);
+        tokenStore.setAccessToken(accessToken, user);
         roleStore.setRole(role);
       },
 
-      logout: () => {
-        tokenStore.clearTokens();
-        roleStore.clearRole();
+      logout: async () => {
+        try {
+          await httpClient.logout();
+        } catch (error) {
+          console.warn("Logout error:", error);
+          tokenStore.clearAuth();
+          roleStore.clearRole();
+        }
       },
 
       updateAccessToken: tokenStore.updateAccessToken,
