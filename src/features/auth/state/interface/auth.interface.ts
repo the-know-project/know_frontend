@@ -17,16 +17,15 @@ export interface IUser {
 
 export interface ITokenState {
   accessToken: string | null;
-  refreshToken: string | null;
+
   user: IUser | null;
   isAuthenticated: boolean;
   hasHydrated: boolean;
 
-  setTokens: (accessToken: string, refreshToken: string, user: IUser) => void;
+  setAccessToken: (accessToken: string, user: IUser) => void;
   updateAccessToken: (accessToken: string) => void;
-  clearTokens: () => void;
-
-  isTokenExpired: () => boolean;
+  clearAuth: () => void;
   getAccessToken: () => string | null;
-  getRefreshToken: () => string | null;
+  getUser: () => IUser | null;
+  setHydrated: (hydrated: boolean) => void;
 }
