@@ -51,16 +51,13 @@ export const SimpleAuthBoundary: React.FC<SimpleAuthBoundaryProps> = ({
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    // Check initial auth state
-    if (!tokenStore.isAuthenticated || tokenStore.isTokenExpired()) {
-      console.warn("Authentication required or expired, redirecting");
+    if (!tokenStore.isAuthenticated || !tokenStore.accessToken) {
+      console.warn("Authentication required, redirecting");
       setIsRedirecting(true);
 
-      // Clear tokens
-      tokenStore.clearTokens();
+      tokenStore.clearAuth();
       roleStore.clearRole();
 
-      // Redirect after short delay
       setTimeout(() => {
         router.push(redirectTo);
       }, 1000);
@@ -68,34 +65,28 @@ export const SimpleAuthBoundary: React.FC<SimpleAuthBoundaryProps> = ({
       return;
     }
 
-    // Set up periodic checks
     const interval = setInterval(() => {
-      if (!tokenStore.isAuthenticated || tokenStore.isTokenExpired()) {
-        console.warn("Token expired during session, redirecting");
+      if (!tokenStore.isAuthenticated || !tokenStore.accessToken) {
+        console.warn("Auth state lost during session, redirecting");
         setIsRedirecting(true);
 
-        // Clear tokens
-        tokenStore.clearTokens();
+        tokenStore.clearAuth();
         roleStore.clearRole();
 
-        // Redirect
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);
       }
-    }, 30000); // Check every 30 seconds
+    }, 30000);
 
-    // Subscribe to token changes
     const unsubscribe = useTokenStore.subscribe((state) => {
       if (!state.isAuthenticated && !isRedirecting) {
         console.warn("Auth state lost, redirecting");
         setIsRedirecting(true);
 
-        // Clear all auth data
-        tokenStore.clearTokens();
+        tokenStore.clearAuth();
         roleStore.clearRole();
 
-        // Redirect
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);
@@ -108,13 +99,11 @@ export const SimpleAuthBoundary: React.FC<SimpleAuthBoundaryProps> = ({
     };
   }, [router, redirectTo, tokenStore, roleStore, isRedirecting]);
 
-  // Show fallback while redirecting
   if (isRedirecting) {
     return <Fallback />;
   }
 
-  // Show fallback if not authenticated
-  if (!tokenStore.isAuthenticated || tokenStore.isTokenExpired()) {
+  if (!tokenStore.isAuthenticated || !tokenStore.accessToken) {
     return <Fallback />;
   }
 
