@@ -1,107 +1,137 @@
-import { tokenService } from "../service/token.service";
 import { useTokenStore } from "../state/store";
+import { httpClient } from "../../../lib/http-client";
 
 export class TokenUtils {
-  private static tokenStore = useTokenStore.getState();
-
-  static IsAuthenticated() {
-    const accessToken = this.tokenStore.getAccessToken();
-
-    if (!accessToken) return false;
-
-    const validation = tokenService.validateToken(accessToken);
-    return validation.isValid;
+  private static getTokenStore() {
+    return useTokenStore.getState();
   }
 
-  static async getValidAccessToken() {
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
-
-    if (!accessToken || !refreshToken || !user) {
-      return null;
-    }
-
-    const validation = tokenService.validateToken(accessToken);
-
-    if (validation.isValid) {
-      return accessToken;
-    }
-
-    try {
-      const refreshResponse = await tokenService.refreshAccessToken(
-        refreshToken,
-      );
-
-      if (refreshResponse.status === 200 && refreshResponse.data) {
-        const {
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-          user: updatedUser,
-        } = refreshResponse.data;
-
-        this.tokenStore.setTokens(newAccessToken, newRefreshToken, updatedUser);
-
-        return newAccessToken;
-      }
-    } catch (error) {
-      console.error("Token refresh failed", error);
-      this.tokenStore.clearTokens();
-    }
-
-    return null;
+  /**
+   * Check if user is currently authenticated
+   * @returns boolean indicating authentication status
+   */
+  static isAuthenticated(): boolean {
+    const tokenStore = this.getTokenStore();
+    return tokenStore.isAuthenticated && !!tokenStore.accessToken;
   }
 
-  static async refreshIfNeeded(thresholdMinutes: number = 5) {
-    const accessToken = this.tokenStore.getAccessToken();
-    const refreshToken = this.tokenStore.getRefreshToken();
-    const user = this.tokenStore.user;
+  /**
+   * Get current access token
+   * @returns string | null - current access token or null if not available
+   */
+  static getAccessToken(): string | null {
+    return this.getTokenStore().getAccessToken();
+  }
 
-    if (!accessToken || !refreshToken || !user) {
-      return false;
-    }
+  /**
+   * Get current user data
+   * @returns IUser | null - current user or null if not authenticated
+   */
+  static getUser() {
+    return this.getTokenStore().getUser();
+  }
 
-    if (!tokenService.willExpireSoon(accessToken, thresholdMinutes)) {
-      return true;
-    }
+  /**
+   * Clear authentication state
+   * This method clears local auth state only
+   * For complete logout including server-side cleanup, use httpClient.logout()
+   */
+  static clearAuthState(): void {
+    this.getTokenStore().clearAuth();
+  }
 
+  /**
+   * Update access token in store
+   * This is typically called by HTTP interceptors after successful refresh
+   * @param accessToken - new access token
+   */
+  static updateAccessToken(accessToken: string): void {
+    this.getTokenStore().updateAccessToken(accessToken);
+  }
+
+  /**
+   * Check if we have a valid access token
+   * Note: This doesn't validate the token's expiration server-side
+   * Token expiration is now handled by HTTP interceptors
+   * @returns boolean
+   */
+  static hasValidToken(): boolean {
+    const token = this.getAccessToken();
+    return !!token;
+  }
+
+  /**
+   * Perform complete logout including server-side cleanup
+   * This will clear HTTP-only refresh token cookies and local state
+   * @returns Promise<void>
+   */
+  static async logout(): Promise<void> {
     try {
-      const refreshResponse = await tokenService.refreshWithRetry(
-        refreshToken,
-      );
-
-      console.log(`Token Refresh endpoint hit. ${refreshResponse}`);
-
-      if (refreshResponse.status === 200 && refreshResponse.data) {
-        const {
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-          user: updatedUser,
-        } = refreshResponse.data;
-        this.tokenStore.setTokens(newAccessToken, newRefreshToken, updatedUser);
-        return true;
-      }
+      await httpClient.logout();
     } catch (error) {
-      console.error("Proactive token refresh failed:", error);
-      this.tokenStore.clearTokens();
+      console.warn("Logout error:", error);
+      // Clear local state anyway
+      this.clearAuthState();
     }
+  }
 
+  /**
+   * @deprecated Use httpClient.isAuthenticated() instead
+   * This method is kept for backward compatibility
+   */
+  static IsAuthenticated(): boolean {
+    console.warn(
+      "TokenUtils.IsAuthenticated() is deprecated. Use TokenUtils.isAuthenticated() or httpClient.isAuthenticated() instead.",
+    );
+    return this.isAuthenticated();
+  }
+
+  /**
+   * @deprecated Token refresh is now handled automatically by HTTP interceptors
+   * This method will be removed in a future version
+   */
+  static async getValidAccessToken(): Promise<string | null> {
+    console.warn(
+      "TokenUtils.getValidAccessToken() is deprecated. Token refresh is now handled automatically by HTTP interceptors.",
+    );
+    return this.getAccessToken();
+  }
+
+  /**
+   * @deprecated Refresh tokens are now managed server-side via HTTP-only cookies
+   * This method will be removed in a future version
+   */
+  static async refreshToken(): Promise<boolean> {
+    console.warn(
+      "TokenUtils.refreshToken() is deprecated. Token refresh is now handled automatically by HTTP interceptors with server-side cookies.",
+    );
     return false;
   }
 
+  /**
+   * @deprecated Manual token refresh is no longer supported
+   * This method will be removed in a future version
+   */
+  static async silentRefresh(): Promise<string | null> {
+    console.warn(
+      "TokenUtils.silentRefresh() is deprecated. Silent refresh is now handled automatically by HTTP interceptors.",
+    );
+    return this.getAccessToken();
+  }
 
+  /**
+   * @deprecated This method is deprecated. Token refresh is now handled automatically by HTTP interceptors
+   * This method will be removed in a future version
+   */
+  static async refreshIfNeeded(thresholdMinutes: number = 5): Promise<boolean> {
+    console.warn(
+      "TokenUtils.refreshIfNeeded() is deprecated. Token refresh is now handled automatically by HTTP interceptors.",
+    );
 
-  static async logout(): Promise<void> {
-    const refreshToken = this.tokenStore.getRefreshToken();
-
-    if (refreshToken) {
-      try {
-        await tokenService.revokeRefreshToken(refreshToken);
-      } catch (error) {
-        console.error("Server logout failed:", error);
-      }
-    }
-
-    this.tokenStore.clearTokens();
+    // Return true if we have a token, indicating "refresh not needed"
+    return this.hasValidToken();
   }
 }
+
+// Export as default for backward compatibility
+export default TokenUtils;
