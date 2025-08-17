@@ -51,7 +51,6 @@ export const useStableAuthStatus = (
   const tokenStore = useTokenStore();
   const roleStore = useRoleStore();
 
-  // Check if stores have rehydrated
   const isTokenStoreRehydrated = tokenStore.hasHydrated;
   const isRoleStoreRehydrated = roleStore.hasHydrated;
   const isRehydrated = isTokenStoreRehydrated && isRoleStoreRehydrated;
@@ -79,24 +78,23 @@ export const useStableAuthStatus = (
 
     try {
       const isAuthenticated = tokenStore.isAuthenticated;
-      const isExpired = tokenStore.isTokenExpired();
+      const hasToken = !!tokenStore.accessToken;
       const user = tokenStore.user;
       const role = roleStore.role;
 
       setAuthState((prevState) => {
         const newState: StableAuthStatus = {
-          isAuthenticated: isAuthenticated && !isExpired,
+          isAuthenticated: isAuthenticated && hasToken,
           isLoading: false,
           user,
           role,
           error: null,
-          isTokenExpired: isExpired,
+          isTokenExpired: false,
           isRehydrated: true,
         };
 
         if (
           prevState.isAuthenticated !== newState.isAuthenticated ||
-          prevState.isTokenExpired !== newState.isTokenExpired ||
           prevState.isLoading !== newState.isLoading ||
           prevState.user?.id !== newState.user?.id ||
           prevState.role !== newState.role ||
@@ -107,33 +105,6 @@ export const useStableAuthStatus = (
 
         return prevState;
       });
-
-      if (isExpired && isAuthenticated) {
-        console.warn("Token expired detected");
-
-        if (onTokenExpired) {
-          onTokenExpired();
-        }
-
-        if (redirectOnExpiry && !hasRedirected.current) {
-          hasRedirected.current = true;
-
-          tokenStore.clearTokens();
-          roleStore.clearRole();
-
-          setAuthState((prevState) => ({
-            ...prevState,
-            error: "Session expired",
-            isAuthenticated: false,
-            isTokenExpired: true,
-            isRehydrated: true,
-          }));
-
-          setTimeout(() => {
-            router.push(redirectTo);
-          }, 100);
-        }
-      }
 
       if (
         !isAuthenticated &&
@@ -149,7 +120,7 @@ export const useStableAuthStatus = (
         if (redirectOnExpiry) {
           hasRedirected.current = true;
 
-          tokenStore.clearTokens();
+          tokenStore.clearAuth();
           roleStore.clearRole();
 
           setAuthState((prevState) => ({
