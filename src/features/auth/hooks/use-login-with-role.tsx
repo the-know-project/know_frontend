@@ -36,12 +36,11 @@ export const useLoginWithRole = () => {
           throw new Error(validatedData.message || "Login failed");
         }
 
-        const { id, email, accessToken, refreshToken, firstName, imageUrl } =
+        const { id, email, accessToken, firstName, imageUrl } =
           validatedData.data;
 
         auth.login(
           accessToken,
-          refreshToken,
           { id, email, firstName, imageUrl },
           selectedRole,
         );
