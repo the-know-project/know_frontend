@@ -8,7 +8,6 @@ import axios, {
 import { isProduction } from "../config/environment";
 import { env } from "../config/schemas/env";
 import { useTokenStore } from "../features/auth/state/store";
-import { EnhancedTokenUtils } from "../features/auth/utils/enhanced-token.utils";
 
 interface QueuedRequest {
   resolve: (value: any) => void;
@@ -36,11 +35,11 @@ class HttpClient {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
   }
 
   private setupInterceptors(): void {
-    // Request Interceptor - Injects Auth token to requests
     this.axiosInstance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         const token = useTokenStore.getState().getAccessToken();
@@ -56,7 +55,6 @@ class HttpClient {
       },
     );
 
-    // Response Interceptor = Handle token refreshon 401
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
@@ -64,7 +62,13 @@ class HttpClient {
           _retry?: boolean;
         };
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (
+          error.response?.status === 401 &&
+          !originalRequest._retry &&
+          this.requiresAuth(originalRequest)
+        ) {
+          originalRequest._retry = true;
+
           if (this.isRefreshing) {
             return new Promise((resolve, reject) => {
               this.requestQueue.push({
@@ -75,45 +79,44 @@ class HttpClient {
             });
           }
 
-          originalRequest._retry = true;
           this.isRefreshing = true;
 
           try {
-            const refreshResult = await this.attemptRefresh();
-            if (refreshResult.success) {
-              this.processQueue(null);
+            console.log(
+              "🔄 HTTP Client: Access token expired, attempting silent refresh...",
+            );
 
-              const token = useTokenStore.getState().getAccessToken();
-              if (token && originalRequest.headers) {
-                originalRequest.headers.Authorization = `Bearer ${token}`;
+            const refreshResponse = await this.attemptSilentRefresh();
+
+            if (refreshResponse.success && refreshResponse.accessToken) {
+              console.log("✅ HTTP Client: Token refresh successful");
+
+              const currentUser = useTokenStore.getState().getUser();
+              if (currentUser) {
+                useTokenStore
+                  .getState()
+                  .setAccessToken(refreshResponse.accessToken, currentUser);
+              }
+
+              this.processQueue(null, refreshResponse.accessToken);
+
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${refreshResponse.accessToken}`;
               }
 
               return this.axiosInstance(originalRequest);
             } else {
-              if (refreshResult.retryable) {
-                console.warn(
-                  "🔄 Token refresh failed but will retry in background",
-                );
-                // For retryable failures, just reject the original request
-                // The enhanced token utils will retry automatically
-                return Promise.reject(error);
-              }
+              console.warn("❌ HTTP Client: Token refresh failed");
 
-              this.processQueue(
-                new Error(refreshResult.error || "Token refresh failed"),
-              );
+              this.processQueue(new Error("Token refresh failed"));
 
-              // Only clear tokens if refresh token is actually invalid
-              if (refreshResult.shouldLogout) {
-                console.warn(
-                  "🚨 HTTP Client: Authentication failed, logging out",
-                );
-                this.handleAuthFailure();
-              }
+              this.handleAuthFailure();
 
               return Promise.reject(error);
             }
           } catch (refreshError) {
+            console.error("❌ HTTP Client: Token refresh error:", refreshError);
+
             this.processQueue(refreshError);
 
             const isAuthError =
@@ -121,13 +124,13 @@ class HttpClient {
               (refreshError as any)?.response?.status === 403;
 
             if (isAuthError) {
-              console.warn("🚨 HTTP Client: Authentication error, logging out");
-              this.handleAuthFailure();
-            } else {
               console.warn(
-                "🔄 HTTP Client: Network/server error, will retry automatically",
+                "🚨 HTTP Client: Refresh token invalid, logging out",
               );
+              this.handleAuthFailure();
             }
+
+            return Promise.reject(error);
           } finally {
             this.isRefreshing = false;
           }
@@ -142,7 +145,7 @@ class HttpClient {
     const skipAuthPaths = [
       "/api/auth/login",
       "/api/auth/registerUser",
-      "/api/auth/refreshToken",
+      "/api/auth/refresh-token",
       "/api/mail-list/addToMailList",
       "/api/categories/getCategories",
     ];
@@ -151,33 +154,53 @@ class HttpClient {
     return !skipAuthPaths.some((path) => url.includes(path));
   }
 
-  private async attemptRefresh(): Promise<{
+  private async attemptSilentRefresh(): Promise<{
     success: boolean;
+    accessToken?: string;
+    user?: any;
     error?: string;
-    shouldLogout?: boolean;
-    retryable?: boolean;
-    errorType?: string;
   }> {
     try {
-      console.log("🔄 HTTP Client: Attempting token refresh silently...");
-      return await EnhancedTokenUtils.attemptRefresh(true);
+      const response = await axios.post(
+        `${this.axiosInstance.defaults.baseURL}/api/auth/refresh-token`,
+        {},
+        {
+          withCredentials: true,
+          timeout: 10000,
+        },
+      );
+
+      if (response.data?.accessToken) {
+        return {
+          success: true,
+          accessToken: response.data.accessToken,
+          user: response.data.user,
+        };
+      } else {
+        return {
+          success: false,
+          error: "No access token in refresh response",
+        };
+      }
     } catch (error) {
-      console.warn("⚠️ HTTP Client: Token refresh encountered error:", error);
+      console.error("🔄 Refresh request failed:", error);
+
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown refresh error",
-        shouldLogout: false,
-        retryable: true,
-        errorType: "unknown",
+        error:
+          error instanceof Error ? error.message : "Refresh request failed",
       };
     }
   }
 
-  private processQueue(error: any): void {
+  private processQueue(error: any, newToken?: string): void {
     this.requestQueue.forEach(({ resolve, reject, config }) => {
       if (error) {
         reject(error);
       } else {
+        if (newToken && config.headers) {
+          config.headers.Authorization = `Bearer ${newToken}`;
+        }
         resolve(this.axiosInstance(config));
       }
     });
@@ -186,19 +209,18 @@ class HttpClient {
   }
 
   private handleAuthFailure(): void {
-    console.warn("🚨 HTTP Client: Critical authentication failure detected");
+    console.warn(
+      "🚨 HTTP Client: Authentication failure - clearing local auth state",
+    );
 
-    // Use enhanced utils for proper cleanup
-    // This will handle server logout and local cleanup
-    EnhancedTokenUtils.logout()
-      .then(() => {
-        console.log("✅ HTTP Client: Auth cleanup completed");
-      })
-      .catch((error) => {
-        console.error("❌ HTTP Client: Cleanup error:", error);
-      });
+    useTokenStore.getState().clearAuth();
+
+    if (typeof window !== "undefined") {
+      window.location.href = "/auth/login";
+    }
   }
 
+  // Public HTTP methods
   public get<T = any>(
     url: string,
     config?: AxiosRequestConfig,
@@ -239,6 +261,39 @@ class HttpClient {
 
   public getInstance(): AxiosInstance {
     return this.axiosInstance;
+  }
+
+  // Utility method to check if user is authenticated
+  public isAuthenticated(): boolean {
+    const token = useTokenStore.getState().getAccessToken();
+    const isAuth = useTokenStore.getState().isAuthenticated;
+    return !!(token && isAuth);
+  }
+
+  // Method to manually logout (can be called from components)
+  public async logout(): Promise<void> {
+    try {
+      console.log("🚪 HTTP Client: Initiating logout...");
+
+      // Call server logout endpoint to clear refresh token cookie
+      await this.axiosInstance.post(
+        "/api/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        },
+      );
+
+      console.log("✅ HTTP Client: Server logout successful");
+    } catch (error) {
+      console.warn(
+        "⚠️ HTTP Client: Server logout failed, clearing local state anyway:",
+        error,
+      );
+    } finally {
+      // Always clear local state
+      this.handleAuthFailure();
+    }
   }
 }
 
