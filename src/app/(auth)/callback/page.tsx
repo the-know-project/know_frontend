@@ -22,7 +22,6 @@ export default function CallbackPage() {
 
         if (urlParams.get("success") === "true") {
           const accessToken = urlParams.get("accessToken");
-          const refreshToken = urlParams.get("refreshToken");
           const userId = urlParams.get("userId");
           const email = urlParams.get("email");
           const role = urlParams.get("role");
@@ -30,14 +29,7 @@ export default function CallbackPage() {
           const firstName = urlParams.get("firstName");
           const imageUrl = urlParams.get("imageUrl");
 
-          if (
-            accessToken &&
-            refreshToken &&
-            userId &&
-            email &&
-            firstName &&
-            imageUrl
-          ) {
+          if (accessToken && userId && email && firstName && imageUrl) {
             auth.login(
               accessToken,
               { id: userId, email, firstName, imageUrl },
