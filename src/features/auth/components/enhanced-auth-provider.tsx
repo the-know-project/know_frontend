@@ -1,14 +1,19 @@
 "use client";
 
-import { useEffect, useState, createContext, useContext } from "react";
+import {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+} from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useEnhancedAuthStatus } from "../hooks/use-enhanced-auth-status";
-import { useTokenStore } from "../state/store";
+import { useAuth } from "../hooks/use-auth";
 import { useRoleStore } from "../state/store";
-import { EnhancedTokenUtils } from "../utils/enhanced-token.utils";
+import { httpClient } from "../../../lib/http-client";
 import GradientText from "@/src/shared/components/gradient-text";
 
-interface EnhancedAuthContextValue {
+interface AuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: {
@@ -19,18 +24,14 @@ interface EnhancedAuthContextValue {
   } | null;
   role: string | null;
   error: string | null;
-  isTokenExpired: boolean;
-  tokenInfo: ReturnType<typeof EnhancedTokenUtils.getTokenInfo>;
-  refreshTokens: () => Promise<void>;
   clearError: () => void;
   retry: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const EnhancedAuthContext = createContext<EnhancedAuthContextValue | undefined>(
-  undefined,
-);
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-interface EnhancedAuthProviderProps {
+interface AuthProviderProps {
   children: React.ReactNode;
   fallback?: React.ComponentType<{
     error: string | null;
@@ -39,9 +40,6 @@ interface EnhancedAuthProviderProps {
   }>;
   publicRoutes?: string[];
   redirectTo?: string;
-  enableAutoRefresh?: boolean;
-  refreshThresholdMinutes?: number;
-  checkInterval?: number;
 }
 
 const DefaultAuthFallback: React.FC<{
@@ -91,12 +89,14 @@ const DefaultAuthFallback: React.FC<{
           <button
             onClick={retry}
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+            type="button"
           >
             Try Again
           </button>
           <button
             onClick={() => (window.location.href = "/login")}
             className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+            type="button"
           >
             Go to Login
           </button>
@@ -106,115 +106,129 @@ const DefaultAuthFallback: React.FC<{
   );
 };
 
-export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
+export const AuthProvider: React.FC<AuthProviderProps> = ({
   children,
   fallback: Fallback = DefaultAuthFallback,
   publicRoutes = ["/login", "/register", "/", "/role", "/about", "/contact"],
   redirectTo = "/login",
-  enableAutoRefresh = true,
-  refreshThresholdMinutes = 15,
-  checkInterval = 10 * 60 * 1000, // 10 minutes
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const tokenStore = useTokenStore();
+  const auth = useAuth();
   const roleStore = useRoleStore();
 
-  const [retryKey, setRetryKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
-  const [forceShowContent, setForceShowContent] = useState(false);
-
-  const handleAuthError = (errorMessage: string) => {
-    router.push("/login");
-  };
-
-  const handleTokenRefreshed = () => {
-    console.log("✅ Token refreshed successfully");
-    setRetryKey((prev) => prev + 1);
-  };
-
-  const {
-    isAuthenticated,
-    isLoading,
-    user,
-    role,
-    error,
-    isTokenExpired,
-    tokenInfo,
-    refreshTokens,
-    clearError,
-    retry,
-  } = useEnhancedAuthStatus({
-    redirectOnAuthFailure: false,
-    redirectTo,
-    onAuthError: handleAuthError,
-    onTokenRefreshed: handleTokenRefreshed,
-    enableAutoRefresh,
-    refreshThresholdMinutes,
-    checkInterval,
-  });
 
   const isPublicRoute = publicRoutes.some((route) => {
     if (route === "/") return pathname === "/";
     return pathname.startsWith(route);
   });
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (isLoading && !hasInitialized) {
-        console.warn(
-          "⚠️ Auth loading timeout reached, forcing content display",
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  const checkAuthStatus = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Check if we have authentication state
+      const isAuthenticated = httpClient.isAuthenticated();
+
+      if (!isAuthenticated && !isPublicRoute) {
+        console.log(
+          "🔄 Not authenticated on protected route, redirecting to login",
         );
-        setForceShowContent(true);
-        setHasInitialized(true);
+        router.push(redirectTo);
+        return;
       }
-    }, 10000); // 10 second timeout
 
-    return () => clearTimeout(timeout);
-  }, [isLoading, hasInitialized]);
-
-  useEffect(() => {
-    if (!hasInitialized && !isLoading) {
+      // If we're authenticated but missing user data, try a test request
+      // This will trigger the interceptor to refresh tokens if needed
+      if (isAuthenticated && !auth.user) {
+        try {
+          // Make a lightweight request to verify auth state
+          await httpClient.get("/api/auth/me");
+        } catch (authError) {
+          console.warn("⚠️ Auth verification failed:", authError);
+          // The interceptor will handle token refresh or logout
+          return;
+        }
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Authentication check failed";
+      console.error("❌ Auth status check failed:", err);
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
       setHasInitialized(true);
-      return;
     }
+  }, [auth.user, isPublicRoute, redirectTo, router]);
 
-    if (!hasInitialized && !forceShowContent) return;
+  const retry = useCallback(async () => {
+    await checkAuthStatus();
+  }, [checkAuthStatus]);
 
-    if (!isPublicRoute && !isAuthenticated && !isLoading) {
+  const logout = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      await auth.logout();
+      roleStore.clearRole();
+      router.push("/login");
+    } catch (err) {
+      console.error("❌ Logout failed:", err);
+      // Still redirect to login even if logout request fails
+      router.push("/login");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [auth, roleStore, router]);
+
+  // Initial auth check
+  useEffect(() => {
+    if (!hasInitialized) {
+      checkAuthStatus();
+    }
+  }, [checkAuthStatus, hasInitialized]);
+
+  // Handle route changes
+  useEffect(() => {
+    if (
+      hasInitialized &&
+      !isPublicRoute &&
+      !auth.isAuthenticated &&
+      !isLoading
+    ) {
       console.log(
-        "🔄 Redirecting to login - not authenticated on protected route",
+        "🔄 Route change detected - redirecting unauthenticated user",
       );
       router.push(redirectTo);
-      return;
-    }
-
-    if (error && error.includes("refresh_token_invalid")) {
-      console.log("🚨 Critical auth error, clearing state and redirecting");
-      tokenStore.clearAuth();
-      roleStore.clearRole();
-      router.push(redirectTo);
-      return;
     }
   }, [
-    isAuthenticated,
-    isLoading,
-    isTokenExpired,
-    error,
-    isPublicRoute,
     pathname,
+    isPublicRoute,
+    auth.isAuthenticated,
+    hasInitialized,
+    isLoading,
     router,
     redirectTo,
-    hasInitialized,
-    tokenStore,
-    roleStore,
   ]);
 
-  const handleRetry = async () => {
-    clearError();
-    setRetryKey((prev) => prev + 1);
-    await retry();
-  };
+  // Handle critical authentication errors
+  useEffect(() => {
+    if (error && error.includes("refresh_token_invalid")) {
+      console.log(
+        "🚨 Critical auth error detected, clearing state and redirecting",
+      );
+      auth.logout();
+      roleStore.clearRole();
+      router.push(redirectTo);
+    }
+  }, [error, auth, roleStore, router, redirectTo]);
 
   const shouldShowFallback =
     !isPublicRoute &&
@@ -225,60 +239,59 @@ export const EnhancedAuthProvider: React.FC<EnhancedAuthProviderProps> = ({
       error.includes("Session expired"));
 
   if (shouldShowFallback) {
-    return <Fallback error={error} retry={handleRetry} isLoading={isLoading} />;
+    return <Fallback error={error} retry={retry} isLoading={isLoading} />;
   }
 
-  if (!isPublicRoute && (isLoading || !hasInitialized) && !forceShowContent) {
-    return <Fallback error={null} retry={handleRetry} isLoading={true} />;
+  if (!isPublicRoute && (isLoading || !hasInitialized)) {
+    return <Fallback error={null} retry={retry} isLoading={true} />;
   }
 
-  const contextValue: EnhancedAuthContextValue = {
-    isAuthenticated,
+  const contextValue: AuthContextValue = {
+    isAuthenticated: auth.isAuthenticated,
     isLoading,
-    user,
-    role: role,
+    user: auth.user,
+    role: roleStore.role,
     error,
-    isTokenExpired,
-    tokenInfo,
-    refreshTokens,
     clearError,
-    retry: handleRetry,
+    retry,
+    logout,
   };
 
   return (
-    <EnhancedAuthContext.Provider value={contextValue}>
-      <div key={retryKey}>
-        {children}
-        {/* Debug info in development */}
-        {process.env.NODE_ENV === "development" && (
-          <DebugAuthInfo
-            tokenInfo={tokenInfo}
-            isTokenStoreRehydrated={tokenStore.hasHydrated}
-            isRoleStoreRehydrated={roleStore.hasHydrated}
-            hasInitialized={hasInitialized}
-            forceShowContent={forceShowContent}
-            isLoading={isLoading}
-          />
-        )}
-      </div>
-    </EnhancedAuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>
+      {children}
+      {/* Debug info in development */}
+      {process.env.NODE_ENV === "development" && (
+        <DebugAuthInfo
+          isAuthenticated={auth.isAuthenticated}
+          hasAccessToken={!!auth.accessToken}
+          user={auth.user}
+          role={roleStore.role}
+          hasInitialized={hasInitialized}
+          isLoading={isLoading}
+          error={error}
+        />
+      )}
+    </AuthContext.Provider>
   );
 };
 
 const DebugAuthInfo: React.FC<{
-  tokenInfo: ReturnType<typeof EnhancedTokenUtils.getTokenInfo>;
-  isTokenStoreRehydrated: boolean;
-  isRoleStoreRehydrated: boolean;
+  isAuthenticated: boolean;
+  hasAccessToken: boolean;
+  user: any;
+  role: string | null;
   hasInitialized: boolean;
-  forceShowContent: boolean;
   isLoading: boolean;
+  error: string | null;
 }> = ({
-  tokenInfo,
-  isTokenStoreRehydrated,
-  isRoleStoreRehydrated,
+  isAuthenticated,
+  hasAccessToken,
+  user,
+  role,
   hasInitialized,
-  forceShowContent,
   isLoading,
+  error,
 }) => {
   const [showDebug, setShowDebug] = useState(false);
 
@@ -287,6 +300,7 @@ const DebugAuthInfo: React.FC<{
       <button
         onClick={() => setShowDebug(true)}
         className="fixed right-4 bottom-4 z-50 rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-50 hover:opacity-100"
+        type="button"
       >
         🔐
       </button>
@@ -300,28 +314,37 @@ const DebugAuthInfo: React.FC<{
         <button
           onClick={() => setShowDebug(false)}
           className="text-gray-400 hover:text-white"
+          type="button"
         >
           ×
         </button>
       </div>
       <div className="space-y-1">
-        <div>Token: {tokenInfo.hasToken ? "✅" : "❌"}</div>
-        <div>Valid: {tokenInfo.isValid ? "✅" : "❌"}</div>
-        <div>Expires in: {tokenInfo.timeUntilExpiryMinutes || 0}m</div>
-        <div>Will expire soon: {tokenInfo.willExpireSoon ? "⚠️" : "✅"}</div>
-        <div>User active: {tokenInfo.isUserActive ? "✅" : "💤"}</div>
-        <div>Refresh count: {tokenInfo.refreshCount || 0}</div>
-        <div className="mt-2 border-t border-gray-600 pt-2">
-          <div>Token Store: {isTokenStoreRehydrated ? "✅" : "❌"}</div>
-          <div>Role Store: {isRoleStoreRehydrated ? "✅" : "❌"}</div>
-          <div>Initialized: {hasInitialized ? "✅" : "❌"}</div>
-          <div>Force Show: {forceShowContent ? "⚠️" : "❌"}</div>
-          <div>Loading: {isLoading ? "🔄" : "✅"}</div>
-        </div>
+        <div>Authenticated: {isAuthenticated ? "✅" : "❌"}</div>
+        <div>Has Token: {hasAccessToken ? "✅" : "❌"}</div>
+        <div>Has User: {user ? "✅" : "❌"}</div>
+        <div>Role: {role || "None"}</div>
+        <div>Initialized: {hasInitialized ? "✅" : "❌"}</div>
+        <div>Loading: {isLoading ? "🔄" : "✅"}</div>
+        <div>Error: {error ? "❌" : "✅"}</div>
+        {error && (
+          <div className="mt-1 text-xs break-words text-red-300">{error}</div>
+        )}
       </div>
       <button
-        onClick={() => EnhancedTokenUtils.debugTokenState()}
+        onClick={() =>
+          console.table({
+            isAuthenticated,
+            hasAccessToken,
+            user,
+            role,
+            hasInitialized,
+            isLoading,
+            error,
+          })
+        }
         className="mt-2 w-full rounded bg-blue-600 px-2 py-1 text-xs hover:bg-blue-700"
+        type="button"
       >
         Log Full State
       </button>
@@ -329,12 +352,14 @@ const DebugAuthInfo: React.FC<{
   );
 };
 
-export const useEnhancedAuthContext = () => {
-  const context = useContext(EnhancedAuthContext);
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error(
-      "useEnhancedAuthContext must be used within an EnhancedAuthProvider",
-    );
+    throw new Error("useAuthContext must be used within an AuthProvider");
   }
   return context;
 };
+
+// Legacy export for backward compatibility
+export const EnhancedAuthProvider = AuthProvider;
+export const useEnhancedAuthContext = useAuthContext;
