@@ -119,9 +119,6 @@ const PageWithParams = async ({ searchParams }: PageProps) => {
 
   return (
     <EnhancedAuthProvider
-      enableAutoRefresh={true}
-      refreshThresholdMinutes={20}
-      checkInterval={1600000}
       publicRoutes={["/login", "/register", "/", "/role", "/about", "/contact"]}
     >
       <section className="relative z-50 flex w-full flex-col px-6">
