@@ -1,7 +1,6 @@
 "use client";
 
 import ArtDetails from "@/src/shared/components/art-details";
-import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef } from "react";
 import { useAuthContext } from "../../auth/components/enhanced-auth-provider";
@@ -18,7 +17,6 @@ import { TAsset } from "../types/explore.types";
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import InfiniteLoadingIndicator from "./infinite-loading-indicator";
-import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 
 interface ExploreCanvasProps {
   categories?: string[];
