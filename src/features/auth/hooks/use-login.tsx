@@ -18,22 +18,18 @@ export const useLogin = () => {
           throw new Error(validatedData.message || "Login Failed");
         }
 
-        const {
-          id,
-          email,
-          accessToken,
-          refreshToken,
-          role,
-          isFirstTime,
-          firstName,
-          imageUrl,
-        } = validatedData.data;
+        const { accessToken, user, role, isFirstTime } = validatedData.data;
 
         return {
           status: validatedData.status,
           message: validatedData.message,
-          user: { id, email, firstName, imageUrl },
-          tokens: { accessToken, refreshToken },
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            imageUrl: user.imageUrl,
+          },
+          accessToken,
           role,
           isFirstTime,
         };
@@ -49,7 +45,7 @@ export const useLogin = () => {
     },
 
     onSuccess: (data) => {
-      auth.login(data.tokens.accessToken, data.user, data.role || "NONE");
+      auth.login(data.accessToken, data.user, data.role || "NONE");
     },
     onError: (error) => {
       auth.logout();

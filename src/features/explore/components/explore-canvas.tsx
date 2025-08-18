@@ -4,7 +4,7 @@ import ArtDetails from "@/src/shared/components/art-details";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef } from "react";
-import { useEnhancedAuthContext } from "../../auth/components/enhanced-auth-provider";
+import { useAuthContext } from "../../auth/components/enhanced-auth-provider";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { TCart } from "../../cart/types/cart.types";
@@ -45,8 +45,7 @@ const AuthLoadingState = ({ message = "Loading..." }: { message?: string }) => (
 const useAuthCheck = () => {
   const router = useRouter();
   const hasRedirected = useRef(false);
-  const { isAuthenticated, isTokenExpired, tokenInfo, error } =
-    useEnhancedAuthContext();
+  const { isAuthenticated, error } = useAuthContext();
 
   const hasCriticalError = useMemo(() => {
     return (
@@ -57,10 +56,6 @@ const useAuthCheck = () => {
         error.includes("Session expired"))
     );
   }, [isAuthenticated, error]);
-
-  const hasRefreshToken = useMemo(() => {
-    return tokenInfo?.hasRefreshToken || false;
-  }, [tokenInfo?.hasRefreshToken]);
 
   useEffect(() => {
     if (hasCriticalError && !hasRedirected.current) {
@@ -74,14 +69,8 @@ const useAuthCheck = () => {
       return { isValid: false, shouldRedirect: true };
     }
 
-    // If token is expired but we have a refresh token, consider it valid
-    // The enhanced system will handle the refresh automatically
-    if (isTokenExpired && hasRefreshToken) {
-      return { isValid: true, shouldRedirect: false };
-    }
-
     return { isValid: isAuthenticated, shouldRedirect: false };
-  }, [isAuthenticated, isTokenExpired, hasRefreshToken, hasCriticalError]);
+  }, [isAuthenticated, hasCriticalError]);
 };
 
 const ExploreCanvasContent = ({

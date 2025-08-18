@@ -19,12 +19,9 @@ export interface ILoginSuccess {
     firstName: string;
     imageUrl: string;
   };
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
+  accessToken: string;
   role?: IRole;
-  isFirstTime: boolean;
+  isFirstTime?: boolean;
 }
 
 export interface IForgotPasswordSuccess {

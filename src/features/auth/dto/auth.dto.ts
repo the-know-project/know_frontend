@@ -2,14 +2,15 @@ import { z } from "zod";
 import { RoleSchema } from "../schema/auth.schema";
 
 const AuthSuccessDataDto = z.object({
-  id: z.string().uuid(),
-  email: z.string().email().min(1).max(100),
-  refreshToken: z.string(),
   accessToken: z.string(),
-  role: RoleSchema,
-  firstName: z.string().min(1).max(100),
-  imageUrl: z.string().url().min(1).max(100),
-  isFirstTime: z.boolean(),
+  user: z.object({
+    id: z.string().uuid(),
+    email: z.string().email().min(1).max(100),
+    firstName: z.string().min(1).max(100),
+    imageUrl: z.string().url().min(1).max(100),
+  }),
+  role: RoleSchema.optional(),
+  isFirstTime: z.boolean().optional(),
 });
 
 export const SendOtpResponseDto = z.object({
