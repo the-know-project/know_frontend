@@ -18,7 +18,7 @@ export const useLogin = () => {
           throw new Error(validatedData.message || "Login Failed");
         }
 
-        const { accessToken, user, role, isFirstTime } = validatedData.data;
+        const { accessToken, user } = validatedData.data;
 
         return {
           status: validatedData.status,
@@ -30,8 +30,8 @@ export const useLogin = () => {
             imageUrl: user.imageUrl,
           },
           accessToken,
-          role,
-          isFirstTime,
+          role: user.role,
+          isFirstTime: user.isFirstTime,
         };
       } catch (error) {
         handleAxiosError(error);
