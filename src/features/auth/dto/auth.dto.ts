@@ -8,9 +8,9 @@ const AuthSuccessDataDto = z.object({
     email: z.string().email().min(1).max(100),
     firstName: z.string().min(1).max(100),
     imageUrl: z.string().url().min(1).max(100),
+    role: RoleSchema.optional(),
+    isFirstTime: z.boolean().optional(),
   }),
-  role: RoleSchema.optional(),
-  isFirstTime: z.boolean().optional(),
 });
 
 export const SendOtpResponseDto = z.object({
