@@ -5,9 +5,6 @@ import { ProfileGrid } from "@/src/features/profile/components/profile-grid";
 export default function Page() {
   return (
     <EnhancedAuthProvider
-      enableAutoRefresh={true}
-      refreshThresholdMinutes={20}
-      checkInterval={1600000}
       publicRoutes={["/login", "/register", "/", "/role", "/about", "/contact"]}
     >
       <PageAuthGuard requiredRoles={["ARTIST"]} requiresAuth={true}>
