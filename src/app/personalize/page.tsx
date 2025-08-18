@@ -16,9 +16,6 @@ const Page = async () => {
     await queryClient.prefetchQuery(getCategoriesQueryOptions);
     return (
       <EnhancedAuthProvider
-        enableAutoRefresh={true}
-        refreshThresholdMinutes={20}
-        checkInterval={1600000}
         publicRoutes={[
           "/login",
           "/register",
