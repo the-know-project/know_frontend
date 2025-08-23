@@ -1,10 +1,16 @@
 import { TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 
-const EngagementInsights = () => {
+interface IEnagagementInsights {
+  topInterestedBuyers?: number;
+  conversionRate?: number;
+}
+
+const EngagementInsights: React.FC<IEnagagementInsights> = ({
+  topInterestedBuyers = 50 / 100,
+  conversionRate = 50 / 100,
+}) => {
   const [isAnimated, setIsAnimated] = useState(false);
-  const topInterestedBuyers = 80;
-  const conversionRate = 20;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,8 +24,8 @@ const EngagementInsights = () => {
 
   const semicircleLength = Math.PI * radius;
 
-  const topInterestedLength = (topInterestedBuyers / 100) * semicircleLength;
-  const conversionLength = (conversionRate / 100) * semicircleLength;
+  const topInterestedLength = topInterestedBuyers * semicircleLength;
+  const conversionLength = conversionRate * semicircleLength;
 
   const topInterestedStrokeDashArray = isAnimated
     ? `${topInterestedLength} ${semicircleLength}`
