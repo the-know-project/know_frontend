@@ -1,7 +1,12 @@
+import { showLog } from "@/src/utils/logger";
 import { AUTH_OP } from "../../data/auth.path";
 import { ILogin } from "../../types/auth.types";
-import { AuthenticatedApiClient } from "../http/authenticated-client";
+import { ApiClient } from "@/src/lib/api-client";
 
 export async function login(ctx: ILogin) {
-  return await AuthenticatedApiClient.post(AUTH_OP.LOGIN, ctx);
+  showLog({
+    context: "Log in",
+    data: ctx,
+  });
+  return await ApiClient.post(AUTH_OP.LOGIN, ctx);
 }
