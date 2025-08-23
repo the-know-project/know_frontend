@@ -3,13 +3,12 @@
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
 
 const ArtSelectionSkeleton = () => {
-  // Create array of 12 items to match the typical number of art preferences
-  const skeletonItems = Array.from({ length: 12 }, (_, index) => index);
+  const predefinedWidths = [85, 70, 95, 80, 90, 75, 100, 65, 88, 92, 78, 82];
 
   return (
     <section className="relative flex w-full flex-col">
       <div className="z-50 grid w-full grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4">
-        {skeletonItems.map((_, index) => (
+        {predefinedWidths.map((width, index) => (
           <div
             key={index}
             className="inline-flex w-fit animate-pulse rounded-md bg-gray-200 px-2 py-1 shadow-md"
@@ -20,7 +19,7 @@ const ArtSelectionSkeleton = () => {
             <div
               className={`h-5 rounded bg-gray-300`}
               style={{
-                width: `${Math.random() * 40 + 60}px`,
+                width: `${width}px`,
               }}
             />
           </div>
