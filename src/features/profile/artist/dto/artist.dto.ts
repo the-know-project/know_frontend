@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+const insightData = z.object({
+  topInterestedBuyersByPercentage: z.string(),
+  conversionRateByPercentage: z.string(),
+});
+
 export const MetricsData = z.object({
   id: z.string().uuid(),
   followerCount: z.number(),
@@ -10,6 +15,7 @@ export const MetricsData = z.object({
   postViews: z.number(),
   profileViews: z.number(),
   lastSaleDate: z.date(),
+  insight: insightData,
 });
 
 export const UserAssetData = z.object({
