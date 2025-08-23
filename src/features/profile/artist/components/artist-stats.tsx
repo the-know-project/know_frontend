@@ -1,9 +1,34 @@
+"use client";
+
 import { audience } from "@/src/assets";
 import Image from "next/image";
 import ArtistAudienceStats from "./artist-audience-stats";
 import EngagementInsights from "./engagement-insights";
+import { useFetchArtistMetrics } from "../hooks/use-fetch-artist-metrics";
+import { showLog } from "@/src/utils/logger";
+import {
+  parseAudienceMetrics,
+  parseInsightData,
+} from "../utils/parse-audience-data";
 
 const Stats = () => {
+  const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
+  showLog({
+    context: `Artist Metrics`,
+    data: metrics,
+  });
+
+  if (metricsLoading) return <div>Loading...</div>;
+  const audienceMetrics = parseAudienceMetrics({
+    metrics: metrics,
+    metricsLoading: metricsLoading,
+  });
+
+  const insightMetrics = parseInsightData({
+    metrics: metrics,
+    metricsLoading: metricsLoading,
+  });
+
   return (
     <section className="flex w-full flex-col">
       {/*Audience Stats*/}
@@ -20,12 +45,15 @@ const Stats = () => {
           />
           <h3 className="stats_title">Your audience</h3>
         </div>
-        <ArtistAudienceStats />
+        <ArtistAudienceStats audienceMetrics={audienceMetrics} />
       </div>
 
       {/*Engagement Insights*/}
       <div className="flex w-full flex-col">
-        <EngagementInsights />
+        <EngagementInsights
+          topInterestedBuyers={insightMetrics.topInterestedBuyer}
+          conversionRate={insightMetrics.conversionRate}
+        />
       </div>
     </section>
   );
