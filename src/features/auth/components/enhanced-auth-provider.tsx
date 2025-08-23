@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../hooks/use-auth";
-import { useRoleStore } from "../state/store";
+import { useRoleStore, useTokenStore } from "../state/store";
 import { httpClient } from "../../../lib/http-client";
 import GradientText from "@/src/shared/components/gradient-text";
 
@@ -130,31 +130,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     setError(null);
   }, []);
 
+  const hasHydrated = useTokenStore((state) => state.hasHydrated);
+
+  const attemptSilentRefresh = useCallback(async (): Promise<boolean> => {
+    try {
+      console.log("🔄 Attempting silent refresh...");
+
+      const refreshResponse = await httpClient.attemptPublicSilentRefresh();
+
+      if (
+        refreshResponse.success &&
+        refreshResponse.accessToken &&
+        refreshResponse.user
+      ) {
+        console.log("✅ Silent refresh successful");
+
+        auth.login(
+          refreshResponse.accessToken,
+          refreshResponse.user,
+          refreshResponse.role || roleStore.role,
+        );
+
+        return true;
+      }
+
+      console.log("❌ Silent refresh failed:", refreshResponse.error);
+      return false;
+    } catch (error) {
+      console.log("❌ Silent refresh failed with error:", error);
+      return false;
+    }
+  }, [auth, roleStore.role]);
+
   const checkAuthStatus = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Check if we have authentication state
-      const isAuthenticated = httpClient.isAuthenticated();
-
-      if (!isAuthenticated && !isPublicRoute) {
-        console.log(
-          "🔄 Not authenticated on protected route, redirecting to login",
-        );
-        router.push(redirectTo);
+      if (!hasHydrated) {
+        console.log("⏳ Waiting for store hydration...");
         return;
       }
 
-      // If we're authenticated but missing user data, try a test request
-      // This will trigger the interceptor to refresh tokens if needed
-      if (isAuthenticated && !auth.user) {
+      // const isAuthenticated = httpClient.isAuthenticated();
+      const isAuthenticated = true;
+
+      if (!isAuthenticated && !isPublicRoute) {
+        console.log("🔄 No access token found, attempting silent refresh...");
+
+        const refreshSuccess = await attemptSilentRefresh();
+
+        if (!refreshSuccess) {
+          console.log("❌ Silent refresh failed, redirecting to login");
+          router.push(redirectTo);
+          return;
+        }
+      }
+
+      if (httpClient.isAuthenticated() && !auth.user) {
         try {
-          // Make a lightweight request to verify auth state
           await httpClient.get("/api/auth/me");
         } catch (authError) {
           console.warn("⚠️ Auth verification failed:", authError);
-          // The interceptor will handle token refresh or logout
           return;
         }
       }
@@ -167,7 +204,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       setIsLoading(false);
       setHasInitialized(true);
     }
-  }, [auth.user, isPublicRoute, redirectTo, router]);
+  }, [
+    auth.user,
+    isPublicRoute,
+    redirectTo,
+    router,
+    attemptSilentRefresh,
+    hasHydrated,
+  ]);
 
   const retry = useCallback(async () => {
     await checkAuthStatus();
@@ -181,24 +225,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       router.push("/login");
     } catch (err) {
       console.error("❌ Logout failed:", err);
-      // Still redirect to login even if logout request fails
       router.push("/login");
     } finally {
       setIsLoading(false);
     }
   }, [auth, roleStore, router]);
 
-  // Initial auth check
   useEffect(() => {
-    if (!hasInitialized) {
+    if (!hasInitialized && hasHydrated) {
       checkAuthStatus();
     }
-  }, [checkAuthStatus, hasInitialized]);
+  }, [checkAuthStatus, hasInitialized, hasHydrated]);
 
-  // Handle route changes
   useEffect(() => {
     if (
       hasInitialized &&
+      hasHydrated &&
       !isPublicRoute &&
       !auth.isAuthenticated &&
       !isLoading
@@ -213,12 +255,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     isPublicRoute,
     auth.isAuthenticated,
     hasInitialized,
+    hasHydrated,
     isLoading,
     router,
     redirectTo,
   ]);
 
-  // Handle critical authentication errors
   useEffect(() => {
     if (error && error.includes("refresh_token_invalid")) {
       console.log(
@@ -242,7 +284,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     return <Fallback error={error} retry={retry} isLoading={isLoading} />;
   }
 
-  if (!isPublicRoute && (isLoading || !hasInitialized)) {
+  if (!isPublicRoute && (isLoading || !hasInitialized || !hasHydrated)) {
     return <Fallback error={null} retry={retry} isLoading={true} />;
   }
 
