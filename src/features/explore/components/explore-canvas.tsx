@@ -44,7 +44,6 @@ const ExploreCanvasContent = ({
     `is content toggled: ${isExploreContentToggled} : ${toggledContentId}`,
   );
 
-  // ESC key handler to close popup
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (
