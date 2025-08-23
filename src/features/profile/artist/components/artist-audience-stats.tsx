@@ -1,14 +1,21 @@
 "use client";
+import { showLog } from "@/src/utils/logger";
 import { useFetchArtistMetrics } from "../hooks/use-fetch-artist-metrics";
 import { parseAudienceMetrics } from "../utils/parse-audience-data";
 
-const ArtistAudienceStats = () => {
-  const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
-  const audienceMetrics = parseAudienceMetrics({
-    metrics: metrics,
-    metricsLoading: metricsLoading,
-  });
+interface IAudienceStats {
+  id: number;
+  context: string;
+  value: number;
+}
 
+interface IArtistAudienceStats {
+  audienceMetrics: IAudienceStats[];
+}
+
+const ArtistAudienceStats: React.FC<IArtistAudienceStats> = ({
+  audienceMetrics,
+}) => {
   return (
     <div className="flex w-full flex-col items-center py-9 md:flex-row">
       <div className="flex w-full flex-col items-center gap-[20px] md:flex-row md:gap-0">
