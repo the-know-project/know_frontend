@@ -10,7 +10,7 @@ import {
   TExploreAssetDto,
 } from "../types/explore.types";
 import { useTokenStore } from "../../auth/state/store";
-import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
+import { useRoleStore } from "../../auth/state/store";
 
 interface UseSimpleInfiniteAssetsProps {
   categories?: string[];
@@ -29,14 +29,11 @@ export const useSimpleInfiniteAssets = ({
   limit = 12,
 }: UseSimpleInfiniteAssetsProps = {}) => {
   const userId = useTokenStore((state) => state.user?.id);
-  const {
-    role,
-    isAuthenticated,
-    error: authError,
-  } = useStableAuthStatus({
-    redirectOnExpiry: true,
-    redirectTo: "/login",
-  });
+  const user = useTokenStore((state) => state.user);
+  const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
+  const hasHydrated = useTokenStore((state) => state.hasHydrated);
+  const role = useRoleStore((state) => state.role);
+
   const [allAssets, setAllAssets] = useState<TAsset[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -74,7 +71,7 @@ export const useSimpleInfiniteAssets = ({
       return result.value as TExploreAssetDto;
     },
     staleTime: 5000,
-    enabled: isAuthenticated && !authError && !!userId, // Only run query if authenticated and user exists
+    enabled: hasHydrated && isAuthenticated && !!userId, // Only run query if hydrated and authenticated
   });
 
   useEffect(() => {
@@ -138,7 +135,7 @@ export const useSimpleInfiniteAssets = ({
 
     isLoading: isLoading && currentPage === 1,
     isLoadingMore,
-    error: error?.message || authError || null,
+    error: error?.message || null,
 
     loadMore,
     refresh,
