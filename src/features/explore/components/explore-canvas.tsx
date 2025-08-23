@@ -1,9 +1,7 @@
 "use client";
 
 import ArtDetails from "@/src/shared/components/art-details";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef } from "react";
-import { useAuthContext } from "../../auth/components/enhanced-auth-provider";
+import { useEffect } from "react";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { TCart } from "../../cart/types/cart.types";
@@ -28,48 +26,6 @@ interface ExploreCanvasProps {
   };
   isInitialized?: boolean;
 }
-
-const AuthLoadingState = ({ message = "Loading..." }: { message?: string }) => (
-  <section className="flex w-full flex-col items-center justify-center py-20">
-    <div className="text-center">
-      <div className="mb-4">
-        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
-      </div>
-      <p className="font-bricolage text-sm text-gray-600">{message}</p>
-    </div>
-  </section>
-);
-
-const useAuthCheck = () => {
-  const router = useRouter();
-  const hasRedirected = useRef(false);
-  const { isAuthenticated, error } = useAuthContext();
-
-  const hasCriticalError = useMemo(() => {
-    return (
-      !isAuthenticated &&
-      error &&
-      (error.includes("No authentication token") ||
-        error.includes("refresh_token_invalid") ||
-        error.includes("Session expired"))
-    );
-  }, [isAuthenticated, error]);
-
-  useEffect(() => {
-    if (hasCriticalError && !hasRedirected.current) {
-      hasRedirected.current = true;
-      router.push("/login");
-    }
-  }, [hasCriticalError, router]);
-
-  return useMemo(() => {
-    if (hasCriticalError) {
-      return { isValid: false, shouldRedirect: true };
-    }
-
-    return { isValid: isAuthenticated, shouldRedirect: false };
-  }, [isAuthenticated, hasCriticalError]);
-};
 
 const ExploreCanvasContent = ({
   categories = [],
@@ -236,32 +192,6 @@ const ExploreCanvasContent = ({
 };
 
 const ExploreCanvas = (props: ExploreCanvasProps) => {
-  const authCheck = useAuthCheck();
-
-  if (!authCheck.isValid) {
-    if (authCheck.shouldRedirect) {
-      return (
-        <AuthLoadingState message="Session expired, redirecting to login..." />
-      );
-    }
-
-    return (
-      <section className="flex w-full flex-col items-center justify-center py-20">
-        <div className="text-center">
-          <p className="font-bricolage mb-4 text-gray-500">
-            Please log in to view content
-          </p>
-          <button
-            onClick={() => (window.location.href = "/login")}
-            className="button_base px-4 py-2"
-          >
-            Go to Login
-          </button>
-        </div>
-      </section>
-    );
-  }
-
   return <ExploreCanvasContent {...props} />;
 };
 
