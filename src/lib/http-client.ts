@@ -60,7 +60,15 @@ class HttpClient {
       async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & {
           _retry?: boolean;
+          _networkRetryCount?: number;
         };
+
+        if (
+          this.isNetworkError(error) &&
+          this.shouldRetryNetworkError(originalRequest)
+        ) {
+          return this.retryNetworkRequest(originalRequest);
+        }
 
         if (
           error.response?.status === 401 &&
@@ -141,6 +149,59 @@ class HttpClient {
     );
   }
 
+  private isNetworkError(error: AxiosError): boolean {
+    return (
+      !error.response &&
+      (error.code === "ECONNABORTED" ||
+        error.code === "ENOTFOUND" ||
+        error.code === "ECONNREFUSED" ||
+        error.code === "ETIMEDOUT" ||
+        error.message.includes("Network Error") ||
+        error.message.includes("timeout") ||
+        error.message.includes("network error"))
+    );
+  }
+
+  private shouldRetryNetworkError(
+    config: InternalAxiosRequestConfig & { _networkRetryCount?: number },
+  ): boolean {
+    const maxRetries = 3;
+    const retryCount = config._networkRetryCount || 0;
+    return retryCount < maxRetries;
+  }
+
+  private async retryNetworkRequest(
+    config: InternalAxiosRequestConfig & { _networkRetryCount?: number },
+  ): Promise<any> {
+    const retryCount = (config._networkRetryCount || 0) + 1;
+    config._networkRetryCount = retryCount;
+
+    // Exponential backoff: 1s, 2s, 4s
+    const delay = Math.pow(2, retryCount - 1) * 1000;
+
+    console.log(
+      `🔄 HTTP Client: Network error detected, retrying request (attempt ${retryCount}/3) after ${delay}ms delay...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, delay));
+
+    try {
+      const response = await this.axiosInstance(config);
+      console.log(
+        `✅ HTTP Client: Network retry successful on attempt ${retryCount}`,
+      );
+      return response;
+    } catch (retryError) {
+      if (retryCount >= 3) {
+        console.error(
+          `❌ HTTP Client: Network retry failed after ${retryCount} attempts`,
+        );
+        return Promise.reject(retryError);
+      }
+      throw retryError;
+    }
+  }
+
   private requiresAuth(config: AxiosRequestConfig): boolean {
     const skipAuthPaths = [
       "/api/auth/login",
@@ -162,7 +223,7 @@ class HttpClient {
   }> {
     try {
       const response = await axios.post(
-        `${this.axiosInstance.defaults.baseURL}/api/auth/refresh-token`,
+        `${this.axiosInstance.defaults.baseURL}/api/auth/refreshToken`,
         {},
         {
           withCredentials: true,
@@ -216,7 +277,7 @@ class HttpClient {
     useTokenStore.getState().clearAuth();
 
     if (typeof window !== "undefined") {
-      window.location.href = "/auth/login";
+      window.location.href = "/login";
     }
   }
 
@@ -263,19 +324,30 @@ class HttpClient {
     return this.axiosInstance;
   }
 
-  // Utility method to check if user is authenticated
   public isAuthenticated(): boolean {
     const token = useTokenStore.getState().getAccessToken();
     const isAuth = useTokenStore.getState().isAuthenticated;
     return !!(token && isAuth);
   }
 
-  // Method to manually logout (can be called from components)
+  public getBaseURL(): string {
+    return this.axiosInstance.defaults.baseURL || "";
+  }
+
+  public async attemptPublicSilentRefresh(): Promise<{
+    success: boolean;
+    accessToken?: string;
+    user?: any;
+    role?: any;
+    error?: string;
+  }> {
+    return this.attemptSilentRefresh();
+  }
+
   public async logout(): Promise<void> {
     try {
       console.log("🚪 HTTP Client: Initiating logout...");
 
-      // Call server logout endpoint to clear refresh token cookie
       await this.axiosInstance.post(
         "/api/auth/logout",
         {},
@@ -291,7 +363,6 @@ class HttpClient {
         error,
       );
     } finally {
-      // Always clear local state
       this.handleAuthFailure();
     }
   }
