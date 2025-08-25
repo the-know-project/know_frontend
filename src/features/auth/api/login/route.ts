@@ -1,4 +1,3 @@
-import { showLog } from "@/src/utils/logger";
 import { AUTH_OP } from "../../data/auth.path";
 import { ILogin } from "../../types/auth.types";
 import { ApiClient } from "@/src/lib/api-client";
