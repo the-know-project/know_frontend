@@ -30,7 +30,6 @@ export const useLikeAsset = () => {
         return result.error;
       }
 
-      console.log(result);
       return result.value;
     },
     onSuccess: () => {
