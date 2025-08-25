@@ -62,6 +62,7 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
     };
   });
 
+  // Initialize grace period on first load
   useEffect(() => {
     if (typeof window !== "undefined" && graceEndTime.current === 0) {
       graceEndTime.current = Date.now() + gracePeriod;
@@ -79,6 +80,8 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
 
     // Debounce the update
     debounceRef.current = setTimeout(() => {
+      if (typeof window === "undefined") return;
+
       const now = Date.now();
       const isHydrated = tokenStore.hasHydrated && roleStore.hasHydrated;
       const isAuthenticated = tokenStore.isAuthenticated;
@@ -118,7 +121,11 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
         hasRedirected.current = true;
         tokenStore.clearAuth();
         roleStore.clearRole();
-        setTimeout(() => router.push(redirectTo), 100);
+        setTimeout(() => {
+          if (typeof window !== "undefined") {
+            router.push(redirectTo);
+          }
+        }, 100);
       }
 
       if (hasToken && inGracePeriod) {
@@ -127,8 +134,13 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
     }, 50); // 50ms debounce
   };
 
+  // Initial check when hydrated
   useEffect(() => {
-    if (tokenStore.hasHydrated && roleStore.hasHydrated) {
+    if (
+      typeof window !== "undefined" &&
+      tokenStore.hasHydrated &&
+      roleStore.hasHydrated
+    ) {
       updateAuthState();
     }
   }, [
@@ -140,8 +152,9 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
     redirectTo,
   ]);
 
+  // Listen for token changes
   useEffect(() => {
-    if (hasRedirected.current) return;
+    if (hasRedirected.current || typeof window === "undefined") return;
 
     const unsubscribe = useTokenStore.subscribe((state, prevState) => {
       if (
@@ -156,8 +169,9 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
     return unsubscribe;
   }, [requiresAuth, requiredRoles.join(","), pathname, redirectTo]);
 
+  // Listen for role changes
   useEffect(() => {
-    if (hasRedirected.current) return;
+    if (hasRedirected.current || typeof window === "undefined") return;
 
     const unsubscribe = useRoleStore.subscribe((state, prevState) => {
       if (state.role !== prevState.role) {

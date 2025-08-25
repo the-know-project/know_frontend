@@ -1,4 +1,3 @@
-import { EnhancedAuthProvider } from "@/src/features/auth/components/enhanced-auth-provider";
 import ArtSelection from "@/src/features/personalize/components/art-selection";
 import { getCategoriesQueryOptions } from "@/src/features/personalize/queries/get-categories.queries";
 
