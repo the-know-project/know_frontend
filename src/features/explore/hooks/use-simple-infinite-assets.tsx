@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
+import { useCanFetchData } from "@/src/hooks/useStableAuth";
 import { fetchAllExploreAssets } from "../api/fetch-asset/route";
 import { ExploreErrorMessages } from "../data/explore.data";
 import { ExploreError } from "../errors/explore.error";
@@ -28,6 +29,7 @@ export const useSimpleInfiniteAssets = ({
   filters = {},
   limit = 12,
 }: UseSimpleInfiniteAssetsProps = {}) => {
+  const canFetch = useCanFetchData();
   const userId = useTokenStore((state) => state.user?.id);
   const user = useTokenStore((state) => state.user);
   const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
@@ -71,7 +73,7 @@ export const useSimpleInfiniteAssets = ({
       return result.value as TExploreAssetDto;
     },
     staleTime: 5000,
-    enabled: hasHydrated && isAuthenticated && !!userId, // Only run query if hydrated and authenticated
+    enabled: canFetch && isAuthenticated && !!userId,
   });
 
   useEffect(() => {
