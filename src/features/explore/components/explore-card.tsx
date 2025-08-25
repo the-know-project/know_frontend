@@ -1,5 +1,6 @@
 "use client";
 
+import { formatViewCount } from "@/src/utils/number-format";
 import {
   IconShoppingCart,
   IconShoppingCartFilled,
@@ -7,10 +8,10 @@ import {
   IconThumbUpFilled,
 } from "@tabler/icons-react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useCart } from "../../cart/hooks/use-cart";
+import { useCartHydration } from "../../cart/state/cart.store";
 import { useAssetLike } from "../hooks/use-asset-like";
-import { formatViewCount } from "@/src/utils/number-format";
 import { useToggleExploreContent } from "../state/explore-content.store";
 
 interface ExploreCardProps {
@@ -40,6 +41,8 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   categories,
   tags,
 }) => {
+  const isCartHydrated = useCartHydration();
+
   const {
     isLiked,
     likeCount: currentLikeCount,
@@ -54,7 +57,12 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   const { isItemInCart, toggleCart } = useCart({
     fileId: id as string,
   });
+
   const toggleExploreContent = useToggleExploreContent();
+
+  const showCartButton = useMemo(() => {
+    return isCartHydrated && role.toLowerCase() === "buyer" && isListed;
+  }, [isCartHydrated, role, isListed]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -152,9 +160,9 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          {role.toLowerCase() === "buyer" && isListed && (
+          {showCartButton && (
             <button onClick={toggleCart} className="group">
-              {isItemInCart ? (
+              {isCartHydrated && isItemInCart ? (
                 <IconShoppingCartFilled
                   width={30}
                   height={30}
