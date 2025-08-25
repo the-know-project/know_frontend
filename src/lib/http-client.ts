@@ -42,15 +42,18 @@ class HttpClient {
   private setupInterceptors(): void {
     this.axiosInstance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        const token = useTokenStore.getState().getAccessToken();
-        const isAuthenticated = useTokenStore.getState().isAuthenticated;
+        // Only access token store on client side
+        if (typeof window !== "undefined") {
+          const token = useTokenStore.getState().getAccessToken();
+          const isAuthenticated = useTokenStore.getState().isAuthenticated;
 
-        if (token && this.requiresAuth(config)) {
-          config.headers.Authorization = `Bearer ${token}`;
-        } else if (this.requiresAuth(config) && !token) {
-          console.warn(
-            `⚠️ HTTP Client: Request requires auth but no token available for ${config.url}`,
-          );
+          if (token && this.requiresAuth(config)) {
+            config.headers.Authorization = `Bearer ${token}`;
+          } else if (this.requiresAuth(config) && !token) {
+            console.warn(
+              `⚠️ HTTP Client: Request requires auth but no token available for ${config.url}`,
+            );
+          }
         }
 
         return config;
@@ -81,6 +84,11 @@ class HttpClient {
           !originalRequest._retry &&
           this.requiresAuth(originalRequest)
         ) {
+          // Only proceed with refresh on client side
+          if (typeof window === "undefined") {
+            return Promise.reject(error);
+          }
+
           const currentToken = useTokenStore.getState().getAccessToken();
           if (currentToken) {
           }
@@ -116,7 +124,10 @@ class HttpClient {
               console.log("✅ HTTP Client: Token refresh successful");
 
               const userToStore =
-                refreshResponse.user || useTokenStore.getState().getUser();
+                refreshResponse.user ||
+                (typeof window !== "undefined"
+                  ? useTokenStore.getState().getUser()
+                  : null);
 
               if (userToStore) {
                 useTokenStore
@@ -127,18 +138,24 @@ class HttpClient {
                   "⚠️ HTTP Client: No user data available, but updating token anyway",
                 );
                 // Force update token and maintain authentication state
-                const currentState = useTokenStore.getState();
-                useTokenStore
-                  .getState()
-                  .setAccessToken(refreshResponse.accessToken, {
-                    id: currentState.user?.id || "unknown",
-                    email: currentState.user?.email || "unknown",
-                    firstName: currentState.user?.firstName || "User",
-                    imageUrl: currentState.user?.imageUrl || "",
-                  });
+                if (typeof window !== "undefined") {
+                  const currentState = useTokenStore.getState();
+                  useTokenStore
+                    .getState()
+                    .setAccessToken(refreshResponse.accessToken, {
+                      id: currentState.user?.id || "unknown",
+                      email: currentState.user?.email || "unknown",
+                      firstName: currentState.user?.firstName || "User",
+                      imageUrl: currentState.user?.imageUrl || "",
+                      role: currentState.user?.role || "buyer",
+                    });
+                }
               }
 
-              const verifyToken = useTokenStore.getState().getAccessToken();
+              const verifyToken =
+                typeof window !== "undefined"
+                  ? useTokenStore.getState().getAccessToken()
+                  : null;
 
               this.processQueue(null, refreshResponse.accessToken);
 
@@ -442,7 +459,9 @@ class HttpClient {
       "🚨 HTTP Client: Authentication failure - clearing local auth state",
     );
 
-    useTokenStore.getState().clearAuth();
+    if (typeof window !== "undefined") {
+      useTokenStore.getState().clearAuth();
+    }
 
     if (typeof window !== "undefined") {
       setTimeout(() => {
@@ -495,6 +514,9 @@ class HttpClient {
   }
 
   public isAuthenticated(): boolean {
+    if (typeof window === "undefined") {
+      return false;
+    }
     const token = useTokenStore.getState().getAccessToken();
     const isAuth = useTokenStore.getState().isAuthenticated;
     return !!(token && isAuth);

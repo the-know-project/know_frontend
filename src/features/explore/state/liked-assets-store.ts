@@ -126,6 +126,7 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
       name: "liked-assets-storage",
       storage: {
         getItem: (name) => {
+          if (typeof window === "undefined") return null;
           const str = localStorage.getItem(name);
           if (!str) return null;
 
@@ -139,19 +140,22 @@ export const useLikedAssetsStore = create<LikedAssetsState>()(
               });
             }
             return parsed;
-          } catch (error) {
-            console.error("Error parsing liked assets from storage:", error);
+          } catch {
             return null;
           }
         },
         setItem: (name, value) => {
+          if (typeof window === "undefined") return;
           try {
             localStorage.setItem(name, JSON.stringify(value));
           } catch (error) {
-            console.error("Error saving liked assets to storage:", error);
+            console.warn("Failed to save to localStorage:", error);
           }
         },
-        removeItem: (name) => localStorage.removeItem(name),
+        removeItem: (name) => {
+          if (typeof window === "undefined") return;
+          localStorage.removeItem(name);
+        },
       },
     },
   ),
