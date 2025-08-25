@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PageAuthGuard } from "@/src/features/auth/guards";
-import { EnhancedAuthProvider } from "@/src/features/auth/components/enhanced-auth-provider";
+import { ArtistGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 
 export default function EditorPage() {
   const [title, setTitle] = useState("");
@@ -17,7 +16,7 @@ export default function EditorPage() {
   };
 
   return (
-    <PageAuthGuard requiredRoles={["ARTIST"]} requiresAuth>
+    <ArtistGuard>
       <div className="mx-auto max-w-7xl p-8">
         {/* Top Bar */}
         <div className="mb-8 flex items-center justify-between">
@@ -115,6 +114,6 @@ export default function EditorPage() {
           </div>
         </div>
       </div>
-    </PageAuthGuard>
+    </ArtistGuard>
   );
 }

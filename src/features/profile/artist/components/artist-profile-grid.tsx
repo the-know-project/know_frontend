@@ -12,12 +12,14 @@ import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
 import { IUser } from "@/src/features/auth/state/interface/auth.interface";
 import Stats from "./artist-stats";
 import ProfileCardSkeletonGrid from "../../layout/profile-card-skeleton";
+import { useCanFetchData } from "@/src/hooks/useStableAuth";
 
 interface ArtistProfileGridProps {
   user: IUser;
 }
 
 const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
+  const canFetch = useCanFetchData();
   const [activeToggle, setActiveToggle] = useState<string>("posts");
 
   const postsHookResult = useSimpleInfiniteUserPosts({
@@ -51,7 +53,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   };
 
   const renderPostsContent = () => {
-    if (isLoading && posts.length === 0) {
+    if (!canFetch || posts.length === 0) {
       return <ProfileCardSkeletonGrid />;
     }
 

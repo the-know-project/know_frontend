@@ -4,7 +4,7 @@ const Page = async () => {
   return (
     <section className="flex w-full flex-col px-6">
       <div className="mt-5 flex w-full flex-col gap-[50px]">
-        <ExploreContainer />
+        <ExploreContainer enableServerSync={true} />
       </div>
     </section>
   );

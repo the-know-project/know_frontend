@@ -6,6 +6,7 @@ import { fetchUserLikes } from "../api/fetch-user-likes/route";
 import { ExploreError } from "../errors/explore.error";
 import { useLikedAssetsActions } from "../state/liked-assets-store";
 import { useLikedAssetsWithCounts } from "./use-fetch-liked-assets";
+import { showLog } from "@/src/utils/logger";
 
 export const useSyncLikedAssets = () => {
   const { initializeLikedAssetsWithCounts } = useLikedAssetsActions();
@@ -60,6 +61,10 @@ export const usePeriodicSyncLikedAssets = (
         throw result.error;
       }
 
+      showLog({
+        context: "Like Sync logs",
+        data: result.value,
+      });
       return result.value;
     },
     enabled: !!userId,

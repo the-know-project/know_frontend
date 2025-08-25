@@ -1,10 +1,10 @@
-import { PageAuthGuard } from "@/src/features/auth/guards";
+import { PublicGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import GridBackground from "@/src/shared/components/grid-background";
 import SelectRole from "@/src/shared/components/role-selection";
 
 const Page = () => {
   return (
-    <PageAuthGuard guestOnly={false}>
+    <PublicGuard>
       <section className="flex w-full flex-col scroll-smooth">
         <GridBackground>
           <>
@@ -12,7 +12,7 @@ const Page = () => {
           </>
         </GridBackground>
       </section>
-    </PageAuthGuard>
+    </PublicGuard>
   );
 };
 

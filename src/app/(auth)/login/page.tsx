@@ -1,12 +1,12 @@
 import LoginForm from "@/src/features/auth/components/login.form";
-import { PageAuthGuard } from "@/src/features/auth/guards";
+import { GuestOnlyGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import { TitleText } from "@/src/shared/layout/header";
 import Image from "next/image";
 import Link from "next/link";
 
 const Login = () => {
   return (
-    <PageAuthGuard guestOnly>
+    <GuestOnlyGuard>
       <section className="relative z-50 flex w-full flex-col">
         <div className="flex items-center justify-between">
           <Image
@@ -36,7 +36,7 @@ const Login = () => {
           </div>
         </div>
       </section>
-    </PageAuthGuard>
+    </GuestOnlyGuard>
   );
 };
 

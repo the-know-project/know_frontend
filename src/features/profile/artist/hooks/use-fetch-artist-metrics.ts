@@ -4,9 +4,12 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { fetchArtistMetrics } from "../api/metrics/route";
 import { ArtistError } from "../error/artist.error";
 import { IArtistMetricsDto } from "../../types/profile.types";
+import { useCanFetchData } from "@/src/hooks/useStableAuth";
 
 export const useFetchArtistMetrics = () => {
+  const canFetch = useCanFetchData();
   const userId = useTokenStore((state) => state.user?.id);
+  const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
 
   return useQuery({
     queryKey: [`artist-${userId}-metrics`],
@@ -34,6 +37,6 @@ export const useFetchArtistMetrics = () => {
 
       return result.value as IArtistMetricsDto;
     },
-    enabled: !!userId,
+    enabled: !!userId && isAuthenticated && canFetch,
   });
 };

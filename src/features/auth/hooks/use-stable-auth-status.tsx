@@ -68,6 +68,8 @@ export const useStableAuthStatus = (
   // Prevent multiple simultaneous auth checks
   const checkInProgress = useRef(false);
   const hasRedirected = useRef(false);
+  // Grace period for token refresh on page load
+  const graceEndTime = useRef<number>(Date.now() + 3000); // 3 second grace period
 
   const checkAuthStatus = useCallback(() => {
     if (checkInProgress.current || hasRedirected.current || !isRehydrated) {
@@ -81,11 +83,13 @@ export const useStableAuthStatus = (
       const hasToken = !!tokenStore.accessToken;
       const user = tokenStore.user;
       const role = roleStore.role;
+      const now = Date.now();
+      const inGracePeriod = now < graceEndTime.current;
 
       setAuthState((prevState) => {
         const newState: StableAuthStatus = {
           isAuthenticated: isAuthenticated && hasToken,
-          isLoading: false,
+          isLoading: inGracePeriod && isAuthenticated && !hasToken, // Keep loading during grace period
           user,
           role,
           error: null,
@@ -106,12 +110,14 @@ export const useStableAuthStatus = (
         return prevState;
       });
 
+      // Only redirect if not in grace period and truly unauthenticated
       if (
         !isAuthenticated &&
         !hasRedirected.current &&
-        !guestAllowed.includes(pathname)
+        !guestAllowed.includes(pathname) &&
+        !inGracePeriod
       ) {
-        console.warn("Authentication lost");
+        console.warn("Authentication lost after grace period");
 
         if (onAuthError) {
           onAuthError("Authentication lost");
@@ -134,6 +140,11 @@ export const useStableAuthStatus = (
             router.push(redirectTo);
           }, 100);
         }
+      }
+
+      // If we get a token during grace period, reset grace period
+      if (hasToken && inGracePeriod) {
+        graceEndTime.current = Date.now(); // End grace period early since we have token
       }
     } catch (error) {
       console.error("Auth status check failed:", error);

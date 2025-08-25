@@ -1,14 +1,14 @@
 "use client";
 
 import OtpForm from "@/src/features/auth/components/otp-form";
-import { PageAuthGuard } from "@/src/features/auth/guards";
+import { PublicGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import { TitleText } from "@/src/shared/layout/header";
 import Image from "next/image";
 import Link from "next/link";
 
 const OtpVerification = () => {
   return (
-    <PageAuthGuard guestOnly={false}>
+    <PublicGuard>
       <section className="relative z-50 flex w-full flex-col">
         <div className="flex items-center justify-between">
           <Image
@@ -42,7 +42,7 @@ const OtpVerification = () => {
           <p>We've sent a 6-digit verification code to your email</p>
         </div>
       </section>
-    </PageAuthGuard>
+    </PublicGuard>
   );
 };
 
