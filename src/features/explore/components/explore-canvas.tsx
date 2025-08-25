@@ -2,6 +2,7 @@
 
 import ArtDetails from "@/src/shared/components/art-details";
 import { useEffect } from "react";
+import { useCanFetchData } from "@/src/hooks/useStableAuth";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { TCart } from "../../cart/types/cart.types";
@@ -31,6 +32,8 @@ const ExploreCanvasContent = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
+  const canFetch = useCanFetchData();
+
   const assetsHookResult = useSimpleInfiniteAssets({
     categories,
     filters,
@@ -108,7 +111,7 @@ const ExploreCanvasContent = ({
     }
   }, [isCartLoading, cartDataResult, initCart]);
 
-  if (isLoading && assets.length === 0 && isCartLoading) {
+  if (!canFetch || (isLoading && assets.length === 0 && isCartLoading)) {
     return <ExploreCardSkeletonGrid />;
   }
 
