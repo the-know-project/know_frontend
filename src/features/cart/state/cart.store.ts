@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, subscribeWithSelector } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 export interface ICartItems {
@@ -9,6 +9,8 @@ export interface ICartItems {
 
 interface CartState {
   cart: Record<string, ICartItems>;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 
   addToCart: (fileId: string) => void;
   removeFromCart: (fileId: string) => void;
@@ -24,97 +26,107 @@ interface CartState {
 }
 
 export const useCartStore = create<CartState>()(
-  persist(
-    immer((set, get) => ({
-      cart: {},
+  subscribeWithSelector(
+    persist(
+      immer((set, get) => ({
+        cart: {},
+        _hasHydrated: false,
+        setHasHydrated: (state) =>
+          set(() => ({
+            _hasHydrated: state,
+          })),
 
-      addToCart: (fileId) =>
-        set((state) => {
-          state.cart[fileId] = {
-            fileId: fileId,
-            quantity: 1,
-          };
-        }),
+        addToCart: (fileId) =>
+          set((state) => {
+            state.cart[fileId] = {
+              fileId: fileId,
+              quantity: 1,
+            };
+          }),
 
-      removeFromCart: (fileId) =>
-        set((state) => {
-          if (state.cart[fileId]) {
-            delete state.cart[fileId];
-          }
-        }),
-
-      isItemInCart: (fileId) => {
-        const state = get();
-        return fileId in state.cart;
-      },
-
-      getItemQuantity: (fileId) => {
-        const state = get();
-        return state.cart[fileId]?.quantity || 0;
-      },
-
-      incrementItemQuantity: (fileId) =>
-        set((state) => {
-          if (state.cart[fileId]) {
-            state.cart[fileId].quantity += 1;
-          }
-        }),
-
-      decrementItemQuantity: (fileId) =>
-        set((state) => {
-          if (state.cart[fileId]) {
-            state.cart[fileId].quantity -= 1;
-            if (state.cart[fileId].quantity <= 0) {
+        removeFromCart: (fileId) =>
+          set((state) => {
+            if (state.cart[fileId]) {
               delete state.cart[fileId];
             }
-          }
-        }),
+          }),
 
-      initializeCart: (ctx) =>
-        set((state) => {
-          state.cart = {};
-          ctx.forEach((item) => {
-            state.cart[item.fileId] = {
-              fileId: item.fileId,
-              quantity: item.quantity,
-            };
-          });
-        }),
-
-      clearCartItems: () =>
-        set((state) => {
-          state.cart = {};
-        }),
-
-      getItemsFileIds: () => {
-        const state = get();
-        return Object.keys(state.cart);
-      },
-
-      getTotalItemsCount: () => {
-        const state = get();
-        return Object.values(state.cart).reduce(
-          (acc, item) => acc + item.quantity,
-          0,
-        );
-      },
-    })),
-
-    {
-      name: "cart-storage",
-      storage: {
-        getItem: (name) => {
-          const str = localStorage.getItem(name);
-          return str ? JSON.parse(str) : null;
+        isItemInCart: (fileId) => {
+          const state = get();
+          return fileId in state.cart;
         },
-        setItem: (name, value) => {
-          localStorage.setItem(name, JSON.stringify(value));
+
+        getItemQuantity: (fileId) => {
+          const state = get();
+          return state.cart[fileId]?.quantity || 0;
         },
-        removeItem: (name) => {
-          localStorage.removeItem(name);
+
+        incrementItemQuantity: (fileId) =>
+          set((state) => {
+            if (state.cart[fileId]) {
+              state.cart[fileId].quantity += 1;
+            }
+          }),
+
+        decrementItemQuantity: (fileId) =>
+          set((state) => {
+            if (state.cart[fileId]) {
+              state.cart[fileId].quantity -= 1;
+              if (state.cart[fileId].quantity <= 0) {
+                delete state.cart[fileId];
+              }
+            }
+          }),
+
+        initializeCart: (ctx) =>
+          set((state) => {
+            state.cart = {};
+            ctx.forEach((item) => {
+              state.cart[item.fileId] = {
+                fileId: item.fileId,
+                quantity: item.quantity,
+              };
+            });
+          }),
+
+        clearCartItems: () =>
+          set((state) => {
+            state.cart = {};
+          }),
+
+        getItemsFileIds: () => {
+          const state = get();
+          return Object.keys(state.cart);
+        },
+
+        getTotalItemsCount: () => {
+          const state = get();
+          return Object.values(state.cart).reduce(
+            (acc, item) => acc + item.quantity,
+            0,
+          );
+        },
+      })),
+
+      {
+        name: "cart-storage",
+        storage: {
+          getItem: (name) => {
+            const str = localStorage.getItem(name);
+            return str ? JSON.parse(str) : null;
+          },
+          setItem: (name, value) => {
+            localStorage.setItem(name, JSON.stringify(value));
+          },
+          removeItem: (name) => {
+            localStorage.removeItem(name);
+          },
+        },
+        onRehydrateStorage: () => (state) => {
+          state?.setHasHydrated(true);
         },
       },
-    },
+    ),
   ),
 );
 
@@ -126,6 +138,9 @@ export const useIsItemInCart = (fileId: string) =>
 
 export const useGetTotalItemsCount = () =>
   useCartStore((state) => state.getTotalItemsCount());
+
+export const useCartHydration = () =>
+  useCartStore((state) => state._hasHydrated);
 
 export const useCartActions = () => {
   const addToCart = useCartStore((state) => state.addToCart);
