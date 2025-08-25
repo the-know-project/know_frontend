@@ -34,9 +34,7 @@ const OrdersPage = () => {
   }, [activeTab]);
 
   return (
-    <EnhancedAuthProvider
-      publicRoutes={["/login", "/register", "/", "/role", "/about", "/contact"]}
-    >
+
       <PageAuthGuard requiredRoles={["BUYER"]} requiresAuth={true}>
         <div className="flex min-h-screen bg-gray-50">
           <main className="flex-1 p-6">
@@ -95,7 +93,6 @@ const OrdersPage = () => {
           </main>
         </div>
       </PageAuthGuard>
-    </EnhancedAuthProvider>
   );
 };
 
