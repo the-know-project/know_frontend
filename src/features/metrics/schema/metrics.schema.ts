@@ -5,7 +5,9 @@ export const IncrementViewCountSchema = z.object({
   fileId: z.string(),
 });
 
+export const SalesDurationSchema = z.enum(["YEARLY", "MONTHLY"]).optional();
+
 export const FetchSalesDataSchema = z.object({
   userId: z.string().uuid(),
-  duration: z.enum(["YEARLY", "MONTHLY"]).optional(),
+  duration: SalesDurationSchema,
 });
