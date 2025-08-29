@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 import { IconLocation } from "@tabler/icons-react";
 import { BlankProfilePicture } from "@/src/constants/constants";
-import { useFetchArtistMetrics } from "../artist/hooks/use-fetch-artist-metrics";
+import { useFetchArtistMetrics } from "../../metrics/hooks/use-fetch-artist-metrics";
 
 const Sidebar = () => {
   const { user, role, isLoading } = useStableAuthStatus({
