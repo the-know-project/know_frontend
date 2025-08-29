@@ -4,7 +4,7 @@ import { audience } from "@/src/assets";
 import Image from "next/image";
 import ArtistAudienceStats from "./artist-audience-stats";
 import EngagementInsights from "./engagement-insights";
-import { useFetchArtistMetrics } from "../hooks/use-fetch-artist-metrics";
+import { useFetchArtistMetrics } from "../../../metrics/hooks/use-fetch-artist-metrics";
 import { showLog } from "@/src/utils/logger";
 import {
   parseAudienceMetrics,
