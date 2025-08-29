@@ -1,7 +1,4 @@
 "use client";
-import { showLog } from "@/src/utils/logger";
-import { useFetchArtistMetrics } from "../hooks/use-fetch-artist-metrics";
-import { parseAudienceMetrics } from "../utils/parse-audience-data";
 
 interface IAudienceStats {
   id: number;
