@@ -4,8 +4,13 @@ import { ArtistError } from "../../profile/artist/error/artist.error";
 import { err, ok, ResultAsync } from "neverthrow";
 import { fetchArtistSalesMetrics } from "../api/artist-sales-metrics/route";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
+import {
+  IArtistMonthlySalesDataResponse,
+  IArtistYearlySalesDataResponse,
+  ISalesDuration,
+} from "../types/metrics.types";
 
-export const useFetchArtistSalesMetrics = () => {
+export const useFetchArtistSalesMetrics = (duration?: ISalesDuration) => {
   const canFetch = useCanFetchData();
   const userId = useTokenStore((state) => state.user?.id);
   return useQuery({
@@ -18,6 +23,7 @@ export const useFetchArtistSalesMetrics = () => {
       const result = await ResultAsync.fromPromise(
         fetchArtistSalesMetrics({
           userId,
+          duration,
         }),
         (error) =>
           new ArtistError(`Error fetch artist sales metrics: ${error}`),
@@ -35,7 +41,13 @@ export const useFetchArtistSalesMetrics = () => {
         );
       }
 
-      return result.value;
+      if (!duration) {
+        return result.value as IArtistMonthlySalesDataResponse;
+      } else if (duration === "YEARLY") {
+        return result.value as IArtistYearlySalesDataResponse;
+      } else {
+        return result.value as IArtistMonthlySalesDataResponse;
+      }
     },
     enabled: !!userId && canFetch,
   });
