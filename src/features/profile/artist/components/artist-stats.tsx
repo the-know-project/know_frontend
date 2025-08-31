@@ -9,6 +9,7 @@ import {
 } from "../utils/parse-audience-data";
 import ArtistSalesStats from "./artist-sales-stats";
 import { FaPeopleGroup } from "react-icons/fa6";
+import ArtistPerformance from "./artist-performance";
 
 const Stats = () => {
   const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
@@ -47,6 +48,10 @@ const Stats = () => {
 
       <div className="flex w-full flex-col">
         <ArtistSalesStats />
+      </div>
+
+      <div className="flex w-full flex-col">
+        <ArtistPerformance />
       </div>
     </section>
   );
