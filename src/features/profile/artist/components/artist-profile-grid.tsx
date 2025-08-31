@@ -12,7 +12,8 @@ import { useSimpleInfiniteUserPosts } from "../hooks/use-fetch-user-posts";
 import { IUser } from "@/src/features/auth/state/interface/auth.interface";
 import Stats from "./artist-stats";
 import ProfileCardSkeletonGrid from "../../layout/profile-card-skeleton";
-import { useCanFetchData } from "@/src/hooks/useStableAuth";
+import { useCanFetchData } from "@/src/features/auth/hooks/use-optimized-auth";
+import { showLog } from "@/src/utils/logger";
 
 interface ArtistProfileGridProps {
   user: IUser;

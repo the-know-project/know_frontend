@@ -1,14 +1,11 @@
 "use client";
 import Image from "next/image";
-import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 import { IconLocation } from "@tabler/icons-react";
 import { BlankProfilePicture } from "@/src/constants/constants";
+import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 
 const Sidebar = () => {
-  const { user, role, isLoading } = useStableAuthStatus({
-    redirectOnExpiry: true,
-    redirectTo: "/login",
-  });
+  const { user, role, isLoading } = useOptimizedAuth();
 
   const profilePicture = isLoading
     ? BlankProfilePicture
@@ -44,8 +41,6 @@ const Sidebar = () => {
           <button className="font-bricolage relative mt-5 inline-flex w-fit items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95">
             Edit profile information
           </button>
-
-        
         </div>
       </div>
     </aside>

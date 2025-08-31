@@ -35,8 +35,20 @@ export const OptimizedAuthGuard: React.FC<OptimizedAuthGuardProps> = ({
     requiresAuth,
     requiredRoles,
     redirectTo,
-    gracePeriod: 2000, // 2 second grace period
+    gracePeriod: 1000, // 1 second grace period
   });
+
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+    console.log("🔍 OptimizedAuthGuard Debug:", {
+      requiresAuth,
+      isLoading: authState.isLoading,
+      isAuthenticated: authState.isAuthenticated,
+      canRender: authState.canRender,
+      hasHydrated: authState.hasHydrated,
+      user: !!authState.user,
+      role: authState.role,
+    });
+  }
 
   if (authState.isLoading) {
     if (loadingFallback) {

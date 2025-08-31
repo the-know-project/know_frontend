@@ -1,3 +1,4 @@
+import { IconTrendingUp } from "@tabler/icons-react";
 import { TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -36,11 +37,11 @@ const EngagementInsights: React.FC<IEnagagementInsights> = ({
   const conversionStrokeDashOffset = isAnimated ? -topInterestedLength : 0;
 
   return (
-    <section className="bg-white">
+    <section className="flex flex-col bg-white py-12">
       {/* Header */}
       <div className="mb-6 flex items-center gap-8">
         <div className="rounded-full bg-orange-100 p-2">
-          <TrendingUp className="h-5 w-5 text-orange-500" />
+          <IconTrendingUp className="h-5 w-5 text-orange-500" />
         </div>
         <h2 className="stats_title">Buyer Engagement Insights</h2>
       </div>

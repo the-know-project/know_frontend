@@ -14,7 +14,7 @@ const ArtistAudienceStats: React.FC<IArtistAudienceStats> = ({
   audienceMetrics,
 }) => {
   return (
-    <div className="flex w-full flex-col items-center py-9 md:flex-row">
+    <div className="flex w-full flex-col items-center md:flex-row">
       <div className="flex w-full flex-col items-center gap-[20px] md:flex-row md:gap-0">
         {audienceMetrics.map((metric, index) => (
           <div

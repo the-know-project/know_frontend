@@ -1,4 +1,4 @@
-import { HomePageGuard } from "@/src/features/auth/guards";
+import { PageGuard } from "@/src/features/auth/guards";
 import Footer from "@/src/shared/layout/footer";
 import Nav from "@/src/shared/layout/navbar";
 import About from "./components/about";
@@ -8,7 +8,7 @@ import JoinCTA from "./components/joincta";
 
 export default function Home() {
   return (
-    <HomePageGuard>
+    <PageGuard>
       <div className="relative">
         <div className="w-full">
           <Nav />
@@ -19,6 +19,6 @@ export default function Home() {
       <JoinCTA />
       <Faq />
       <Footer />
-    </HomePageGuard>
+    </PageGuard>
   );
 }

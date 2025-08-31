@@ -1,15 +1,12 @@
 "use client";
-import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
+import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import { IUser } from "../../auth/state/interface/auth.interface";
 import ArtistProfileGrid from "../artist/components/artist-profile-grid";
 
 export const ProfileGrid = () => {
-  const { role, isLoading, user } = useStableAuthStatus({
-    redirectOnExpiry: true,
-    redirectTo: "/login",
-  });
+  const { canRender, user, isLoading, role } = useOptimizedAuth();
 
-  if (isLoading) {
+  if (isLoading && !canRender) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="animate-pulse">

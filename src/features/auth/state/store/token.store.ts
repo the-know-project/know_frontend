@@ -19,6 +19,15 @@ export const useTokenStore = create<ITokenState>()(
           });
         },
 
+        refreshAccessToken: (accessToken: string) => {
+          const currentState = get();
+          set({
+            accessToken,
+            isAuthenticated: true,
+            user: currentState.user,
+          });
+        },
+
         updateAccessToken: (accessToken: string) => {
           set({ accessToken });
         },
@@ -53,7 +62,6 @@ export const useTokenStore = create<ITokenState>()(
           isAuthenticated: state.isAuthenticated,
         }),
         migrate: (persistedState: any, version: number) => {
-          // Handle migration from old token structure
           if (version < 2) {
             return {
               user: persistedState?.user || null,
@@ -67,6 +75,9 @@ export const useTokenStore = create<ITokenState>()(
           if (state) {
             state.hasHydrated = true;
             state.accessToken = null;
+            if (state.user && !state.isAuthenticated) {
+              state.isAuthenticated = false; // Will trigger auth flow
+            }
           }
         },
       },

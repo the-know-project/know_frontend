@@ -90,16 +90,22 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
       const role = roleStore.role;
       const inGracePeriod = now < graceEndTime.current;
 
-      const isUserAuthenticated =
-        isAuthenticated && (hasToken || inGracePeriod);
+      if (hasToken && inGracePeriod) {
+        graceEndTime.current = Date.now();
+      }
+
+      const isUserAuthenticated = isAuthenticated && hasToken;
       const hasRequiredRole =
         requiredRoles.length === 0 || (role && requiredRoles.includes(role));
+
       const canRender =
         !requiresAuth ||
         (isUserAuthenticated && hasRequiredRole) ||
-        inGracePeriod;
+        (inGracePeriod && !hasToken);
+
       const shouldLoad =
-        !isHydrated || (requiresAuth && !isUserAuthenticated && inGracePeriod);
+        !isHydrated ||
+        (requiresAuth && !isUserAuthenticated && inGracePeriod && !hasToken);
 
       setAuthState({
         isAuthenticated: isUserAuthenticated,
@@ -126,10 +132,6 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
             router.push(redirectTo);
           }
         }, 100);
-      }
-
-      if (hasToken && inGracePeriod) {
-        graceEndTime.current = Date.now();
       }
     }, 50); // 50ms debounce
   };
@@ -160,8 +162,12 @@ export const useOptimizedAuth = (options: UseOptimizedAuthOptions = {}) => {
       if (
         state.isAuthenticated !== prevState.isAuthenticated ||
         state.accessToken !== prevState.accessToken ||
-        state.user?.id !== prevState.user?.id
+        state.user?.id !== prevState.user?.id ||
+        state.hasHydrated !== prevState.hasHydrated
       ) {
+        if (state.accessToken && !prevState.accessToken) {
+          graceEndTime.current = Date.now();
+        }
         updateAuthState();
       }
     });
@@ -213,4 +219,22 @@ export const useRequireRole = (
     requiresAuth: true,
     requiredRoles: roles,
   });
+};
+
+export const useAuthReady = () => {
+  const tokenStore = useTokenStore();
+  const roleStore = useRoleStore();
+
+  const isReady = tokenStore.hasHydrated && roleStore.hasHydrated;
+  const isAuthenticated =
+    tokenStore.isAuthenticated && !!tokenStore.accessToken;
+  const user = tokenStore.user;
+  const role = roleStore.role;
+
+  return {
+    isReady,
+    isAuthenticated,
+    user,
+    role,
+  };
 };

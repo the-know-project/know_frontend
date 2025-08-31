@@ -1,15 +1,12 @@
 "use client";
 import Image from "next/image";
-import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 import { IconLocation } from "@tabler/icons-react";
 import { BlankProfilePicture } from "@/src/constants/constants";
 import { useFetchArtistMetrics } from "../../metrics/hooks/use-fetch-artist-metrics";
+import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 
 const Sidebar = () => {
-  const { user, role, isLoading } = useStableAuthStatus({
-    redirectOnExpiry: true,
-    redirectTo: "/login",
-  });
+  const { user, role, isLoading } = useOptimizedAuth();
 
   const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
 

@@ -5,7 +5,7 @@ import { RouteProtectionResult } from "../types/route-protection.types";
 import { useEffect, useState } from "react";
 import { RouteProtectionUtils } from "../utils/route-protection.utils";
 import { useRoleStore } from "../state/store";
-import { useStableAuthStatus } from "./use-stable-auth-status";
+import { useOptimizedAuth } from "./use-optimized-auth";
 
 interface UseAuthGuardOptions {
   redirectOnUnauthorized?: boolean;
@@ -26,11 +26,7 @@ export const useAuthGuard = (options: UseAuthGuardOptions = {}) => {
 
   const router = useRouter();
   const pathName = usePathname();
-  const {
-    isAuthenticated,
-    isLoading: authLoading,
-    user,
-  } = useStableAuthStatus();
+  const { isAuthenticated, isLoading: authLoading, user } = useOptimizedAuth();
   const role = useRoleStore((state) => state.role);
 
   const [guardState, setGuardState] = useState<AuthGuardState>({

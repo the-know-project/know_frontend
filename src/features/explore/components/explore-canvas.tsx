@@ -2,7 +2,6 @@
 
 import ArtDetails from "@/src/shared/components/art-details";
 import { useEffect } from "react";
-import { useCanFetchData } from "@/src/hooks/useStableAuth";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { TCart } from "../../cart/types/cart.types";
@@ -16,6 +15,7 @@ import { TAsset } from "../types/explore.types";
 import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import InfiniteLoadingIndicator from "./infinite-loading-indicator";
+import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
 
 interface ExploreCanvasProps {
   categories?: string[];

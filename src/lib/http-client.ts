@@ -134,21 +134,13 @@ class HttpClient {
                   .getState()
                   .setAccessToken(refreshResponse.accessToken, userToStore);
               } else {
-                console.warn(
-                  "⚠️ HTTP Client: No user data available, but updating token anyway",
+                console.log(
+                  "🔄 HTTP Client: Using refreshAccessToken to maintain existing user state",
                 );
-                // Force update token and maintain authentication state
                 if (typeof window !== "undefined") {
-                  const currentState = useTokenStore.getState();
                   useTokenStore
                     .getState()
-                    .setAccessToken(refreshResponse.accessToken, {
-                      id: currentState.user?.id || "unknown",
-                      email: currentState.user?.email || "unknown",
-                      firstName: currentState.user?.firstName || "User",
-                      imageUrl: currentState.user?.imageUrl || "",
-                      role: currentState.user?.role || "buyer",
-                    });
+                    .refreshAccessToken(refreshResponse.accessToken);
                 }
               }
 

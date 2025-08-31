@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
-import { useCanFetchData } from "@/src/hooks/useStableAuth";
 import { useTokenStore } from "../../auth/state/store";
 import { fetchUserCart } from "../api/fetch-user-cart/route";
 import { CartError } from "../error/cart.error";
 import { IUserCart } from "../types/cart.types";
+import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
 
 export const useFetchUserCart = () => {
   const canFetch = useCanFetchData();

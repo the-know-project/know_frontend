@@ -23,6 +23,7 @@ export interface ITokenState {
   hasHydrated: boolean;
 
   setAccessToken: (accessToken: string, user: IUser) => void;
+  refreshAccessToken: (accessToken: string) => void;
   updateAccessToken: (accessToken: string) => void;
   clearAuth: () => void;
   getAccessToken: () => string | null;

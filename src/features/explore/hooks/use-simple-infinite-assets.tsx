@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
-import { useCanFetchData } from "@/src/hooks/useStableAuth";
 import { fetchAllExploreAssets } from "../api/fetch-asset/route";
 import { ExploreErrorMessages } from "../data/explore.data";
 import { ExploreError } from "../errors/explore.error";
@@ -12,6 +11,7 @@ import {
 } from "../types/explore.types";
 import { useTokenStore } from "../../auth/state/store";
 import { useRoleStore } from "../../auth/state/store";
+import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
 
 interface UseSimpleInfiniteAssetsProps {
   categories?: string[];

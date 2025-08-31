@@ -7,12 +7,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useStableAuthStatus } from "../../auth/hooks/use-stable-auth-status";
 import NotificationCard from "../../notifications/components/notification-card";
 import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
 import { INotificationData } from "../../notifications/types/notification.types";
 import ProfileModal from "../../profile/components/profile-modal";
 import ExploreForm from "./explore-form";
+import {
+  useCanFetchData,
+  useAuthReady,
+} from "../../auth/hooks/use-optimized-auth";
 
 interface IExploreNavOptions {
   toggleShareButton?: boolean;
@@ -32,14 +35,8 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   // Refs for click outside detection
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const {
-    user,
-    role,
-    isLoading: authLoading,
-  } = useStableAuthStatus({
-    redirectOnExpiry: true,
-    redirectTo: "/login",
-  });
+  const canFetchData = useCanFetchData();
+  const { user, role, isReady } = useAuthReady();
   const router = useRouter();
   const [isSearchToggled, setIsSearchToggled] = useState<boolean>(false);
 
@@ -50,14 +47,14 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   }, []);
 
   useEffect(() => {
-    if (isClient && !authLoading) {
+    if (isClient && canFetchData && isReady) {
       if (user && notificationData?.data) {
         setNotifications(notificationData.data);
       } else {
         setNotifications(MockNotifications);
       }
     }
-  }, [isClient, user, notificationData, authLoading]);
+  }, [isClient, user, notificationData, canFetchData, isReady]);
 
   // Click outside handler
   useEffect(() => {
@@ -178,7 +175,8 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
         </div>
 
         <div className="flex items-center gap-4 sm:gap-5">
-          {!authLoading &&
+          {canFetchData &&
+          isReady &&
           user &&
           role?.toLowerCase() === "artist" &&
           toggleShareButton ? (
@@ -188,7 +186,10 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
             >
               <p className="block">Share works</p>
             </button>
-          ) : !authLoading && user && role?.toLowerCase() === "buyer" ? (
+          ) : canFetchData &&
+            isReady &&
+            user &&
+            role?.toLowerCase() === "buyer" ? (
             <button
               className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#1E3A8A] sm:text-[16px]"
               onClick={handleCtaNavigate}
@@ -243,7 +244,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
                 </AnimatePresence>
               </div>
             </div>
-            {!authLoading && user?.imageUrl ? (
+            {canFetchData && isReady && user?.imageUrl ? (
               <div className="flex w-full flex-col" ref={profileRef}>
                 <button onClick={handleProfileClicked} className="-mt-1">
                   <Image

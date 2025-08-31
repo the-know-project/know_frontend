@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
 import { ArtistError } from "../../profile/artist/error/artist.error";
 import { IArtistMetricsDto } from "../../profile/types/profile.types";
-import { useCanFetchData } from "@/src/hooks/useStableAuth";
 import { fetchArtistMetrics } from "../api/artist-metrics/route";
+import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
 
 export const useFetchArtistMetrics = () => {
   const canFetch = useCanFetchData();

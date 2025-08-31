@@ -1,22 +1,17 @@
 "use client";
 
-import { audience } from "@/src/assets";
-import Image from "next/image";
 import ArtistAudienceStats from "./artist-audience-stats";
 import EngagementInsights from "./engagement-insights";
 import { useFetchArtistMetrics } from "../../../metrics/hooks/use-fetch-artist-metrics";
-import { showLog } from "@/src/utils/logger";
 import {
   parseAudienceMetrics,
   parseInsightData,
 } from "../utils/parse-audience-data";
+import ArtistSalesStats from "./artist-sales-stats";
+import { FaPeopleGroup } from "react-icons/fa6";
 
 const Stats = () => {
   const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
-  showLog({
-    context: `Artist Metrics`,
-    data: metrics,
-  });
 
   if (metricsLoading) return <div>Loading...</div>;
   const audienceMetrics = parseAudienceMetrics({
@@ -32,17 +27,11 @@ const Stats = () => {
   return (
     <section className="flex w-full flex-col">
       {/*Audience Stats*/}
-      <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col py-12">
         <div className="flex items-center gap-8">
-          <Image
-            src={audience}
-            alt="audience"
-            width={40}
-            height={40}
-            quality={100}
-            priority
-            className="object-center"
-          />
+          <div className="rounded-full bg-orange-100 p-2">
+            <FaPeopleGroup className="h-5 w-5 text-orange-500" />
+          </div>
           <h3 className="stats_title">Your audience</h3>
         </div>
         <ArtistAudienceStats audienceMetrics={audienceMetrics} />
@@ -54,6 +43,10 @@ const Stats = () => {
           topInterestedBuyers={insightMetrics.topInterestedBuyer}
           conversionRate={insightMetrics.conversionRate}
         />
+      </div>
+
+      <div className="flex w-full flex-col">
+        <ArtistSalesStats />
       </div>
     </section>
   );
