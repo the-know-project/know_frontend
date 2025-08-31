@@ -74,7 +74,7 @@ const ArtistChart = () => {
               type="linear"
               stroke="var(--color-desktop)"
               strokeWidth={2}
-              dot={false}
+              dot={true}
             />
           </LineChart>
         </ChartContainer>
