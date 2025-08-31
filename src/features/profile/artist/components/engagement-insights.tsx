@@ -113,7 +113,7 @@ const EngagementInsights: React.FC<IEnagagementInsights> = ({
         <div className="flex flex-col gap-3 sm:gap-4">
           {/* Top Interested Buyers */}
           <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-[#F97316]" />
+            <div className="flex h-3 w-3 rounded-full bg-[#F97316] p-1" />
             <span className="stats_content motion-preset-expand motion-duration-300">
               Top Interested Buyers ({topInterestedBuyers}%)
             </span>
