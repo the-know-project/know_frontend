@@ -152,7 +152,6 @@ export const GuestOnlyGuard: React.FC<{ children: React.ReactNode }> = ({
     return <OptimizedLoadingFallback />;
   }
 
-  // If authenticated, show loading while redirect happens
   if (isAuthenticated) {
     return <OptimizedLoadingFallback />;
   }

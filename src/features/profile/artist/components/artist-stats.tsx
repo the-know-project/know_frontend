@@ -10,6 +10,7 @@ import {
 import ArtistSalesStats from "./artist-sales-stats";
 import { FaPeopleGroup } from "react-icons/fa6";
 import ArtistPerformance from "./artist-performance";
+import { DummyPostsPerformance } from "../data/artist.data";
 
 const Stats = () => {
   const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
@@ -51,7 +52,7 @@ const Stats = () => {
       </div>
 
       <div className="flex w-full flex-col">
-        <ArtistPerformance />
+        <ArtistPerformance posts={DummyPostsPerformance} />
       </div>
     </section>
   );
