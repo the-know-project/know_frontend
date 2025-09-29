@@ -24,6 +24,10 @@ import { SignUpFormSchema } from "../schema/auth.schema";
 import { ISignUpForm, ISignUpResponseDto } from "../types/auth.types";
 import { useGoogleLogin } from "../hooks/use-google-login";
 import { useSendOtp } from "../hooks/use-send-otp";
+import { SendOtpResponseDto } from "../dto/auth.dto";
+import z from "zod";
+
+type SendOtpData = z.infer<typeof SendOtpResponseDto>;
 
 const SignupForm = () => {
   const { mutateAsync: handleSendOtp, isPending } = useSendOtp();
@@ -45,8 +49,8 @@ const SignupForm = () => {
     },
   });
 
-  const handleToast = (data: ISignUpResponseDto) => {
-    if (data.status === 201) {
+  const handleToast = (data: SendOtpData, ctx: ISignUpForm) => {
+    if (data.status === 201 || data.status === 200) {
       toast("", {
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
@@ -60,7 +64,7 @@ const SignupForm = () => {
           fontWeight: "bolder",
         },
       });
-      router.push("/otp");
+      router.push("/otp?email=${ENCODEURIComponent(ctx.email)}");
     } else if (data.status === 409) {
       toast("", {
         icon: <ToastIcon />,
@@ -76,35 +80,6 @@ const SignupForm = () => {
         },
       });
       router.push("/login");
-    } else if (data.status === 200) {
-      toast("", {
-        icon: <ToastIcon />,
-        description: <ToastDescription description={data.message} />,
-        style: {
-          backdropFilter: "-moz-initial",
-          opacity: "-moz-initial",
-          backgroundColor: " oklch(62.7% 0.194 149.214)",
-          fontSize: "15px",
-          font: "Space Grotesk",
-          color: "#ffffff",
-          fontWeight: "bolder",
-        },
-      });
-      router.push("/otp");
-    } else if (data.status === 401) {
-      toast("", {
-        icon: <ToastIcon />,
-        description: <ToastDescription description={data.message} />,
-        style: {
-          backdropFilter: "-moz-initial",
-          opacity: "-moz-initial",
-          backgroundColor: "oklch(62.8% 0.258 29.234)",
-          fontSize: "15px",
-          font: "Space Grotesk",
-          color: "#ffffff",
-          fontWeight: "bolder",
-        },
-      });
     } else {
       toast("", {
         icon: <ToastIcon />,
@@ -124,9 +99,24 @@ const SignupForm = () => {
 
   const onSubmit = async (ctx: ISignUpForm) => {
     setActiveButton("regular");
-    const data = await handleSendOtp(ctx);
-    handleToast(data);
-    setActiveButton(null);
+    try {
+      const data = await handleSendOtp(ctx);
+      handleToast(data, ctx);
+    } catch (error) {
+      console.error("Failed to send OTP:", error);
+      handleToast(
+        {
+          status: 500,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        },
+        ctx,
+      );
+    } finally {
+      setActiveButton(null);
+    }
   };
 
   const handleGoogleSignup = (e: React.FormEvent) => {

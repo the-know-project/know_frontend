@@ -156,6 +156,7 @@ const ExploreCanvasContent = ({
             >
               <ExploreCard
                 id={item.fileId}
+                userId={item.userId}
                 artWork={item.url}
                 artName={item.fileName}
                 description={item.description}

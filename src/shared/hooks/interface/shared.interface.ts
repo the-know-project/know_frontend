@@ -1,5 +1,6 @@
 export interface IExploreContent {
   id: string;
+  userId: string;
   creatorProfileUrl: string;
   creatorName: string;
   artName: string;

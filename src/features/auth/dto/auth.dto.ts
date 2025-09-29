@@ -16,13 +16,13 @@ const AuthSuccessDataDto = z.object({
 export const SendOtpResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
-  data: z.string().min(1).max(100).optional(),
+  data: z.string().min(1).max(100).nullable().optional(),
 });
 
 export const ValidateOtpResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
-  data: z.string().min(1).max(100).optional(),
+  data: z.string().min(1).max(100).nullable().optional(),
 });
 
 export const ResetPasswordResponseDto = z.object({

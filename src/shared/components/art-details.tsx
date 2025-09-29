@@ -2,6 +2,9 @@
 
 import { empty } from "@/src/assets";
 import { BlankProfilePicture } from "@/src/constants/constants";
+import ArtistInfoCard from "@/src/features/explore/components/artist-info-card";
+import ExploreArtistInfo from "@/src/features/explore/components/explore-artist-info";
+import ExploreCommentSection from "@/src/features/explore/components/explore-comment-section";
 import {
   useIsExploreContentToggled,
   useToggleExploreContent,
@@ -201,6 +204,26 @@ const ArtDetails = () => {
                       </div>
                     </div>
                   </div>
+
+                  <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] p-10 px-20 lg:grid-cols-3">
+                    {/* Left side for comments */}
+                    <div className="lg:col-span-2">
+                      <ExploreCommentSection />
+                    </div>
+                    {/* Right side for artist info */}
+                    <div>
+                      {exploreContent?.userId && (
+                        <ExploreArtistInfo
+                          artistId={"artist-123"}
+                          artworkId={"artwork-456"}
+                          onTagSelect={(tags) =>
+                            console.log("Selected tags:", tags)
+                          }
+                          selectedTags={["car", "photography"]}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -210,7 +233,7 @@ const ArtDetails = () => {
                   {exploreContent?.categories?.map((category, index) => (
                     <span
                       key={index}
-                      className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-full bg-neutral-600/50 px-2 py-1 text-xs font-medium tracking-wider text-white lowercase"
+                      className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-md bg-neutral-600/50 px-2 py-1 text-xs font-medium tracking-wider text-white lowercase"
                       style={{
                         animationDelay: `${index * 150}ms`,
                       }}

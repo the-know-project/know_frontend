@@ -16,6 +16,7 @@ import { useToggleExploreContent } from "../state/explore-content.store";
 
 interface ExploreCardProps {
   id: number | string;
+  userId: string;
   artistName: string;
   artName: string;
   artWork: string;
@@ -30,6 +31,7 @@ interface ExploreCardProps {
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
   id,
+  userId,
   artistName,
   artName,
   artWork,
@@ -117,6 +119,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               id as string,
               {
                 id: id as string,
+                userId: userId,
                 artName,
                 artWorkUrl: artWork,
                 description,
