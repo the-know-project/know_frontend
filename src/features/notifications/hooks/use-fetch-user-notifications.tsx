@@ -5,12 +5,13 @@ import { fetchUserNotifications } from "../api/fetch-notifications/route";
 import { NOTIFICATION_ERROR_MESSAGES } from "../data/notifications.data";
 import { NotificationError } from "../error/notification.error";
 
-export const useFetchUserNotifications = () => {
+export const useFetchUserNotifications = (options?: { enabled?: boolean }) => {
   const user = useTokenStore((state) => state.user);
 
   return useQuery({
     queryKey: [`fetch-user-notifications-${user?.id}`],
-    enabled: !!user,
+    enabled:
+      options?.enabled !== undefined ? options.enabled && !!user : !!user,
     queryFn: async () => {
       if (!user) {
         throw new Error("User not available");

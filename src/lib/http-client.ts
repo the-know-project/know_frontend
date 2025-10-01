@@ -90,7 +90,8 @@ class HttpClient {
           }
 
           const currentToken = useTokenStore.getState().getAccessToken();
-          if (currentToken) {
+          if (!currentToken) {
+            return Promise.reject(error);
           }
 
           originalRequest._retry = true;
@@ -529,6 +530,10 @@ class HttpClient {
   }
 
   public async logout(): Promise<void> {
+    const tokenStore = useTokenStore.getState();
+    // Clear auth state first
+    tokenStore.clearAuth();
+
     try {
       await this.axiosInstance.post(
         "/api/auth/logout",
@@ -541,11 +546,9 @@ class HttpClient {
       console.log("✅ HTTP Client: Server logout successful");
     } catch (error) {
       console.warn(
-        "⚠️ HTTP Client: Server logout failed, clearing local state anyway:",
+        "⚠️ HTTP Client: Server logout failed, but local state is already cleared:",
         error,
       );
-    } finally {
-      this.handleAuthFailure();
     }
   }
 }

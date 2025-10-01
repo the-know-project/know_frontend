@@ -4,51 +4,66 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { CartError } from "../error/cart.error";
 import { removeFromCart } from "../api/remove-from-cart/route";
 
-export const useRemoveFromCart = () => {
+
+export type RemoveFromCartResult = {
+  mutate: (fileId: string) => void;
+  mutateAsync: (fileId: string) => Promise<any | null>;
+  isPending: boolean;
+  isError: boolean;
+  error: Error | null;
+  status: 'idle' | 'pending' | 'success' | 'error';
+};
+
+export const useRemoveFromCart = ({ enabled }: { enabled: boolean }): RemoveFromCartResult => {
   const queryClient = useQueryClient();
-  const userId = useTokenStore((state) => state.user?.id);
+  const user = useTokenStore((state) => state.user);
 
-  if (!userId) {
-    return {
-      mutateAsync: async () => {},
-      isPending: false,
-      isSuccess: false,
-      isError: false,
-      error: null,
-      data: null,
-    };
-  }
-  return useMutation({
-    mutationKey: [`remove-from-cart-${userId}`],
+  const { mutate, mutateAsync, isPending, isError, error, status } = useMutation({
     mutationFn: async (fileId: string) => {
-      const result = await ResultAsync.fromPromise(
-        removeFromCart({
-          userId,
-          fileId,
-        }),
-        (error) => new CartError(`Error removing item to cart ${error}`),
-      ).andThen((data) => {
-        if (data.status === 200) {
-          return ok(data);
-        } else {
-          return err(
-            new CartError(`An error occurred while calling function ${data}`),
-          );
-        }
-      });
-
-      if (result.isErr()) {
-        return result.error;
+      if (!enabled || !user?.id) {
+        throw new CartError('Cannot remove from cart: Operation not allowed');
       }
 
-      console.log(result.value);
-      return result.value;
+      const result = await ResultAsync.fromPromise(
+        removeFromCart({
+          userId: user.id,
+          fileId,
+        }),
+        (error) => new CartError(`Failed to remove item from cart: ${error}`),
+      );
+
+      const finalResult = await result.andThen((data) => {
+        if (data.status === 200) {
+          return ok(data);
+        }
+        return err(new CartError(`Failed to remove item: ${data}`));
+      });
+
+      if (finalResult.isErr()) {
+        throw finalResult.error;
+      }
+
+      return finalResult.value;
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [`fetch-user-cart-${userId}`],
-      });
+      if (user?.id) {
+        queryClient.invalidateQueries({
+          queryKey: ['cart', user.id],
+        });
+      }
     },
   });
+
+  return {
+    mutate,
+    mutateAsync: async (fileId: string) => {
+      if (!enabled || !user?.id) return null;
+      return mutateAsync(fileId);
+    },
+    isPending,
+    isError,
+    error,
+    status
+  };
 };

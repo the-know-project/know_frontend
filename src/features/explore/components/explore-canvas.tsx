@@ -32,7 +32,7 @@ const ExploreCanvasContent = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
-  const canFetch = useCanFetchData();
+  // const canFetch = useCanFetchData();
 
   const assetsHookResult = useSimpleInfiniteAssets({
     categories,
@@ -111,7 +111,7 @@ const ExploreCanvasContent = ({
     }
   }, [isCartLoading, cartDataResult, initCart]);
 
-  if (!canFetch || (isLoading && assets.length === 0 && isCartLoading)) {
+  if (isLoading && assets.length === 0) {
     return <ExploreCardSkeletonGrid />;
   }
 
@@ -195,6 +195,11 @@ const ExploreCanvasContent = ({
 };
 
 const ExploreCanvas = (props: ExploreCanvasProps) => {
+  const canFetch = useCanFetchData();
+
+  if (!canFetch) {
+    return <ExploreCardSkeletonGrid />;
+  }
   return <ExploreCanvasContent {...props} />;
 };
 

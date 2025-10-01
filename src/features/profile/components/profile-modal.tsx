@@ -6,6 +6,8 @@ import {
 } from "@/src/constants/constants";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useLogout } from "../../auth/hooks";
+import Spinner from "@/src/shared/components/spinner";
 
 interface ProfileModalProps {
   firstName: string;
@@ -21,19 +23,23 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   role,
 }) => {
   const router = useRouter();
+  const { mutate: handleLogout, isPending: isLoggingOut } = useLogout();
   const userNavigationData =
     role.toLowerCase() === "buyer"
       ? ProfileModalItemsBuyer
       : ProfileModalItemsArtist;
 
   const handleNavigation = (ctx: string) => {
-    console.log(ctx);
-    if (ctx.toLowerCase() === "my profile") {
+    const action = ctx.toLowerCase();
+
+    if (action === "my profile") {
       if (role.toLowerCase() === "buyer") {
         router.push("/buyer-profile");
       } else if (role.toLowerCase() === "artist") {
         router.push("/artist-profile");
       }
+    } else if (action === "sign out") {
+      handleLogout();
     }
   };
 
@@ -61,20 +67,25 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       </div>
       <hr className="mt-[30px] border-t border-neutral-200" />
       <div className="mt-[20px] flex w-full flex-col items-start gap-[10px] px-5">
-        {userNavigationData.map((item, index) => (
-          <button
-            key={item.id}
-            className="motion-preset-blur-down motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
-            style={{
-              animationDelay: `${index * 100}ms`,
-            }}
-            onClick={() => handleNavigation(item.title)}
-          >
-            <p className="font-bricolage text-sm text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
-              {item.title}
-            </p>
-          </button>
-        ))}
+        {userNavigationData.map((item, index) => {
+          const isSignOutButton = item.title.toLowerCase() === "sign out";
+          return (
+            <button
+              key={item.id}
+              className="motion-preset-blur-down motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
+              style={{
+                animationDelay: `${index * 100}ms`,
+              }}
+              onClick={() => handleNavigation(item.title)}
+              disabled={isSignOutButton && isLoggingOut}
+            >
+              {isSignOutButton && isLoggingOut && <Spinner />}
+              <p className="font-bricolage text-sm text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
+                {item.title}
+              </p>
+            </button>
+          );
+        })}
       </div>
     </section>
   );

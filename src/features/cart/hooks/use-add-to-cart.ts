@@ -4,7 +4,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { addToCart } from "../api/add-to-cart/route";
 import { CartError } from "../error/cart.error";
 
-export const useAddToCart = () => {
+export const useAddToCart = ({ enabled}: { enabled: boolean}) => {
   const queryClient = useQueryClient();
   const userId = useTokenStore((state) => state.user?.id);
 
@@ -21,6 +21,7 @@ export const useAddToCart = () => {
   return useMutation({
     mutationKey: [`add-to-cart-${userId}`],
     mutationFn: async (fileId: string) => {
+      if(!enabled) return;
       const result = await ResultAsync.fromPromise(
         addToCart({
           userId,

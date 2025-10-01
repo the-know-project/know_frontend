@@ -33,11 +33,14 @@ export const useAuth = () => {
       },
 
       logout: async () => {
+        // Clear auth state first to prevent any further API calls
+        tokenStore.clearAuth();
+        roleStore.clearRole();
+
         try {
           await httpClient.logout();
         } catch (error) {
           console.warn("Logout error:", error);
-          tokenStore.clearAuth();
           roleStore.clearRole();
         }
       },

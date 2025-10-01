@@ -56,15 +56,16 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     initialLikeCount: likeCount,
   });
 
-  const { isItemInCart, toggleCart } = useCart({
-    fileId: id as string,
-  });
-
   const toggleExploreContent = useToggleExploreContent();
 
   const showCartButton = useMemo(() => {
     return isCartHydrated && role.toLowerCase() === "buyer" && isListed;
   }, [isCartHydrated, role, isListed]);
+
+  const { isItemInCart, toggleCart } = useCart({
+    fileId: id as string,
+    enabled: showCartButton,
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -10,12 +10,13 @@ import { useRemoveFromCart } from "./use-remove-from-cart";
 
 interface IUseCartProps {
   fileId: string;
+  enabled?: boolean;
 }
 
-export const useCart = ({ fileId }: IUseCartProps) => {
-  const { mutateAsync: handleAddToCart, isPending: isAdding } = useAddToCart();
+export const useCart = ({ fileId, enabled = true }: IUseCartProps) => {
+  const { mutateAsync: handleAddToCart, isPending: isAdding } = useAddToCart({ enabled });
   const { mutateAsync: handleRemoveFromCart, isPending: isRemoving } =
-    useRemoveFromCart();
+    useRemoveFromCart({ enabled });
 
   const isItemInCart = useIsItemInCart(fileId);
   const totalItemsInCart = useGetTotalItemsCount();

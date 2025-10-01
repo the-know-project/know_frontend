@@ -1,6 +1,7 @@
 "use client";
 
 import { MockNotifications } from "@/src/constants/constants";
+import { type ReactElement } from "react";
 import { IconBellRinging, IconSearch, IconUser } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -23,7 +24,7 @@ interface IExploreNavOptions {
 
 const ExploreNav: React.FC<IExploreNavOptions> = ({
   toggleShareButton = true,
-}) => {
+}): ReactElement => {
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
   const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
@@ -32,7 +33,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
     useState<INotificationData[]>(MockNotifications);
   const [isClient, setIsClient] = useState(false);
 
-  // Refs for click outside detection
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   const canFetchData = useCanFetchData();
@@ -47,16 +47,34 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   }, []);
 
   useEffect(() => {
-    if (isClient && canFetchData && isReady) {
-      if (user && notificationData?.data) {
-        setNotifications(notificationData.data);
-      } else {
-        setNotifications(MockNotifications);
-      }
+    if (isClient && !user) {
+      setNotifications([]);
+      setIsNotificationClicked(false);
+      setIsProfileClicked(false);
+      setShouldShake(false);
     }
+  }, [isClient, user]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const updateNotifications = () => {
+      if (isClient && canFetchData && isReady && user) {
+        if (mounted && notificationData?.data) {
+          setNotifications(notificationData.data);
+        } else if (mounted) {
+          setNotifications(MockNotifications);
+        }
+      }
+    };
+
+    updateNotifications();
+
+    return () => {
+      mounted = false;
+    };
   }, [isClient, user, notificationData, canFetchData, isReady]);
 
-  // Click outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -94,19 +112,28 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   };
 
   const handleCtaNavigate = () => {
-    if (role?.toLowerCase() === "artist") {
+    // Guard against undefined role
+    if (!role || !user) return;
+
+    if (role.toLowerCase() === "artist") {
       router.push("/upload");
-    } else if (role?.toLowerCase() === "buyer") {
+    } else if (role.toLowerCase() === "buyer") {
       router.push("/cart");
     }
   };
 
   const handleNotificationClicked = () => {
+    // Only allow notification click if user is authenticated
+    if (!user || !isReady) return;
+
     setIsNotificationClicked((prev) => !prev);
     setIsProfileClicked(false);
   };
 
   const handleProfileClicked = () => {
+    // Only allow profile click if user is authenticated
+    if (!user || !isReady) return;
+
     setIsProfileClicked((prev) => !prev);
     setIsNotificationClicked(false);
   };
@@ -115,16 +142,22 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
     setIsSearchToggled((prev) => !prev);
   };
 
+  // Shake animation for notifications (only when user is authenticated)
   useEffect(() => {
-    if (notifications.length > 0) {
+    if (notifications.length > 0 && user && isReady) {
       const interval = setInterval(() => {
         setShouldShake(true);
         setTimeout(() => setShouldShake(false), 1000);
       }, 5000);
 
       return () => clearInterval(interval);
+    } else {
+      setShouldShake(false);
     }
-  }, [notifications.length]);
+  }, [notifications.length, user, isReady]);
+
+  // Check if user is fully authenticated
+  const isAuthenticated = canFetchData && isReady && user;
 
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
@@ -175,9 +208,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
         </div>
 
         <div className="flex items-center gap-4 sm:gap-5">
-          {canFetchData &&
-          isReady &&
-          user &&
+          {isAuthenticated &&
           role?.toLowerCase() === "artist" &&
           toggleShareButton ? (
             <button
@@ -186,70 +217,76 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
             >
               <p className="block">Share works</p>
             </button>
-          ) : canFetchData &&
-            isReady &&
-            user &&
-            role?.toLowerCase() === "buyer" ? (
+          ) : isAuthenticated && role?.toLowerCase() === "buyer" ? (
             <button
               className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#1E3A8A] sm:text-[16px]"
               onClick={handleCtaNavigate}
             >
               <p className="block">View cart</p>
             </button>
-          ) : (
-            <></>
-          )}
+          ) : null}
 
           <div className="flex items-center gap-2 bg-transparent px-2">
             <button className="flex sm:hidden" onClick={handleSearchToggled}>
               <IconSearch width={32} height={32} className="text-neutral-600" />
             </button>
+
             <div
               className="relative flex w-full flex-col"
               ref={notificationRef}
             >
-              <button className="relative" onClick={handleNotificationClicked}>
+              <button
+                className="relative"
+                onClick={handleNotificationClicked}
+                disabled={!isAuthenticated}
+              >
                 <IconBellRinging
                   className={`h-[32px] w-[32px] cursor-pointer text-neutral-600 ${
-                    notifications.length > 0 && shouldShake
+                    notifications.length > 0 && shouldShake && isAuthenticated
                       ? "motion-preset-shake motion-duration-700"
                       : ""
-                  }`}
+                  } ${!isAuthenticated ? "cursor-not-allowed opacity-50" : ""}`}
                 />
-                {notifications.length > 0 && (
+                {notifications.length > 0 && isAuthenticated && (
                   <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 p-2 text-[10px] font-medium text-white">
                     {notifications.length > 99 ? "99+" : notifications.length}
                   </span>
                 )}
               </button>
+
               <div className="absolute top-[50px] right-[250px] z-50 w-full lg:right-[270px]">
                 <AnimatePresence>
-                  {isNotificationClicked && (
-                    <motion.div
-                      variants={variants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      transition={{
-                        delay: 0.05,
-                        ease: "easeInOut",
-                        duration: 0.09,
-                      }}
-                    >
-                      {notifications.length > 0 && (
+                  {isNotificationClicked &&
+                    isAuthenticated &&
+                    notifications.length > 0 && (
+                      <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        transition={{
+                          delay: 0.05,
+                          ease: "easeInOut",
+                          duration: 0.09,
+                        }}
+                      >
                         <NotificationCard data={notifications} />
-                      )}
-                    </motion.div>
-                  )}
+                      </motion.div>
+                    )}
                 </AnimatePresence>
               </div>
             </div>
+
             {canFetchData && isReady && user?.imageUrl ? (
               <div className="flex w-full flex-col" ref={profileRef}>
-                <button onClick={handleProfileClicked} className="-mt-1">
+                <button
+                  onClick={handleProfileClicked}
+                  className="-mt-1"
+                  disabled={!isAuthenticated}
+                >
                   <Image
                     alt="user profile"
-                    src={user?.imageUrl}
+                    src={user?.imageUrl || ""}
                     width={32}
                     height={32}
                     className="rounded-full object-contain object-center"
@@ -258,7 +295,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
 
                 <div className="absolute top-[100px] right-[50px] z-50 w-fit sm:top-[80px]">
                   <AnimatePresence>
-                    {isProfileClicked && (
+                    {isProfileClicked && isAuthenticated && (
                       <motion.div
                         variants={variants}
                         initial="hidden"
@@ -271,9 +308,9 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
                         }}
                       >
                         <ProfileModal
-                          firstName={user.firstName}
-                          emailAddress={user.email}
-                          imageUrl={user.imageUrl}
+                          firstName={user?.firstName || ""}
+                          emailAddress={user?.email || ""}
+                          imageUrl={user?.imageUrl || ""}
                           role={role || ""}
                         />
                       </motion.div>
