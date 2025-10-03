@@ -6,6 +6,7 @@ import { ArtistError } from "../error/artist.error";
 import { TUserAssetData } from "../dto/artist.dto";
 import { IFetchUserAsset } from "../../types/profile.types";
 import { useTokenStore } from "@/src/features/auth/state/store";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
 
 interface UseSimpleInfiniteUserPostsProps {
   userId?: string;
@@ -29,7 +30,7 @@ export const useSimpleInfiniteUserPosts = ({
   userId,
   limit = 12,
 }: UseSimpleInfiniteUserPostsProps = {}) => {
-  const currentUserId = useTokenStore((state) => state.user?.id);
+  const currentUserId = useTokenStore(selectUserId);
   const targetUserId = userId || currentUserId;
 
   const [allPosts, setAllPosts] = useState<TUserAssetData[]>([]);
@@ -151,7 +152,7 @@ export const useSimpleInfiniteUserPosts = ({
 
 // Legacy hook for backward compatibility
 export const useFetchUserPosts = () => {
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
 
   if (!userId) {
     return {

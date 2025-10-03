@@ -12,6 +12,13 @@ import {
 import { useTokenStore } from "../../auth/state/store";
 import { useRoleStore } from "../../auth/state/store";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
+import {
+  selectHasHydrated,
+  selectIsAuthenticated,
+  selectUser,
+  selectUserId,
+} from "../../auth/state/selectors/token.selectors";
+import { selectRole } from "../../auth/state/selectors/role.selectors";
 
 interface UseSimpleInfiniteAssetsProps {
   categories?: string[];
@@ -30,11 +37,11 @@ export const useSimpleInfiniteAssets = ({
   limit = 12,
 }: UseSimpleInfiniteAssetsProps = {}) => {
   const canFetch = useCanFetchData();
-  const userId = useTokenStore((state) => state.user?.id);
-  const user = useTokenStore((state) => state.user);
-  const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
-  const hasHydrated = useTokenStore((state) => state.hasHydrated);
-  const role = useRoleStore((state) => state.role);
+  const userId = useTokenStore(selectUserId);
+  const user = useTokenStore(selectUser);
+  const isAuthenticated = useTokenStore(selectIsAuthenticated);
+  const hasHydrated = useTokenStore(selectHasHydrated);
+  const role = useRoleStore(selectRole);
 
   const [allAssets, setAllAssets] = useState<TAsset[]>([]);
   const [currentPage, setCurrentPage] = useState(1);

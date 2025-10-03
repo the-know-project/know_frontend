@@ -6,6 +6,7 @@ import { ExploreErrorMessages } from "../data/explore.data";
 import { ExploreError } from "../errors/explore.error";
 import { TFetchExploreAsset, TAsset } from "../types/explore.types";
 import { useTokenStore } from "../../auth/state/store";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 interface UseInfiniteExploreAssetsProps {
   categories?: string[];
@@ -23,7 +24,7 @@ export const useInfiniteExploreAssets = ({
   filters = {},
   limit = 12,
 }: UseInfiniteExploreAssetsProps = {}) => {
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
   const queryClient = useQueryClient();
 
   const [allAssets, setAllAssets] = useState<TAsset[]>([]);

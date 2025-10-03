@@ -4,9 +4,10 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { TLikeAsset } from "../types/explore.types";
 import { ExploreError } from "../errors/explore.error";
 import { unLikeAsset } from "../api/unlike-asset/route";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useUnlikeAsset = () => {
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
 
   return useMutation({
     mutationKey: [`unlike-asset-${userId}`],

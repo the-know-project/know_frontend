@@ -5,10 +5,11 @@ import { ArtistError } from "../../profile/artist/error/artist.error";
 import { IArtistMetricsDto } from "../../profile/types/profile.types";
 import { fetchArtistMetrics } from "../api/artist-metrics/route";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useFetchArtistMetrics = () => {
   const canFetch = useCanFetchData();
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
 
   return useQuery({
     queryKey: [`artist-${userId}-metrics`],

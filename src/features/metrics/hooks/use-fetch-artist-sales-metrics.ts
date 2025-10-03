@@ -9,10 +9,11 @@ import {
   IArtistYearlySalesDataResponse,
   ISalesDuration,
 } from "../types/metrics.types";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useFetchArtistSalesMetrics = (duration?: ISalesDuration) => {
   const canFetch = useCanFetchData();
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
   return useQuery({
     queryKey: [`artist-${userId}-sales-data`],
     queryFn: async () => {

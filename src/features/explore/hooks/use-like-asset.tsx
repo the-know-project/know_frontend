@@ -4,10 +4,11 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { likeAsset } from "../api/like-asset/route";
 import { TLikeAsset } from "../types/explore.types";
 import { ExploreError } from "../errors/explore.error";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useLikeAsset = () => {
   const queryClient = useQueryClient();
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
 
   return useMutation({
     mutationKey: [`like-asset-${userId}`],

@@ -3,9 +3,10 @@ import { useEffect } from "react";
 import { useTokenStore } from "../../auth/state/store";
 import { personalizeExperience } from "../api/prefrences/route";
 import { PersonalizeResponseDto } from "../dto/personalize.dto";
+import { selectUser } from "../../auth/state/selectors/token.selectors";
 
 export const usePersonalizeExp = () => {
-  const user = useTokenStore((state) => state.user);
+  const user = useTokenStore(selectUser);
 
   useEffect(() => {
     if (typeof window !== "undefined" && !user) {
