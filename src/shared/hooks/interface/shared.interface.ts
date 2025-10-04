@@ -8,4 +8,14 @@ export interface IExploreContent {
   artWorkUrl: string;
   categories: string[];
   tags: string[] | undefined;
+  price: number;
+  size: {
+    width: number;
+    height: number;
+  };
+  numOfLikes: number;
+  numOfViews: number;
+  numOfComments: number;
+  isListed: boolean;
+  createdAt: Date;
 }

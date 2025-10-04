@@ -61,8 +61,7 @@ const ArtistInfoCard = ({ artistId }: ArtistInfoCardProps) => {
       </div>
 
       <div className="space-y-3">
-        {canFollow && <ExploreFollowButton />}
-        <ExploreCheckoutButton />
+        {canFollow && <ExploreFollowButton artistId={artistId} />}
       </div>
     </div>
   );

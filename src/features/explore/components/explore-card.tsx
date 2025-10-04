@@ -20,6 +20,13 @@ interface ExploreCardProps {
   artistName: string;
   artName: string;
   artWork: string;
+  price: number;
+  size: {
+    width: number;
+    height: number;
+  };
+  numOfViews: number;
+  createdAt: Date;
   artistImage: string;
   likeCount: number;
   isListed: boolean;
@@ -33,6 +40,10 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   id,
   userId,
   artistName,
+  price,
+  size,
+  numOfViews,
+  createdAt,
   artName,
   artWork,
   description,
@@ -128,6 +139,13 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
                 creatorName: artistName,
                 categories,
                 tags,
+                price: price,
+                size: size,
+                numOfLikes: likeCount,
+                numOfViews: numOfViews,
+                numOfComments: 0,
+                isListed: isListed,
+                createdAt: createdAt,
               },
               viewportPosition,
             );
