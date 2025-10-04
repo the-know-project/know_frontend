@@ -214,7 +214,7 @@ const ArtDetails = () => {
                     <div>
                       {exploreContent?.userId && (
                         <ExploreArtistInfo
-                          artistId={"artist-123"}
+                          artistId={exploreContent.userId}
                           artworkId={"artwork-456"}
                           onTagSelect={(tags) =>
                             console.log("Selected tags:", tags)
