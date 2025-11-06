@@ -69,6 +69,7 @@ export const useTokenStore = create<ITokenState>()(
         onRehydrateStorage: () => (state) => {
           if (state) {
             state.hasHydrated = true;
+            state.accessToken = null;
           }
         },
       },
