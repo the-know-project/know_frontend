@@ -1,7 +1,3 @@
-import { create } from "zustand";
-import { ITokenState, IUser } from "../interface/auth.interface";
-import { devtools, persist } from "zustand/middleware";
-
 export const useTokenStore = create<ITokenState>()(
   devtools(
     persist(
@@ -69,7 +65,7 @@ export const useTokenStore = create<ITokenState>()(
         onRehydrateStorage: () => (state) => {
           if (state) {
             state.hasHydrated = true;
-            state.accessToken = null;
+            // ← REMOVE THE LINE: state.accessToken = null;
           }
         },
       },
