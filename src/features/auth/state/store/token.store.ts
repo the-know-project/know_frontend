@@ -10,7 +10,6 @@ export const useTokenStore = create<ITokenState>()(
         user: null,
         isAuthenticated: false,
         hasHydrated: false,
-
         setAccessToken: (accessToken: string, user: IUser) => {
           set({
             accessToken,
@@ -18,7 +17,6 @@ export const useTokenStore = create<ITokenState>()(
             isAuthenticated: true,
           });
         },
-
         refreshAccessToken: (accessToken: string) => {
           const currentState = get();
           set({
@@ -27,11 +25,9 @@ export const useTokenStore = create<ITokenState>()(
             user: currentState.user,
           });
         },
-
         updateAccessToken: (accessToken: string) => {
           set({ accessToken });
         },
-
         clearAuth: () => {
           set({
             accessToken: null,
@@ -39,33 +35,32 @@ export const useTokenStore = create<ITokenState>()(
             isAuthenticated: false,
           });
         },
-
         getAccessToken: () => {
           const { accessToken } = get();
           return accessToken;
         },
-
         getUser: () => {
           const { user } = get();
           return user;
         },
-
         setHydrated: (hydrated: boolean) => {
           set({ hasHydrated: hydrated });
         },
       }),
       {
         name: "auth-store",
-        version: 2,
+        version: 3, // ← Increment version
         partialize: (state) => ({
           user: state.user,
           isAuthenticated: state.isAuthenticated,
+          accessToken: state.accessToken, // ← ADD THIS!
         }),
         migrate: (persistedState: any, version: number) => {
-          if (version < 2) {
+          if (version < 3) {
             return {
               user: persistedState?.user || null,
               isAuthenticated: persistedState?.isAuthenticated || false,
+              accessToken: persistedState?.accessToken || null, // ← ADD THIS
               hasHydrated: false,
             };
           }
@@ -74,10 +69,7 @@ export const useTokenStore = create<ITokenState>()(
         onRehydrateStorage: () => (state) => {
           if (state) {
             state.hasHydrated = true;
-            state.accessToken = null;
-            if (state.user && !state.isAuthenticated) {
-              state.isAuthenticated = false; // Will trigger auth flow
-            }
+            // ← REMOVE THE LINE: state.accessToken = null;
           }
         },
       },
