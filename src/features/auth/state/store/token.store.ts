@@ -1,3 +1,7 @@
+import { create } from "zustand";
+import { ITokenState, IUser } from "../interface/auth.interface";
+import { devtools, persist } from "zustand/middleware";
+
 export const useTokenStore = create<ITokenState>()(
   devtools(
     persist(
@@ -6,6 +10,7 @@ export const useTokenStore = create<ITokenState>()(
         user: null,
         isAuthenticated: false,
         hasHydrated: false,
+        
         setAccessToken: (accessToken: string, user: IUser) => {
           set({
             accessToken,
@@ -13,6 +18,7 @@ export const useTokenStore = create<ITokenState>()(
             isAuthenticated: true,
           });
         },
+        
         refreshAccessToken: (accessToken: string) => {
           const currentState = get();
           set({
@@ -21,9 +27,11 @@ export const useTokenStore = create<ITokenState>()(
             user: currentState.user,
           });
         },
+        
         updateAccessToken: (accessToken: string) => {
           set({ accessToken });
         },
+        
         clearAuth: () => {
           set({
             accessToken: null,
@@ -31,26 +39,32 @@ export const useTokenStore = create<ITokenState>()(
             isAuthenticated: false,
           });
         },
+        
         getAccessToken: () => {
           const { accessToken } = get();
           return accessToken;
         },
+        
         getUser: () => {
           const { user } = get();
           return user;
         },
+        
         setHydrated: (hydrated: boolean) => {
           set({ hasHydrated: hydrated });
         },
       }),
       {
         name: "auth-store",
-        version: 3, // ← Increment version
+        version: 3, // ← INCREMENT VERSION
+        
+        // FIX: Persist the accessToken too!
         partialize: (state) => ({
           user: state.user,
           isAuthenticated: state.isAuthenticated,
-          accessToken: state.accessToken, // ← ADD THIS!
+          accessToken: state.accessToken, // ← ADD THIS LINE
         }),
+        
         migrate: (persistedState: any, version: number) => {
           if (version < 3) {
             return {
@@ -62,10 +76,19 @@ export const useTokenStore = create<ITokenState>()(
           }
           return persistedState;
         },
+        
+        // FIX: Don't clear the token on rehydration!
         onRehydrateStorage: () => (state) => {
           if (state) {
             state.hasHydrated = true;
-            // ← REMOVE THE LINE: state.accessToken = null;
+            // ← REMOVED: state.accessToken = null;
+            
+            // Optional: Validate token still exists with user
+            if (state.user && !state.accessToken) {
+              // User exists but no token - clear everything
+              state.isAuthenticated = false;
+              state.user = null;
+            }
           }
         },
       },
