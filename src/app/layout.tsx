@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "../lib/react-query-client";
 import { Toaster } from "../shared/ui/sonner";
+import { AuthInitializer } from "@/src/features/auth/components/AuthInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 const bebasNeue = localFont({
-  src: [
-    { path: "/fonts/BebasNeue-Regular.ttf", weight: "400", style: "normal" },
-  ],
+  src: [{ path: "/fonts/BebasNeue-Regular.ttf", weight: "400", style: "normal" }],
   variable: "--bebas-neue",
 });
 
@@ -34,15 +33,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <Provider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
         >
+          {/* Initialize Auth state on client */}
+          <AuthInitializer />
+
           <main>{children}</main>
 
           <Toaster />
