@@ -25,6 +25,7 @@ import { OtpFormSchema } from "../schema/auth.schema";
 import { useSignUp } from "../hooks/use-sign-up";
 import { decryptData } from "@/src/utils/crypto";
 import { useSendOtp } from "../hooks/use-send-otp";
+import { useState } from "react";
 
 const OtpForm = () => {
   const { mutateAsync: handleValidateOtp, isPending } = useValidateOtp();
@@ -33,6 +34,7 @@ const OtpForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("email");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const form = useForm<IOtpForm>({
     resolver: zodResolver(OtpFormSchema),
@@ -60,69 +62,106 @@ const OtpForm = () => {
   };
 
   const onSubmit = async (data: IOtpForm) => {
+    if (isProcessing) return;
+    
+    setIsProcessing(true);
+    
     try {
+      // Step 1: Validate OTP
+      console.log("Step 1: Validating OTP...");
       const result = await handleValidateOtp(data);
 
-      if (result.status == 200) {
-        handleToast(true, result.message);
+      if (result.status !== 200) {
+        handleToast(false, result.message || "Invalid OTP. Please try again.");
+        setIsProcessing(false);
+        return;
+      }
 
-        const ctxData = sessionStorage.getItem("sign-up");
+      console.log(" OTP validated successfully");
+      handleToast(true, result.message);
 
-        if (!ctxData) {
-          handleToast(
-            false,
-            "Something unexpected happened. Please try again.",
-          );
-          return;
-        }
+      // Step 2: Get signup data from session
+      const ctxData = sessionStorage.getItem("sign-up");
 
-        const ctx = JSON.parse(await decryptData(ctxData));
+      if (!ctxData) {
+        handleToast(
+          false,
+          "Session expired. Please start registration again.",
+        );
+        setIsProcessing(false);
+        setTimeout(() => router.push("/signup"), 2000);
+        return;
+      }
+
+      const ctx = JSON.parse(await decryptData(ctxData));
+      
+      // Step 3: Attempt registration
+      console.log("Step 2: Attempting registration...");
+      
+      try {
+        const signUpData = await handleSignUp(ctx);
         
-        try {
-          const signUpData = await handleSignUp(ctx);
-          handleToast(true, signUpData.message);
+        console.log("Registration successful");
+        handleToast(true, signUpData.message || "Registration successful!");
+        
+        // Clear session storage
+        sessionStorage.removeItem("sign-up");
+        
+        // Redirect to login
+        setTimeout(() => {
+          router.push("/login");
+        }, 1500);
+        
+      } catch (signUpError: any) {
+        console.error("Registration error:", signUpError);
+        
+        // Extract error message
+        const errorData = signUpError?.response?.data;
+        const errorMessage = errorData?.message || 
+                            signUpError?.message || 
+                            "Registration failed";
+        
+        console.log("Error message:", errorMessage);
+        console.log("Error data:", errorData);
+        
+        // Check if it's a duplicate email error
+        const isDuplicateError = 
+          errorMessage.toLowerCase().includes("duplicate") ||
+          errorMessage.toLowerCase().includes("already exists") ||
+          errorMessage.toLowerCase().includes("unique constraint") ||
+          errorMessage.toLowerCase().includes("email_unique") ||
+          errorData?.statusCode === 409;
+        
+        if (isDuplicateError) {
+          console.log(" Duplicate email detected - treating as success");
           
-          // Clear the session storage after successful signup
+          handleToast(
+            true,
+            "Your account has been created! Redirecting to login..."
+          );
+          
+          // Clear session storage
           sessionStorage.removeItem("sign-up");
           
-          router.push("/login");
-        } catch (signUpError: any) {
-          // Handle duplicate email error
-          const errorMessage = signUpError?.response?.data?.message || 
-                              signUpError?.message || 
-                              "Registration error";
-          
-          if (errorMessage.includes("duplicate") || 
-              errorMessage.includes("already exists") ||
-              errorMessage.includes("unique constraint")) {
-            
-            console.log("User already exists, redirecting to login");
-            handleToast(
-              true, 
-              "Account already exists. Redirecting to login..."
-            );
-            
-            // Clear session storage
-            sessionStorage.removeItem("sign-up");
-            
-            // Redirect to login
-            setTimeout(() => {
-              router.push("/login");
-            }, 1500);
-          } else {
-            // Other signup errors
-            handleToast(false, errorMessage);
-          }
+          // Redirect to login
+          setTimeout(() => {
+            router.push("/login");
+          }, 2000);
+        } else {
+          // Other errors - show error message
+          handleToast(false, errorMessage);
+          setIsProcessing(false);
         }
-      } else {
-        handleToast(false, result.message || "Invalid OTP. Please try again.");
       }
-    } catch (error) {
+      
+    } catch (error: any) {
+      console.error("OTP validation error:", error);
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Invalid OTP. Please try again.";
+        error?.response?.data?.message ||
+        error?.message ||
+        "Invalid OTP. Please try again.";
       handleToast(false, errorMessage);
+      setIsProcessing(false);
     }
   };
 
@@ -131,15 +170,20 @@ const OtpForm = () => {
       const ctxData = sessionStorage.getItem("sign-up");
 
       if (!ctxData) {
-        handleToast(false, "Something unexpected happened. Please try again.");
+        handleToast(false, "Session expired. Please start registration again.");
+        setTimeout(() => router.push("/signup"), 2000);
         return;
       }
 
       const ctx = JSON.parse(await decryptData(ctxData));
       const data = await handleSendOtp(ctx);
-      handleToast(true, data.message);
-    } catch (error) {
-      handleToast(false, "Failed to resend OTP. Please try again.");
+      handleToast(true, data.message || "OTP sent successfully!");
+    } catch (error: any) {
+      console.error("Resend OTP error:", error);
+      const errorMessage = error?.response?.data?.message || 
+                          error?.message || 
+                          "Failed to resend OTP";
+      handleToast(false, errorMessage);
     }
   };
 
@@ -215,6 +259,7 @@ const OtpForm = () => {
                         inputMode="numeric"
                         autoComplete="one-time-code"
                         autoFocus={index === 0}
+                        disabled={isProcessing}
                       />
                     ))}
                   </div>
@@ -234,11 +279,11 @@ const OtpForm = () => {
           className="flex w-full items-center justify-center"
         >
           <button
-            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
+            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
-            disabled={isPending}
+            disabled={isPending || isProcessing}
           >
-            {isPending ? (
+            {isPending || isProcessing ? (
               <div className="flex w-full items-center justify-center">
                 <Spinner />
               </div>
@@ -260,8 +305,9 @@ const OtpForm = () => {
         <div className="flex justify-center">
           <button
             type="button"
-            className="text-sm text-blue-500 hover:underline"
+            className="text-sm text-blue-500 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleResendOTP}
+            disabled={isProcessing}
           >
             Resend OTP
           </button>
