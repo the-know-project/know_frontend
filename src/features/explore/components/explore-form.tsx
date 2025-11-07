@@ -82,29 +82,36 @@ const ExploreForm = ({
               <FormItem className="flex w-full flex-col">
                 <FormControl>
                   <div className="relative flex w-full">
+                    {/* Search Icon - Responsive sizing */}
                     <IconSearch
-                      width={20}
-                      height={20}
-                      className="absolute top-1/2 left-3 -translate-y-1/2 transform text-neutral-500"
+                      className="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 transform text-neutral-500 sm:left-3 sm:h-5 sm:w-5"
                     />
+                    
+                    {/* Input Field - Responsive padding and font size */}
                     <Input
-                      className="font-bricolage placeholder:font-bricolage !important flex w-full rounded-lg bg-neutral-100 pr-10 pl-10 text-neutral-700 placeholder:text-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
+                      className="font-bricolage placeholder:font-bricolage !important flex h-9 w-full rounded-lg bg-neutral-100 py-2 pr-9 pl-8 text-sm text-neutral-700 placeholder:text-xs placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0 sm:h-10 sm:pr-10 sm:pl-10 sm:text-base sm:placeholder:text-sm sm:placeholder:text-neutral-700"
                       placeholder={placeholder}
                       {...field}
+                      autoComplete="off"
                     />
+                    
+                    {/* Clear Button - Responsive sizing */}
                     {hasQuery && (
                       <button
                         type="button"
                         onClick={handleClearSearch}
-                        className="absolute top-1/2 right-3 -translate-y-1/2 transform text-neutral-500 transition-colors hover:text-neutral-700"
+                        className="absolute top-1/2 right-2.5 -translate-y-1/2 transform rounded-full p-1 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-700 active:bg-neutral-300 sm:right-3"
+                        aria-label="Clear search"
                       >
-                        <IconX width={16} height={16} />
+                        <IconX className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </button>
                     )}
                   </div>
                 </FormControl>
-                <div className="absolute top-full left-3">
-                  <FormMessage className="font-bebas tracking-widest" />
+                
+                {/* Error Message - Responsive positioning */}
+                <div className="absolute top-full left-2 sm:left-3">
+                  <FormMessage className="font-bebas text-xs tracking-wide sm:text-sm sm:tracking-widest" />
                 </div>
               </FormItem>
             )}

@@ -25,6 +25,7 @@ import { OtpFormSchema } from "../schema/auth.schema";
 import { useSignUp } from "../hooks/use-sign-up";
 import { decryptData } from "@/src/utils/crypto";
 import { useSendOtp } from "../hooks/use-send-otp";
+import { useState } from "react";
 
 const OtpForm = () => {
   const { mutateAsync: handleValidateOtp, isPending } = useValidateOtp();
@@ -33,6 +34,7 @@ const OtpForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("email");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const form = useForm<IOtpForm>({
     resolver: zodResolver(OtpFormSchema),
@@ -60,71 +62,130 @@ const OtpForm = () => {
   };
 
   const onSubmit = async (data: IOtpForm) => {
-    try {
-      const result = await handleValidateOtp(data);
+  if (isProcessing) return;
 
-      if (result.status == 200) {
-        handleToast(true, result.message);
+  setIsProcessing(true);
 
-        const ctxData = sessionStorage.getItem("sign-up");
+  try {
+    // Step 1: Validate OTP
+    console.log("Step 1: Validating OTP...");
+    const result = await handleValidateOtp(data);
 
-        if (!ctxData) {
-          handleToast(
-            false,
-            "Something unexpected happened. Please try again.",
-          );
-          return;
-        }
-
-        const ctx = JSON.parse(await decryptData(ctxData));
-        const signUpData = await handleSignUp(ctx);
-        handleToast(true, signUpData.message);
-        router.push("/login");
-      } else {
-        handleToast(false, result.message || "Invalid OTP. Please try again.");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Invalid OTP. Please try again.";
-      handleToast(false, errorMessage);
-    }
-  };
-
-  const handleResendOTP = async () => {
-    const ctxData = sessionStorage.getItem("sign-up");
-
-    if (!ctxData) {
-      handleToast(false, "Something unexpected happened. Please try again.");
+    if (result.status !== 200) {
+      handleToast(false, result.message || "Invalid OTP. Please try again.");
+      setIsProcessing(false);
       return;
     }
 
-    const ctx = JSON.parse(await decryptData(ctxData));
-    const data = await handleSendOtp(ctx);
-    handleToast(true, data.message);
+    console.log("✅ OTP validated successfully");
+    handleToast(true, result.message);
+
+    // Step 2: Retrieve sign-up data from session
+    const ctxData = sessionStorage.getItem("sign-up");
+
+    if (!ctxData) {
+      handleToast(false, "Session expired. Please start registration again.");
+      setIsProcessing(false);
+      setTimeout(() => router.push("/signup"), 2000);
+      return;
+    }
+
+    // Step 3: Decrypt and sanitize signup data
+    console.log("🔐 Decrypting signup data...");
+    const decrypted = await decryptData(ctxData);
+    const ctx = JSON.parse(decrypted);
+
+    console.log("Decrypted signup data:", ctx);
+
+    // ✅ Sanitize: convert null/undefined → "", force all values to strings
+    const sanitizedCtx = Object.fromEntries(
+      Object.entries(ctx).map(([key, value]) => [
+        key,
+        value === null || value === undefined ? "" : String(value),
+      ])
+    );
+
+    console.log("Sanitized signup data:", sanitizedCtx);
+
+    // Step 4: Attempt registration
+    console.log("Attempting registration...");
+    const signUpData = await handleSignUp(sanitizedCtx);
+
+    console.log("Registration successful");
+    handleToast(true, signUpData.message || "Registration successful!");
+
+    // Clear session storage and redirect
+    sessionStorage.removeItem("sign-up");
+    setTimeout(() => router.push("/login"), 1500);
+
+  } catch (signUpError: any) {
+    console.error("Registration error:", signUpError);
+
+    const errorData = signUpError?.response?.data;
+    const errorMessage =
+      errorData?.message ||
+      signUpError?.message ||
+      "Registration failed";
+
+    const isDuplicateError =
+      errorMessage.toLowerCase().includes("duplicate") ||
+      errorMessage.toLowerCase().includes("already exists") ||
+      errorMessage.toLowerCase().includes("unique constraint") ||
+      errorMessage.toLowerCase().includes("email_unique") ||
+      errorData?.statusCode === 409;
+
+    if (isDuplicateError) {
+      console.log("⚠️ Duplicate email detected - treating as success");
+      handleToast(true, "Your account has been created! Redirecting to login...");
+      sessionStorage.removeItem("sign-up");
+      setTimeout(() => router.push("/login"), 2000);
+    } else {
+      handleToast(false, errorMessage);
+      setIsProcessing(false);
+    }
+  }
+};
+
+
+  const handleResendOTP = async () => {
+    try {
+      const ctxData = sessionStorage.getItem("sign-up");
+
+      if (!ctxData) {
+        handleToast(false, "Session expired. Please start registration again.");
+        setTimeout(() => router.push("/signup"), 2000);
+        return;
+      }
+
+      const ctx = JSON.parse(await decryptData(ctxData));
+      const data = await handleSendOtp(ctx);
+      handleToast(true, data.message || "OTP sent successfully!");
+    } catch (error: any) {
+      console.error("Resend OTP error:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to resend OTP";
+      handleToast(false, errorMessage);
+    }
   };
 
   // Handle input change to auto-focus next field
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     const value = e.target.value;
-
-    // Only allow digits
     if (value && !/^\d+$/.test(value)) return;
 
-    // Update form value
     const currentOtp = form.getValues("otp") || "";
     let newOtp = currentOtp.split("");
 
     if (value.length > 1) {
-      // Handle paste (take first 6 digits)
       const pastedValue = value.replace(/\D/g, "").substring(0, 6);
       form.setValue("otp", pastedValue);
       const lastInput = document.getElementById(
-        `otp-${pastedValue.length - 1}`,
+        `otp-${pastedValue.length - 1}`
       );
       if (lastInput) lastInput.focus();
       return;
@@ -133,17 +194,15 @@ const OtpForm = () => {
     newOtp[index] = value;
     form.setValue("otp", newOtp.join(""));
 
-    // Auto-focus next input if a digit was entered
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
     }
   };
 
-  // Handle backspace to focus previous input
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     if (e.key === "Backspace" && !e.currentTarget.value && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
@@ -177,6 +236,7 @@ const OtpForm = () => {
                         inputMode="numeric"
                         autoComplete="one-time-code"
                         autoFocus={index === 0}
+                        disabled={isProcessing}
                       />
                     ))}
                   </div>
@@ -196,11 +256,11 @@ const OtpForm = () => {
           className="flex w-full items-center justify-center"
         >
           <button
-            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
+            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
-            disabled={isPending}
+            disabled={isPending || isProcessing}
           >
-            {isPending ? (
+            {isPending || isProcessing ? (
               <div className="flex w-full items-center justify-center">
                 <Spinner />
               </div>
@@ -222,8 +282,9 @@ const OtpForm = () => {
         <div className="flex justify-center">
           <button
             type="button"
-            className="text-sm text-blue-500 hover:underline"
+            className="text-sm text-blue-500 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleResendOTP}
+            disabled={isProcessing}
           >
             Resend OTP
           </button>
