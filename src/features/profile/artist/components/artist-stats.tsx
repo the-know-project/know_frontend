@@ -10,12 +10,23 @@ import {
 import ArtistSalesStats from "./artist-sales-stats";
 import { FaPeopleGroup } from "react-icons/fa6";
 import ArtistPerformance from "./artist-performance";
-import { DummyPostsPerformance } from "../data/artist.data";
 
 const Stats = () => {
   const { data: metrics, isLoading: metricsLoading } = useFetchArtistMetrics();
 
-  if (metricsLoading) return <div>Loading...</div>;
+  if (metricsLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <p className="font-bricolage text-sm text-gray-500">
+            Loading your stats...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const audienceMetrics = parseAudienceMetrics({
     metrics: metrics,
     metricsLoading: metricsLoading,
@@ -28,7 +39,7 @@ const Stats = () => {
 
   return (
     <section className="flex w-full flex-col">
-      {/*Audience Stats*/}
+      {/* Audience Stats */}
       <div className="flex w-full flex-col py-12">
         <div className="flex items-center gap-8">
           <div className="rounded-full bg-orange-100 p-2">
@@ -39,7 +50,7 @@ const Stats = () => {
         <ArtistAudienceStats audienceMetrics={audienceMetrics} />
       </div>
 
-      {/*Engagement Insights*/}
+      {/* Engagement Insights */}
       <div className="flex w-full flex-col">
         <EngagementInsights
           topInterestedBuyers={insightMetrics.topInterestedBuyer}
@@ -47,12 +58,14 @@ const Stats = () => {
         />
       </div>
 
+      {/* Sales Stats */}
       <div className="flex w-full flex-col">
         <ArtistSalesStats />
       </div>
 
+      {/* Post Performance - Now Dynamic! ✨ */}
       <div className="flex w-full flex-col">
-        <ArtistPerformance posts={DummyPostsPerformance} />
+        <ArtistPerformance />
       </div>
     </section>
   );
