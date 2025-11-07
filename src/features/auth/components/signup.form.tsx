@@ -21,11 +21,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { SignUpFormSchema } from "../schema/auth.schema";
-import { ISignUpForm, ISignUpResponseDto } from "../types/auth.types";
+import { ISignUpForm } from "../types/auth.types";
 import { useGoogleLogin } from "../hooks/use-google-login";
 import { useSendOtp } from "../hooks/use-send-otp";
 import { SendOtpResponseDto } from "../dto/auth.dto";
 import z from "zod";
+import { encryptData } from "@/src/utils/crypto";
 
 type SendOtpData = z.infer<typeof SendOtpResponseDto>;
 
@@ -55,23 +56,22 @@ const SignupForm = () => {
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
         style: {
-          backdropFilter: "-moz-initial",
-          opacity: "-moz-initial",
-          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          backdropFilter: "blur(4px)",
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
           fontSize: "15px",
           font: "Space Grotesk",
           color: "#ffffff",
           fontWeight: "bolder",
         },
       });
-      router.push("/otp?email=${ENCODEURIComponent(ctx.email)}");
+      //  Fixed template literal + proper encoding
+      router.push(`/otp?email=${encodeURIComponent(ctx.email)}`);
     } else if (data.status === 409) {
       toast("", {
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
         style: {
-          backdropFilter: "-moz-initial",
-          opacity: "-moz-initial",
+          backdropFilter: "blur(4px)",
           backgroundColor: "oklch(68.1% 0.162 75.834)",
           fontSize: "15px",
           font: "Space Grotesk",
@@ -83,10 +83,9 @@ const SignupForm = () => {
     } else {
       toast("", {
         icon: <ToastIcon />,
-        description: <ToastDescription description={`An error occurred`} />,
+        description: <ToastDescription description="An error occurred" />,
         style: {
-          backdropFilter: "-moz-initial",
-          opacity: "-moz-initial",
+          backdropFilter: "blur(4px)",
           backgroundColor: "oklch(62.8% 0.258 29.234)",
           fontSize: "15px",
           font: "Space Grotesk",
@@ -100,7 +99,16 @@ const SignupForm = () => {
   const onSubmit = async (ctx: ISignUpForm) => {
     setActiveButton("regular");
     try {
+      // Step 1: Send OTP
       const data = await handleSendOtp(ctx);
+
+      // Step 2: Save user signup data for OTP verification step
+      if (data.status === 200 || data.status === 201) {
+        const encrypted = await encryptData(JSON.stringify(ctx));
+        sessionStorage.setItem("sign-up", encrypted);
+      }
+
+      // Step 3: Notify and redirect
       handleToast(data, ctx);
     } catch (error) {
       console.error("Failed to send OTP:", error);
@@ -127,7 +135,6 @@ const SignupForm = () => {
   const handleDiscordSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setActiveButton("discord");
-
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setActiveButton(null);
   };
@@ -148,12 +155,11 @@ const SignupForm = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="signup_form_input !important"
+                      className="signup_form_input"
                       placeholder=""
                       {...field}
                     />
                   </FormControl>
-
                   <div className="absolute right-0 -bottom-5">
                     <FormMessage className="signup_error_message" />
                   </div>
@@ -171,12 +177,11 @@ const SignupForm = () => {
                   <FormLabel className="signup_form_label">Last Name</FormLabel>
                   <FormControl>
                     <Input
-                      className="signup_form_input !important"
+                      className="signup_form_input"
                       placeholder=""
                       {...field}
                     />
                   </FormControl>
-
                   <div className="absolute right-0 -bottom-5">
                     <FormMessage className="signup_error_message" />
                   </div>
@@ -202,7 +207,6 @@ const SignupForm = () => {
                       {...field}
                     />
                   </FormControl>
-
                   <div className="absolute right-0 -bottom-5">
                     <FormMessage className="signup_error_message" />
                   </div>
@@ -225,7 +229,6 @@ const SignupForm = () => {
                       {...field}
                     />
                   </FormControl>
-
                   <div className="absolute right-0 -bottom-5">
                     <FormMessage className="signup_error_message" />
                   </div>
@@ -251,7 +254,6 @@ const SignupForm = () => {
                     {...field}
                   />
                 </FormControl>
-
                 <div className="absolute right-0 -bottom-5">
                   <FormMessage className="signup_error_message" />
                 </div>
@@ -266,11 +268,11 @@ const SignupForm = () => {
           className="flex w-full items-center justify-center"
         >
           <button
-            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
+            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
-            disabled={isPending && activeButton === "regular"}
+            disabled={isPending && activeButton === 'regular'}
           >
-            {isPending && activeButton === "regular" ? (
+            {isPending && activeButton === 'regular' ? (
               <div className="flex w-full items-center justify-center">
                 <Spinner />
               </div>
@@ -314,9 +316,9 @@ const SignupForm = () => {
           )}
         </button>
 
-        {/* Sign Up With Discord Button */}
+        {/* Sign Up With Discord */}
         <button
-          className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95"
+          className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           type="button"
           onClick={handleDiscordSignup}
           disabled={activeButton === "discord"}
