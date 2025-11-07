@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTokenStore } from "@/src/features/auth/state/store";
 import { httpClient } from "@/src/lib/http-client";
+import TextEffectWithExit from "@/src/shared/components/animate-text";
 
 /**
  * AuthInitializer validates the persisted token on app load
@@ -29,9 +30,9 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
         // Attempt to validate token by making a protected request
         // Or attempt a silent refresh
         console.log(" AuthInitializer: Validating persisted token...");
-        
+
         const result = await httpClient.attemptPublicSilentRefresh();
-        
+
         if (result.success && result.accessToken) {
           console.log(" AuthInitializer: Token refreshed successfully");
           // Token is automatically updated by the refresh logic
@@ -56,10 +57,10 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
   if (!hasHydrated || isValidating) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
-          <p className="mt-2 text-sm text-gray-600">Loading...</p>
-        </div>
+        <TextEffectWithExit
+          text="Are you in the know"
+          style="!font-bebas !text-3xl !text-gray-600 !capitalize"
+        />
       </div>
     );
   }
