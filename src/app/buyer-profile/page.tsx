@@ -44,7 +44,7 @@ const OrdersPage = () => {
       // Replace with actual API call
       // const response = await fetch('/api/user/profile');
       // const data = await response.json();
-      
+
       // Mock data - replace with actual API call
       const mockProfile: UserProfile = {
         name: "Hydon Precious",
@@ -61,7 +61,7 @@ const OrdersPage = () => {
         email: "hydonprecious@gmail.com",
         memberSince: "NOVEMBER 2024"
       };
-      
+
       setUserProfile(mockProfile);
     };
 
@@ -76,16 +76,16 @@ const OrdersPage = () => {
           "Work": "cart",
           "Appreciations": "cart",
           "Cart": "cart",
-          "Pending Orders": "pendingorders",
-          "Completed Orders": "completedorders"
+          "Pending Orders": "pending",
+          "Completed Orders": "completed"
         };
         return keyMap[label] || "cart";
       };
-      
+
       // Replace with actual API call based on tab
       // const response = await fetch(`/api/orders/${activeTab}`);
       // const data = await response.json();
-      
+
       const key = normalizeKey(activeTab);
       if (mockOrders[key]) {
         setOrders(mockOrders[key]);
@@ -145,8 +145,8 @@ const OrdersPage = () => {
               <div className="mb-4">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center">
                   <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={userProfile.profileImage} 
+                    <img
+                      src={userProfile.profileImage}
                       alt={userProfile.name}
                       className="w-full h-full object-cover"
                     />
@@ -169,7 +169,7 @@ const OrdersPage = () => {
               </div>
 
               {/* Follow Button */}
-              <button 
+              <button
                 onClick={handleFollow}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-md mb-6 transition-colors"
               >
@@ -271,13 +271,13 @@ const OrdersPage = () => {
                           </h3>
                           <p className="text-xs text-gray-500 truncate">{order.artist}</p>
                         </div>
-                        <button 
+                        <button
                           onClick={() => handleLike(order.id)}
                           className={`flex-shrink-0 p-1 hover:bg-gray-100 rounded transition-colors ${
                             likedItems.has(order.id) ? 'text-red-500' : 'text-gray-400'
                           }`}
                         >
-                          <ThumbsUp 
+                          <ThumbsUp
                             className={`h-4 w-4 ${likedItems.has(order.id) ? 'fill-current' : ''}`}
                           />
                         </button>
