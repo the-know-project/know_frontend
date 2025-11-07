@@ -41,10 +41,9 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
         >
           {/* Initialize Auth state on client */}
-          <AuthInitializer />
-
-          <main>{children}</main>
-
+          <AuthInitializer >
+            <main>{children}</main>
+          </AuthInitializer>
           <Toaster />
         </body>
       </Provider>
