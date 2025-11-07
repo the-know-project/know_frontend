@@ -28,7 +28,7 @@ export const ValidateOtpResponseDto = z.object({
 export const ResetPasswordResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
-  data: AuthSuccessDataDto.optional(),
+  data: AuthSuccessDataDto.optional().nullable(),
 });
 
 export const SignUpResponseDto = z.object({
@@ -46,5 +46,5 @@ export const LoginResponseDto = z.object({
 export const ForgotPasswordResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
-  data: AuthSuccessDataDto.optional(),
+  data: AuthSuccessDataDto.optional().nullable(),
 });

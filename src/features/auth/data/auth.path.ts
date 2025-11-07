@@ -10,3 +10,13 @@ export enum AUTH_OP {
   CREATE_NEW_PASSWORD = "/api/auth/create-new-password",
   REFRESH_TOKEN = "/api/auth/refreshToken",
 }
+
+export const SKIP_AUTH = [
+  "/api/auth/login",
+  "/api/auth/registerUser",
+  "/api/auth/refreshToken",
+  "/api/mail-list/addToMailList",
+  "/api/categories/getCategories",
+  "/api/auth/send-otp-to-existing-email",
+  "/api/auth/create-new-password",
+];

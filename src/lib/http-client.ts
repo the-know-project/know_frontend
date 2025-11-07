@@ -8,6 +8,7 @@ import axios, {
 import { isProduction } from "../config/environment";
 import { env } from "../config/schemas/env";
 import { useTokenStore } from "../features/auth/state/store";
+import { SKIP_AUTH } from "../features/auth/data/auth.path";
 
 interface QueuedRequest {
   resolve: (value: any) => void;
@@ -264,13 +265,7 @@ class HttpClient {
   }
 
   private requiresAuth(config: AxiosRequestConfig): boolean {
-    const skipAuthPaths = [
-      "/api/auth/login",
-      "/api/auth/registerUser",
-      "/api/auth/refreshToken",
-      "/api/mail-list/addToMailList",
-      "/api/categories/getCategories",
-    ];
+    const skipAuthPaths = SKIP_AUTH;
 
     const url = config.url || "";
     return !skipAuthPaths.some((path) => url.includes(path));

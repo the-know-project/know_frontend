@@ -10,6 +10,6 @@ export async function createNewPassword(ctx: IResetPassword) {
 
   return await AuthenticatedApiClient.post(AUTH_OP.CREATE_NEW_PASSWORD, {
     email,
-    password: ctx.password,
+    newPassword: ctx.password,
   });
 }
