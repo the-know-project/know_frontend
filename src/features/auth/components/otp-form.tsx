@@ -63,9 +63,8 @@ const OtpForm = () => {
 
   const onSubmit = async (data: IOtpForm) => {
     if (isProcessing) return;
-    
     setIsProcessing(true);
-    
+
     try {
       // Step 1: Validate OTP
       console.log("Step 1: Validating OTP...");
@@ -84,76 +83,74 @@ const OtpForm = () => {
       const ctxData = sessionStorage.getItem("sign-up");
 
       if (!ctxData) {
-        handleToast(
-          false,
-          "Session expired. Please start registration again.",
-        );
+        handleToast(false, "Session expired. Please start registration again.");
         setIsProcessing(false);
         setTimeout(() => router.push("/signup"), 2000);
         return;
       }
 
-      const ctx = JSON.parse(await decryptData(ctxData));
-      
+      const decrypted = await decryptData(ctxData);
+      const ctx = JSON.parse(decrypted);
+
+      console.log("Decrypted signup context:", ctx);
+
       // Step 3: Attempt registration
       console.log("Step 2: Attempting registration...");
-      
+
       try {
-        const signUpData = await handleSignUp(ctx);
-        
+        //  Fix: Backend expects data as a string, not null
+        const payload = {
+          data: JSON.stringify(ctx),
+        };
+
+        const signUpData = await handleSignUp(payload);
+
         console.log("Registration successful");
         handleToast(true, signUpData.message || "Registration successful!");
-        
+
         // Clear session storage
         sessionStorage.removeItem("sign-up");
-        
+
         // Redirect to login
         setTimeout(() => {
           router.push("/login");
         }, 1500);
-        
       } catch (signUpError: any) {
         console.error("Registration error:", signUpError);
-        
-        // Extract error message
+
         const errorData = signUpError?.response?.data;
-        const errorMessage = errorData?.message || 
-                            signUpError?.message || 
-                            "Registration failed";
-        
+        const errorMessage =
+          errorData?.message ||
+          signUpError?.message ||
+          "Registration failed";
+
         console.log("Error message:", errorMessage);
         console.log("Error data:", errorData);
-        
-        // Check if it's a duplicate email error
-        const isDuplicateError = 
+
+        const isDuplicateError =
           errorMessage.toLowerCase().includes("duplicate") ||
           errorMessage.toLowerCase().includes("already exists") ||
           errorMessage.toLowerCase().includes("unique constraint") ||
           errorMessage.toLowerCase().includes("email_unique") ||
           errorData?.statusCode === 409;
-        
+
         if (isDuplicateError) {
           console.log(" Duplicate email detected - treating as success");
-          
+
           handleToast(
             true,
             "Your account has been created! Redirecting to login..."
           );
-          
-          // Clear session storage
+
           sessionStorage.removeItem("sign-up");
-          
-          // Redirect to login
           setTimeout(() => {
             router.push("/login");
           }, 2000);
         } else {
-          // Other errors - show error message
           handleToast(false, errorMessage);
           setIsProcessing(false);
         }
       }
-      
     } catch (error: any) {
       console.error("OTP validation error:", error);
       const errorMessage =
@@ -180,9 +177,10 @@ const OtpForm = () => {
       handleToast(true, data.message || "OTP sent successfully!");
     } catch (error: any) {
       console.error("Resend OTP error:", error);
-      const errorMessage = error?.response?.data?.message || 
-                          error?.message || 
-                          "Failed to resend OTP";
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to resend OTP";
       handleToast(false, errorMessage);
     }
   };
@@ -190,23 +188,19 @@ const OtpForm = () => {
   // Handle input change to auto-focus next field
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     const value = e.target.value;
-
-    // Only allow digits
     if (value && !/^\d+$/.test(value)) return;
 
-    // Update form value
     const currentOtp = form.getValues("otp") || "";
     let newOtp = currentOtp.split("");
 
     if (value.length > 1) {
-      // Handle paste (take first 6 digits)
       const pastedValue = value.replace(/\D/g, "").substring(0, 6);
       form.setValue("otp", pastedValue);
       const lastInput = document.getElementById(
-        `otp-${pastedValue.length - 1}`,
+        `otp-${pastedValue.length - 1}`
       );
       if (lastInput) lastInput.focus();
       return;
@@ -215,17 +209,15 @@ const OtpForm = () => {
     newOtp[index] = value;
     form.setValue("otp", newOtp.join(""));
 
-    // Auto-focus next input if a digit was entered
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
     }
   };
 
-  // Handle backspace to focus previous input
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     if (e.key === "Backspace" && !e.currentTarget.value && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
