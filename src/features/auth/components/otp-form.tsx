@@ -77,9 +77,43 @@ const OtpForm = () => {
         }
 
         const ctx = JSON.parse(await decryptData(ctxData));
-        const signUpData = await handleSignUp(ctx);
-        handleToast(true, signUpData.message);
-        router.push("/login");
+        
+        try {
+          const signUpData = await handleSignUp(ctx);
+          handleToast(true, signUpData.message);
+          
+          // Clear the session storage after successful signup
+          sessionStorage.removeItem("sign-up");
+          
+          router.push("/login");
+        } catch (signUpError: any) {
+          // Handle duplicate email error
+          const errorMessage = signUpError?.response?.data?.message || 
+                              signUpError?.message || 
+                              "Registration error";
+          
+          if (errorMessage.includes("duplicate") || 
+              errorMessage.includes("already exists") ||
+              errorMessage.includes("unique constraint")) {
+            
+            console.log("User already exists, redirecting to login");
+            handleToast(
+              true, 
+              "Account already exists. Redirecting to login..."
+            );
+            
+            // Clear session storage
+            sessionStorage.removeItem("sign-up");
+            
+            // Redirect to login
+            setTimeout(() => {
+              router.push("/login");
+            }, 1500);
+          } else {
+            // Other signup errors
+            handleToast(false, errorMessage);
+          }
+        }
       } else {
         handleToast(false, result.message || "Invalid OTP. Please try again.");
       }
@@ -93,16 +127,20 @@ const OtpForm = () => {
   };
 
   const handleResendOTP = async () => {
-    const ctxData = sessionStorage.getItem("sign-up");
+    try {
+      const ctxData = sessionStorage.getItem("sign-up");
 
-    if (!ctxData) {
-      handleToast(false, "Something unexpected happened. Please try again.");
-      return;
+      if (!ctxData) {
+        handleToast(false, "Something unexpected happened. Please try again.");
+        return;
+      }
+
+      const ctx = JSON.parse(await decryptData(ctxData));
+      const data = await handleSendOtp(ctx);
+      handleToast(true, data.message);
+    } catch (error) {
+      handleToast(false, "Failed to resend OTP. Please try again.");
     }
-
-    const ctx = JSON.parse(await decryptData(ctxData));
-    const data = await handleSendOtp(ctx);
-    handleToast(true, data.message);
   };
 
   // Handle input change to auto-focus next field
