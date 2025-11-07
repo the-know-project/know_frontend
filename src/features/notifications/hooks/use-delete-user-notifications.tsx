@@ -4,10 +4,11 @@ import { useTokenStore } from "../../auth/state/store";
 import { deleteNotifications } from "../api/delete-notifications/route";
 import { NotificationError } from "../error/notification.error";
 import { IDeleteNotifications } from "../types/notification.types";
+import { selectUser } from "../../auth/state/selectors/token.selectors";
 
 export const useDeleteUserNotifications = () => {
   const queryClient = useQueryClient();
-  const user = useTokenStore((state) => state.user);
+  const user = useTokenStore(selectUser);
 
   return useMutation({
     mutationKey: [`delete-user-notifications-${user?.id}`],

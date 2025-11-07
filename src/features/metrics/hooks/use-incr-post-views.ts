@@ -5,10 +5,11 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { incrementViewCount } from "../api/route";
 import { MetricsError } from "../error/metrics.error";
 import { showLog } from "@/src/utils/logger";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useIncrementPostViews = () => {
   const queryClient = useQueryClient();
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
   return useMutation({
     mutationKey: [`increment-post-view-${userId}`],
     mutationFn: async (ctx: Omit<IIncrementViewCount, "userId">) => {

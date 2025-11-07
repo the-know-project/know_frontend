@@ -7,6 +7,7 @@ import { ExploreError } from "../errors/explore.error";
 import { useLikedAssetsActions } from "../state/liked-assets-store";
 import { useLikedAssetsWithCounts } from "./use-fetch-liked-assets";
 import { showLog } from "@/src/utils/logger";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useSyncLikedAssets = () => {
   const { initializeLikedAssetsWithCounts } = useLikedAssetsActions();
@@ -36,7 +37,7 @@ export const useSyncLikedAssets = () => {
 export const usePeriodicSyncLikedAssets = (
   intervalMs: number = 5 * 60 * 1000,
 ) => {
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
   const { initializeLikedAssetsWithCounts } = useLikedAssetsActions();
 
   const { data, isLoading, error } = useQuery({

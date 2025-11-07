@@ -3,6 +3,7 @@ import { useTokenStore } from "../../auth/state/store";
 import { err, ok, ResultAsync } from "neverthrow";
 import { CartError } from "../error/cart.error";
 import { removeFromCart } from "../api/remove-from-cart/route";
+import { selectUser } from "../../auth/state/selectors/token.selectors";
 
 
 export type RemoveFromCartResult = {
@@ -16,7 +17,7 @@ export type RemoveFromCartResult = {
 
 export const useRemoveFromCart = ({ enabled }: { enabled: boolean }): RemoveFromCartResult => {
   const queryClient = useQueryClient();
-  const user = useTokenStore((state) => state.user);
+  const user = useTokenStore(selectUser);
 
   const { mutate, mutateAsync, isPending, isError, error, status } = useMutation({
     mutationFn: async (fileId: string) => {

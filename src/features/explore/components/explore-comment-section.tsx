@@ -1,6 +1,5 @@
 "use client";
 
-import { Separator } from "@/src/shared/ui/separator";
 import { Textarea } from "@/src/shared/ui/textarea";
 
 const ExploreCommentSection = () => {

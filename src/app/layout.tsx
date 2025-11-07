@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "../lib/react-query-client";
 import { Toaster } from "../shared/ui/sonner";
-import { AuthInitializer } from "@/src/features/auth/components/AuthInitializer";
+import { AuthInitializer } from "@/src/features/auth/components/auth-initializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,10 +41,9 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${Helvetica.variable} antialiased`}
         >
           {/* Initialize Auth state on client */}
-          <AuthInitializer />
-
-          <main>{children}</main>
-
+          <AuthInitializer >
+            <main>{children}</main>
+          </AuthInitializer>
           <Toaster />
         </body>
       </Provider>

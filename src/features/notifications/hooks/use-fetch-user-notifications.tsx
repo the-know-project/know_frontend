@@ -4,9 +4,10 @@ import { useTokenStore } from "../../auth/state/store";
 import { fetchUserNotifications } from "../api/fetch-notifications/route";
 import { NOTIFICATION_ERROR_MESSAGES } from "../data/notifications.data";
 import { NotificationError } from "../error/notification.error";
+import { selectUser } from "../../auth/state/selectors/token.selectors";
 
 export const useFetchUserNotifications = (options?: { enabled?: boolean }) => {
-  const user = useTokenStore((state) => state.user);
+  const user = useTokenStore(selectUser);
 
   return useQuery({
     queryKey: [`fetch-user-notifications-${user?.id}`],

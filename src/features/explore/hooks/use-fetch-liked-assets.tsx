@@ -3,9 +3,11 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { useTokenStore } from "../../auth/state/store";
 import { ExploreError } from "../errors/explore.error";
 import { fetchUserLikes } from "../api/fetch-user-likes/route";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
+import { showLog } from "@/src/utils/logger";
 
 export const useFetchLikedAssets = () => {
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
 
   return useQuery({
     queryKey: ["liked-assets", userId],
@@ -43,6 +45,7 @@ export const useLikedAssetsWithCounts = () => {
   const { data, isLoading, error } = useFetchLikedAssets();
 
   const likedAssetsWithCounts = data?.data || [];
+
 
   return {
     likedAssetsWithCounts,

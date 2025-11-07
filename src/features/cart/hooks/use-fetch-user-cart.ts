@@ -5,10 +5,11 @@ import { fetchUserCart } from "../api/fetch-user-cart/route";
 import { CartError } from "../error/cart.error";
 import { IUserCart } from "../types/cart.types";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useFetchUserCart = () => {
   const canFetch = useCanFetchData();
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
 
   return useQuery({
     queryKey: [`fetch-user-cart-${userId}`],

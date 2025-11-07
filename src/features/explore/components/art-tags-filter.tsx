@@ -3,36 +3,14 @@
 import { useState } from "react";
 
 interface ArtTagsFilterProps {
-  onTagSelect?: (tags: string[]) => void;
-  selectedTags?: string[];
+  tags: string[];
 }
 
-const ArtTagsFilter = ({
-  onTagSelect,
-  selectedTags: propSelectedTags = [],
-}: ArtTagsFilterProps) => {
-  const [selectedTags, setSelectedTags] = useState<string[]>(propSelectedTags);
-
-  // Sample tags based on the image
-  const availableTags = [
-    "fact cars",
-    "advertising",
-    "mercedes benz",
-    "car",
-    "automotive",
-    "photography",
-    "candid shots",
-    "lagos photographers",
-    "urban photography",
-  ];
+const ArtTagsFilter = ({ tags }: ArtTagsFilterProps) => {
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const handleTagClick = (tag: string) => {
-    const updatedTags = selectedTags.includes(tag)
-      ? selectedTags.filter((t) => t !== tag)
-      : [...selectedTags, tag];
-
-    setSelectedTags(updatedTags);
-    onTagSelect?.(updatedTags);
+    console.log("Tag clicked:", tag);
   };
 
   const isTagSelected = (tag: string) => {
@@ -42,7 +20,7 @@ const ArtTagsFilter = ({
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap gap-2">
-        {availableTags.map((tag) => (
+        {tags.map((tag) => (
           <button
             key={tag}
             onClick={() => handleTagClick(tag)}

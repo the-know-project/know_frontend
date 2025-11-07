@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useValidateOtp } from "../hooks/use-validate-otp";
-import { IOtpForm } from "../types/auth.types";
+import { IOtpForm, ISignUpForm } from "../types/auth.types";
 import { OtpFormSchema } from "../schema/auth.schema";
 import { useSignUp } from "../hooks/use-sign-up";
 import { decryptData } from "@/src/utils/crypto";
@@ -109,7 +109,7 @@ const OtpForm = () => {
 
     // Step 4: Attempt registration
     console.log("Attempting registration...");
-    const signUpData = await handleSignUp(sanitizedCtx);
+    const signUpData = await handleSignUp(sanitizedCtx as ISignUpForm);
 
     console.log("Registration successful");
     handleToast(true, signUpData.message || "Registration successful!");

@@ -3,25 +3,29 @@ import { useTokenStore } from "../../auth/state/store";
 import { err, ok, ResultAsync } from "neverthrow";
 import { addToCart } from "../api/add-to-cart/route";
 import { CartError } from "../error/cart.error";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useAddToCart = ({ enabled}: { enabled: boolean}) => {
   const queryClient = useQueryClient();
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
 
-  if (!userId) {
-    return {
-      mutateAsync: async () => {},
-      isPending: false,
-      isSuccess: false,
-      isError: false,
-      error: null,
-      data: null,
-    };
-  }
+  // if (!userId) {
+  //   return {
+  //     mutateAsync: async () => {},
+  //     isPending: false,
+  //     isSuccess: false,
+  //     isError: false,
+  //     error: null,
+  //     data: null,
+  //   };
+  // }
+
   return useMutation({
     mutationKey: [`add-to-cart-${userId}`],
     mutationFn: async (fileId: string) => {
-      if(!enabled) return;
+      if(!enabled || !userId) {
+        throw new CartError('Cannot add to cart: User not authenticated');
+      };
       const result = await ResultAsync.fromPromise(
         addToCart({
           userId,

@@ -6,9 +6,10 @@ import { UploadResponseDto } from "../dto/upload.dto";
 import { UploadError } from "../errors/upload.error";
 import { IUploadAssetServer, IUploadAssetClient } from "../types/upload.types";
 import { transformCustomMetadata } from "../utils/form-data.utils";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 export const useUploadAsset = () => {
-  const id = useTokenStore((state) => state.user?.id);
+  const id = useTokenStore(selectUserId);
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: [`upload-asset-${id}`],

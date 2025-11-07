@@ -167,6 +167,10 @@ const ExploreCanvasContent = ({
                 role={role!}
                 categories={item.categories}
                 tags={item.tags}
+                price={item.price}
+                size={item.size}
+                numOfViews={item.numOfViews}
+                createdAt={item.createdAt}
               />
             </div>
           ))}

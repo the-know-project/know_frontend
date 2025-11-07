@@ -214,12 +214,8 @@ const ArtDetails = () => {
                     <div>
                       {exploreContent?.userId && (
                         <ExploreArtistInfo
-                          artistId={"artist-123"}
-                          artworkId={"artwork-456"}
-                          onTagSelect={(tags) =>
-                            console.log("Selected tags:", tags)
-                          }
-                          selectedTags={["car", "photography"]}
+                          artistId={exploreContent.userId}
+                          artwork={exploreContent}
                         />
                       )}
                     </div>

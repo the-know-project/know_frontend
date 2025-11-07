@@ -8,6 +8,7 @@ import {
 } from "../state/liked-assets-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTokenStore } from "../../auth/state/store";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
 interface UseAssetLikeProps {
   assetId: string | number;
@@ -35,7 +36,7 @@ export const useAssetLike = ({
     useLikedAssetsActions();
 
   const queryClient = useQueryClient();
-  const userId = useTokenStore((state) => state.user?.id);
+  const userId = useTokenStore(selectUserId);
   const [error, setError] = useState<string | null>(null);
 
   const toggleLike = async () => {
