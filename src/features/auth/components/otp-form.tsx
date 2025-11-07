@@ -62,105 +62,90 @@ const OtpForm = () => {
   };
 
   const onSubmit = async (data: IOtpForm) => {
-    if (isProcessing) return;
-    setIsProcessing(true);
+  if (isProcessing) return;
 
-    try {
-      // Step 1: Validate OTP
-      console.log("Step 1: Validating OTP...");
-      const result = await handleValidateOtp(data);
+  setIsProcessing(true);
 
-      if (result.status !== 200) {
-        handleToast(false, result.message || "Invalid OTP. Please try again.");
-        setIsProcessing(false);
-        return;
-      }
+  try {
+    // Step 1: Validate OTP
+    console.log("Step 1: Validating OTP...");
+    const result = await handleValidateOtp(data);
 
-      console.log(" OTP validated successfully");
-      handleToast(true, result.message);
+    if (result.status !== 200) {
+      handleToast(false, result.message || "Invalid OTP. Please try again.");
+      setIsProcessing(false);
+      return;
+    }
 
-      // Step 2: Get signup data from session
-      const ctxData = sessionStorage.getItem("sign-up");
+    console.log("✅ OTP validated successfully");
+    handleToast(true, result.message);
 
-      if (!ctxData) {
-        handleToast(false, "Session expired. Please start registration again.");
-        setIsProcessing(false);
-        setTimeout(() => router.push("/signup"), 2000);
-        return;
-      }
+    // Step 2: Retrieve sign-up data from session
+    const ctxData = sessionStorage.getItem("sign-up");
 
-      const decrypted = await decryptData(ctxData);
-      const ctx = JSON.parse(decrypted);
+    if (!ctxData) {
+      handleToast(false, "Session expired. Please start registration again.");
+      setIsProcessing(false);
+      setTimeout(() => router.push("/signup"), 2000);
+      return;
+    }
 
-      console.log("Decrypted signup context:", ctx);
+    // Step 3: Decrypt and sanitize signup data
+    console.log("🔐 Decrypting signup data...");
+    const decrypted = await decryptData(ctxData);
+    const ctx = JSON.parse(decrypted);
 
-      // Step 3: Attempt registration
-      console.log("Step 2: Attempting registration...");
+    console.log("Decrypted signup data:", ctx);
 
-      try {
-        //  Fix: Backend expects data as a string, not null
-        const payload = {
-          data: JSON.stringify(ctx),
-        };
+    // ✅ Sanitize: convert null/undefined → "", force all values to strings
+    const sanitizedCtx = Object.fromEntries(
+      Object.entries(ctx).map(([key, value]) => [
+        key,
+        value === null || value === undefined ? "" : String(value),
+      ])
+    );
 
-        const signUpData = await handleSignUp(payload);
+    console.log("Sanitized signup data:", sanitizedCtx);
 
-        console.log("Registration successful");
-        handleToast(true, signUpData.message || "Registration successful!");
+    // Step 4: Attempt registration
+    console.log("Attempting registration...");
+    const signUpData = await handleSignUp(sanitizedCtx);
 
-        // Clear session storage
-        sessionStorage.removeItem("sign-up");
+    console.log("Registration successful");
+    handleToast(true, signUpData.message || "Registration successful!");
 
-        // Redirect to login
-        setTimeout(() => {
-          router.push("/login");
-        }, 1500);
-      } catch (signUpError: any) {
-        console.error("Registration error:", signUpError);
+    // Clear session storage and redirect
+    sessionStorage.removeItem("sign-up");
+    setTimeout(() => router.push("/login"), 1500);
 
-        const errorData = signUpError?.response?.data;
-        const errorMessage =
-          errorData?.message ||
-          signUpError?.message ||
-          "Registration failed";
+  } catch (signUpError: any) {
+    console.error("Registration error:", signUpError);
 
-        console.log("Error message:", errorMessage);
-        console.log("Error data:", errorData);
+    const errorData = signUpError?.response?.data;
+    const errorMessage =
+      errorData?.message ||
+      signUpError?.message ||
+      "Registration failed";
 
-        const isDuplicateError =
-          errorMessage.toLowerCase().includes("duplicate") ||
-          errorMessage.toLowerCase().includes("already exists") ||
-          errorMessage.toLowerCase().includes("unique constraint") ||
-          errorMessage.toLowerCase().includes("email_unique") ||
-          errorData?.statusCode === 409;
+    const isDuplicateError =
+      errorMessage.toLowerCase().includes("duplicate") ||
+      errorMessage.toLowerCase().includes("already exists") ||
+      errorMessage.toLowerCase().includes("unique constraint") ||
+      errorMessage.toLowerCase().includes("email_unique") ||
+      errorData?.statusCode === 409;
 
-        if (isDuplicateError) {
-          console.log(" Duplicate email detected - treating as success");
-
-          handleToast(
-            true,
-            "Your account has been created! Redirecting to login..."
-          );
-
-          sessionStorage.removeItem("sign-up");
-          setTimeout(() => {
-            router.push("/login");
-          }, 2000);
-        } else {
-          handleToast(false, errorMessage);
-          setIsProcessing(false);
-        }
-      }
-    } catch (error: any) {
-      console.error("OTP validation error:", error);
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Invalid OTP. Please try again.";
+    if (isDuplicateError) {
+      console.log("⚠️ Duplicate email detected - treating as success");
+      handleToast(true, "Your account has been created! Redirecting to login...");
+      sessionStorage.removeItem("sign-up");
+      setTimeout(() => router.push("/login"), 2000);
+    } else {
       handleToast(false, errorMessage);
       setIsProcessing(false);
     }
-  };
+  }
+};
+
 
   const handleResendOTP = async () => {
     try {
