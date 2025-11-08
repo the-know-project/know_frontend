@@ -1,6 +1,7 @@
+"use client";
+
 import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-
 import {
   ChartConfig,
   ChartContainer,
@@ -15,36 +16,71 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/shared/ui/card";
+import { useFetchEarnings } from "../hooks/use-fetch-earnings";
 
-export const description = "A linear line chart";
-
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-  { month: "July", desktop: 186 },
-  { month: "August", desktop: 305 },
-  { month: "September", desktop: 237 },
-  { month: "October", desktop: 73 },
-  { month: "November", desktop: 209 },
-  { month: "December", desktop: 214 },
-];
+export const description = "A dynamic earnings line chart";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  earnings: {
+    label: "Earnings",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
 const ArtistChart = () => {
+  const { data: earningsData, isLoading, error } = useFetchEarnings();
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="h-8 w-32 rounded bg-gray-200 animate-pulse"></div>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Error state
+  if (error || !earningsData) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="stats_title text-red-500">Error</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="font-bricolage text-gray-500">
+              Failed to load earnings data
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const { chartData, total, percentageChange } = earningsData;
+
+  // Format currency
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="stats_title">$120,785</CardTitle>
+        <CardTitle className="stats_title">{formatCurrency(total)}</CardTitle>
+        <CardDescription>Total earnings this year</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -70,15 +106,25 @@ const ArtistChart = () => {
               content={<ChartTooltipContent hideLabel />}
             />
             <Line
-              dataKey="desktop"
+              dataKey="earnings"
               type="linear"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-earnings)"
               strokeWidth={2}
               dot={true}
             />
           </LineChart>
         </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          {percentageChange >= 0 ? "Trending up" : "Trending down"} by{" "}
+          {Math.abs(percentageChange).toFixed(1)}% this month
+          <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total earnings for the last 12 months
+        </div>
+      </CardFooter>
     </Card>
   );
 };
