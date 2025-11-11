@@ -45,11 +45,21 @@ class HttpClient {
       (config: InternalAxiosRequestConfig) => {
         // Only access token store on client side
         if (typeof window !== "undefined") {
-          const token = useTokenStore.getState().getAccessToken();
+          const token = useTokenStore.getState().accessToken;
           const isAuthenticated = useTokenStore.getState().isAuthenticated;
+
+          // DEBUG LOGS
+          console.log('🔑 Request Interceptor Debug:', {
+            url: config.url,
+            hasToken: !!token,
+            tokenLength: token?.length,
+            isAuthenticated,
+            requiresAuth: this.requiresAuth(config)
+          });
 
           if (token && this.requiresAuth(config)) {
             config.headers.Authorization = `Bearer ${token}`;
+            console.log('✅ Auth header set for:', config.url);
           } else if (this.requiresAuth(config) && !token) {
             console.warn(
               `⚠️ HTTP Client: Request requires auth but no token available for ${config.url}`,
@@ -90,7 +100,7 @@ class HttpClient {
             return Promise.reject(error);
           }
 
-          const currentToken = useTokenStore.getState().getAccessToken();
+          const currentToken = useTokenStore.getState().accessToken;
           if (!currentToken) {
             return Promise.reject(error);
           }
@@ -128,7 +138,7 @@ class HttpClient {
               const userToStore =
                 refreshResponse.user ||
                 (typeof window !== "undefined"
-                  ? useTokenStore.getState().getUser()
+                  ? useTokenStore.getState().user
                   : null);
 
               if (userToStore) {
@@ -148,7 +158,7 @@ class HttpClient {
 
               const verifyToken =
                 typeof window !== "undefined"
-                  ? useTokenStore.getState().getAccessToken()
+                  ? useTokenStore.getState().accessToken
                   : null;
 
               this.processQueue(null, refreshResponse.accessToken);
@@ -422,18 +432,25 @@ class HttpClient {
           `🔄 HTTP Client: Processing queued request ${index + 1}: ${config.url}`,
         );
         if (newToken) {
-          if (config.headers) {
-            config.headers.Authorization = `Bearer ${newToken}`;
+          // Create proper headers object for axios
+          const headers = config.headers || {};
+          
+          // Ensure we're setting it correctly for axios
+          if (typeof headers === 'object' && headers !== null) {
+            (headers as any).Authorization = `Bearer ${newToken}`;
+            config.headers = headers;
             console.log(
               `✅ HTTP Client: Updated Authorization header for queued request ${index + 1}`,
             );
           } else {
             console.warn(
-              `⚠️ HTTP Client: No headers on queued request ${index + 1}, creating new headers object`,
+              `⚠️ HTTP Client: Invalid headers on queued request ${index + 1}, creating new headers object`,
             );
-            config.headers = { Authorization: `Bearer ${newToken}` };
+            config.headers = { Authorization: `Bearer ${newToken}` } as any;
           }
         }
+        
+        // Retry the request with the axios instance
         resolve(this.axiosInstance(config));
       }
     });
@@ -505,7 +522,7 @@ class HttpClient {
     if (typeof window === "undefined") {
       return false;
     }
-    const token = useTokenStore.getState().getAccessToken();
+    const token = useTokenStore.getState().accessToken;
     const isAuth = useTokenStore.getState().isAuthenticated;
     return !!(token && isAuth);
   }
