@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ProfileToggleData } from "../data/profile.data";
 import {
   useToggleEditProfile,
@@ -15,9 +16,25 @@ import {
 interface IProfileEditToggle {
   id: string;
   role?: string;
+  userId?: string;
+  postId?: string; // For post-specific actions
+  onEdit?: () => void;
+  onShare?: () => void;
+  onUnpublish?: () => void;
+  onDelete?: () => void;
 }
 
-const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
+const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
+  id,
+  role,
+  userId,
+  postId,
+  onEdit,
+  onShare,
+  onUnpublish,
+  onDelete,
+}) => {
+  const router = useRouter();
   const toggleEditProfile = useToggleEditProfile();
   const isEditProfileToggled = useIsEditProfileToggled(id);
   const [editToggled, setEditToggled] = useState(false);
@@ -31,6 +48,73 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
   const toggleEdit = () => {
     setEditToggled((prev) => !prev);
     toggleEditProfile(id);
+  };
+
+  const handleMenuItemClick = (itemName: string) => {
+    setEditToggled(false);
+
+    // Handle different menu items based on name
+    switch (itemName.toLowerCase()) {
+      case "edit post":
+        if (onEdit) {
+          onEdit();
+        } else if (postId) {
+          router.push(`/post/edit/${postId}`);
+        }
+        break;
+
+      case "share":
+        if (onShare) {
+          onShare();
+        } else {
+          // Default share logic
+          handleShare();
+        }
+        break;
+
+      case "unpublish":
+        if (onUnpublish) {
+          onUnpublish();
+        }
+        break;
+
+      case "delete":
+        if (onDelete) {
+          onDelete();
+        } else {
+          handleDelete();
+        }
+        break;
+
+      default:
+        console.log(`Clicked: ${itemName}`);
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share && postId) {
+      navigator
+        .share({
+          title: "Check out this post",
+          url: `${window.location.origin}/post/${postId}`,
+        })
+        .catch((error) => console.log("Error sharing:", error));
+    } else {
+      // Fallback: copy to clipboard
+      const url = `${window.location.origin}/post/${postId}`;
+      navigator.clipboard.writeText(url);
+      alert("Link copied to clipboard!");
+    }
+  };
+
+  const handleDelete = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this post?",
+    );
+    if (confirmed && postId) {
+      // Call delete API here
+      console.log("Deleting post:", postId);
+    }
   };
 
   useEffect(() => {
@@ -53,7 +137,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [editToggled]);
+  }, [editToggled, isEditProfileToggled, id, toggleEditProfile]);
 
   return (
     <section className="flex w-full flex-col">
@@ -68,11 +152,15 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
             color="black"
             width={20}
             height={20}
-            className={`${editToggled ? "rotate-90 transition-transform duration-300" : "transition-transform duration-300"}`}
+            className={`${
+              editToggled
+                ? "rotate-90 transition-transform duration-300"
+                : "transition-transform duration-300"
+            }`}
           />
         </button>
 
-        <div className="aboslute flex w-full px-4">
+        <div className="absolute z-50 flex w-full px-4 pt-2">
           <AnimatePresence>
             {editToggled && (
               <motion.div
@@ -86,10 +174,11 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                   duration: 0.3,
                 }}
               >
-                <div className="flex w-[138px] touch-manipulation flex-col gap-[8px] rounded-[9px] bg-[#F4F4F4] px-4 pt-[12px] pb-[12px] opacity-75 sm:gap-[16px]">
+                <div className="flex w-[138px] touch-manipulation flex-col gap-[8px] rounded-[9px] bg-[#F4F4F4] px-4 pt-[12px] pb-[12px] opacity-75 shadow-lg sm:gap-[16px]">
                   {ProfileToggleData.map((item, index) => (
                     <button
                       key={item.id}
+                      onClick={() => handleMenuItemClick(item.name)}
                       style={{
                         animationDelay: `${index * 100}ms`,
                       }}
