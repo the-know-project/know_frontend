@@ -1,9 +1,9 @@
 export const isProduction = () => {
-  return process.env.NEXT_PUBLIC_API_ENV === "production";
+  return process.env.NODE_ENV === "production";
 };
 
 export const isDevelopment = () => {
-  return process.env.NEXT_PUBLIC_API_ENV === "development";
+  return process.env.NODE_ENV === "development";
 };
 
 export const isTest = () => {
