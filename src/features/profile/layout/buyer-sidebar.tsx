@@ -2,12 +2,12 @@
 import Image from "next/image";
 import { IconLocation } from "@tabler/icons-react";
 import { BlankProfilePicture } from "@/src/constants/constants";
-import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
+import { useAuthReady } from "../../auth/hooks/use-optimized-auth";
 
 const Sidebar = () => {
-  const { user, role, isLoading } = useOptimizedAuth();
+  const { user, role, isReady } = useAuthReady();
 
-  const profilePicture = isLoading
+  const profilePicture = !isReady
     ? BlankProfilePicture
     : (user?.imageUrl as string);
   return (
