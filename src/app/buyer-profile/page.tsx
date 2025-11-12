@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useTokenStore } from "@/src/features/auth/state/store";
 import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
 import { useFetchUserOrders } from "@/src/features/orders/hooks/use-fetch-user-orders";
+import { showLog } from "@/src/utils/logger";
 
 const tabs = ["Cart", "Pending Orders", "Completed Orders"];
 
@@ -15,22 +16,29 @@ const OrdersPage = () => {
   const token = useTokenStore((state) => state.accessToken);
   const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
 
-  useEffect(() => {
-    console.log("🔍 OrdersPage Token Debug:", {
-      hasToken: !!token,
-      tokenLength: token?.length,
-      tokenPreview: token ? token.substring(0, 30) + "..." : "NO TOKEN",
-      isAuthenticated,
-    });
-  }, [token, isAuthenticated]);
-
   const { data: cartData, isLoading: cartLoading } = useFetchUserCart();
   const { data: pendingOrders, isLoading: pendingOrdersLoading } =
     useFetchUserOrders({
       status: "pending",
     });
-  const { data, isLoading: completedOrdersLoading } = useFetchUserOrders({
-    status: "completed",
+  const { data: completedOrders, isLoading: completedOrdersLoading } =
+    useFetchUserOrders({
+      status: "completed",
+    });
+
+  showLog({
+    context: "Cart Data",
+    data: cartData,
+  });
+
+  showLog({
+    context: "Pending Orders",
+    data: pendingOrders,
+  });
+
+  showLog({
+    context: "Completed Orders",
+    data: completedOrders,
   });
 
   /**
@@ -40,8 +48,8 @@ const OrdersPage = () => {
 
   return (
     <BuyerGuard>
-      <div className="flex min-h-screen bg-gray-50">
-        <main className="flex-1 p-6">
+      <section className="flex min-h-screen bg-gray-50">
+        <div className="flex-1 p-6">
           {/* Tabs */}
           <div className="mb-6 flex justify-around border-b">
             {tabs.map((tab) => (
@@ -124,8 +132,8 @@ const OrdersPage = () => {
               ))}
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      </section>
     </BuyerGuard>
   );
 };
