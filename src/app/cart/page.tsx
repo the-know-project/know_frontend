@@ -8,7 +8,7 @@ const products = [
   { id: "file-3", title: "Artwork 3", price: 79.99, image: "/art3.jpg" },
 ];
 
-export default function ExplorePage() {
+export default function Page() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 text-3xl font-bold">Explore Artworks</h1>
