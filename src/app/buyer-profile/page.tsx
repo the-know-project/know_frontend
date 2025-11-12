@@ -23,7 +23,6 @@ const tabs = ["Cart", "Pending Orders", "Completed Orders"];
 const OrdersPage = () => {
   const [activeTab, setActiveTab] = useState("Cart");
 
-  // DEBUG: Check token in component
   const token = useTokenStore((state) => state.accessToken);
   const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
 
@@ -36,12 +35,10 @@ const OrdersPage = () => {
     });
   }, [token, isAuthenticated]);
 
-  // Fetch data for each tab
   const cartQuery = useBuyerCart();
   const pendingQuery = useBuyerPendingOrders();
   const completedQuery = useBuyerCompletedOrders();
 
-  // Select the appropriate query based on active tab
   const currentQuery =
     activeTab === "Cart"
       ? cartQuery
@@ -51,7 +48,6 @@ const OrdersPage = () => {
 
   const { data: ordersData, isLoading, error } = currentQuery;
 
-  // Adjust based on your actual API response structure
   const orders: Order[] = ordersData?.orders || ordersData?.data || [];
 
   return (
