@@ -3,20 +3,9 @@ import { BuyerGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import { Eye, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import {
-  useBuyerCart,
-  useBuyerPendingOrders,
-  useBuyerCompletedOrders,
-} from "@/src/features/profile/buyer/hooks/use-buyer-orders";
 import { useTokenStore } from "@/src/features/auth/state/store";
-
-type Order = {
-  id: string;
-  title: string;
-  artist: string;
-  views: number;
-  imageUrl: string;
-};
+import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
+import { useFetchUserOrders } from "@/src/features/orders/hooks/use-fetch-user-orders";
 
 const tabs = ["Cart", "Pending Orders", "Completed Orders"];
 
@@ -35,20 +24,19 @@ const OrdersPage = () => {
     });
   }, [token, isAuthenticated]);
 
-  const cartQuery = useBuyerCart();
-  const pendingQuery = useBuyerPendingOrders();
-  const completedQuery = useBuyerCompletedOrders();
+  const { data: cartData, isLoading: cartLoading } = useFetchUserCart();
+  const { data: pendingOrders, isLoading: pendingOrdersLoading } =
+    useFetchUserOrders({
+      status: "pending",
+    });
+  const { data, isLoading: completedOrdersLoading } = useFetchUserOrders({
+    status: "completed",
+  });
 
-  const currentQuery =
-    activeTab === "Cart"
-      ? cartQuery
-      : activeTab === "Pending Orders"
-        ? pendingQuery
-        : completedQuery;
-
-  const { data: ordersData, isLoading, error } = currentQuery;
-
-  const orders: Order[] = ordersData?.orders || ordersData?.data || [];
+  /**
+   * @dev Your previous implementation will not work as cart and orders do not return the same structure. ref figma file.
+   * @dev all responses have been typed.
+   */
 
   return (
     <BuyerGuard>
