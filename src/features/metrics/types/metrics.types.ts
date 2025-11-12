@@ -5,6 +5,8 @@ import {
 } from "../dto/metrics.dto";
 import {
   FetchSalesDataSchema,
+  FetchUserFollowersSchema,
+  FollowSchema,
   IncrementViewCountSchema,
   SalesDurationSchema,
 } from "../schema/metrics.schema";
@@ -18,3 +20,8 @@ export type IArtistMonthlySalesDataResponse = z.infer<
 export type IArtistYearlySalesDataResponse = z.infer<
   typeof ArtistYearlySalesDataResponse
 >;
+
+export type IFollowUser = z.infer<typeof FollowSchema>;
+export type IUnFollowUser = z.infer<typeof FollowSchema>;
+export type IFetchUserFollowers = z.infer<typeof FetchUserFollowersSchema>;
+export type IFetchUserFollowing = z.infer<typeof FetchUserFollowersSchema>;
