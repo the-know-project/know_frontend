@@ -57,7 +57,7 @@ export const CartItem: React.FC<ICartItemProps> = ({ item }) => {
           </button>
         </div>
 
-        <p className="mb-2 text-sm text-gray-500">${item.price.toFixed(2)}</p>
+        <p className="mb-2 text-sm text-gray-500">${item.price}</p>
 
         <div className="mt-auto flex items-center justify-between">
           {/* Quantity Controls */}
