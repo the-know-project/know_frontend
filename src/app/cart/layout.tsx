@@ -1,16 +1,14 @@
 import { NavWithCart } from "@/src/app/cart/components/NavWithCart";
 
-export default function RootLayout({
+export default function CartLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <NavWithCart />
-        <main>{children}</main>
-      </body>
-    </html>
+    <div>
+      <NavWithCart />
+      <div>{children}</div>
+    </div>
   );
 }
