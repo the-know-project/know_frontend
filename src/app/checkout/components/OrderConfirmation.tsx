@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Button } from "../../../shared/ui/button";
+import { Button } from "@/src/shared/ui/button";
 import { Minus, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -46,7 +46,7 @@ export function OrderConfirmation() {
   };
 
   const handleSubmit = () => {
-    router.push("/checkout/shipping");
+    router.push("/checkout/success"); // Navigate to success page
   };
 
   return (

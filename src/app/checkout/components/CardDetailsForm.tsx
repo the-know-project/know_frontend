@@ -1,8 +1,8 @@
 "use client";
 
-import { Input } from "../../../shared/ui/input";
-import { Label } from "../../../shared/ui/label";
-import { Button } from "../../../shared/ui/button";
+import { Input } from "@/src/shared/ui/input";
+import { Label } from "@/src/shared/ui/label";
+import { Button } from "@/src/shared/ui/button";
 import { HelpCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,7 @@ export function CardDetailsForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/checkout/confirm"); // next step
+    router.push("/checkout/shipping"); // Navigate to shipping info
   };
 
   return (
@@ -76,7 +76,7 @@ export function CardDetailsForm() {
       <div className="pt-4">
         <Button
           type="submit"
-          className="font-bricolage relative mt-5 inline-flex cursor-pointer w-full items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95"
+          className="font-bricolage relative mt-5 inline-flex w-full cursor-pointer items-center gap-[8px] rounded-lg bg-[#1E3A8A] pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95"
         >
           Proceed
         </Button>
@@ -84,5 +84,3 @@ export function CardDetailsForm() {
     </form>
   );
 }
-
-
