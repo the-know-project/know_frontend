@@ -1,25 +1,20 @@
 "use client";
 import { BuyerGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
+import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
+import { useFetchOrdersSummary } from "@/src/features/orders/hooks/use-fetch-orders-summary";
+import { useFetchUserOrders } from "@/src/features/orders/hooks/use-fetch-user-orders";
+import { formatDate } from "@/src/utils/date";
+import { showLog } from "@/src/utils/logger";
 import { Eye, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useTokenStore } from "@/src/features/auth/state/store";
-import { useFetchUserOrders } from "@/src/features/orders/hooks/use-fetch-user-orders";
-import { useFetchOrdersSummary } from "@/src/features/orders/hooks/use-fetch-orders-summary";
-import { showLog } from "@/src/utils/logger";
 
 const tabs = ["Cart", "Pending Orders", "Completed Orders"];
 
-const OrdersPage = () => {
+const Page = () => {
   const [activeTab, setActiveTab] = useState("Cart");
 
-  const token = useTokenStore((state) => state.accessToken);
-  const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
-
-  // Fetch orders with different statuses
-  const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserOrders({
-    status: "cart", // Assuming cart items have status "cart"
-  });
+  const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
 
   const { data: pendingOrdersData, isLoading: pendingOrdersLoading } =
     useFetchUserOrders({
@@ -31,7 +26,6 @@ const OrdersPage = () => {
       status: "completed",
     });
 
-  // Fetch orders summary for additional info
   const { data: ordersSummary } = useFetchOrdersSummary();
 
   showLog({
@@ -54,24 +48,16 @@ const OrdersPage = () => {
     data: ordersSummary,
   });
 
-  // Format date helper
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  // Render Cart Tab (items not yet ordered/pending payment)
   const renderCart = () => {
     if (cartLoading) {
       return <LoadingGrid />;
     }
 
-    const cartItems = cartOrdersData?.data?.orders || [];
+    const cartItems = cartOrdersData?.data || [];
+    showLog({
+      context: "Cart Items",
+      data: cartItems,
+    });
 
     if (cartItems.length === 0) {
       return <EmptyState message="Your cart is empty" />;
@@ -79,27 +65,27 @@ const OrdersPage = () => {
 
     return (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {cartItems.map((item: any) => (
+        {cartItems.map((item) => (
           <div
             key={item.id}
             className="overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
           >
             <img
-              src={item.artwork?.images?.[0]?.url || "/placeholder-art.jpg"}
-              alt={item.artwork?.title || "Artwork"}
+              src={item.url || "/placeholder-art.jpg"}
+              alt={"Artwork"}
               className="h-64 w-full object-cover"
             />
             <div className="p-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                {item.artwork?.title || "Untitled"}
+                {item.title || "Untitled"}
               </h3>
               <p className="text-sm text-gray-500">
-                {item.artwork?.artist?.name || "Unknown Artist"}
+                {`${item.artistFirstName} ${item.artistLastName} `}
               </p>
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex items-center gap-1 text-sm text-gray-600">
                   <Eye className="h-4 w-4" />
-                  <span>{item.artwork?.views?.toLocaleString() || 0}</span>
+                  <span>{item.viewCount || 0}</span>
                 </div>
                 <Link href={`/checkout?orderId=${item.id}`}>
                   <button className="flex items-center gap-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700">
@@ -115,7 +101,6 @@ const OrdersPage = () => {
     );
   };
 
-  // Render Pending Orders Tab
   const renderPendingOrders = () => {
     const pendingOrders = pendingOrdersData?.data?.orders || [];
 
@@ -129,7 +114,8 @@ const OrdersPage = () => {
 
     return (
       <div className="space-y-8">
-        {pendingOrders.map((order: any) => (
+         {/*Order data has types dont use any here. the order type is infered */}
+        {pendingOrders.map((order) => (
           <div
             key={order.id}
             className="grid grid-cols-1 gap-6 rounded-lg bg-white p-6 shadow lg:grid-cols-2"
@@ -275,7 +261,10 @@ const OrdersPage = () => {
     );
   };
 
-  // Render Completed Orders Tab
+  /**
+   * 
+   * @Dev The order data has type declaration. use that to assign the right values
+   */
   const renderCompletedOrders = () => {
     const completedOrders = completedOrdersData?.data?.orders || [];
 
@@ -289,7 +278,8 @@ const OrdersPage = () => {
 
     return (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {completedOrders.map((order: any) => (
+        {/*Order data has types dont use any here. the order type is infered */}
+        {completedOrders.map((order) => (
           <div
             key={order.id}
             className="overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
@@ -367,7 +357,6 @@ const OrdersPage = () => {
   );
 };
 
-// Loading Skeleton Component
 const LoadingGrid = () => (
   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
     {[1, 2, 3, 4].map((i) => (
@@ -386,7 +375,6 @@ const LoadingGrid = () => (
   </div>
 );
 
-// Empty State Component
 const EmptyState = ({ message }: { message: string }) => (
   <div className="flex min-h-[400px] flex-col items-center justify-center py-12">
     <div className="rounded-full bg-gray-100 p-6">
@@ -404,4 +392,4 @@ const EmptyState = ({ message }: { message: string }) => (
   </div>
 );
 
-export default OrdersPage;
+export default Page;
