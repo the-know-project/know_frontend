@@ -125,3 +125,13 @@ export const formatDateToFull = (isoDateString: string): string => {
     hour12: true,
   });
 };
+
+export function formatDate(dateString: string) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}

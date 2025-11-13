@@ -18,8 +18,6 @@ export const isTest = () => {
 
 export const getEnvironment = () => {
   return (
-    process.env.NEXT_PUBLIC_API_ENV ||
-    process.env.NODE_ENV ||
-    "development"
+    process.env.NEXT_PUBLIC_API_ENV || process.env.NODE_ENV || "development"
   );
 };
