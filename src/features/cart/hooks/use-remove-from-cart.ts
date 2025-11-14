@@ -4,7 +4,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { CartError } from "../error/cart.error";
 import { removeFromCart } from "../api/remove-from-cart/route";
 import { selectUser } from "../../auth/state/selectors/token.selectors";
-import { IUserCart, ICartItem } from "../types/cart.types";
+import { IUserCart, TCart } from "../types/cart.types";
 import { useCartActions } from "../state/cart.store";
 
 export type RemoveFromCartResult = {
@@ -85,7 +85,7 @@ export const useRemoveFromCart = ({ enabled }: { enabled: boolean }): RemoveFrom
             return {
               ...old,
               data: {
-                items: old.data.items.filter((item: ICartItem) => item.fileId !== fileId),
+                items: old.data.items.filter((item: TCart) => item.fileId !== fileId),
                 totalItems: Math.max(0, old.data.totalItems - 1),
               },
             };
