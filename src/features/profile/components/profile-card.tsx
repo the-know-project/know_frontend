@@ -1,11 +1,13 @@
 "use client";
-
 import { IconEye, IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import { formatViewCount } from "@/src/utils/number-format";
 import { useRoleStore } from "../../auth/state/store";
 import ProfileEditToggle from "./profile-edit-toggle";
-import { useIsEditProfileToggled } from "../artist/store/artist-profile.store";
+import {
+  useIsEditProfileToggled,
+  useToggleEditProfile, // ← Add this import
+} from "../artist/store/artist-profile.store";
 
 interface IProfileCard {
   id: number | string;
@@ -25,9 +27,16 @@ const ProfileCard: React.FC<IProfileCard> = ({
 }) => {
   const role = useRoleStore((state) => state.role);
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
+  const toggleEditProfile = useToggleEditProfile(); // ← Add this hook
+
+  // Add click handler for edit button
+  const handleEditClick = () => {
+    console.log("✏️ Edit button clicked! ID:", id);
+    toggleEditProfile(id as string);
+  };
 
   return (
-    <div className={`relative mt-[30px] flex w-full flex-col px-4`}>
+    <div className="relative mt-[30px] flex w-full flex-col px-4">
       <div className="absolute top-1 z-20 px-2">
         {role === "ARTIST" && (
           <ProfileEditToggle id={id as string} role={role} />
@@ -46,7 +55,6 @@ const ProfileCard: React.FC<IProfileCard> = ({
             }`}
           />
         </div>
-
         <div className="mt-2 flex w-full max-w-[400px] justify-between">
           <div className="flex flex-col items-start font-medium text-neutral-600">
             <h3 className="font-bricolage sm:text-normal text-sm text-neutral-800 capitalize">
@@ -56,7 +64,6 @@ const ProfileCard: React.FC<IProfileCard> = ({
               {createdAt}
             </p>
           </div>
-
           <div className="flex items-center gap-3 text-black">
             <div className="flex items-center gap-1">
               <IconEye width={15} height={15} />
@@ -64,12 +71,16 @@ const ProfileCard: React.FC<IProfileCard> = ({
                 {formatViewCount(views)}
               </p>
             </div>
-            <div className="flex items-center gap-1">
+            {/* FIXED: Changed from div to button with onClick handler */}
+            <button
+              onClick={handleEditClick}
+              className="flex cursor-pointer items-center gap-1 transition-all duration-200 hover:scale-105 active:scale-95"
+            >
               <IconPencil width={15} height={15} />
               <p className="font-bricolage text-xs capitalize sm:text-sm">
                 Edit
               </p>
-            </div>
+            </button>
           </div>
         </div>
       </div>

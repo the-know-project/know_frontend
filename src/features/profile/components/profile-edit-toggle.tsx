@@ -1,5 +1,4 @@
 "use client";
-
 import {
   IconArrowRightCircleFilled,
   IconSettingsFilled,
@@ -30,7 +29,16 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
 
   const toggleEdit = () => {
     setEditToggled((prev) => !prev);
-    toggleEditProfile(id);
+  };
+
+  const handleMenuItemClick = (itemId: string) => {
+    if (itemId === "edit-profile") {
+      // Open the edit profile modal
+      toggleEditProfile(id);
+      // Close the dropdown menu
+      setEditToggled(false);
+    }
+    // Add other menu item handlers here
   };
 
   useEffect(() => {
@@ -40,9 +48,6 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
         !toggleRef.current.contains(event.target as Node)
       ) {
         setEditToggled(false);
-        if (isEditProfileToggled) {
-          toggleEditProfile(id);
-        }
       }
     };
 
@@ -68,11 +73,14 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
             color="black"
             width={20}
             height={20}
-            className={`${editToggled ? "rotate-90 transition-transform duration-300" : "transition-transform duration-300"}`}
+            className={`${
+              editToggled
+                ? "rotate-90 transition-transform duration-300"
+                : "transition-transform duration-300"
+            }`}
           />
         </button>
-
-        <div className="aboslute flex w-full px-4">
+        <div className="absolute flex w-full px-4">
           <AnimatePresence>
             {editToggled && (
               <motion.div
@@ -90,6 +98,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                   {ProfileToggleData.map((item, index) => (
                     <button
                       key={item.id}
+                      onClick={() => handleMenuItemClick(item.id)}
                       style={{
                         animationDelay: `${index * 100}ms`,
                       }}

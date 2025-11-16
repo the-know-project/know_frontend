@@ -2,9 +2,13 @@
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import { IUser } from "../../auth/state/interface/auth.interface";
 import ArtistProfileGrid from "../artist/components/artist-profile-grid";
+import EditProfileModal from "./EditProfileModal"; // ← Add this import
+import { useTokenStore } from "@/src/features/auth/state/store";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
 
 export const ProfileGrid = () => {
   const { canRender, user, isLoading, role } = useOptimizedAuth();
+  const userId = useTokenStore(selectUserId); // ← Add this
 
   if (isLoading && !canRender) {
     return (
@@ -33,6 +37,9 @@ export const ProfileGrid = () => {
           </div>
         </div>
       )}
+
+      {/* Add the EditProfileModal here - CRITICAL! */}
+      {userId && <EditProfileModal userId={userId} />}
     </>
   );
 };
