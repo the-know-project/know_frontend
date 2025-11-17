@@ -10,7 +10,11 @@ module.exports = {
   ],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        'xs': '375px', // iPhone 6/7/8 and similar small phones
+      },
+    },
   },
   plugins: [tailwind_motion],
 };
