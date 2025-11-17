@@ -5,7 +5,7 @@ import { BlankProfilePicture } from "@/src/constants/constants";
 import { useAuthReady } from "../../auth/hooks/use-optimized-auth";
 import { useMemo } from "react";
 import { useToggleEditProfile } from "../artist/store/artist-profile.store";
-import EditProfileModal from "./EditProfileModal"; // Update path as needed
+import EditProfileModal from "../components/edit-profile-modal";
 
 const Sidebar = () => {
   const { user, role, isReady } = useAuthReady();

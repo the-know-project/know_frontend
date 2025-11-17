@@ -6,7 +6,7 @@ import { useFetchArtistMetrics } from "../../metrics/hooks/use-fetch-artist-metr
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import { useMemo } from "react";
 import { useToggleEditProfile } from "../artist/store/artist-profile.store";
-import EditProfileModal from "./EditProfileModal"; // Update path as needed
+import EditProfileModal from "../components/edit-profile-modal";
 
 const Sidebar = () => {
   const { user, role, isLoading } = useOptimizedAuth();
