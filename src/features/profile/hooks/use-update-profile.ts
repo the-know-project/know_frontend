@@ -1,49 +1,46 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTokenStore } from "@/src/features/auth/state/store";
-import { selectAccessToken } from "@/src/features/auth/state/selectors/token.selectors";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
+import { IUpdateProfileRequest } from "../types/user.types";
+import { ProfileError } from "../error/profile.error";
+import { err, ok, ResultAsync } from "neverthrow";
+import { updateProfile } from "../api/update-profile/route";
 
-export interface UpdateProfileData {
-  userId: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  userSelection?: string;
-  location?: string;
-  phoneNumber?: string;
-  sectionTitle?: string;
-  description?: string;
-  oldPassword?: string;
-  newPassword?: string;
-}
-
+type UpdateProfileParams = Omit<IUpdateProfileRequest, "userId">;
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
-  const accessToken = useTokenStore(selectAccessToken);
+  const userId = useTokenStore(selectUserId);
 
   return useMutation({
-    mutationFn: async (data: UpdateProfileData) => {
-      const response = await fetch("/api/user/updateUser", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to update profile");
+    mutationFn: async (data: UpdateProfileParams) => {
+      if (!userId) {
+        throw new ProfileError("User not authenticated");
       }
 
-      return response.json();
+      const result = await ResultAsync.fromPromise(
+        updateProfile({
+          ...data,
+          userId,
+        }),
+        (error) => new ProfileError(`Error updating user profile ${error}`),
+      ).andThen((result) => {
+        if (result.status === 200) {
+          return ok(result);
+        } else {
+          return err(new ProfileError("Failed to update profilr"));
+        }
+      });
+
+      if (result.isErr()) {
+        throw result.error;
+      }
+
+      return result.value;
     },
 
     onSuccess: (data) => {
-      // Refetch user data
       queryClient.invalidateQueries({ queryKey: ["user"] });
 
-      // Sync with auth store if needed
       const updateUser = useTokenStore.getState().updateUser;
       if (data.user) updateUser(data.user);
     },
