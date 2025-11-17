@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// User base schema
 export const UserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
@@ -16,7 +15,6 @@ export const UserSchema = z.object({
   updatedAt: z.string().optional(),
 });
 
-// Social links schema
 export const SocialLinksSchema = z.object({
   instagram: z.string().optional(),
   discord: z.string().optional(),
@@ -25,7 +23,6 @@ export const SocialLinksSchema = z.object({
   linkedin: z.string().optional(),
 });
 
-// Payment info schema
 export const PaymentInfoSchema = z.object({
   cardType: z.string().optional(),
   lastFourDigits: z.string().optional(),
@@ -33,19 +30,15 @@ export const PaymentInfoSchema = z.object({
   email: z.string().optional(),
 });
 
-// Full user profile schema
 export const UserProfileSchema = UserSchema.extend({
   socialLinks: SocialLinksSchema.optional(),
   paymentInfo: PaymentInfoSchema.optional(),
 });
 
-// Type exports
-export type IUser = z.infer<typeof UserSchema>;
 export type ISocialLinks = z.infer<typeof SocialLinksSchema>;
 export type IPaymentInfo = z.infer<typeof PaymentInfoSchema>;
 export type IUserProfile = z.infer<typeof UserProfileSchema>;
 
-// Update profile request schema
 export const UpdateProfileRequestSchema = z.object({
   userId: z.string(),
   firstName: z.string().optional(),
