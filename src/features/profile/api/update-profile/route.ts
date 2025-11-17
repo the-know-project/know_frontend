@@ -5,7 +5,7 @@ import { PROFILE_OP } from "../../data/profile.route";
 export async function updateProfile(ctx: IUpdateProfileRequest) {
   const formData = new FormData();
   Object.entries(ctx).forEach(([key, value]) => {
-    if (typeof File !== "undefined" && value instanceof File) {
+    if (typeof File !== "undefined" && (value as any) instanceof File) {
       formData.append(key, value);
     } else if (value !== undefined && value !== null) {
       formData.append(key, value as string);
