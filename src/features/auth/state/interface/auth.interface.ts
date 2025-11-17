@@ -28,5 +28,6 @@ export interface ITokenState {
   clearAuth: () => void;
   getAccessToken: () => string | null;
   getUser: () => IUser | null;
+  updateUser: (user: IUser) => void;
   setHydrated: (hydrated: boolean) => void;
 }
