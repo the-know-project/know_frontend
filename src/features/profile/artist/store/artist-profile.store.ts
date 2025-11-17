@@ -3,17 +3,24 @@ import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 interface EditProfileToggleState {
-  toggleEditProfile: (id: string) => void;
+  toggleEditProfile: (id: string, open?: boolean) => void;
   editingProfileId: string | null;
 }
 
 const useEditProfileToggleStore = create<EditProfileToggleState>()(
   persist(
     immer((set) => ({
-      toggleEditProfile: (id: string) =>
-        set((state) => ({
-          editingProfileId: state.editingProfileId === id ? null : id,
-        })),
+      toggleEditProfile: (id: string, open?: boolean) =>
+        set((state) => {
+          if (typeof open === "boolean") {
+            return {
+              editingProfileId: open ? id : null,
+            };
+          }
+          return {
+            editingProfileId: state.editingProfileId === id ? null : id,
+          };
+        }),
       editingProfileId: null,
     })),
     {

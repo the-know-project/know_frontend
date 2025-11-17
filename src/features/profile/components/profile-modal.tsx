@@ -8,12 +8,21 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLogout } from "../../auth/hooks";
 import Spinner from "@/src/shared/components/spinner";
+import {
+  useIsEditProfileToggled,
+  useToggleEditProfile,
+} from "@/src/features/profile/artist/store/artist-profile.store";
+import EditProfileModal from "./edit-profile-modal";
+import { useEffect, useState } from "react";
+import { showLog } from "@/src/utils/logger";
 
 interface ProfileModalProps {
   firstName: string;
   imageUrl: string;
   emailAddress: string;
   role: string;
+  userId: string;
+  onClose: () => void;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -21,9 +30,20 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   imageUrl,
   emailAddress,
   role,
+  userId,
+  onClose,
 }) => {
   const router = useRouter();
+  const toggleEditProfile = useToggleEditProfile();
+  const isOpen = useIsEditProfileToggled(userId);
   const { mutate: handleLogout, isPending: isLoggingOut } = useLogout();
+
+  useEffect(() => {
+    return () => {
+      toggleEditProfile(userId, false);
+    };
+  }, [toggleEditProfile, userId]);
+
   const userNavigationData =
     role.toLowerCase() === "buyer"
       ? ProfileModalItemsBuyer
@@ -40,6 +60,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       }
     } else if (action === "sign out") {
       handleLogout();
+    } else if (action === "edit profile") {
+      if (userId) {
+        toggleEditProfile(userId);
+      }
     }
   };
 
@@ -53,7 +77,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           height={72}
           className="rounded-full"
         />
-        <div className="itmes-center flex flex-col justify-center text-center">
+        <div className="flex flex-col items-center justify-center text-center">
           <h3 className="font-bricolage text-[20px] font-bold text-neutral-900 capitalize">
             {firstName}
           </h3>
@@ -86,6 +110,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             </button>
           );
         })}
+      </div>
+      <div className="absolute z-50">
+        {isOpen && <EditProfileModal userId={userId} />}
       </div>
     </section>
   );

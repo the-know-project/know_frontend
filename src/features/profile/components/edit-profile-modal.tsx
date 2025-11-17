@@ -2,22 +2,25 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { IconX } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useIsEditProfileToggled,
   useToggleEditProfile,
 } from "@/src/features/profile/artist/store/artist-profile.store";
 import EditProfileForm from "./edit-profile-form";
+import ReactDOM from "react-dom";
 
 interface IEditProfileModal {
   userId: string;
 }
 
 const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
+  const [mounted, setMounted] = useState(false);
   const isOpen = useIsEditProfileToggled(userId);
   const toggleEditProfile = useToggleEditProfile();
 
   useEffect(() => {
+    setMounted(true);
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -30,20 +33,27 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
   }, [isOpen]);
 
   const handleClose = () => {
-    toggleEditProfile(userId);
+    toggleEditProfile(userId, false);
   };
 
-  return (
+  if (!mounted) return null;
+
+  return ReactDOM.createPortal(
     <AnimatePresence>
       {isOpen && (
-        <>
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{
+              delay: 0.05,
+              ease: "easeInOut",
+              duration: 0.09,
+            }}
             onClick={handleClose}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
           />
 
           {/* Modal */}
@@ -52,7 +62,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="relative z-10 flex w-full items-center justify-center p-4"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="relative h-[90vh] w-full max-w-7xl overflow-hidden rounded-2xl bg-white shadow-2xl">
               {/* Close Button */}
@@ -69,9 +80,10 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
               </div>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 };
 

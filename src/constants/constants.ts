@@ -256,6 +256,7 @@ export const ProfileModalItemsBuyer = [
     id: 1,
     title: "My Profile",
   },
+
   {
     id: 2,
     title: "Switch to Artist",
@@ -274,6 +275,10 @@ export const ProfileModalItemsBuyer = [
   },
   {
     id: 6,
+    title: "Edit Profile",
+  },
+  {
+    id: 7,
     title: "Sign Out",
   },
 ];
@@ -305,6 +310,10 @@ export const ProfileModalItemsArtist = [
   },
   {
     id: 7,
+    title: "Edit Profile",
+  },
+  {
+    id: 8,
     title: "Sign Out",
   },
 ];

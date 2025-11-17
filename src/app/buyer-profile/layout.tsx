@@ -12,7 +12,7 @@ export default function OrdersLayout({
 
       <div className="mt-16 flex flex-1">
         {/* Hide sidebar on mobile (below 640px), show on sm and up */}
-        <div className="hidden sm:block">
+        <div className="hidden lg:block">
           <Sidebar />
         </div>
         <main className="flex-1 p-4">{children}</main>

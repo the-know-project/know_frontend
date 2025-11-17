@@ -45,7 +45,7 @@ export const UpdateProfileRequestSchema = z.object({
   lastName: z.string().optional(),
   email: z.string().email().optional(),
   userSelection: z.string().optional(),
-  location: z.string().optional(),
+  country: z.string().optional(),
   phoneNumber: z.string().optional(),
   sectionTitle: z.string().optional(),
   description: z.string().optional(),

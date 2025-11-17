@@ -20,47 +20,8 @@ import Image from "next/image";
 import { useTokenStore } from "@/src/features/auth/state/store";
 import { selectUser } from "@/src/features/auth/state/selectors/token.selectors";
 import { useUpdateProfile } from "@/src/features/profile/hooks/use-update-profile";
-
-const profileSchema = z
-  .object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email("Invalid email address"),
-    userSelection: z.string().min(1, "User selection is required"),
-    location: z.string().min(1, "Location is required"),
-    phoneNumber: z.string().optional(),
-    sectionTitle: z.string().optional(),
-    description: z.string().optional(),
-    oldPassword: z.string().optional(),
-    newPassword: z.string().optional(),
-    confirmPassword: z.string().optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.newPassword && !data.oldPassword) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Old password is required to set a new password",
-      path: ["oldPassword"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (data.newPassword && data.newPassword !== data.confirmPassword) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Passwords do not match",
-      path: ["confirmPassword"],
-    },
-  );
-
-type ProfileFormData = z.infer<typeof profileSchema>;
+import { ProfileFormData } from "../types/profile.types";
+import { ProfileFormSchema } from "../dto/profile.dto";
 
 interface IEditProfileForm {
   userId: string;
@@ -82,13 +43,13 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
     formState: { errors, isDirty },
     watch,
   } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
       firstName: user?.firstName || "",
       lastName: "",
       email: user?.email || "",
       userSelection: user?.role || "",
-      location: "",
+      country: "",
       phoneNumber: "",
       sectionTitle: "",
       description: "",
@@ -119,7 +80,6 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      // Update profile data
       await updateProfile({
         ...data,
       });
@@ -319,15 +279,15 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
                     size={20}
                   />
                   <input
-                    {...register("location")}
+                    {...register("country")}
                     type="text"
                     className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
                     placeholder="Enter location"
                   />
                 </div>
-                {errors.location && (
+                {errors.country && (
                   <p className="font-bricolage mt-1 text-sm text-red-600">
-                    {errors.location.message}
+                    {errors.country.message}
                   </p>
                 )}
               </div>

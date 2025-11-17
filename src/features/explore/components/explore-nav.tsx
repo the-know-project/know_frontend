@@ -138,6 +138,10 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
     setIsNotificationClicked(false);
   };
 
+  const handleCloseProfileModal = () => {
+    setIsProfileClicked(false);
+  };
+
   const handleSearchToggled = () => {
     setIsSearchToggled((prev) => !prev);
   };
@@ -308,10 +312,12 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
                         }}
                       >
                         <ProfileModal
+                          userId={user?.id || ""}
                           firstName={user?.firstName || ""}
                           emailAddress={user?.email || ""}
                           imageUrl={user?.imageUrl || ""}
                           role={role || ""}
+                          onClose={handleCloseProfileModal}
                         />
                       </motion.div>
                     )}

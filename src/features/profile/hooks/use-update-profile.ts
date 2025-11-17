@@ -38,11 +38,11 @@ export const useUpdateProfile = () => {
       return result.value;
     },
 
-    onSuccess: (data) => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
 
       const updateUser = useTokenStore.getState().updateUser;
-      if (data.user) updateUser(data.user);
+      if (result.data) updateUser(result.data);
     },
 
     onError: (error: Error) => {
