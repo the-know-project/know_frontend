@@ -14,6 +14,7 @@ export const OrdersData = z.object({
   userId: z.string().uuid(),
   sellerId: z.string().uuid(),
   fileId: z.string(),
+  assetUrl: z.string(),
   name: z.string(),
   artistFirstName: z.string(),
   artistLastName: z.string(),
