@@ -1,4 +1,4 @@
 export enum PROFILE_OP {
   USER_ASSETS = "/api/asset/userAsset",
-  UPDATE_PROFILE = "api/user/updateProfile",
+  UPDATE_PROFILE = "api/user/updateUser",
 }
