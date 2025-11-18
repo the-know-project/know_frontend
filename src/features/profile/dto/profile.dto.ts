@@ -71,22 +71,6 @@ export const ProfileFormSchema = z
       message: "Passwords do not match",
       path: ["confirmPassword"],
     },
-<<<<<<< HEAD
   );
 
-export const UpdateProfileReturnData = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
-  firstName: z.string(),
-  imageUrl: z.string(),
-  role: z.string(),
-});
-
-export const UpdateProfileResponseDto = z.object({
-  status: z.number(),
-  message: z.string(),
-  data: UpdateProfileReturnData,
-});
-=======
-  );
->>>>>>> 4c6b456 (updated stuff)
+export type ProfileFormData = z.infer<typeof ProfileFormSchema>;
