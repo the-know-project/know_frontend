@@ -88,7 +88,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
         profileRef.current &&
         !profileRef.current.contains(event.target as Node)
       ) {
-        setIsProfileClicked(false);
+        // setIsProfileClicked(false);
       }
     };
 
