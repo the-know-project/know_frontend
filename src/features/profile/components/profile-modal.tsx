@@ -13,7 +13,7 @@ import {
   useToggleEditProfile,
 } from "@/src/features/profile/artist/store/artist-profile.store";
 import EditProfileModal from "./edit-profile-modal";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { showLog } from "@/src/utils/logger";
 
 interface ProfileModalProps {
@@ -118,4 +118,4 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   );
 };
 
-export default ProfileModal;
+export default React.memo(ProfileModal);
