@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   useIsEditProfileToggled,
   useToggleEditProfile,
@@ -32,9 +32,9 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
     };
   }, [isOpen]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     toggleEditProfile(userId, false);
-  };
+  }, [toggleEditProfile, userId]);
 
   if (!mounted) return null;
 
@@ -87,4 +87,4 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
   );
 };
 
-export default EditProfileModal;
+export default React.memo(EditProfileModal);
