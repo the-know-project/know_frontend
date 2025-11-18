@@ -11,7 +11,7 @@ export default function CheckoutLayout({ children }: { children: ReactNode }) {
 
       <div className="mt-16 flex flex-1">
         {/* Hide sidebar on mobile, show on sm and up */}
-        <div className="hidden sm:block">
+        <div className="hidden lg:block">
           <Sidebar />
         </div>
 
