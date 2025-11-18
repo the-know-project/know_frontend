@@ -14,7 +14,7 @@ import {
   IconChevronLeft,
   IconCamera,
 } from "@tabler/icons-react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useTokenStore } from "@/src/features/auth/state/store";
 import { selectUser } from "@/src/features/auth/state/selectors/token.selectors";
@@ -88,6 +88,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
   };
 
   const onSubmit = async (data: ProfileFormData) => {
+    console.log(`image file ${imageFile}`);
     try {
       await updateProfile({
         ...data,
@@ -506,4 +507,4 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
   );
 };
 
-export default EditProfileForm;
+export default React.memo(EditProfileForm);
