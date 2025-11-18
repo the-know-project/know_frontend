@@ -91,7 +91,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
     try {
       await updateProfile({
         ...data,
-        profileImage: imageFile || undefined,
+        profilePicture: imageFile || undefined,
       });
 
       onClose();

@@ -5,6 +5,8 @@ import { IUpdateProfileRequest } from "../types/user.types";
 import { ProfileError } from "../error/profile.error";
 import { err, ok, ResultAsync } from "neverthrow";
 import { updateProfile } from "../api/update-profile/route";
+import { IUpdateProfileResponseDto } from "../types/profile.types";
+import { showLog } from "@/src/utils/logger";
 
 type UpdateProfileParams = Omit<IUpdateProfileRequest, "userId">;
 export const useUpdateProfile = () => {
@@ -35,7 +37,11 @@ export const useUpdateProfile = () => {
         throw result.error;
       }
 
-      return result.value;
+      showLog({
+        context: "Update Profile Information",
+        data: result.value,
+      });
+      return result.value as IUpdateProfileResponseDto;
     },
 
     onSuccess: (result) => {

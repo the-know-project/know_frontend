@@ -72,3 +72,17 @@ export const ProfileFormSchema = z
       path: ["confirmPassword"],
     },
   );
+
+export const UpdateProfileReturnData = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  firstName: z.string(),
+  imageUrl: z.string(),
+  role: z.string(),
+});
+
+export const UpdateProfileResponseDto = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: UpdateProfileReturnData,
+});
