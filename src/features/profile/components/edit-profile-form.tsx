@@ -68,6 +68,16 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image file");
+        return;
+      }
+
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -81,6 +91,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
     try {
       await updateProfile({
         ...data,
+        profileImage: imageFile || undefined,
       });
 
       onClose();
@@ -105,37 +116,39 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex h-full flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-        <div className="flex items-center gap-4">
+      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sm:py-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             type="button"
             onClick={handleBackToProfile}
-            className="rounded-full p-2 transition-colors hover:bg-gray-100"
+            className="rounded-full p-1.5 transition-colors hover:bg-gray-100 sm:p-2"
           >
-            <IconChevronLeft size={24} />
+            <IconChevronLeft size={20} className="sm:h-6 sm:w-6" />
           </button>
-          <h1 className="font-bricolage text-2xl font-bold">Edit Profile</h1>
+          <h1 className="font-bricolage text-lg font-bold sm:text-2xl">
+            Edit Profile
+          </h1>
         </div>
         <button
           type="submit"
           disabled={isUpdating || !hasChanges}
-          className="font-bricolage rounded-full bg-black px-6 py-2 text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+          className="font-bricolage rounded-full bg-black px-4 py-1.5 text-sm text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 sm:px-6 sm:py-2 sm:text-base"
         >
-          {isUpdating ? "Saving..." : "Save Changes"}
+          {isUpdating ? "Saving..." : "Save"}
         </button>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-8">
-        <div className="mx-auto max-w-4xl space-y-8">
+      <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
+        <div className="mx-auto max-w-4xl space-y-6 sm:space-y-8">
           {/* Profile Picture Section */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="font-bricolage mb-6 text-xl font-semibold">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6">
+            <h2 className="font-bricolage mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
               Profile Picture
             </h2>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
               <div className="relative">
-                <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-white bg-gray-100 shadow-lg">
+                <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-gray-100 shadow-lg sm:h-32 sm:w-32">
                   {profileImage ? (
                     <Image
                       src={profileImage}
@@ -146,15 +159,18 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-400 to-pink-400">
-                      <IconUser size={48} className="text-white" />
+                      <IconUser
+                        size={36}
+                        className="text-white sm:h-12 sm:w-12"
+                      />
                     </div>
                   )}
                 </div>
                 <label
                   htmlFor="profile-image"
-                  className="absolute right-0 bottom-0 cursor-pointer rounded-full bg-black p-2 text-white shadow-lg transition-colors hover:bg-gray-800"
+                  className="absolute right-0 bottom-0 cursor-pointer rounded-full bg-black p-1.5 text-white shadow-lg transition-colors hover:bg-gray-800 sm:p-2"
                 >
-                  <IconCamera size={20} />
+                  <IconCamera size={16} className="sm:h-5 sm:w-5" />
                   <input
                     id="profile-image"
                     type="file"
@@ -164,11 +180,11 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
                   />
                 </label>
               </div>
-              <div>
-                <p className="font-bricolage mb-2 text-sm text-gray-600">
+              <div className="text-center sm:text-left">
+                <p className="font-bricolage mb-1 text-xs text-gray-600 sm:mb-2 sm:text-sm">
                   Upload a new profile picture
                 </p>
-                <p className="font-bricolage text-xs text-gray-400">
+                <p className="font-bricolage text-[10px] text-gray-400 sm:text-xs">
                   JPG, PNG or GIF. Max size 5MB
                 </p>
               </div>
@@ -176,135 +192,135 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
           </div>
 
           {/* Basic Information */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="font-bricolage mb-6 text-xl font-semibold">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6">
+            <h2 className="font-bricolage mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
               Basic Information
             </h2>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   First Name *
                 </label>
                 <div className="relative">
                   <IconUser
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("firstName")}
                     type="text"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Enter first name"
                   />
                 </div>
                 {errors.firstName && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.firstName.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Last Name *
                 </label>
                 <div className="relative">
                   <IconUser
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("lastName")}
                     type="text"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Enter last name"
                   />
                 </div>
                 {errors.lastName && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.lastName.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Email *
                 </label>
                 <div className="relative">
                   <IconMail
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("email")}
                     type="email"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Enter email"
                   />
                 </div>
                 {errors.email && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.email.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Phone Number
                 </label>
                 <div className="relative">
                   <IconPhone
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("phoneNumber")}
                     type="tel"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Enter phone number"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Location *
                 </label>
                 <div className="relative">
                   <IconMapPin
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("country")}
                     type="text"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Enter location"
                   />
                 </div>
                 {errors.country && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.country.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   User Type *
                 </label>
                 <select
                   {...register("userSelection")}
-                  className="font-bricolage w-full rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                  className="font-bricolage w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                 >
                   <option value="">Select type</option>
                   <option value="ARTIST">Artist</option>
                   <option value="BUYER">Buyer</option>
                 </select>
                 {errors.userSelection && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.userSelection.message}
                   </p>
                 )}
@@ -313,37 +329,37 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
           </div>
 
           {/* About Me Section */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="font-bricolage mb-6 text-xl font-semibold">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6">
+            <h2 className="font-bricolage mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
               About Me
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Section Title
                 </label>
                 <div className="relative">
                   <IconInfoCircle
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("sectionTitle")}
                     type="text"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="e.g., Professional Summary"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Description
                 </label>
                 <textarea
                   {...register("description")}
-                  rows={5}
-                  className="font-bricolage w-full resize-none rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                  rows={4}
+                  className="font-bricolage w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                   placeholder="Tell us about yourself..."
                 />
               </div>
@@ -351,37 +367,37 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
           </div>
 
           {/* Links Section */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="font-bricolage mb-6 text-xl font-semibold">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6">
+            <h2 className="font-bricolage mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
               Social Links
             </h2>
-            <div className="space-y-4">
-              <p className="font-bricolage text-sm text-gray-600">
+            <div className="space-y-3 sm:space-y-4">
+              <p className="font-bricolage text-xs text-gray-600 sm:text-sm">
                 Connect your social media accounts (Coming soon)
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <button
                   type="button"
-                  className="font-bricolage rounded-lg border border-gray-300 px-4 py-2 text-sm transition-colors hover:bg-gray-50"
+                  className="font-bricolage rounded-lg border border-gray-300 px-3 py-1.5 text-xs transition-colors hover:bg-gray-50 sm:px-4 sm:py-2 sm:text-sm"
                   disabled
                 >
-                  <IconLink size={16} className="mr-2 inline" />
+                  <IconLink size={14} className="mr-1.5 inline sm:mr-2" />
                   Instagram
                 </button>
                 <button
                   type="button"
-                  className="font-bricolage rounded-lg border border-gray-300 px-4 py-2 text-sm transition-colors hover:bg-gray-50"
+                  className="font-bricolage rounded-lg border border-gray-300 px-3 py-1.5 text-xs transition-colors hover:bg-gray-50 sm:px-4 sm:py-2 sm:text-sm"
                   disabled
                 >
-                  <IconLink size={16} className="mr-2 inline" />
+                  <IconLink size={14} className="mr-1.5 inline sm:mr-2" />
                   Twitter
                 </button>
                 <button
                   type="button"
-                  className="font-bricolage rounded-lg border border-gray-300 px-4 py-2 text-sm transition-colors hover:bg-gray-50"
+                  className="font-bricolage rounded-lg border border-gray-300 px-3 py-1.5 text-xs transition-colors hover:bg-gray-50 sm:px-4 sm:py-2 sm:text-sm"
                   disabled
                 >
-                  <IconLink size={16} className="mr-2 inline" />
+                  <IconLink size={14} className="mr-1.5 inline sm:mr-2" />
                   Facebook
                 </button>
               </div>
@@ -389,75 +405,75 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
           </div>
 
           {/* Security Section */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="font-bricolage mb-6 text-xl font-semibold">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6">
+            <h2 className="font-bricolage mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
               Security
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Old Password
                 </label>
                 <div className="relative">
                   <IconLock
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("oldPassword")}
                     type="password"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Enter old password"
                   />
                 </div>
                 {errors.oldPassword && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.oldPassword.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   New Password
                 </label>
                 <div className="relative">
                   <IconLock
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("newPassword")}
                     type="password"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Enter new password"
                   />
                 </div>
                 {errors.newPassword && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.newPassword.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="font-bricolage mb-2 block text-sm font-medium text-gray-700">
+                <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
                   Confirm New Password
                 </label>
                 <div className="relative">
                   <IconLock
                     className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                    size={20}
+                    size={18}
                   />
                   <input
                     {...register("confirmPassword")}
                     type="password"
-                    className="font-bricolage w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition-all focus:border-transparent focus:ring-2 focus:ring-black"
+                    className="font-bricolage w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base"
                     placeholder="Confirm new password"
                   />
                 </div>
                 {errors.confirmPassword && (
-                  <p className="font-bricolage mt-1 text-sm text-red-600">
+                  <p className="font-bricolage mt-1 text-xs text-red-600 sm:text-sm">
                     {errors.confirmPassword.message}
                   </p>
                 )}
@@ -466,20 +482,20 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
           </div>
 
           {/* Payment Information */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="font-bricolage mb-6 text-xl font-semibold">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6">
+            <h2 className="font-bricolage mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
               Payment Information
             </h2>
-            <div className="space-y-4">
-              <p className="font-bricolage text-sm text-gray-600">
+            <div className="space-y-3 sm:space-y-4">
+              <p className="font-bricolage text-xs text-gray-600 sm:text-sm">
                 Manage your payment methods (Coming soon)
               </p>
               <button
                 type="button"
-                className="font-bricolage rounded-lg border border-gray-300 px-4 py-2 text-sm transition-colors hover:bg-gray-50"
+                className="font-bricolage rounded-lg border border-gray-300 px-3 py-1.5 text-xs transition-colors hover:bg-gray-50 sm:px-4 sm:py-2 sm:text-sm"
                 disabled
               >
-                <IconCreditCard size={16} className="mr-2 inline" />
+                <IconCreditCard size={14} className="mr-1.5 inline sm:mr-2" />
                 Add Payment Method
               </button>
             </div>
