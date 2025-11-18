@@ -13,16 +13,16 @@ export const CheckoutStepper = () => {
   return (
     <div className="mb-4 sm:mb-6">
       {/* Mobile view - stacked vertical stepper */}
-      <div className="flex items-center justify-between sm:hidden">
+      <div className="flex sm:hidden">
         {checkoutSteps.map((step, index) => (
           <div key={step.path} className="flex flex-1 flex-col items-center">
             {/* Top row: dots and lines */}
-            <div className="flex w-full items-center">
+            <div className="relative flex w-full items-center justify-center">
               {/* Left connector */}
               {index !== 0 && (
                 <div
                   className={clsx(
-                    "h-0.5 flex-1",
+                    "absolute right-1/2 h-0.5 w-1/2",
                     index <= activeIndex ? "bg-orange-500" : "bg-gray-300",
                   )}
                 />
@@ -31,7 +31,7 @@ export const CheckoutStepper = () => {
               {/* Dot */}
               <div
                 className={clsx(
-                  "h-3 w-3 flex-shrink-0 rounded-full",
+                  "relative z-10 h-3 w-3 flex-shrink-0 rounded-full",
                   index <= activeIndex ? "bg-orange-500" : "bg-gray-300",
                 )}
               />
@@ -40,7 +40,7 @@ export const CheckoutStepper = () => {
               {index !== checkoutSteps.length - 1 && (
                 <div
                   className={clsx(
-                    "h-0.5 flex-1",
+                    "absolute left-1/2 h-0.5 w-1/2",
                     index < activeIndex ? "bg-orange-500" : "bg-gray-300",
                   )}
                 />

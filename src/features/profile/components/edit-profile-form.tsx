@@ -14,7 +14,11 @@ import {
   IconChevronLeft,
   IconCamera,
 } from "@tabler/icons-react";
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
+=======
+import { useState, useEffect, useRef } from "react";
+>>>>>>> 4c6b456 (updated stuff)
 import Image from "next/image";
 import { useTokenStore } from "@/src/features/auth/state/store";
 import { selectUser } from "@/src/features/auth/state/selectors/token.selectors";
@@ -34,6 +38,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
 
   const [profileImage, setProfileImage] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const imageFileRef = useRef<File | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
 
   const {
@@ -79,6 +84,8 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
       }
 
       setImageFile(file);
+      imageFileRef.current = file;
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfileImage(reader.result as string);
@@ -90,11 +97,32 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
   const onSubmit = async (data: ProfileFormData) => {
     console.log(`image file ${imageFile}`);
     try {
+<<<<<<< HEAD
       await updateProfile({
         ...data,
         profilePicture: imageFile || undefined,
       });
+=======
+      const currentFile = imageFileRef.current;
+>>>>>>> 4c6b456 (updated stuff)
 
+      const updatePayload = {
+        firstName: data.firstName || undefined,
+        lastName: data.lastName || undefined,
+        email: data.email || undefined,
+        userSelection: data.userSelection || undefined,
+        country: data.country || undefined,
+        phoneNumber: data.phoneNumber || undefined,
+        sectionTitle: data.sectionTitle || undefined,
+        description: data.description || undefined,
+        oldPassword: data.oldPassword || undefined,
+        newPassword: data.newPassword || undefined,
+        profileImage: currentFile || undefined,
+      };
+
+      console.log("Submitting with file:", currentFile);
+
+      await updateProfile(updatePayload);
       onClose();
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -200,7 +228,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
             <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
               <div>
                 <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
-                  First Name *
+                  First Name
                 </label>
                 <div className="relative">
                   <IconUser
@@ -223,7 +251,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
 
               <div>
                 <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
-                  Last Name *
+                  Last Name
                 </label>
                 <div className="relative">
                   <IconUser
@@ -246,7 +274,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
 
               <div>
                 <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
-                  Email *
+                  Email
                 </label>
                 <div className="relative">
                   <IconMail
@@ -287,7 +315,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
 
               <div>
                 <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
-                  Location *
+                  Location
                 </label>
                 <div className="relative">
                   <IconMapPin
@@ -310,7 +338,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
 
               <div>
                 <label className="font-bricolage mb-1.5 block text-xs font-medium text-gray-700 sm:mb-2 sm:text-sm">
-                  User Type *
+                  User Type
                 </label>
                 <select
                   {...register("userSelection")}

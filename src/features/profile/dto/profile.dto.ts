@@ -36,21 +36,21 @@ export const UpdateProfileSchema = z.object({
 
 export const ProfileFormSchema = z
   .object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email("Invalid email address"),
-    userSelection: z.string().min(1, "User selection is required"),
-    country: z.string().min(1, "Location is required"),
-    phoneNumber: z.string().optional(),
-    sectionTitle: z.string().optional(),
-    description: z.string().optional(),
-    oldPassword: z.string().optional(),
-    newPassword: z.string().optional(),
-    confirmPassword: z.string().optional(),
+    firstName: z.string().optional().or(z.literal("")),
+    lastName: z.string().optional().or(z.literal("")),
+    email: z.string().email("Invalid email address").optional().or(z.literal("")),
+    userSelection: z.string().optional().or(z.literal("")),
+    country: z.string().optional().or(z.literal("")),
+    phoneNumber: z.string().optional().or(z.literal("")),
+    sectionTitle: z.string().optional().or(z.literal("")),
+    description: z.string().optional().or(z.literal("")),
+    oldPassword: z.string().optional().or(z.literal("")),
+    newPassword: z.string().optional().or(z.literal("")),
+    confirmPassword: z.string().optional().or(z.literal("")),
   })
   .refine(
     (data) => {
-      if (data.newPassword && !data.oldPassword) {
+      if (data.newPassword && data.newPassword.length > 0 && !data.oldPassword) {
         return false;
       }
       return true;
@@ -62,7 +62,7 @@ export const ProfileFormSchema = z
   )
   .refine(
     (data) => {
-      if (data.newPassword && data.newPassword !== data.confirmPassword) {
+      if (data.newPassword && data.newPassword.length > 0 && data.newPassword !== data.confirmPassword) {
         return false;
       }
       return true;
@@ -71,6 +71,7 @@ export const ProfileFormSchema = z
       message: "Passwords do not match",
       path: ["confirmPassword"],
     },
+<<<<<<< HEAD
   );
 
 export const UpdateProfileReturnData = z.object({
@@ -86,3 +87,6 @@ export const UpdateProfileResponseDto = z.object({
   message: z.string(),
   data: UpdateProfileReturnData,
 });
+=======
+  );
+>>>>>>> 4c6b456 (updated stuff)
