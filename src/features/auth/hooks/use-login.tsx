@@ -1,7 +1,6 @@
 import { handleAxiosError } from "@/src/utils/handle-axios-error";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../api/login/route";
-import { LoginResponseDto } from "../dto/auth.dto";
 import { ILogin, ILoginResponseDto, ILoginSuccess } from "../types/auth.types";
 import { useAuth } from "./use-auth";
 import { err, ok, ResultAsync } from "neverthrow";
