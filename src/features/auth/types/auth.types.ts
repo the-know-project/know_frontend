@@ -8,7 +8,7 @@ import {
   SignUpFormSchema,
   SignUpSchema,
 } from "../schema/auth.schema";
-import { SignUpResponseDto } from "../dto/auth.dto";
+import { LoginResponseDto, SignUpResponseDto } from "../dto/auth.dto";
 
 export interface ILoginSuccess {
   status: number;
@@ -41,3 +41,4 @@ export type ISignUpResponseDto = z.infer<typeof SignUpResponseDto>;
 export type IOtpForm = z.infer<typeof OtpFormSchema>;
 export type IForgotPassword = z.infer<typeof ForgotPasswordSchema>;
 export type IResetPassword = z.infer<typeof ResetPasswordSchema>;
+export type ILoginResponseDto = z.infer<typeof LoginResponseDto>;
