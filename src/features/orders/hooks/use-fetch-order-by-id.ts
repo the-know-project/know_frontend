@@ -3,6 +3,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { fetchOrderById } from "../api/order-by-id/route";
 import { OrdersErrorMessages } from "../data/orders.data";
 import { OrdersError } from "../errors/orders.error";
+import { OrdersByIdResponse } from "../types/orders.types";
 
 export const useFetchOrderById = (orderId: string) => {
   return useQuery({
