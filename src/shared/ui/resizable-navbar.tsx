@@ -11,6 +11,9 @@ import {
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { GlowEffect } from "./glow-effect";
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -252,11 +255,29 @@ export const MobileNavToggle = ({
   );
 };
 
+// src/shared/ui/resizable-navbar.tsx
+
 export const NavbarLogo = () => {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    if (isAuthenticated) {
+      // Always push to explore for authenticated users
+      // router.push with same URL will just refresh
+      router.replace("/explore");
+    } else {
+      router.replace("/");
+    }
+  };
+
   return (
     <a
-      href="/"
-      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
+      href="/explore"
+      onClick={handleLogoClick}
+      className="relative z-20 mr-4 flex cursor-pointer items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
       <Image
         src="/Know-Logo.png"
