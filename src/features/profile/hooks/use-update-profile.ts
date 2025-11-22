@@ -29,7 +29,7 @@ export const useUpdateProfile = () => {
         if (result.status === 200) {
           return ok(result);
         } else {
-          return err(new ProfileError("Failed to update profilr"));
+          return err(new ProfileError("Failed to update profile"));
         }
       });
 

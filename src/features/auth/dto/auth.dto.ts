@@ -7,7 +7,8 @@ const AuthSuccessDataDto = z.object({
     id: z.string().uuid(),
     email: z.string().email().min(1).max(100),
     firstName: z.string().min(1).max(100),
-    imageUrl: z.string().url().min(1).max(100),
+    // FIX: Remove the max(100) constraint for imageUrl
+    imageUrl: z.string().url().optional(), // ✅ Changed from .min(1).max(100)
     role: RoleSchema.optional(),
     isFirstTime: z.boolean().optional(),
   }),

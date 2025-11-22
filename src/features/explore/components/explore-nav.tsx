@@ -191,7 +191,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
         </AnimatePresence>
       </div>
       <div className="flex items-center justify-between px-4 sm:px-6">
-        <Link href={"/"} className="flex flex-col items-start gap-1">
+        <Link href={"/explore"} className="flex flex-col items-start gap-1">
           <Image
             src="/Know-Logo.png"
             alt="logo"
