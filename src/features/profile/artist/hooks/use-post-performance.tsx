@@ -1,73 +1,165 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { useTokenStore } from "@/src/features/auth/state/store";
-import { getPostPerformance } from "../api/post-performance.api";
-import { PostPerformanceResponseDto } from "../dto/post-performance.dto";
+import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { err, ok, ResultAsync } from "neverthrow";
+import { getPostPerformance } from "@/src/features/metrics/api/post-performance.api";
 import {
-  PostPerformance,
-  PostPerformanceMeta,
-} from "../types/post-performance.types";
+  PostPerformanceError,
+  PostPerformanceUnauthorizedError,
+} from "@/src/features/profile/artist/error/artist.error";
+import { useTokenStore } from "@/src/features/auth/state/store";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
+import { useRoleStore } from "@/src/features/auth/state/store";
+import { useCanFetchData } from "@/src/features/auth/hooks/use-optimized-auth";
+import type { PostPerformanceResponse } from "../dto/post-performance.dto";
 
 interface UsePostPerformanceOptions {
-  page?: number;
+  userId?: string;
   limit?: number;
-  enabled?: boolean;
 }
 
-interface PostPerformanceResult {
-  posts: PostPerformance[];
-  meta: PostPerformanceMeta;
+interface PostPerformanceItem {
+  title: string;
+  url: string;
+  fileId: string;
+  ordersCount: number;
+  commentCount: number;
+  createdAt: string;
 }
 
-export const usePostPerformance = (
-  options: UsePostPerformanceOptions = {},
-): UseQueryResult<PostPerformanceResult, Error> => {
-  const { page = 1, limit = 10, enabled: customEnabled = true } = options;
-  const { isAuthenticated, user, role } = useAuth();
-  const token = useTokenStore((state) => state.accessToken);
+export const usePostPerformance = ({
+  userId,
+  limit = 10,
+}: UsePostPerformanceOptions = {}) => {
+  const canFetch = useCanFetchData();
+  const currentUserId = useTokenStore(selectUserId);
+  const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
+  const hasToken = useTokenStore((state) => !!state.accessToken);
+  const hasHydrated = useTokenStore((state) => state.hasHydrated);
+  const role = useRoleStore((state) => state.role);
 
-  return useQuery<PostPerformanceResult, Error>({
-    queryKey: ["postPerformance", user?.id, page, limit],
-    queryFn: async () => {
-      // Validation checks
-      if (!user?.id) {
-        throw new Error("User not authenticated");
+  const targetUserId = userId || currentUserId;
+
+  const [allPosts, setAllPosts] = useState<PostPerformanceItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["postPerformance", targetUserId, currentPage, limit],
+    queryFn: async (): Promise<PostPerformanceResponse> => {
+      if (!targetUserId) {
+        throw new PostPerformanceUnauthorizedError();
       }
 
-      if (!token) {
-        throw new Error("No access token available");
+      const result = await ResultAsync.fromPromise(
+        getPostPerformance({
+          userId: targetUserId,
+          page: currentPage,
+          limit,
+        }),
+        (error) =>
+          new PostPerformanceError(
+            `Error fetching post performance: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+      ).andThen((data: any) => {
+        if (data.status === 200) {
+          return ok(data as PostPerformanceResponse);
+        } else {
+          return err(
+            new PostPerformanceError("Failed to fetch post performance"),
+          );
+        }
+      });
+
+      if (result.isErr()) {
+        throw result.error;
       }
 
-      if (role !== "ARTIST") {
-        throw new Error("This feature is only available for artists");
-      }
-
-      console.log("🎨 Fetching post performance for artist:", user.id);
-
-      // Fetch data with pagination
-      const response = await getPostPerformance(user.id, page, limit);
-
-      console.log("📊 Raw API Response:", response);
-
-      // Validate response structure with Zod
-      const validatedData = PostPerformanceResponseDto.parse(response);
-
-      console.log("✅ Validated data:", validatedData);
-
-      // Return both data and meta
-      return {
-        posts: validatedData.data,
-        meta: validatedData.meta,
-      };
+      return result.value;
     },
     enabled:
+      canFetch &&
       isAuthenticated &&
-      !!user?.id &&
-      !!token &&
-      role === "ARTIST" &&
-      customEnabled,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-    retry: 2,
+      hasToken &&
+      hasHydrated &&
+      !!targetUserId &&
+      role === "ARTIST",
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    retryDelay: 1000,
   });
+
+  useEffect(() => {
+    setAllPosts([]);
+    setCurrentPage(1);
+    setHasNextPage(true);
+    setTotalPages(0);
+    setTotalItems(0);
+    setIsLoadingMore(false);
+  }, [targetUserId]);
+
+  useEffect(() => {
+    if (data?.data) {
+      const { data: newPosts, meta } = data;
+
+      setTotalPages(meta?.totalPages || 0);
+      setTotalItems(meta?.totalItems || 0);
+      setHasNextPage(meta?.hasNextPage || false);
+
+      if (currentPage === 1) {
+        setAllPosts(newPosts || []);
+      } else {
+        setAllPosts((prevPosts) => {
+          const existingIds = new Set(prevPosts.map((post) => post.fileId));
+          const uniqueNewPosts = (newPosts || []).filter(
+            (post: PostPerformanceItem) => !existingIds.has(post.fileId),
+          );
+          return [...prevPosts, ...uniqueNewPosts];
+        });
+      }
+    }
+  }, [data, currentPage]);
+
+  useEffect(() => {
+    if (isLoading && currentPage > 1) {
+      setIsLoadingMore(true);
+    } else {
+      setIsLoadingMore(false);
+    }
+  }, [isLoading, currentPage]);
+
+  const loadMore = useCallback(() => {
+    if (hasNextPage && !isLoading && !isLoadingMore) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  }, [hasNextPage, isLoading, isLoadingMore]);
+
+  const refresh = useCallback(() => {
+    setAllPosts([]);
+    setCurrentPage(1);
+    setHasNextPage(true);
+    setTotalPages(0);
+    setTotalItems(0);
+    setIsLoadingMore(false);
+  }, []);
+
+  return {
+    posts: allPosts,
+    currentPage,
+    hasNextPage,
+    totalPages,
+    totalItems,
+
+    isLoading: isLoading && currentPage === 1,
+    isLoadingMore,
+    error: error?.message || null,
+
+    loadMore,
+    refresh,
+
+    isEmpty: allPosts.length === 0 && !isLoading,
+    canLoadMore: hasNextPage && !isLoading && !isLoadingMore,
+  };
 };

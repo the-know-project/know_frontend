@@ -25,4 +25,11 @@ export const PostPerformanceResponseDto = z.object({
   meta: PostPerformanceMetaDto,
 });
 
+export const GetPostPerformanceParamsDto = z.object({
+  userId: z.string().uuid(),
+  page: z.number().int().positive(),
+  limit: z.number().int().positive().max(100),
+});
+
 export type PostPerformanceResponse = z.infer<typeof PostPerformanceResponseDto>;
+export type GetPostPerformanceParams = z.infer<typeof GetPostPerformanceParamsDto>;
