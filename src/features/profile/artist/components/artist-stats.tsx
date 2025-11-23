@@ -56,9 +56,7 @@ const Stats = () => {
       <div className="flex w-full flex-col py-12">
         <div className="mb-6">
           <h3 className="stats_title">Post Performance</h3>
-          <p className="mt-2 text-sm text-gray-600">
-            Track how your artworks are performing across the platform
-          </p>
+          <p className="mt-2 text-sm text-gray-600"></p>
         </div>
         <PostPerformanceDashboard />
       </div>
