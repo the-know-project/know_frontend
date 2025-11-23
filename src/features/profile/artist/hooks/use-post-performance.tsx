@@ -1,18 +1,35 @@
-// src/features/profile/artist/hooks/use-post-performance.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useTokenStore } from "@/src/features/auth/state/store";
 import { getPostPerformance } from "../api/post-performance.api";
 import { PostPerformanceResponseDto } from "../dto/post-performance.dto";
-import { PostPerformance } from "../types/post-performance.types";
+import {
+  PostPerformance,
+  PostPerformanceMeta,
+} from "../types/post-performance.types";
 
-export const usePostPerformance = () => {
+interface UsePostPerformanceOptions {
+  page?: number;
+  limit?: number;
+  enabled?: boolean;
+}
+
+interface PostPerformanceResult {
+  posts: PostPerformance[];
+  meta: PostPerformanceMeta;
+}
+
+export const usePostPerformance = (
+  options: UsePostPerformanceOptions = {},
+): UseQueryResult<PostPerformanceResult, Error> => {
+  const { page = 1, limit = 10, enabled: customEnabled = true } = options;
   const { isAuthenticated, user, role } = useAuth();
   const token = useTokenStore((state) => state.accessToken);
 
-  return useQuery<PostPerformance[]>({
-    queryKey: ["postPerformance", user?.id],
+  return useQuery<PostPerformanceResult, Error>({
+    queryKey: ["postPerformance", user?.id, page, limit],
     queryFn: async () => {
+      // Validation checks
       if (!user?.id) {
         throw new Error("User not authenticated");
       }
@@ -25,22 +42,32 @@ export const usePostPerformance = () => {
         throw new Error("This feature is only available for artists");
       }
 
-      const response = await getPostPerformance(user.id);
+      console.log("🎨 Fetching post performance for artist:", user.id);
 
-      // DEBUG: Log the actual response to see the structure
+      // Fetch data with pagination
+      const response = await getPostPerformance(user.id, page, limit);
+
       console.log("📊 Raw API Response:", response);
-      console.log("📊 Response data array:", response.data);
-      if (response.data && response.data.length > 0) {
-        console.log("📊 First item structure:", response.data[0]);
-        console.log("📊 First item keys:", Object.keys(response.data[0]));
-      }
 
+      // Validate response structure with Zod
       const validatedData = PostPerformanceResponseDto.parse(response);
-      return validatedData.data;
+
+      console.log("✅ Validated data:", validatedData);
+
+      // Return both data and meta
+      return {
+        posts: validatedData.data,
+        meta: validatedData.meta,
+      };
     },
-    enabled: isAuthenticated && !!user?.id && !!token && role === "ARTIST",
-    staleTime: 5 * 60 * 1000,
+    enabled:
+      isAuthenticated &&
+      !!user?.id &&
+      !!token &&
+      role === "ARTIST" &&
+      customEnabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: 2,
   });
 };

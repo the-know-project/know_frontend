@@ -13,7 +13,6 @@ import React, { useRef, useState } from "react";
 import { GlowEffect } from "./glow-effect";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
 
 interface NavbarProps {
   children: React.ReactNode;

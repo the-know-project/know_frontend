@@ -1,11 +1,8 @@
-// src/features/profile/artist/types/post-performance.types.ts
 import { z } from "zod";
-import { PostPerformanceDto } from "../dto/post-performance.dto";
+import {
+  PostPerformanceItemDto,
+  PostPerformanceMetaDto,
+} from "../dto/post-performance.dto";
 
-export type PostPerformance = z.infer<typeof PostPerformanceDto>;
-
-export interface PostPerformanceResponse {
-  status: number;
-  message: string;
-  data: PostPerformance[];
-}
+export type PostPerformance = z.infer<typeof PostPerformanceItemDto>;
+export type PostPerformanceMeta = z.infer<typeof PostPerformanceMetaDto>;
