@@ -75,6 +75,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           alt={firstName}
           width={72}
           height={72}
+          quality={100}
           className="rounded-full object-cover"
         />
         <div className="flex flex-col items-center justify-center text-center">

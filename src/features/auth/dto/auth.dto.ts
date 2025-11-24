@@ -41,7 +41,7 @@ export const SignUpResponseDto = z.object({
 export const LoginResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
-  data: AuthSuccessDataDto.optional(),
+  data: AuthSuccessDataDto,
 });
 
 export const ForgotPasswordResponseDto = z.object({

@@ -98,7 +98,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                   {ProfileToggleData.map((item, index) => (
                     <button
                       key={item.id}
-                      onClick={() => handleMenuItemClick(item.id)}
+                      onClick={() => handleMenuItemClick(String(item.id))}
                       style={{
                         animationDelay: `${index * 100}ms`,
                       }}

@@ -277,6 +277,24 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
                         <NotificationCard data={notifications} />
                       </motion.div>
                     )}
+
+                  {isNotificationClicked &&
+                    isAuthenticated &&
+                    notifications.length < 1 && (
+                      <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        transition={{
+                          delay: 0.05,
+                          ease: "easeInOut",
+                          duration: 0.09,
+                        }}
+                      >
+                        <NotificationCard data={notifications} />
+                      </motion.div>
+                    )}
                 </AnimatePresence>
               </div>
             </div>

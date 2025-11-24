@@ -32,8 +32,10 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
   };
 
   const handleDeleteAll = async () => {
-    const allIds = data.map((notification) => String(notification.id));
-    await handleDeleteNotifications(allIds);
+    if (data.length > 0) {
+      const allIds = data.map((notification) => String(notification.id));
+      await handleDeleteNotifications(allIds);
+    }
   };
 
   return (
@@ -59,48 +61,55 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
         </button>
       </div>
       <div className="relative z-10 flex w-full flex-col gap-5">
-        {data.map((notification: NotificationProps, index) => (
-          <div className="flex w-full flex-col gap-2" key={notification.id}>
-            <div
-              className="motion-preset-blur-down motion-duration-700 flex items-center gap-5"
-              style={{
-                animationDelay: `${index * 100}ms`,
-              }}
-            >
-              <div className="flex w-fit items-center justify-center rounded-full bg-gray-200 mask-auto p-2">
-                <Image
-                  src={notification.image}
-                  alt={`notification_image`}
-                  width={50}
-                  height={50}
-                  className="rounded-full object-cover"
-                />
-              </div>
+        {data.length < 1 && (
+          <h3 className="font-bricolage self-center text-sm font-medium">
+            All caught up
+          </h3>
+        )}
 
-              <div className="flex flex-1 flex-col gap-1 capitalize">
-                <h3 className="font-bricolage text-sm font-bold">
-                  {notification.content}
-                </h3>
-                <p className="font-grotesk text-xs text-gray-400">
-                  {formatTimestampToReadable(notification.createdAt)}
-                </p>
-              </div>
-
-              <button
-                onClick={() => handleDeleteSingle(String(notification.id))}
-                disabled={isPending}
-                className="group flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 disabled:opacity-50"
+        {data.length > 0 &&
+          data.map((notification: NotificationProps, index) => (
+            <div className="flex w-full flex-col gap-2" key={notification.id}>
+              <div
+                className="motion-preset-blur-down motion-duration-700 flex items-center gap-5"
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                }}
               >
-                <IconX
-                  width={12}
-                  height={12}
-                  className="text-gray-400 group-hover:text-red-500"
-                />
-              </button>
+                <div className="flex w-fit items-center justify-center rounded-full bg-gray-200 mask-auto p-2">
+                  <Image
+                    src={notification.image}
+                    alt={`notification_image`}
+                    width={50}
+                    height={50}
+                    className="rounded-full object-cover"
+                  />
+                </div>
+
+                <div className="flex flex-1 flex-col gap-1 capitalize">
+                  <h3 className="font-bricolage text-sm font-bold">
+                    {notification.content}
+                  </h3>
+                  <p className="font-grotesk text-xs text-gray-400">
+                    {formatTimestampToReadable(notification.createdAt)}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => handleDeleteSingle(String(notification.id))}
+                  disabled={isPending}
+                  className="group flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 disabled:opacity-50"
+                >
+                  <IconX
+                    width={12}
+                    height={12}
+                    className="text-gray-400 group-hover:text-red-500"
+                  />
+                </button>
+              </div>
+              <hr className="w-full border-t border-gray-200" />
             </div>
-            <hr className="w-full border-t border-gray-200" />
-          </div>
-        ))}
+          ))}
       </div>
     </section>
   );
