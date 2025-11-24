@@ -50,13 +50,11 @@ export const useInfiniteScroll = ({
     loadingRef.current = true;
     onLoadMore();
 
-    // Reset loading flag after a short delay
     setTimeout(() => {
       loadingRef.current = false;
     }, 100);
   }, [enabled, hasNextPage, isLoadingMore, onLoadMore]);
 
-  // Scroll event handler for window/document
   const handleScroll = useCallback(() => {
     if (!enabled || !hasNextPage || isLoadingMore || loadingRef.current) {
       return;
