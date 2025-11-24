@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
 import { usePostPerformance } from "../hooks/use-post-performance";
+import { useInfiniteScroll } from "@/src/features/explore/hooks/use-infinite-scroll";
 import Image from "next/image";
 import {
   IconShoppingCart,
@@ -10,6 +10,16 @@ import {
 } from "@tabler/icons-react";
 
 export const PostPerformanceDashboard = () => {
+  const postPerformanceHookResult = usePostPerformance({ limit: 10 });
+
+  const infiniteScrollResult = useInfiniteScroll({
+    onLoadMore: postPerformanceHookResult.loadMore,
+    hasNextPage: postPerformanceHookResult.hasNextPage,
+    isLoadingMore: postPerformanceHookResult.isLoadingMore,
+    threshold: 200,
+    enabled: true,
+  });
+
   const {
     posts,
     isLoading,
@@ -17,42 +27,11 @@ export const PostPerformanceDashboard = () => {
     error,
     hasNextPage,
     totalItems,
-    loadMore,
     canLoadMore,
     isEmpty,
-  } = usePostPerformance({ limit: 10 });
+  } = postPerformanceHookResult;
 
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  const handleIntersection = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      if (entry.isIntersecting && canLoadMore) {
-        loadMore();
-      }
-    },
-    [canLoadMore, loadMore],
-  );
-
-  useEffect(() => {
-    const target = loadMoreRef.current;
-    if (!target) return;
-
-    observerRef.current = new IntersectionObserver(handleIntersection, {
-      root: null,
-      rootMargin: "100px",
-      threshold: 0.1,
-    });
-
-    observerRef.current.observe(target);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [handleIntersection]);
+  const { sentinelRef } = infiniteScrollResult;
 
   if (isLoading) {
     return (
@@ -254,19 +233,25 @@ export const PostPerformanceDashboard = () => {
       </div>
 
       {/* Infinite Scroll Trigger & Loading Indicator */}
-      <div ref={loadMoreRef} className="min-h-[50px] py-4">
-        {isLoadingMore && (
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-orange-500 border-t-transparent"></div>
-            <span>Loading more posts...</span>
-          </div>
-        )}
-        {!hasNextPage && posts.length > 0 && (
-          <p className="text-center text-xs text-gray-500 sm:text-sm">
-            No more posts to load
-          </p>
-        )}
-      </div>
+      {canLoadMore && (
+        <div
+          ref={sentinelRef}
+          className="flex h-10 w-full items-center justify-center"
+        />
+      )}
+
+      {isLoadingMore && (
+        <div className="flex items-center justify-center gap-2 py-4 text-sm text-gray-600">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-orange-500 border-t-transparent"></div>
+          <span>Loading more posts...</span>
+        </div>
+      )}
+
+      {!hasNextPage && posts.length > 0 && (
+        <p className="text-center text-xs text-gray-500 sm:text-sm">
+          No more posts to load
+        </p>
+      )}
 
       {/* Showing Count */}
       <p className="text-center text-xs text-gray-500 sm:text-sm">
