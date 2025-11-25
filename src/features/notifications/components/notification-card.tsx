@@ -9,6 +9,7 @@ import Spinner from "@/src/shared/components/spinner";
 interface NotificationProps {
   id: string | number;
   image: string;
+  secondaryImage?: string | null;
   content: string;
   createdAt: number;
 }
