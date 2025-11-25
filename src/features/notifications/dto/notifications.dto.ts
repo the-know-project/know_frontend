@@ -4,6 +4,7 @@ export const NotificationData = z.object({
   userId: z.string().uuid(),
   id: z.string().uuid(),
   image: z.string().url(),
+  secondaryImage: z.string().url().optional().nullable(),
   type: z.string().min(1).max(255),
   content: z.string().min(1).max(255),
   createdAt: z.number(),
