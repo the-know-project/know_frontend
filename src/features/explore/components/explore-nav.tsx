@@ -258,7 +258,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
                 )}
               </button>
 
-              <div className="absolute top-[50px] right-[250px] z-50 w-full lg:right-[270px]">
+              <div className="absolute top-[50px] right-[270px] z-50 w-full lg:right-[270px]">
                 <AnimatePresence>
                   {isNotificationClicked &&
                     isAuthenticated &&
