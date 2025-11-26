@@ -17,7 +17,7 @@ export const textVariant = (delay: number) => ({
     y: 0,
     opacity: 1,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       duration: 1.25,
       delay,
     },
@@ -33,11 +33,11 @@ export const textVariant2 = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "tween",
+      type: "tween" as const,
       ease: "easeIn",
     },
   },
-};
+} as const;
 
 export const staggerContainer = (
   staggerChildren: number,
@@ -57,7 +57,7 @@ export const navVariants = {
     opacity: 0,
     y: -50,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 300,
       damping: 140,
     },
@@ -66,7 +66,7 @@ export const navVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 80,
       delay: 0.5,
     },
@@ -75,7 +75,7 @@ export const navVariants = {
 
 export const slideIn = (
   direction: string,
-  type: string,
+  type: "spring" | "tween" | "inertia" | "keyframes",
   delay: number,
   duration: number,
 ) => ({
@@ -90,7 +90,7 @@ export const slideIn = (
       type,
       delay,
       duration,
-      ease: "easeOut",
+      ease: "easeOut" as const,
     },
   },
 });
