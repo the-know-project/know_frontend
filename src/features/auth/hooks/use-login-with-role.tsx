@@ -44,7 +44,7 @@ export const useLoginWithRole = () => {
             id: user.id,
             email: user.email,
             firstName: user.firstName,
-            imageUrl: user.imageUrl || '',
+            imageUrl: user.imageUrl || "",
           },
           selectedRole,
         );
@@ -54,7 +54,7 @@ export const useLoginWithRole = () => {
             id: user.id,
             email: user.email,
             firstName: user.firstName,
-            imageUrl: user.imageUrl,
+            imageUrl: user.imageUrl || "",
           },
           role: selectedRole,
           message: validatedData.message,
