@@ -2,7 +2,6 @@
 
 import { empty } from "@/src/assets";
 import { BlankProfilePicture } from "@/src/constants/constants";
-import ArtistInfoCard from "@/src/features/explore/components/artist-info-card";
 import ExploreArtistInfo from "@/src/features/explore/components/explore-artist-info";
 import ExploreCommentSection from "@/src/features/explore/components/explore-comment-section";
 import {
@@ -13,7 +12,6 @@ import { showLog } from "@/src/utils/logger";
 import { IconTag, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect } from "react";
 
 const ArtDetails = () => {
   const {
@@ -23,21 +21,6 @@ const ArtDetails = () => {
     isExploreContentToggled,
   } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
-
-  /**
-   * @Note: This effect prevents body scrolling when the modal is open.
-   */
-  // useEffect(() => {
-  //   if (isExploreContentToggled) {
-  //     document.body.style.overflow = "hidden";
-  //   } else {
-  //     document.body.style.overflow = "unset";
-  //   }
-
-  //   return () => {
-  //     document.body.style.overflow = "unset";
-  //   };
-  // }, [isExploreContentToggled]);
 
   showLog({
     context: "Art-Details",
@@ -205,7 +188,7 @@ const ArtDetails = () => {
                     </div>
                   </div>
 
-                  <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] p-10 px-20 lg:grid-cols-3">
+                  <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] lg:grid-cols-3">
                     {/* Left side for comments */}
                     <div className="lg:col-span-2">
                       <ExploreCommentSection />
