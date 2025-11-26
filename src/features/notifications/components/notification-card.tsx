@@ -5,6 +5,7 @@ import { IconChecks, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useDeleteUserNotifications } from "../hooks/use-delete-user-notifications";
 import Spinner from "@/src/shared/components/spinner";
+import { showLog } from "@/src/utils/logger";
 
 interface NotificationProps {
   id: string | number;
@@ -21,6 +22,11 @@ interface INotificationCard {
 const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
   const { mutateAsync: deleteNotifications, isPending } =
     useDeleteUserNotifications();
+
+  showLog({
+    context: "Nofication Card",
+    data: data,
+  });
 
   const handleDeleteNotifications = async (notificationIds: string[]) => {
     await deleteNotifications({
@@ -40,7 +46,7 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
   };
 
   return (
-    <section className="scrollbar-hide relative flex max-h-[600px] min-h-[300px] min-w-[300px] scroll-m-2 flex-col overflow-auto scroll-smooth rounded-[15px] border border-white/20 bg-white px-2 py-4 opacity-95 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)]">
+    <section className="scrollbar-hide relative flex max-h-[600px] min-h-[300px] min-w-[350px] scroll-m-2 flex-col overflow-auto scroll-smooth rounded-[15px] border border-white/20 bg-white px-2 py-4 opacity-95 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)]">
       <div className="mb-5 flex w-full flex-col items-end justify-end">
         <button
           className="group flex items-center gap-2"
@@ -81,20 +87,30 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
                   <Image
                     src={notification.image}
                     alt={`notification_image`}
-                    width={50}
-                    height={50}
-                    className="rounded-full object-cover"
+                    width={30}
+                    height={30}
+                    className="rounded-full"
                   />
                 </div>
 
                 <div className="flex flex-1 flex-col gap-1 capitalize">
-                  <h3 className="font-bricolage text-sm font-bold">
+                  <h3 className="font-bricolage text-[12px] font-bold sm:text-sm">
                     {notification.content}
                   </h3>
-                  <p className="font-grotesk text-xs text-gray-400">
+                  <p className="font-grotesk text-[9px] text-gray-400 sm:text-xs">
                     {formatTimestampToReadable(notification.createdAt)}
                   </p>
                 </div>
+
+                {notification.secondaryImage && (
+                  <Image
+                    src={notification.secondaryImage}
+                    alt={`notification_image`}
+                    width={30}
+                    height={30}
+                    className="rounded-full"
+                  />
+                )}
 
                 <button
                   onClick={() => handleDeleteSingle(String(notification.id))}
