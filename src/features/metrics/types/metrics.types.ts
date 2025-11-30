@@ -29,3 +29,4 @@ export type IFetchUserFollowing = z.infer<typeof FetchUserFollowersSchema>;
 export type IFetchUserFollowingResponse = z.infer<
   typeof FetchUserFollowingResponse
 >;
+export type IValidateUserFollowing = z.infer<typeof FollowSchema>;

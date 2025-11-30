@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
-import { getPostPerformance } from "@/src/features/metrics/api/post-performance.api";
+
 import {
   PostPerformanceError,
   PostPerformanceUnauthorizedError,
@@ -11,6 +11,7 @@ import { selectUserId } from "@/src/features/auth/state/selectors/token.selector
 import { useRoleStore } from "@/src/features/auth/state/store";
 import { useCanFetchData } from "@/src/features/auth/hooks/use-optimized-auth";
 import type { PostPerformanceResponse } from "../dto/post-performance.dto";
+import { getPostPerformance } from "@/src/features/metrics/api/post-performance/post-performance.api";
 
 interface UsePostPerformanceOptions {
   userId?: string;
