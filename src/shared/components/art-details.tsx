@@ -8,12 +8,14 @@ import {
   useIsExploreContentToggled,
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
+import { useFollowUser } from "@/src/features/metrics/hooks/use-follow-user";
 import { showLog } from "@/src/utils/logger";
 import { IconTag, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import Spinner from "./spinner";
 
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
@@ -24,6 +26,13 @@ const ArtDetails = () => {
     isExploreContentToggled,
   } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
+  const { mutateAsync: followUser, isPending } = useFollowUser();
+
+  const handleFollowUser = async (artistId: string) => {
+    await followUser({
+      followingId: artistId,
+    });
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -140,7 +149,18 @@ const ArtDetails = () => {
                       </h1>
                       <div className="font-bricolage flex gap-1 text-xs text-gray-400 capitalize sm:text-sm">
                         <p>{exploreContent?.creatorName}• </p>
-                        <button className="hover:text-blue-300"> Follow</button>
+                        {isPending ? (
+                          <Spinner />
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleFollowUser(exploreContent?.userId || "")
+                            }
+                            className="hover:text-blue-300"
+                          >
+                            Follow
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
