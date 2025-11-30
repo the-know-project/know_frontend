@@ -24,7 +24,7 @@ const ArtTagsFilter = ({ tags }: ArtTagsFilterProps) => {
           <button
             key={tag}
             onClick={() => handleTagClick(tag)}
-            className={`rounded-full border px-3 py-1 text-xs transition-colors duration-200 ${
+            className={`font-bebas rounded-full border px-3 py-1 text-xs tracking-wider transition-colors duration-200 ${
               isTagSelected(tag)
                 ? "border-blue-700 bg-blue-700 text-white"
                 : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"

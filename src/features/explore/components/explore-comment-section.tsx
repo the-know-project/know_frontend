@@ -65,10 +65,10 @@ const ExploreCommentSection = () => {
         <div className="flex-1">
           <Textarea
             placeholder="What are your thoughts on this project?"
-            className="w-full bg-transparent text-sm text-gray-700 placeholder-gray-500 outline-none"
+            className="profile_content w-full bg-transparent"
           />
           <div className="mt-2 flex justify-end">
-            <button className="rounded bg-gray-300 px-4 py-1 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-400">
+            <button className="font-bebas rounded bg-gray-300 px-4 py-1 text-sm font-medium tracking-wider text-gray-600 transition-colors hover:bg-gray-400">
               Share your work
             </button>
           </div>
@@ -88,14 +88,14 @@ const ExploreCommentSection = () => {
             </div>
             <div className="flex-1">
               <div className="mb-1 flex items-center gap-2">
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="profile_title !text-sm">
                   {comment.username}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="profile_content !text-[12px]">
                   • {comment.timeAgo}
                 </span>
               </div>
-              <p className="text-sm text-gray-700">{comment.comment}</p>
+              <p className="profile_content !text-[14px]">{comment.comment}</p>
             </div>
           </div>
         ))}

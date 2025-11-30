@@ -16,11 +16,9 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
       <div className="mb-4">
-        <h2 className="mb-2 text-xl font-bold text-gray-900">
-          {artwork.artName}
-        </h2>
+        <h2 className="profile_title">{artwork.artName}</h2>
         {artwork.size && (
-          <div className="space-y-1 text-sm text-gray-600">
+          <div className="profile_content">
             <p>Height: {artwork.size.height}cm</p>
             <p>Width: {artwork.size.width}cm</p>
           </div>
@@ -70,7 +68,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
       </div>
 
       {/* Published Date */}
-      <p className="mb-4 text-xs text-gray-500">
+      <p className="profile_content">
         Published on: {new Date(artwork.createdAt).toLocaleDateString()}
       </p>
 
@@ -78,7 +76,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
       <div className="space-y-3">
         {artwork.isListed && (
           <div className="text-center">
-            <div className="rounded-lg bg-[#1E3A8A] px-4 py-2 text-xl font-semibold text-white">
+            <div className="font-bebas rounded-lg bg-[#1E3A8A] px-4 py-2 text-xl font-semibold tracking-wider text-white">
               ${artwork.price}
             </div>
           </div>

@@ -12,7 +12,7 @@ const ExploreFollowButton = ({ artistId }: ExploreFollowButtonProps) => {
   };
 
   return (
-    <Button className="w-full cursor-pointer bg-[#1E3A8A] p-6 hover:bg-[#2c52ba]">
+    <Button className="font-bebas w-full cursor-pointer bg-[#1E3A8A] p-6 tracking-wider hover:bg-[#2c52ba]">
       <PlusCircle /> Follow
     </Button>
   );
