@@ -230,8 +230,32 @@
     @apply font-bricolage text-[20px] font-bold text-neutral-800 capitalize md:text-[24px];
   }
 
+  .stats_sub_title {
+    @apply font-bricolage text-xs font-medium text-neutral-600 capitalize sm:text-sm;
+  }
+
   .stats_content {
     @apply font-bricolage text-[14px] font-light text-[#666666] capitalize sm:text-[16px];
+  }
+
+  .stats_value {
+    @apply font-bricolage text-[20px] font-semibold text-neutral-800 capitalize md:text-[32px];
+  }
+
+  .profile_title {
+    @apply font-bricolage font-bold text-neutral-900 capitalize sm:text-lg;
+  }
+
+  .order_title {
+    @apply font-bricolage font-bold text-neutral-900 capitalize sm:text-2xl lg:text-3xl;
+  }
+
+  .order_sub_title {
+    @apply font-bricolage text-sm font-semibold text-neutral-800 capitalize sm:text-[16px];
+  }
+
+  .profile_content {
+    @apply font-bricolage text-xs text-[#666666] sm:text-sm;
   }
 }
 .purple-glow {
