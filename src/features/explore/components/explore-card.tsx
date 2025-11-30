@@ -162,7 +162,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               alt="logo"
               width={30}
               height={30}
-              className="rounded-full object-contain object-center select-none"
+              className="rounded-full object-cover object-center select-none"
               style={{
                 userSelect: "none",
               }}
