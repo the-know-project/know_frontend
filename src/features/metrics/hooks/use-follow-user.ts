@@ -18,6 +18,11 @@ export const useFollowUser = () => {
       if (!followerId) {
         throw new MetricsError("User not authenticated");
       }
+
+      if (followerId === params.followingId) {
+        throw new MetricsError("Cannot follow yourself");
+      }
+
       const result = await ResultAsync.fromPromise(
         followUser({ ...params, followerId }),
         (error) => new MetricsError(`Error following user: ${error}`),
@@ -36,10 +41,18 @@ export const useFollowUser = () => {
       return result.value;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: [`user-followers`, variables.followingId] });
-      queryClient.invalidateQueries({ queryKey: [`user-following`, followerId] });
-      queryClient.invalidateQueries({ queryKey: [`artist-${variables.followingId}-metrics`] });
-      queryClient.invalidateQueries({ queryKey: [`artist-${followerId}-metrics`] });
+      queryClient.invalidateQueries({
+        queryKey: [`user-followers`, variables.followingId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`user-following`, followerId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`artist-${variables.followingId}-metrics`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`artist-${followerId}-metrics`],
+      });
     },
   });
 };
