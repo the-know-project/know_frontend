@@ -36,7 +36,7 @@ export const useFetchUserFollowing = (params: FetchUserFollowingParams) => {
         throw result.error;
       }
 
-      return result.value;
+      return result.value as IFetchUserFollowing;
     },
     enabled: !!userId && canFetch,
   });
