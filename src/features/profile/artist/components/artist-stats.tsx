@@ -52,7 +52,6 @@ const Stats = () => {
         <ArtistSalesStats />
       </div>
 
-      {/* Post Performance - Now Dynamic! */}
       <div className="flex w-full flex-col py-12">
         <div className="mb-6">
           <h3 className="stats_title">Post Performance</h3>

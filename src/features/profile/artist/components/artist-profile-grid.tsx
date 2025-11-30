@@ -3,7 +3,7 @@
 import { ArtistProfileToggle } from "@/src/constants/constants";
 import { formatDateToReadable } from "@/src/utils/date";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import InfiniteLoadingIndicator from "../../../explore/components/infinite-loading-indicator";
 import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
 import ProfileCard from "../../components/profile-card";
@@ -22,6 +22,19 @@ interface ArtistProfileGridProps {
 const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const canFetch = useCanFetchData();
   const [activeToggle, setActiveToggle] = useState<string>("posts");
+  const tabRefs = useRef(new Map<string, HTMLButtonElement>());
+  const tabContainerRef = useRef<HTMLDivElement>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const activeTabElement = tabRefs.current.get(activeToggle);
+    if (activeTabElement) {
+      setIndicatorStyle({
+        left: activeTabElement.offsetLeft,
+        width: activeTabElement.offsetWidth,
+      });
+    }
+  }, [activeToggle]);
 
   const postsHookResult = useSimpleInfiniteUserPosts({
     userId: user.id,
@@ -143,10 +156,16 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   return (
     <section className="lg:px- -mt-[50px] flex w-full flex-col px-4">
       <div className="w-full items-center justify-center">
-        <div className="relative flex flex-row items-center justify-between">
+        <div
+          ref={tabContainerRef}
+          className="relative flex flex-row items-center justify-between"
+        >
           {ArtistProfileToggle.map((toggle) => (
             <button
               key={toggle.id}
+              ref={(el) => {
+                if (el) tabRefs.current.set(toggle.name, el);
+              }}
               className="flex flex-1 flex-col items-center"
               onClick={() => setActiveToggle(toggle.name)}
             >
@@ -165,13 +184,8 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
           <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-gray-300"></div>
           {/* Active section highlight */}
           <div
-            className={`absolute bottom-0 h-[2px] bg-gray-900 transition-all duration-300 ${
-              activeToggle === "posts"
-                ? "left-0 w-1/3 rounded-[15px]"
-                : activeToggle === "stats"
-                  ? "left-1/3 w-1/3 rounded-[15px]"
-                  : "left-2/3 w-1/3 rounded-[15px]"
-            }`}
+            className="absolute bottom-0 h-[2px] rounded-full bg-gray-900 transition-all duration-300"
+            style={{ left: indicatorStyle.left, width: indicatorStyle.width }}
           ></div>
         </div>
       </div>

@@ -309,8 +309,8 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
                   <Image
                     alt="user profile"
                     src={user?.imageUrl || ""}
-                    width={32}
-                    height={32}
+                    width={30}
+                    height={30}
                     className="rounded-full object-contain object-center"
                   />
                 </button>
