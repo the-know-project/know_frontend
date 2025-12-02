@@ -3,6 +3,8 @@ import {
   ArtistMonthlySalesDataResponse,
   ArtistYearlySalesDataResponse,
   FetchUserFollowingResponse,
+  FollowUserResponse,
+  ValidateFollowingResponse,
 } from "../dto/metrics.dto";
 import {
   FetchSalesDataSchema,
@@ -30,3 +32,7 @@ export type IFetchUserFollowingResponse = z.infer<
   typeof FetchUserFollowingResponse
 >;
 export type IValidateUserFollowing = z.infer<typeof FollowSchema>;
+export type IFollowUserResponseDto = z.infer<typeof FollowUserResponse>;
+export type IValidateFollowingResponse = z.infer<
+  typeof ValidateFollowingResponse
+>;
