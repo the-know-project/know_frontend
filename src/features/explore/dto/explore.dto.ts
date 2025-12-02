@@ -54,3 +54,56 @@ export const FetchExploreAssetDto = z.object({
     filters: Filters,
   }),
 });
+
+export const AddCommentDto = z.object({
+  userId: z.string(),
+  fileId: z.string(),
+  comment: z.string().min(1).max(1000),
+});
+
+export const FetchCommentsDto = z.object({
+  fileId: z.string(),
+  page: z.number().min(1).optional(),
+  limit: z.number().min(1).max(100).optional(),
+});
+
+export const HideCommentDto = z.object({
+  userId: z.string(),
+  commentId: z.string(),
+});
+
+export const DeleteCommentDto = z.object({
+  userId: z.string(),
+  commentId: z.string(),
+});
+
+export const CommentDto = z.object({
+  id: z.string(),
+  userId: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  profilePicture: z.string().url(),
+  comment: z.string(),
+  createdAt: z.string(),
+});
+
+export const CommentMetaDto = z.object({
+  currentPage: z.number(),
+  totalPages: z.number(),
+  totalItems: z.number(),
+  itemsPerPage: z.number(),
+  hasNextPage: z.boolean(),
+  hasPreviousPage: z.boolean(),
+});
+
+export const FetchCommentsResponseDto = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.array(CommentDto),
+  meta: CommentMetaDto,
+});
+
+export const CommentActionResponseDto = z.object({
+  status: z.number(),
+  message: z.string(),
+});
