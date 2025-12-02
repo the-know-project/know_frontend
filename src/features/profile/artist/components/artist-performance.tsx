@@ -79,8 +79,12 @@ export const PostPerformanceDashboard = () => {
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-start justify-between">
             <div>
-              <p className="stats_sub_title">Total Posts</p>
-              <p className="stats_value">{totalItems}</p>
+              <p className="text-xs font-medium text-gray-600 sm:text-sm">
+                Total Posts
+              </p>
+              <p className="mt-1 text-xl font-bold text-gray-900 sm:mt-2 sm:text-2xl">
+                {totalItems}
+              </p>
             </div>
             <div className="rounded-full bg-orange-100 p-2"></div>
           </div>
@@ -89,8 +93,12 @@ export const PostPerformanceDashboard = () => {
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-start justify-between">
             <div>
-              <p className="stats_sub_title">Total Orders</p>
-              <p className="stats_value">{totalOrders}</p>
+              <p className="text-xs font-medium text-gray-600 sm:text-sm">
+                Total Orders
+              </p>
+              <p className="mt-1 text-xl font-bold text-gray-900 sm:mt-2 sm:text-2xl">
+                {totalOrders}
+              </p>
             </div>
             <div className="rounded-full bg-green-100 p-2"></div>
           </div>
@@ -99,8 +107,12 @@ export const PostPerformanceDashboard = () => {
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:col-span-2 sm:p-5 lg:col-span-1">
           <div className="flex items-start justify-between">
             <div>
-              <p className="stats_sub_title">Total Comments</p>
-              <p className="stats_value">{totalComments}</p>
+              <p className="text-xs font-medium text-gray-600 sm:text-sm">
+                Total Comments
+              </p>
+              <p className="mt-1 text-xl font-bold text-gray-900 sm:mt-2 sm:text-2xl">
+                {totalComments}
+              </p>
             </div>
             <div className="rounded-full bg-purple-100 p-2"></div>
           </div>
@@ -110,7 +122,7 @@ export const PostPerformanceDashboard = () => {
       {/* Desktop Table View */}
       <div className="hidden overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm lg:block">
         <div className="border-b border-gray-200 bg-gray-50 px-6 py-3">
-          <div className="font-bricolage grid grid-cols-12 gap-4 text-xs font-semibold tracking-wider text-neutral-600 uppercase">
+          <div className="grid grid-cols-12 gap-4 text-xs font-semibold tracking-wider text-gray-600 uppercase">
             <div className="col-span-1">Image</div>
             <div className="col-span-4">Title</div>
             <div className="col-span-2 text-center">Orders</div>
@@ -137,25 +149,25 @@ export const PostPerformanceDashboard = () => {
               </div>
 
               <div className="col-span-4 flex items-center">
-                <p className="stats_content line-clamp-2 !font-bold !text-neutral-800">
+                <p className="line-clamp-2 text-sm font-medium text-gray-900">
                   {post.title}
                 </p>
               </div>
 
               <div className="col-span-2 flex items-center justify-center">
-                <span className="stats_content !text-neutral-800">
+                <span className="text-sm font-semibold text-gray-900">
                   {post.ordersCount}
                 </span>
               </div>
 
               <div className="col-span-2 flex items-center justify-center">
-                <span className="stats_content !text-neutral-800">
+                <span className="text-sm font-semibold text-gray-900">
                   {post.commentCount}
                 </span>
               </div>
 
               <div className="col-span-3 flex items-center">
-                <p className="stats_content">
+                <p className="text-sm text-gray-600">
                   {new Date(post.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
@@ -187,27 +199,27 @@ export const PostPerformanceDashboard = () => {
 
               <div className="flex min-w-0 flex-1 flex-col justify-between">
                 <div>
-                  <h3 className="stats_content line-clamp-2 !font-bold !text-neutral-800">
+                  <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 sm:text-base">
                     {post.title}
                   </h3>
 
                   <div className="mt-2 flex items-center gap-3 text-xs sm:gap-4 sm:text-sm">
                     <div className="flex items-center gap-1">
-                      <span className="stats_sub_title line-clamp-2 !font-bold !text-neutral-800">
+                      <span className="font-medium text-gray-700">
                         {post.ordersCount}
                       </span>
-                      <span className="profile_content">orders</span>
+                      <span className="text-gray-500">orders</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="stats_sub_title line-clamp-2 !font-bold !text-neutral-800">
+                      <span className="font-medium text-gray-700">
                         {post.commentCount}
                       </span>
-                      <span className="profile_content">comments</span>
+                      <span className="text-gray-500">comments</span>
                     </div>
                   </div>
                 </div>
 
-                <p className="profile_content mt-2 !text-xs">
+                <p className="mt-2 text-xs text-gray-500">
                   {new Date(post.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
@@ -236,10 +248,15 @@ export const PostPerformanceDashboard = () => {
       )}
 
       {!hasNextPage && posts.length > 0 && (
-        <p className="stats_content mt-[50px] text-center">
+        <p className="text-center text-xs text-gray-500 sm:text-sm">
           No more posts to load
         </p>
       )}
+
+      {/* Showing Count */}
+      <p className="text-center text-xs text-gray-500 sm:text-sm">
+        Showing {posts.length} of {totalItems} posts
+      </p>
     </div>
   );
 };

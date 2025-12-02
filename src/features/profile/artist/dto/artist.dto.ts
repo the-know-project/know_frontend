@@ -78,8 +78,3 @@ export const FetchUserAsset = z.object({
 });
 
 export type TUserAssetData = z.infer<typeof UserAssetData>;
-
-export const FetchArtistDto = z.object({
-  userId: z.string().uuid(),
-  viewerId: z.string().uuid(),
-});

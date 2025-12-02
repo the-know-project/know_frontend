@@ -20,4 +20,5 @@ export const vibrantColors = [
 
 export enum ExploreErrorMessages {
   FAILED_TO_FETCH_ASSET = "Failed to fetch asset",
+  FAILED_TO_FETCH_COMMENTS = "Failed to fetch comments"
 }

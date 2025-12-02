@@ -6,3 +6,10 @@ export class ExploreError extends Error {
     this.name = "ExploreError";
   }
 }
+
+export class CommentError extends ExploreError {
+  constructor(message: string = ExploreErrorMessages.FAILED_TO_FETCH_COMMENTS) {
+    super(message);
+    this.name = "CommentError";
+  }
+}

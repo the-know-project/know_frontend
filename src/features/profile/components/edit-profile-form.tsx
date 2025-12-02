@@ -68,25 +68,26 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
 
-    e.target.value = "";
+      if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image file");
+        return;
+      }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("File size must be less than 5MB");
-      return;
+      setImageFile(file);
+      imageFileRef.current = file;
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-
-    if (!file.type.startsWith("image/")) {
-      alert("Please select a valid image file");
-      return;
-    }
-
-    setImageFile(file);
-    imageFileRef.current = file;
-
-    const previewUrl = URL.createObjectURL(file);
-    setProfileImage(previewUrl);
   };
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -164,10 +165,12 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
               <div className="relative">
                 <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-gray-100 shadow-lg sm:h-32 sm:w-32">
                   {profileImage ? (
-                    <img
+                    <Image
                       src={profileImage}
                       alt="Profile"
-                      className="h-full w-full rounded-full object-cover"
+                      width={128}
+                      height={128}
+                      className="h-full w-full object-cover"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-400 to-pink-400">

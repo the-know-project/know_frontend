@@ -8,7 +8,6 @@ import {
   useIsEditProfileToggled,
   useToggleEditProfile, // ← Add this import
 } from "../artist/store/artist-profile.store";
-import { BlankProfilePicture } from "@/src/constants/constants";
 
 interface IProfileCard {
   id: number | string;
@@ -46,7 +45,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
       <div className="flex flex-col">
         <div className="relative">
           <Image
-            src={image ? image : BlankProfilePicture}
+            src={image}
             alt="user_asset"
             quality={100}
             width={400}
@@ -58,7 +57,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
         </div>
         <div className="mt-2 flex w-full max-w-[400px] justify-between">
           <div className="flex flex-col items-start font-medium text-neutral-600">
-            <h3 className="font-bricolage sm:text-normal text-sm text-neutral-900 capitalize">
+            <h3 className="font-bricolage sm:text-normal text-sm text-neutral-800 capitalize">
               {title}
             </h3>
             <p className="font-bricolage text-xs font-light text-[#666666] capitalize sm:text-sm">
@@ -72,7 +71,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
                 {formatViewCount(views)}
               </p>
             </div>
-
+            {/* FIXED: Changed from div to button with onClick handler */}
             <button
               onClick={handleEditClick}
               className="flex cursor-pointer items-center gap-1 transition-all duration-200 hover:scale-105 active:scale-95"
