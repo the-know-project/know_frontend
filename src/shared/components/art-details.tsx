@@ -203,7 +203,9 @@ const ArtDetails = () => {
                     <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] lg:grid-cols-3">
                       {/* Left side for comments */}
                       <div className="lg:col-span-2">
-                        <ExploreCommentSection />
+                        <ExploreCommentSection
+                          postId={exploreContent?.id || ""}
+                        />
                       </div>
                       {/* Right side for artist info */}
                       <div>
