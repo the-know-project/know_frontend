@@ -9,9 +9,11 @@ import {
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
 import { showLog } from "@/src/utils/logger";
+import { useTokenStore } from "@/src/features/auth/state/store/token.store";
 import { IconTag, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { User } from "lucide-react";
 
 const ArtDetails = () => {
   const {
@@ -32,6 +34,8 @@ const ArtDetails = () => {
     visible: { opacity: 1 },
     exit: { opacity: 0 },
   };
+
+  const user = useTokenStore((state) => state.user);
 
   const popupVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.95 },
@@ -191,7 +195,12 @@ const ArtDetails = () => {
                   <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] lg:grid-cols-3">
                     {/* Left side for comments */}
                     <div className="lg:col-span-2">
-                      <ExploreCommentSection />
+                      <ExploreCommentSection
+                        fileId={toggledContentId as string}
+                        userId={user?.id || ""}
+                        userAvatar={user?.imageUrl}
+                        userName={user?.firstName}
+                      />
                     </div>
                     {/* Right side for artist info */}
                     <div>
