@@ -16,6 +16,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import Spinner from "./spinner";
+import { useValidateFollow } from "@/src/features/metrics/hooks/use-validate-follow";
+import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
 
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
@@ -27,8 +29,18 @@ const ArtDetails = () => {
   } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
   const { mutateAsync: followUser, isPending } = useFollowUser();
+  const { mutateAsync: unFollowUser, isPending: isUnfollowing } =
+    useUnfollowUser();
+  const { data: isFollowing, isLoading } = useValidateFollow({
+    followingId: exploreContent?.userId!,
+  });
 
   const handleFollowUser = async (artistId: string) => {
+    if (isFollowing?.data === true) {
+      await unFollowUser({
+        followingId: artistId,
+      });
+    }
     await followUser({
       followingId: artistId,
     });
@@ -149,7 +161,7 @@ const ArtDetails = () => {
                       </h1>
                       <div className="font-bricolage flex gap-1 text-xs text-gray-400 capitalize sm:text-sm">
                         <p>{exploreContent?.creatorName}• </p>
-                        {isPending ? (
+                        {isPending || isUnfollowing ? (
                           <Spinner />
                         ) : (
                           <button
@@ -158,7 +170,7 @@ const ArtDetails = () => {
                             }
                             className="hover:text-blue-300"
                           >
-                            Follow
+                            {isFollowing?.data === true ? "Unfollow" : "Follow"}
                           </button>
                         )}
                       </div>
