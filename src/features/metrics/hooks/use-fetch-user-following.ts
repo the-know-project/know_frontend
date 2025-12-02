@@ -4,7 +4,10 @@ import { useTokenStore } from "../../auth/state/store";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { fetchUserFollowing } from "../api/user-following/route";
 import { MetricsError } from "../error/metrics.error";
-import { IFetchUserFollowing } from "../types/metrics.types";
+import {
+  IFetchUserFollowing,
+  IFetchUserFollowingResponse,
+} from "../types/metrics.types";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
 
 type FetchUserFollowingParams = Omit<IFetchUserFollowing, "userId">;
@@ -36,7 +39,7 @@ export const useFetchUserFollowing = (params: FetchUserFollowingParams) => {
         throw result.error;
       }
 
-      return result.value as IFetchUserFollowing;
+      return result.value as IFetchUserFollowingResponse;
     },
     enabled: !!userId && canFetch,
   });
