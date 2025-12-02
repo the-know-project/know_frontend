@@ -38,3 +38,14 @@ export const FetchUserFollowingResponse = z.object({
   data: z.array(FollowingData),
   meta: Pagination,
 });
+
+export const FollowUserResponse = z.object({
+  status: z.number(),
+  message: z.string(),
+});
+
+export const ValidateFollowingResponse = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.boolean(),
+});
