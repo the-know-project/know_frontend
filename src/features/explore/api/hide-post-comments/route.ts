@@ -1,4 +1,4 @@
-// features/explore/api/hide-post-comment.api.ts
+
 import { ApiClient } from "@/src/lib/api-client";
 import { EXPLORE_OP } from "../../data/explore.route";
 import { THideComment } from "../../types/explore.types";
