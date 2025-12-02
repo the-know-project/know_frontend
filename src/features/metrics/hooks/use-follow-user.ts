@@ -4,7 +4,11 @@ import { useTokenStore } from "../../auth/state/store";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { followUser } from "../api/follow-user/route";
 import { MetricsError } from "../error/metrics.error";
-import { IFollowUser } from "../types/metrics.types";
+import {
+  IFetchUserFollowingResponse,
+  IFollowUser,
+  IFollowUserResponseDto,
+} from "../types/metrics.types";
 
 type FollowUserParams = Omit<IFollowUser, "followerId">;
 
@@ -20,7 +24,7 @@ export const useFollowUser = () => {
       }
 
       if (followerId === params.followingId) {
-        throw new MetricsError("Cannot follow yourself");
+        return;
       }
 
       const result = await ResultAsync.fromPromise(
@@ -38,18 +42,73 @@ export const useFollowUser = () => {
         throw result.error;
       }
 
-      return result.value;
+      return result.value as IFollowUserResponseDto;
     },
-    onSuccess: (_, variables) => {
+
+    onMutate: async (params) => {
+      await queryClient.cancelQueries({
+        queryKey: [`user-followers`, followerId],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [`user-following`, followerId],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [`artist-${followerId}-metrics`],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [`artist-${followerId}-metrics`],
+      });
+
+      const previousData =
+        queryClient.getQueryData<IFetchUserFollowingResponse>([
+          `user-following`,
+          params.followingId,
+        ]);
+
+      if (previousData) {
+        queryClient.setQueryData<IFetchUserFollowingResponse>(
+          [`user-following`, params.followingId],
+          (old) => {
+            if (!old) return old;
+            const oldData = old.data.find((data) => data.id === followerId);
+
+            const newData = {
+              id: oldData?.id || followerId || "",
+              firstName: oldData?.firstName || "",
+              lastName: oldData?.lastName || "",
+              role: oldData?.role || "",
+              username: oldData?.username || "",
+              imageUrl: oldData?.imageUrl || "",
+            };
+
+            return {
+              ...old,
+              data: [...(old.data ?? []), newData],
+            };
+          },
+        );
+      }
+
+      return { previousData };
+    },
+
+    onError: (error, variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData<IFetchUserFollowingResponse>(
+          [`user-following`, followerId],
+          context?.previousData,
+        );
+      }
+    },
+
+    onSettled: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [`user-followers`, variables.followingId],
+        queryKey: [`user-followers`, followerId],
       });
       queryClient.invalidateQueries({
         queryKey: [`user-following`, followerId],
       });
-      queryClient.invalidateQueries({
-        queryKey: [`artist-${variables.followingId}-metrics`],
-      });
+
       queryClient.invalidateQueries({
         queryKey: [`artist-${followerId}-metrics`],
       });
