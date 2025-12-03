@@ -250,7 +250,7 @@ const ExploreCategories = ({
             {/* Buttons */}
             <button
               onClick={() => setActiveButton("for-you")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "for-you"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"
@@ -261,7 +261,7 @@ const ExploreCategories = ({
 
             <button
               onClick={() => setActiveButton("following")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "following"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"
