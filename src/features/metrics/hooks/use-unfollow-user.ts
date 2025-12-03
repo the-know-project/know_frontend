@@ -8,12 +8,18 @@ import {
   IFetchUserFollowingResponse,
   IUnFollowUser,
 } from "../types/metrics.types";
+import { useFollowActions } from "../state/store/metrics.store";
 
 type UnfollowUserParams = Omit<IUnFollowUser, "followerId">;
 
 export const useUnfollowUser = () => {
   const queryClient = useQueryClient();
   const followerId = useTokenStore(selectUserId);
+  const {
+    useFollow: _followUser,
+    useUnfollow: _unfollowUser,
+    useIsUserFollowing: _useIsUserFollowing,
+  } = useFollowActions();
 
   return useMutation({
     mutationKey: [`unfollow-user`, followerId],
@@ -39,6 +45,7 @@ export const useUnfollowUser = () => {
       return result.value;
     },
     onMutate: async (params) => {
+      _unfollowUser(params.followingId);
       await queryClient.cancelQueries({
         queryKey: [`user-followers`, followerId],
       });
@@ -50,6 +57,10 @@ export const useUnfollowUser = () => {
       });
       await queryClient.cancelQueries({
         queryKey: [`artist-${followerId}-metrics`],
+      });
+
+      await queryClient.cancelQueries({
+        queryKey: [`validate-follow-${followerId}`],
       });
 
       const previousData =
@@ -86,12 +97,17 @@ export const useUnfollowUser = () => {
     },
 
     onError: (error, variables, context) => {
+      _followUser(variables.followingId);
       if (context?.previousData) {
         queryClient.setQueryData<IFetchUserFollowingResponse>(
           [`user-following`, followerId],
           context?.previousData,
         );
       }
+    },
+
+    onSuccess: (data, _params) => {
+      _unfollowUser(_params.followingId);
     },
 
     onSettled: (_, variables) => {
@@ -104,6 +120,10 @@ export const useUnfollowUser = () => {
 
       queryClient.invalidateQueries({
         queryKey: [`artist-${followerId}-metrics`],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`validate-follow-${followerId}`],
       });
     },
   });
