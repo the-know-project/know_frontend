@@ -96,8 +96,6 @@ const ExploreCategories = ({
 
   const handleFiltersChange = useCallback(
     (filters: string[]) => {
-      console.log("User selected filters:", filters);
-
       const filterObject: {
         priceMin?: number;
         priceMax?: number;
@@ -107,22 +105,15 @@ const ExploreCategories = ({
 
       if (filters.length > 0) {
         filters.forEach((filterName) => {
-          // Handle availability filters
           if (filterName === "For Sale") {
             filterObject.available = true;
           } else if (filterName === "Not For Sale") {
             filterObject.available = false;
-          }
-
-          // Handle sort filters
-          else if (filterName === "Latest") {
+          } else if (filterName === "Latest") {
             filterObject.sortBy = "latest";
           } else if (filterName === "Oldest") {
             filterObject.sortBy = "oldest";
-          }
-
-          // Handle price range filters
-          else if (filterName === "$50 - $500") {
+          } else if (filterName === "$50 - $500") {
             filterObject.priceMin = 50;
             filterObject.priceMax = 500;
           } else if (filterName === "$501 - $1500") {
