@@ -2,6 +2,8 @@
 
 import { empty } from "@/src/assets";
 import { BlankProfilePicture } from "@/src/constants/constants";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
+import { useTokenStore } from "@/src/features/auth/state/store";
 import ExploreArtistInfo from "@/src/features/explore/components/explore-artist-info";
 import ExploreCommentSection from "@/src/features/explore/components/explore-comment-section";
 import {
@@ -9,30 +11,23 @@ import {
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
 import { useFollowUser } from "@/src/features/metrics/hooks/use-follow-user";
+import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
+import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
 import { showLog } from "@/src/utils/logger";
 import { IconTag, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
-import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
-import { useTokenStore } from "@/src/features/auth/state/store";
-import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
 
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
   const followerId = useTokenStore(selectUserId);
-  const {
-    toggledContentId,
-    viewportPosition,
-    exploreContent,
-    isExploreContentToggled,
-  } = useIsExploreContentToggled();
+  const { toggledContentId, exploreContent, isExploreContentToggled } =
+    useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
-  const { mutateAsync: followUser, isPending } = useFollowUser();
-  const { mutateAsync: unFollowUser, isPending: isUnfollowing } =
-    useUnfollowUser();
+  const { mutateAsync: followUser } = useFollowUser();
+  const { mutateAsync: unFollowUser } = useUnfollowUser();
   const { useIsUserFollowing } = useFollowActions();
 
   const isFollowing = useIsUserFollowing(
@@ -264,7 +259,7 @@ const ArtDetails = () => {
                     {exploreContent?.categories?.map((category, index) => (
                       <span
                         key={index}
-                        className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-md bg-neutral-600/50 px-2 py-1 text-xs font-medium tracking-wider text-white lowercase"
+                        className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-md bg-neutral-600/50 px-3 py-1 text-xs font-medium tracking-wider text-white lowercase"
                         style={{
                           animationDelay: `${index * 150}ms`,
                         }}
