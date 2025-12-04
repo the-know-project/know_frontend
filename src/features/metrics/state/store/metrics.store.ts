@@ -7,34 +7,45 @@ export const useFollowStore = create<IFollowState>()(
   subscribeWithSelector(
     persist(
       immer((set, get) => ({
-        userFollowing: [],
+        userFollowing: {},
         _hasHydrated: false,
         setHasHydrated: (state) =>
           set(() => ({
             _hasHydrated: state,
           })),
 
-        followUser: (userId) =>
+        followUser: (followerId, followingId) =>
           set((state) => {
-            if (!state.userFollowing.includes(userId)) {
-              state.userFollowing.push(userId);
+            if (!state.userFollowing[followerId]) {
+              state.userFollowing[followerId] = [];
+            }
+            if (!state.userFollowing[followerId].includes(followingId)) {
+              state.userFollowing[followerId].push(followingId);
             }
           }),
-        addFollowings: (userIds) =>
+        addFollowings: (followerId, followingIds) =>
           set((state) => {
-            const newIds = userIds.filter(
-              (id) => !state.userFollowing.includes(id),
+            if (!state.userFollowing[followerId]) {
+              state.userFollowing[followerId] = [];
+            }
+            const newIds = followingIds.filter(
+              (id) => !state.userFollowing[followerId].includes(id),
             );
             if (newIds.length > 0) {
-              state.userFollowing.push(...newIds);
+              state.userFollowing[followerId].push(...newIds);
             }
           }),
-        unfollowUser: (userId) =>
-          set((state) => ({
-            userFollowing: state.userFollowing.filter((id) => id !== userId),
-          })),
-        getUserFollowing: () => get().userFollowing,
-        isUserFollowing: (userId) => get().userFollowing.includes(userId),
+        unfollowUser: (followerId, followingId) =>
+          set((state) => {
+            if (state.userFollowing[followerId]) {
+              state.userFollowing[followerId] = state.userFollowing[
+                followerId
+              ].filter((id) => id !== followingId);
+            }
+          }),
+        getUserFollowing: (followerId) => get().userFollowing[followerId] || [],
+        isUserFollowing: (followerId, followingId) =>
+          get().userFollowing[followerId]?.includes(followingId) || false,
       })),
       {
         name: "follow-store",
@@ -61,26 +72,28 @@ export const useFollowStore = create<IFollowState>()(
   ),
 );
 
-export const useGetUserFollowing = () => {
-  const userFollowing = useFollowStore((state) => state.userFollowing);
+export const useGetUserFollowing = (followerId: string) => {
+  const userFollowing = useFollowStore((state) =>
+    state.getUserFollowing(followerId),
+  );
   return userFollowing;
 };
 
 export const useFollowActions = () => {
-  const useFollow = (userId: string) => {
-    useFollowStore.getState().followUser(userId);
+  const followUser = (followerId: string, followingId: string) => {
+    useFollowStore.getState().followUser(followerId, followingId);
   };
 
-  const useUnfollow = (userId: string) => {
-    useFollowStore.getState().unfollowUser(userId);
+  const unfollowUser = (followerId: string, followingId: string) => {
+    useFollowStore.getState().unfollowUser(followerId, followingId);
   };
 
-  const useIsUserFollowing = (userId: string) => {
+  const useIsUserFollowing = (followerId: string, followingId: string) => {
     const isFollowing = useFollowStore((state) =>
-      state.isUserFollowing(userId),
+      state.isUserFollowing(followerId, followingId),
     );
     return isFollowing;
   };
 
-  return { useFollow, useUnfollow, useIsUserFollowing };
+  return { followUser, unfollowUser, useIsUserFollowing };
 };
