@@ -18,6 +18,7 @@ import ReactDOM from "react-dom";
 import Spinner from "./spinner";
 import { useValidateFollow } from "@/src/features/metrics/hooks/use-validate-follow";
 import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
+import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
 
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
@@ -31,12 +32,10 @@ const ArtDetails = () => {
   const { mutateAsync: followUser, isPending } = useFollowUser();
   const { mutateAsync: unFollowUser, isPending: isUnfollowing } =
     useUnfollowUser();
-  const { data: isFollowing, isLoading } = useValidateFollow({
-    followingId: exploreContent?.userId!,
-  });
+  const { useIsUserFollowing: isFollowing } = useFollowActions();
 
   const handleFollowUser = async (artistId: string) => {
-    if (isFollowing?.data === true) {
+    if (isFollowing(artistId)) {
       await unFollowUser({
         followingId: artistId,
       });
@@ -62,6 +61,11 @@ const ArtDetails = () => {
   showLog({
     context: "Art-Details",
     data: exploreContent,
+  });
+
+  showLog({
+    context: "From Art Details: Validating follow",
+    data: isFollowing,
   });
 
   const backdropVariants = {
@@ -134,7 +138,7 @@ const ArtDetails = () => {
                     : "80vw",
                 height:
                   typeof window !== "undefined" && window.innerWidth < 768
-                    ? "83vh"
+                    ? "90vh"
                     : "95vh",
               }}
               onClick={(e) => e.stopPropagation()}
@@ -143,7 +147,7 @@ const ArtDetails = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between bg-transparent px-4 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 p-1 backdrop-blur-lg">
                       <Image
                         src={
                           exploreContent?.creatorProfileUrl ||
@@ -159,8 +163,8 @@ const ArtDetails = () => {
                       <h1 className="font-bricolage text-lg font-bold text-white capitalize">
                         {exploreContent?.artName}
                       </h1>
-                      <div className="font-bricolage flex gap-1 text-xs text-gray-400 capitalize sm:text-sm">
-                        <p>{exploreContent?.creatorName}• </p>
+                      <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
+                        <p>{exploreContent?.creatorName} • </p>
                         {isPending || isUnfollowing ? (
                           <Spinner />
                         ) : (
@@ -168,9 +172,11 @@ const ArtDetails = () => {
                             onClick={() =>
                               handleFollowUser(exploreContent?.userId || "")
                             }
-                            className="hover:text-blue-300"
+                            className="font-bricolage text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
                           >
-                            {isFollowing?.data === true ? "Unfollow" : "Follow"}
+                            {isFollowing(exploreContent?.userId || "") === true
+                              ? "Unfollow"
+                              : "Follow"}
                           </button>
                         )}
                       </div>
