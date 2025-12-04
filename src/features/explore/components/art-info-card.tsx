@@ -52,8 +52,8 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
         <div className="flex items-center gap-1">
           <svg
             className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
+            fill={artwork.numOfLikes > 0 ? "red" : "none"}
+            stroke={artwork.numOfLikes > 0 ? "red" : "currentColor"}
             viewBox="0 0 24 24"
           >
             <path
