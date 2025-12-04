@@ -228,7 +228,7 @@ const ArtDetails = () => {
                       <div className="relative w-full overflow-hidden">
                         <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
                           <Image
-                            src={exploreContent?.artWorkUrl || empty}
+                            src={exploreContent?.highResUrl || empty}
                             alt="art_work"
                             quality={100}
                             priority
