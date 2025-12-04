@@ -80,7 +80,11 @@ export const useFetchUserFollowing = (params: FetchUserFollowingParams) => {
         });
       }
       if (newFollowing && newFollowing.length > 0) {
-        addFollowings(newFollowing.map((f) => f.id));
+        if (!userId) return;
+        addFollowings(
+          userId,
+          newFollowing.map((f) => f.id),
+        );
       }
     }
   }, [data, currentPage, addFollowings]);
