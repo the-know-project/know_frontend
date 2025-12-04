@@ -67,6 +67,20 @@ export const useFollowStore = create<IFollowState>()(
         onRehydrateStorage: () => (state) => {
           state?.setHasHydrated(true);
         },
+        migrate: (persistedState: any, version) => {
+          if (
+            version === 0 &&
+            persistedState &&
+            Array.isArray(persistedState.userFollowing)
+          ) {
+            return {
+              ...persistedState,
+              userFollowing: {},
+            };
+          }
+          return persistedState;
+        },
+        version: 1,
       },
     ),
   ),
