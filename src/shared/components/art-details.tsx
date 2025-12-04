@@ -15,7 +15,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import Spinner from "./spinner";
 import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
 import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
 import { useTokenStore } from "@/src/features/auth/state/store";

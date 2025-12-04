@@ -14,9 +14,8 @@ interface ExploreFollowButtonProps {
 
 const ExploreFollowButton = ({ artistId }: ExploreFollowButtonProps) => {
   const followerId = useTokenStore(selectUserId);
-  const { mutateAsync: followUser, isPending } = useFollowUser();
-  const { mutateAsync: unFollowUser, isPending: isUnfollowing } =
-    useUnfollowUser();
+  const { mutateAsync: followUser } = useFollowUser();
+  const { mutateAsync: unFollowUser } = useUnfollowUser();
   const { useIsUserFollowing } = useFollowActions();
 
   const isFollowing = useIsUserFollowing(followerId || "", artistId);
