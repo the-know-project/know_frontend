@@ -16,7 +16,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import Spinner from "./spinner";
-import { useValidateFollow } from "@/src/features/metrics/hooks/use-validate-follow";
 import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
 import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
 
@@ -32,17 +31,20 @@ const ArtDetails = () => {
   const { mutateAsync: followUser, isPending } = useFollowUser();
   const { mutateAsync: unFollowUser, isPending: isUnfollowing } =
     useUnfollowUser();
-  const { useIsUserFollowing: isFollowing } = useFollowActions();
+  const { useIsUserFollowing } = useFollowActions();
+
+  const isFollowing = useIsUserFollowing(exploreContent?.userId || "");
 
   const handleFollowUser = async (artistId: string) => {
-    if (isFollowing(artistId)) {
+    if (isFollowing) {
       await unFollowUser({
         followingId: artistId,
       });
+    } else {
+      await followUser({
+        followingId: artistId,
+      });
     }
-    await followUser({
-      followingId: artistId,
-    });
   };
 
   useEffect(() => {
@@ -165,20 +167,15 @@ const ArtDetails = () => {
                       </h1>
                       <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
                         <p>{exploreContent?.creatorName} • </p>
-                        {isPending || isUnfollowing ? (
-                          <Spinner />
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleFollowUser(exploreContent?.userId || "")
-                            }
-                            className="font-bricolage text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
-                          >
-                            {isFollowing(exploreContent?.userId || "") === true
-                              ? "Unfollow"
-                              : "Follow"}
-                          </button>
-                        )}
+
+                        <button
+                          onClick={() =>
+                            handleFollowUser(exploreContent?.userId || "")
+                          }
+                          className="font-bricolage text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
+                        >
+                          {isFollowing === true ? "Unfollow" : "Follow"}
+                        </button>
                       </div>
                     </div>
                   </div>
