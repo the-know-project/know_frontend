@@ -173,6 +173,7 @@ const ExploreCanvasContent = ({
                 id={item.fileId}
                 userId={item.userId}
                 artWork={item.url}
+                highResUrl={item.highResUrl}
                 artName={item.fileName}
                 description={item.description}
                 artistImage={item.imageUrl}
