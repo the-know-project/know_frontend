@@ -1,13 +1,13 @@
 export interface IFollowState {
-  userFollowing: string[];
+  userFollowing: Record<string, string[]>;
 
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
 
-  followUser: (followingId: string) => void;
-  unfollowUser: (followingId: string) => void;
-  addFollowings: (followingIds: string[]) => void;
+  followUser: (followerId: string, followingId: string) => void;
+  unfollowUser: (followerId: string, followingId: string) => void;
+  addFollowings: (followerId: string, followingIds: string[]) => void;
 
-  getUserFollowing: () => string[];
-  isUserFollowing: (followingId: string) => boolean;
+  getUserFollowing: (followerId: string) => string[];
+  isUserFollowing: (followerId: string, followingId: string) => boolean;
 }
