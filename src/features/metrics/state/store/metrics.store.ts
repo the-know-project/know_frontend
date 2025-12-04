@@ -68,13 +68,11 @@ export const useGetUserFollowing = () => {
 
 export const useFollowActions = () => {
   const useFollow = (userId: string) => {
-    const followUser = useFollowStore((state) => state.followUser);
-    return followUser(userId);
+    useFollowStore.getState().followUser(userId);
   };
 
   const useUnfollow = (userId: string) => {
-    const unfollowUser = useFollowStore((state) => state.unfollowUser);
-    return unfollowUser(userId);
+    useFollowStore.getState().unfollowUser(userId);
   };
 
   const useIsUserFollowing = (userId: string) => {
