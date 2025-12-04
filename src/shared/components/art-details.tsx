@@ -18,9 +18,12 @@ import ReactDOM from "react-dom";
 import Spinner from "./spinner";
 import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
 import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
+import { useTokenStore } from "@/src/features/auth/state/store";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
 
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
+  const followerId = useTokenStore(selectUserId);
   const {
     toggledContentId,
     viewportPosition,
@@ -33,7 +36,10 @@ const ArtDetails = () => {
     useUnfollowUser();
   const { useIsUserFollowing } = useFollowActions();
 
-  const isFollowing = useIsUserFollowing(exploreContent?.userId || "");
+  const isFollowing = useIsUserFollowing(
+    followerId || "",
+    exploreContent?.userId || "",
+  );
 
   const handleFollowUser = async (artistId: string) => {
     if (isFollowing) {
