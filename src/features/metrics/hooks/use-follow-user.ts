@@ -16,11 +16,8 @@ type FollowUserParams = Omit<IFollowUser, "followerId">;
 export const useFollowUser = () => {
   const queryClient = useQueryClient();
   const followerId = useTokenStore(selectUserId);
-  const {
-    useFollow: _followUser,
-    useUnfollow: _unfollowUser,
-    useIsUserFollowing: _useIsUserFollowing,
-  } = useFollowActions();
+  const { followUser: _followUser, unfollowUser: _unfollowUser } =
+    useFollowActions();
 
   return useMutation({
     mutationKey: [`follow-user`, followerId],
@@ -52,7 +49,8 @@ export const useFollowUser = () => {
     },
 
     onMutate: async (params) => {
-      _followUser(params.followingId);
+      if (!followerId) return;
+      _followUser(followerId, params.followingId);
       await queryClient.cancelQueries({
         queryKey: [`user-followers`, followerId],
       });
@@ -104,7 +102,8 @@ export const useFollowUser = () => {
     },
 
     onError: (error, variables, context) => {
-      _unfollowUser(variables.followingId);
+      if (!followerId) return;
+      _unfollowUser(followerId, variables.followingId);
       if (context?.previousData) {
         queryClient.setQueryData<IFetchUserFollowingResponse>(
           [`user-following`, followerId],
@@ -114,7 +113,8 @@ export const useFollowUser = () => {
     },
 
     onSuccess: (data, _params) => {
-      _followUser(_params.followingId);
+      if (!followerId) return;
+      _followUser(followerId, _params.followingId);
     },
 
     onSettled: (_, variables) => {
