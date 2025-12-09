@@ -96,8 +96,6 @@ const ExploreCategories = ({
 
   const handleFiltersChange = useCallback(
     (filters: string[]) => {
-      console.log("User selected filters:", filters);
-
       const filterObject: {
         priceMin?: number;
         priceMax?: number;
@@ -107,22 +105,15 @@ const ExploreCategories = ({
 
       if (filters.length > 0) {
         filters.forEach((filterName) => {
-          // Handle availability filters
           if (filterName === "For Sale") {
             filterObject.available = true;
           } else if (filterName === "Not For Sale") {
             filterObject.available = false;
-          }
-
-          // Handle sort filters
-          else if (filterName === "Latest") {
+          } else if (filterName === "Latest") {
             filterObject.sortBy = "latest";
           } else if (filterName === "Oldest") {
             filterObject.sortBy = "oldest";
-          }
-
-          // Handle price range filters
-          else if (filterName === "$50 - $500") {
+          } else if (filterName === "$50 - $500") {
             filterObject.priceMin = 50;
             filterObject.priceMax = 500;
           } else if (filterName === "$501 - $1500") {
@@ -250,7 +241,7 @@ const ExploreCategories = ({
             {/* Buttons */}
             <button
               onClick={() => setActiveButton("for-you")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "for-you"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"
@@ -261,7 +252,7 @@ const ExploreCategories = ({
 
             <button
               onClick={() => setActiveButton("following")}
-              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "following"
                   ? "text-neutral-300"
                   : "text-neutral-700 hover:text-neutral-500"

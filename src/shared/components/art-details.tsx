@@ -2,12 +2,17 @@
 
 import { empty } from "@/src/assets";
 import { BlankProfilePicture } from "@/src/constants/constants";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
+import { useTokenStore } from "@/src/features/auth/state/store";
 import ExploreArtistInfo from "@/src/features/explore/components/explore-artist-info";
 import ExploreCommentSection from "@/src/features/explore/components/explore-comment-section";
 import {
   useIsExploreContentToggled,
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
+import { useFollowUser } from "@/src/features/metrics/hooks/use-follow-user";
+import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
+import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
 import { showLog } from "@/src/utils/logger";
 import { IconTag, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,13 +22,30 @@ import ReactDOM from "react-dom";
 
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
-  const {
-    toggledContentId,
-    viewportPosition,
-    exploreContent,
-    isExploreContentToggled,
-  } = useIsExploreContentToggled();
+  const followerId = useTokenStore(selectUserId);
+  const { toggledContentId, exploreContent, isExploreContentToggled } =
+    useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
+  const { mutateAsync: followUser } = useFollowUser();
+  const { mutateAsync: unFollowUser } = useUnfollowUser();
+  const { useIsUserFollowing } = useFollowActions();
+
+  const isFollowing = useIsUserFollowing(
+    followerId || "",
+    exploreContent?.userId || "",
+  );
+
+  const handleFollowUser = async (artistId: string) => {
+    if (isFollowing) {
+      await unFollowUser({
+        followingId: artistId,
+      });
+    } else {
+      await followUser({
+        followingId: artistId,
+      });
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -41,6 +63,11 @@ const ArtDetails = () => {
   showLog({
     context: "Art-Details",
     data: exploreContent,
+  });
+
+  showLog({
+    context: "From Art Details: Validating follow",
+    data: isFollowing,
   });
 
   const backdropVariants = {
@@ -113,7 +140,7 @@ const ArtDetails = () => {
                     : "80vw",
                 height:
                   typeof window !== "undefined" && window.innerWidth < 768
-                    ? "83vh"
+                    ? "90vh"
                     : "95vh",
               }}
               onClick={(e) => e.stopPropagation()}
@@ -122,7 +149,7 @@ const ArtDetails = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between bg-transparent px-4 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 p-1 backdrop-blur-lg">
                       <Image
                         src={
                           exploreContent?.creatorProfileUrl ||
@@ -138,9 +165,17 @@ const ArtDetails = () => {
                       <h1 className="font-bricolage text-lg font-bold text-white capitalize">
                         {exploreContent?.artName}
                       </h1>
-                      <div className="font-bricolage flex gap-1 text-xs text-gray-400 capitalize sm:text-sm">
-                        <p>{exploreContent?.creatorName}• </p>
-                        <button className="hover:text-blue-300"> Follow</button>
+                      <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
+                        <p>{exploreContent?.creatorName} • </p>
+
+                        <button
+                          onClick={() =>
+                            handleFollowUser(exploreContent?.userId || "")
+                          }
+                          className="font-bricolage text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
+                        >
+                          {isFollowing === true ? "Unfollow" : "Follow"}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -188,7 +223,7 @@ const ArtDetails = () => {
                       <div className="relative w-full overflow-hidden">
                         <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
                           <Image
-                            src={exploreContent?.artWorkUrl || empty}
+                            src={exploreContent?.highResUrl || empty}
                             alt="art_work"
                             quality={100}
                             priority
@@ -226,7 +261,7 @@ const ArtDetails = () => {
                     {exploreContent?.categories?.map((category, index) => (
                       <span
                         key={index}
-                        className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-md bg-neutral-600/50 px-2 py-1 text-xs font-medium tracking-wider text-white lowercase"
+                        className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-md bg-neutral-600/50 px-3 py-1 text-xs font-medium tracking-wider text-white lowercase"
                         style={{
                           animationDelay: `${index * 150}ms`,
                         }}

@@ -27,7 +27,7 @@ const ArtTagsFilter = ({ tags }: ArtTagsFilterProps) => {
             className={`font-bebas rounded-full border px-3 py-1 text-xs tracking-wider transition-colors duration-200 ${
               isTagSelected(tag)
                 ? "border-blue-700 bg-blue-700 text-white"
-                : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "border-gray-300 bg-neutral-300 text-neutral-700 hover:bg-gray-200"
             }`}
           >
             {tag}

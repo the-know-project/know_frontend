@@ -20,6 +20,7 @@ interface ExploreCardProps {
   artistName: string;
   artName: string;
   artWork: string;
+  highResUrl: string;
   price: number;
   size: {
     width: number;
@@ -46,6 +47,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   createdAt,
   artName,
   artWork,
+  highResUrl,
   description,
   artistImage,
   likeCount,
@@ -134,6 +136,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
                 userId: userId,
                 artName,
                 artWorkUrl: artWork,
+                highResUrl,
                 description,
                 creatorProfileUrl: artistImage,
                 creatorName: artistName,

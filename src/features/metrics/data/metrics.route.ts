@@ -8,4 +8,5 @@ export enum METRICS_OP {
   USER_FOLLOWERS = "/api/metrics/fetchUserFollowers",
   USER_FOLLOWING = "/api/metrics/fetchUserFollowing",
   POST_PERFORMANCE = "/api/metrics/postPerformance",
+  VALIDATE_FOLLOW = "/api/metrics/validateUserFollowing",
 }

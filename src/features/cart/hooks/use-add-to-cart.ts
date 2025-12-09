@@ -20,8 +20,6 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
         throw new CartError("Cannot add to cart: User not authenticated");
       }
 
-      console.log("🛒 Adding to cart:", { userId, fileId });
-
       const result = await ResultAsync.fromPromise(
         addToCart({
           userId,
@@ -29,7 +27,6 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
         }),
         (error) => new CartError(`Error adding item to cart: ${error}`),
       ).andThen((data) => {
-        console.log(" Backend response:", data);
         if (data.status === 200 || data.status === 201) {
           return ok(data);
         } else {
@@ -50,8 +47,6 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
     },
 
     onMutate: async (fileId: string) => {
-      console.log("⚡ Optimistic update: Adding item", fileId);
-
       addToLocalCart(fileId);
 
       await queryClient.cancelQueries({
@@ -102,7 +97,6 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
       removeFromLocalCart(fileId);
 
       if (context?.previousCart) {
-        console.log("↩️ Rolling back optimistic update");
         queryClient.setQueryData(
           ["fetch-user-cart", userId],
           context.previousCart,

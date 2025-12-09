@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTokenStore } from "../../auth/state/store";
 import { IIncrementViewCount } from "../types/metrics.types";
 import { err, ok, ResultAsync } from "neverthrow";
-import { incrementViewCount } from "../api/route";
+import { incrementViewCount } from "../api/incr-view-count/route";
 import { MetricsError } from "../error/metrics.error";
 import { showLog } from "@/src/utils/logger";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";

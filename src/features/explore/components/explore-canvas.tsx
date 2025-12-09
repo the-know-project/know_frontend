@@ -16,6 +16,8 @@ import ExploreCard from "./explore-card";
 import { ExploreCardSkeletonGrid } from "./explore-card-skeleton";
 import InfiniteLoadingIndicator from "./infinite-loading-indicator";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
+import { useFetchUserFollowing } from "../../metrics/hooks/use-fetch-user-following";
+import { showLog } from "@/src/utils/logger";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -42,10 +44,20 @@ const ExploreCanvasContent = ({
 
   const { isExploreContentToggled, toggledContentId, exploreContent } =
     useIsExploreContentToggled();
+  const { following } = useFetchUserFollowing({
+    limit: 20,
+  });
   const toggleExploreContent = useToggleExploreContent();
-  console.log(
-    `is content toggled: ${isExploreContentToggled} : ${toggledContentId}`,
-  );
+
+  showLog({
+    context: "Explore Canvas",
+    data: `is content toggled: ${isExploreContentToggled} : ${toggledContentId}`,
+  });
+
+  showLog({
+    context: "Explore Canvas: User Following",
+    data: following,
+  });
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -161,6 +173,7 @@ const ExploreCanvasContent = ({
                 id={item.fileId}
                 userId={item.userId}
                 artWork={item.url}
+                highResUrl={item.highResUrl}
                 artName={item.fileName}
                 description={item.description}
                 artistImage={item.imageUrl}
