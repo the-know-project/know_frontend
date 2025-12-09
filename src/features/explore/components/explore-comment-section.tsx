@@ -93,33 +93,43 @@ const ExploreCommentSection = ({ postId }: ExploreCommentSectionProps) => {
         </div>
       ) : (
         <div className="space-y-10">
-          {comments.map((comment) => (
-            <div key={comment.id} className="flex items-start gap-3">
-              <div className="h-10 w-10 flex-shrink-0 rounded-full">
-                <img
-                  src={
-                    comment.ProfilePicture ||
-                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face"
-                  }
-                  alt={`${comment.firstName}'s avatar`}
-                  className="h-full w-full rounded-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <div className="mb-1 flex items-center gap-2">
-                  <span className="profile_title !text-sm">
-                    {comment.firstName} {comment.lastName}
-                  </span>
-                  <span className="profile_content !text-[12px]">
-                    • {formatTimeAgo(comment.createdAt)}
-                  </span>
+          {comments.map((comment) => {
+            const isOptimistic =
+              comment.isOptimistic || comment.id.startsWith("temp-");
+
+            return (
+              <div
+                key={comment.id}
+                className={`flex items-start gap-3 transition-opacity duration-200 ${
+                  isOptimistic ? "opacity-60" : "opacity-100"
+                }`}
+              >
+                <div className="h-10 w-10 flex-shrink-0 rounded-full">
+                  <img
+                    src={
+                      comment.ProfilePicture ||
+                      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face"
+                    }
+                    alt={`${comment.firstName}'s avatar`}
+                    className="h-full w-full rounded-full object-cover"
+                  />
                 </div>
-                <p className="profile_content !text-[14px]">
-                  {comment.comment}
-                </p>
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="profile_title !text-sm">
+                      {comment.firstName} {comment.lastName}
+                    </span>
+                    <span className="profile_content !text-[12px]">
+                      • {formatTimeAgo(comment.createdAt)}
+                    </span>
+                  </div>
+                  <p className="profile_content !text-[14px]">
+                    {comment.comment}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

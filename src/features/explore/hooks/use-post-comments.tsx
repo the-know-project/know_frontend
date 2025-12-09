@@ -15,16 +15,11 @@ export const usePostComments = (postId: string) => {
   const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
 
   const comments = usePostCommentsSelector(postId);
-  const {
-    setComments,
-    appendComments,
-    addOptimisticComment,
-    removeComment,
-    setLoading,
-  } = useCommentActions();
+  const { setComments, appendComments, setLoading } = useCommentActions();
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+
   const fetchQuery = useFetchPostComments(postId, page);
   const addMutation = useAddPostComment();
   const deleteMutation = useDeletePostComment();
@@ -45,11 +40,11 @@ export const usePostComments = (postId: string) => {
         appendComments(postId, rawData);
       }
     }
-  }, [fetchQuery.data, page, postId]);
+  }, [fetchQuery.data, page, postId, setComments, appendComments]);
 
   useEffect(() => {
     setLoading(postId, fetchQuery.isLoading);
-  }, [fetchQuery.isLoading, postId]);
+  }, [fetchQuery.isLoading, postId, setLoading]);
 
   const loadMore = useCallback(() => {
     if (!fetchQuery.isLoading && page < totalPages) {
@@ -66,45 +61,41 @@ export const usePostComments = (postId: string) => {
 
   const handleAddComment = async (content: string) => {
     if (!isAuthenticated || !user) {
-      return;
+      throw new Error("User must be authenticated to comment");
     }
 
-    const tempId = `temp-${Date.now()}`;
-
-    addOptimisticComment(postId, {
-      id: tempId,
-      userId: user.id,
-      firstName: user.firstName,
-      lastName: "",
-      ProfilePicture: user.imageUrl,
-      comment: content,
-      createdAt: Date.now(),
-    });
-
     try {
-      await addMutation.mutateAsync({ postId, comment: content });
+      await addMutation.mutateAsync({
+        postId,
+        comment: content.trim(),
+      });
     } catch (error) {
-      console.error("Failed to add comment");
-      removeComment(postId, tempId);
+      console.error("Failed to add comment:", error);
       throw error;
     }
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    removeComment(postId, commentId);
     try {
-      await deleteMutation.mutateAsync({ commentId });
+      await deleteMutation.mutateAsync({
+        commentId,
+        postId,
+      });
     } catch (error) {
-      fetchQuery.refetch();
+      console.error("Failed to delete comment:", error);
+      throw error;
     }
   };
 
   const handleHideComment = async (commentId: string) => {
-    removeComment(postId, commentId);
     try {
-      await hideMutation.mutateAsync({ commentId });
+      await hideMutation.mutateAsync({
+        commentId,
+        postId,
+      });
     } catch (error) {
-      fetchQuery.refetch();
+      console.error("Failed to hide comment:", error);
+      throw error;
     }
   };
 
@@ -115,8 +106,11 @@ export const usePostComments = (postId: string) => {
     isLoadingInitial: fetchQuery.isLoading && page === 1,
     isLoadingMore: fetchQuery.isLoading && page > 1,
     isAdding: addMutation.isPending,
+    isDeleting: deleteMutation.isPending,
+    isHiding: hideMutation.isPending,
     addComment: handleAddComment,
     deleteComment: handleDeleteComment,
     hideComment: handleHideComment,
+    refetch: fetchQuery.refetch,
   };
 };

@@ -46,7 +46,6 @@ export const useLikedAssetsWithCounts = () => {
 
   const likedAssetsWithCounts = data?.data || [];
 
-
   return {
     likedAssetsWithCounts,
     isLoading,

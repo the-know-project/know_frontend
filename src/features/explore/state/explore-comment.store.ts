@@ -11,6 +11,7 @@ export interface Comment {
   ProfilePicture: string | null | undefined;
   comment: string;
   createdAt: number;
+  isOptimistic?: boolean;
 }
 
 export interface CommentMeta {
@@ -32,6 +33,7 @@ interface CommentState {
   updateComment: (postId: string, commentId: string, updates: Partial<Comment>) => void;
   removeComment: (postId: string, commentId: string) => void;
   setLoading: (postId: string, isLoading: boolean) => void;
+  clearPostComments: (postId: string) => void;
 }
 
 const isComment = (item: Comment | CommentMeta): item is Comment => {
@@ -46,7 +48,6 @@ export const useCommentStore = create<CommentState>()(
 
       setComments: (postId, rawData) =>
         set((state) => {
-    
           state.comments[postId] = rawData.filter(isComment);
         }),
 
@@ -58,7 +59,6 @@ export const useCommentStore = create<CommentState>()(
             state.comments[postId] = [];
           }
 
-
           const existingIds = new Set(state.comments[postId].map((c) => c.id));
           const uniqueNewComments = newComments.filter(
             (c) => !existingIds.has(c.id)
@@ -67,17 +67,14 @@ export const useCommentStore = create<CommentState>()(
           state.comments[postId].push(...uniqueNewComments);
         }),
 
-  
       addOptimisticComment: (postId, newComment) =>
         set((state) => {
           if (!state.comments[postId]) {
             state.comments[postId] = [];
           }
-
           state.comments[postId].unshift(newComment);
         }),
 
- 
       updateComment: (postId, commentId, updates) =>
         set((state) => {
           const list = state.comments[postId];
@@ -105,11 +102,16 @@ export const useCommentStore = create<CommentState>()(
         set((state) => {
           state.isLoading[postId] = status;
         }),
+
+      clearPostComments: (postId) =>
+        set((state) => {
+          delete state.comments[postId];
+          delete state.isLoading[postId];
+        }),
     })),
     {
       name: "comment-storage",
       version: 1,
-      
       partialize: (state) => ({
         comments: state.comments,
       }),
@@ -117,6 +119,7 @@ export const useCommentStore = create<CommentState>()(
   )
 );
 
+// Selectors
 export const usePostComments = (postId: string | null) => {
   return useCommentStore((state) =>
     postId ? state.comments[postId] || [] : []
@@ -138,5 +141,6 @@ export const useCommentActions = () => {
     updateComment: state.updateComment,
     removeComment: state.removeComment,
     setLoading: state.setLoading,
+    clearPostComments: state.clearPostComments,
   };
 };
