@@ -8,9 +8,15 @@ import {
   selectUser,
 } from "../../auth/state/selectors/token.selectors";
 import { useCommentActions } from "../state/explore-comment.store";
-import type { Comment, CommentMeta } from "../state/explore-comment.store";
-import type { AddCommentPayload } from "../types/explore-comment.types";
 
+import { IPostComment } from "../types/explore-comment.types";
+import {
+  Comment,
+  CommentMeta,
+} from "../state/interface/explore-comment.interface";
+import { getFingerPrint } from "@/src/utils/fingerprint";
+
+type PostCommentParams = Omit<IPostComment, "userId">;
 export const useAddPostComment = () => {
   const queryClient = useQueryClient();
   const userId = useTokenStore(selectUserId);
@@ -21,9 +27,16 @@ export const useAddPostComment = () => {
   return useMutation({
     mutationKey: [`add-post-comment-${userId}`],
 
-    mutationFn: async (payload: AddCommentPayload) => {
+    mutationFn: async (payload: PostCommentParams) => {
+      if (!userId) {
+        throw new ExploreError("User not authenticated");
+      }
       const result = await ResultAsync.fromPromise(
-        addPostComment(payload.postId, payload.comment),
+        addPostComment({
+          userId: userId,
+          comment: payload.comment,
+          fileId: payload.fileId,
+        }),
         (error) => new ExploreError(`Error adding comment: ${error}`),
       ).andThen((data) => {
         if (data.status === 200 || data.status === 201) {
@@ -43,9 +56,7 @@ export const useAddPostComment = () => {
     },
 
     onMutate: async (variables) => {
-      const { postId, comment, fileId } = variables;
-
-      const tempId = `temp-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const { comment, fileId } = variables;
 
       const extractNames = (fullName: string) => {
         const names = fullName.trim().split(" ");
@@ -59,25 +70,26 @@ export const useAddPostComment = () => {
         ? extractNames(user.firstName)
         : { firstName: "You", lastName: "" };
 
+      const fingerPrint = getFingerPrint();
+
       const optimisticComment: Comment = {
-        id: tempId,
+        id: fingerPrint,
         userId: userId || "",
-        fileId,
         firstName,
         lastName,
-        ProfilePicture: user?.imageUrl || null,
+        profilePicture: user?.imageUrl || null,
         comment,
         createdAt: Date.now(),
         isOptimistic: true,
       };
 
-      addOptimisticComment(postId, optimisticComment);
+      addOptimisticComment(fileId, optimisticComment);
 
       await queryClient.cancelQueries({
-        queryKey: [`fetch-post-comments`, postId],
+        queryKey: [`fetch-post-comments`, fileId],
       });
 
-      return { tempId, postId };
+      return { fileId, fingerPrint };
     },
 
     onSuccess: (data, variables, context) => {
@@ -90,12 +102,12 @@ export const useAddPostComment = () => {
         ) as Comment | undefined;
 
         if (realComment) {
-          updateComment(context.postId, context.tempId, {
+          updateComment(context.fileId, {
             id: realComment.id,
             userId: realComment.userId,
             firstName: realComment.firstName,
             lastName: realComment.lastName,
-            ProfilePicture: realComment.ProfilePicture,
+            profilePicture: realComment.profilePicture,
             comment: realComment.comment,
             createdAt: realComment.createdAt,
             isOptimistic: false,
@@ -103,12 +115,12 @@ export const useAddPostComment = () => {
         }
       } else if (data.data && "comment" in data.data) {
         const realComment = data.data as Comment;
-        updateComment(context.postId, context.tempId, {
+        updateComment(context.fileId, {
           id: realComment.id,
           userId: realComment.userId,
           firstName: realComment.firstName,
           lastName: realComment.lastName,
-          ProfilePicture: realComment.ProfilePicture,
+          profilePicture: realComment.profilePicture,
           comment: realComment.comment,
           createdAt: realComment.createdAt,
           isOptimistic: false,
@@ -118,14 +130,14 @@ export const useAddPostComment = () => {
 
     onError: (error, variables, context) => {
       if (context) {
-        removeComment(context.postId, context.tempId);
+        removeComment(context.fileId, context.fingerPrint);
       }
       console.error("Failed to add comment:", error);
     },
 
     onSettled: (data, error, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [`fetch-post-comments`, variables.postId],
+        queryKey: [`fetch-post-comments`, variables.fileId],
       });
     },
   });
