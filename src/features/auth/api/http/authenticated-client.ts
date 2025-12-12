@@ -33,12 +33,12 @@ export class AuthenticatedApiClient {
     return ApiClient.put<T>(url, data);
   }
 
-  static async delete<T>(path: string): Promise<T> {
+  static async delete<T>(path: string, data: any): Promise<T> {
     const url = createUrl({
       baseUrl: this.getBaseUrl(),
       path,
     });
-    return ApiClient.delete<T>(url);
+    return ApiClient.delete<T>(url, data);
   }
 
   static window(path: string) {
