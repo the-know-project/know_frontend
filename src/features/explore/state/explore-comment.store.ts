@@ -1,112 +1,80 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-
-export interface Comment {
-  id: string;
-  userId: string;
-  fileId?: string;
-  firstName: string;
-  lastName: string;
-  ProfilePicture: string | null | undefined;
-  comment: string;
-  createdAt: number;
-  isOptimistic?: boolean;
-}
-
-export interface CommentMeta {
-  currentPage: number;
-  totalPage: number;
-  totalItems: number;
-  itemsPerPage: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-interface CommentState {
-  comments: Record<string, Comment[]>;
-  isLoading: Record<string, boolean>;
-
-  setComments: (postId: string, data: (Comment | CommentMeta)[]) => void;
-  appendComments: (postId: string, data: (Comment | CommentMeta)[]) => void;
-  addOptimisticComment: (postId: string, comment: Comment) => void;
-  updateComment: (postId: string, commentId: string, updates: Partial<Comment>) => void;
-  removeComment: (postId: string, commentId: string) => void;
-  setLoading: (postId: string, isLoading: boolean) => void;
-  clearPostComments: (postId: string) => void;
-}
+import {
+  Comment,
+  CommentMeta,
+  ICommentState,
+} from "./interface/explore-comment.interface";
 
 const isComment = (item: Comment | CommentMeta): item is Comment => {
   return (item as Comment).id !== undefined;
 };
 
-export const useCommentStore = create<CommentState>()(
+export const useCommentStore = create<ICommentState>()(
   persist(
     immer((set) => ({
       comments: {},
       isLoading: {},
 
-      setComments: (postId, rawData) =>
+      setComments: (fileId, rawData) =>
         set((state) => {
-          state.comments[postId] = rawData.filter(isComment);
+          state.comments[fileId] = rawData.filter(isComment);
         }),
 
-      appendComments: (postId, rawData) =>
+      appendComments: (fileId, rawData) =>
         set((state) => {
           const newComments = rawData.filter(isComment);
-          
-          if (!state.comments[postId]) {
-            state.comments[postId] = [];
+
+          if (!state.comments[fileId]) {
+            state.comments[fileId] = [];
           }
 
-          const existingIds = new Set(state.comments[postId].map((c) => c.id));
+          const existingIds = new Set(state.comments[fileId].map((c) => c.id));
           const uniqueNewComments = newComments.filter(
-            (c) => !existingIds.has(c.id)
+            (c) => !existingIds.has(c.id),
           );
 
-          state.comments[postId].push(...uniqueNewComments);
+          state.comments[fileId].push(...uniqueNewComments);
         }),
 
-      addOptimisticComment: (postId, newComment) =>
+      addOptimisticComment: (fileId, newComment) =>
         set((state) => {
-          if (!state.comments[postId]) {
-            state.comments[postId] = [];
+          if (!state.comments[fileId]) {
+            state.comments[fileId] = [];
           }
-          state.comments[postId].unshift(newComment);
+          state.comments[fileId].unshift(newComment);
         }),
 
-      updateComment: (postId, commentId, updates) =>
+      updateComment: (fileId, updates) =>
         set((state) => {
-          const list = state.comments[postId];
+          const list = state.comments[fileId];
           if (list) {
-            const index = list.findIndex((c) => c.id === commentId);
-            if (index !== -1) {
-              state.comments[postId][index] = {
-                ...state.comments[postId][index],
-                ...updates,
-              };
-            }
+            state.comments[fileId] = {
+              ...state.comments[fileId],
+              ...updates,
+            };
           }
         }),
 
-      removeComment: (postId, commentId) =>
+      removeComment: (fileId, commentId) =>
         set((state) => {
-          if (state.comments[postId]) {
-            state.comments[postId] = state.comments[postId].filter(
-              (c) => c.id !== commentId
+          if (state.comments[fileId]) {
+            state.comments[fileId] = state.comments[fileId].filter(
+              (c) => c.id !== commentId,
             );
           }
         }),
 
-      setLoading: (postId, status) =>
+      setLoading: (fileId, status) =>
         set((state) => {
-          state.isLoading[postId] = status;
+          state.isLoading[fileId] = status;
         }),
 
-      clearPostComments: (postId) =>
+      clearPostComments: (fileId) =>
         set((state) => {
-          delete state.comments[postId];
-          delete state.isLoading[postId];
+          delete state.comments[fileId];
+          delete state.isLoading[fileId];
         }),
     })),
     {
@@ -115,21 +83,18 @@ export const useCommentStore = create<CommentState>()(
       partialize: (state) => ({
         comments: state.comments,
       }),
-    }
-  )
+    },
+  ),
 );
 
-// Selectors
-export const usePostComments = (postId: string | null) => {
-  return useCommentStore((state) =>
-    postId ? state.comments[postId] || [] : []
-  );
+export const usePostComments = (fileId: string | null) => {
+  if (fileId === null) return [];
+  return useCommentStore.getState().comments[fileId] || [];
 };
 
-export const useIsCommentsLoading = (postId: string | null) => {
-  return useCommentStore((state) =>
-    postId ? state.isLoading[postId] || false : false
-  );
+export const useIsCommentsLoading = (fileId: string | null) => {
+  if (fileId === null) return false;
+  return useCommentStore.getState().isLoading[fileId] || false;
 };
 
 export const useCommentActions = () => {
