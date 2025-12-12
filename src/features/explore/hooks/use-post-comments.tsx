@@ -9,18 +9,24 @@ import { useAddPostComment } from "./use-add-post-comment";
 import { useDeletePostComment } from "./use-delete-post-comment";
 import { useHidePostComment } from "./use-hide-post-comment";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
+import { IFetchPostComments } from "../types/explore-comment.types";
 
-export const usePostComments = (postId: string) => {
+export const usePostComments = (params: IFetchPostComments) => {
+  const { fileId, limit } = params;
   const user = useTokenStore((state) => state.user);
   const isAuthenticated = useTokenStore((state) => state.isAuthenticated);
 
-  const comments = usePostCommentsSelector(postId);
+  const comments = usePostCommentsSelector(fileId);
   const { setComments, appendComments, setLoading } = useCommentActions();
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
-  const fetchQuery = useFetchPostComments(postId, page);
+  const fetchQuery = useFetchPostComments({
+    fileId,
+    page,
+    limit,
+  });
   const addMutation = useAddPostComment();
   const deleteMutation = useDeletePostComment();
   const hideMutation = useHidePostComment();
@@ -28,23 +34,20 @@ export const usePostComments = (postId: string) => {
   useEffect(() => {
     if (fetchQuery.data?.data) {
       const rawData = fetchQuery.data.data;
-      const metaItem = rawData.find(
-        (item: any) => item.totalPage !== undefined,
-      );
 
-      if (metaItem) setTotalPages(metaItem.totalPage);
+      setTotalPages(fetchQuery.data.meta.totalPages);
 
       if (page === 1) {
-        setComments(postId, rawData);
+        setComments(fileId, rawData);
       } else {
-        appendComments(postId, rawData);
+        appendComments(fileId, rawData);
       }
     }
-  }, [fetchQuery.data, page, postId, setComments, appendComments]);
+  }, [fetchQuery.data, page, fileId, setComments, appendComments]);
 
   useEffect(() => {
-    setLoading(postId, fetchQuery.isLoading);
-  }, [fetchQuery.isLoading, postId, setLoading]);
+    setLoading(fileId, fetchQuery.isLoading);
+  }, [fetchQuery.isLoading, fileId, setLoading]);
 
   const loadMore = useCallback(() => {
     if (!fetchQuery.isLoading && page < totalPages) {
@@ -66,8 +69,8 @@ export const usePostComments = (postId: string) => {
 
     try {
       await addMutation.mutateAsync({
-        postId,
-        comment: content.trim(),
+        fileId,
+        comment: content,
       });
     } catch (error) {
       console.error("Failed to add comment:", error);
@@ -79,7 +82,7 @@ export const usePostComments = (postId: string) => {
     try {
       await deleteMutation.mutateAsync({
         commentId,
-        postId,
+        fileId,
       });
     } catch (error) {
       console.error("Failed to delete comment:", error);
@@ -91,7 +94,7 @@ export const usePostComments = (postId: string) => {
     try {
       await hideMutation.mutateAsync({
         commentId,
-        postId,
+        fileId,
       });
     } catch (error) {
       console.error("Failed to hide comment:", error);

@@ -8,7 +8,9 @@ import {
   useCommentActions,
   useCommentStore,
 } from "../state/explore-comment.store";
-import type { HideCommentPayload } from "../types/explore-comment.types";
+import type { IHideComment } from "../types/explore-comment.types";
+
+type HideCommentParams = Omit<IHideComment, "userId">;
 
 export const useHidePostComment = () => {
   const queryClient = useQueryClient();
@@ -18,9 +20,14 @@ export const useHidePostComment = () => {
   return useMutation({
     mutationKey: [`hide-post-comment-${userId}`],
 
-    mutationFn: async (payload: HideCommentPayload) => {
+    mutationFn: async (payload: HideCommentParams) => {
+      if (!userId) throw new ExploreError("User not authenticated");
+
       const result = await ResultAsync.fromPromise(
-        hidePostComment(payload.commentId),
+        hidePostComment({
+          userId,
+          commentId: payload.commentId,
+        }),
         (error) => new ExploreError(`Error hiding comment: ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {
@@ -40,31 +47,31 @@ export const useHidePostComment = () => {
     },
 
     onMutate: async (variables) => {
-      const { commentId, postId } = variables;
+      const { fileId, commentId } = variables;
 
       await queryClient.cancelQueries({
-        queryKey: [`fetch-post-comments`, postId],
+        queryKey: [`fetch-post-comments`, fileId, 1],
       });
 
       const { comments } = useCommentStore.getState();
-      const postComments = comments[postId] || [];
+      const postComments = comments[fileId as string] || [];
       const hiddenComment = postComments.find((c) => c.id === commentId);
 
-      removeComment(postId, commentId);
+      removeComment(fileId as string, commentId);
 
-      return { hiddenComment, postId };
+      return { hiddenComment, fileId };
     },
 
     onError: (error, variables, context) => {
       if (context?.hiddenComment) {
-        addOptimisticComment(context.postId, context.hiddenComment);
+        addOptimisticComment(context.fileId as string, context.hiddenComment);
       }
       console.error("Failed to hide comment:", error);
     },
 
     onSettled: (data, error, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [`fetch-post-comments`, variables.postId],
+        queryKey: [`fetch-post-comments`, variables.fileId],
       });
     },
   });

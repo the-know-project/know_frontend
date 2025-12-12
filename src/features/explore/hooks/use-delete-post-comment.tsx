@@ -8,8 +8,9 @@ import {
   useCommentActions,
   useCommentStore,
 } from "../state/explore-comment.store";
-import type { DeleteCommentPayload } from "../types/explore-comment.types";
+import { IDeleteComment } from "../types/explore-comment.types";
 
+type DeleteCommentParams = Omit<IDeleteComment, "userId">;
 export const useDeletePostComment = () => {
   const queryClient = useQueryClient();
   const userId = useTokenStore(selectUserId);
@@ -18,9 +19,15 @@ export const useDeletePostComment = () => {
   return useMutation({
     mutationKey: [`delete-post-comment-${userId}`],
 
-    mutationFn: async (payload: DeleteCommentPayload) => {
+    mutationFn: async (payload: DeleteCommentParams) => {
+      if (!userId) {
+        throw new ExploreError("User not authenticated");
+      }
       const result = await ResultAsync.fromPromise(
-        deletePostComment(payload.commentId),
+        deletePostComment({
+          userId,
+          commentId: payload.commentId,
+        }),
         (error) => new ExploreError(`Error deleting comment: ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {
@@ -40,31 +47,31 @@ export const useDeletePostComment = () => {
     },
 
     onMutate: async (variables) => {
-      const { commentId, postId } = variables;
+      const { commentId, fileId } = variables;
 
       await queryClient.cancelQueries({
-        queryKey: [`fetch-post-comments`, postId],
+        queryKey: [`fetch-post-comments`, fileId, 1],
       });
 
       const { comments } = useCommentStore.getState();
-      const postComments = comments[postId] || [];
+      const postComments = comments[fileId as string] || [];
       const deletedComment = postComments.find((c) => c.id === commentId);
 
-      removeComment(postId, commentId);
+      removeComment(fileId as string, commentId);
 
-      return { deletedComment, postId };
+      return { deletedComment, fileId };
     },
 
     onError: (error, variables, context) => {
       if (context?.deletedComment) {
-        addOptimisticComment(context.postId, context.deletedComment);
+        addOptimisticComment(context.fileId as string, context.deletedComment);
       }
       console.error("Failed to delete comment:", error);
     },
 
     onSettled: (data, error, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [`fetch-post-comments`, variables.postId],
+        queryKey: [`fetch-post-comments`, variables.fileId, 1],
       });
     },
   });

@@ -5,18 +5,20 @@ import { fetchPostComments } from "../api/fetch-post-comment/route";
 import { ExploreError } from "../errors/explore.error";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { useCommentActions } from "../state/explore-comment.store";
+import { IFetchPostComments, TComments } from "../types/explore-comment.types";
 
-export const useFetchPostComments = (postId: string, page: number = 1) => {
+export const useFetchPostComments = (params: IFetchPostComments) => {
+  const { fileId, page, limit } = params;
   const userId = useTokenStore(selectUserId);
   const { setComments, appendComments, setLoading } = useCommentActions();
 
   return useQuery({
-    queryKey: [`fetch-post-comments`, postId, page],
+    queryKey: [`fetch-post-comments`, fileId, page],
     queryFn: async () => {
-      setLoading(postId, true);
+      setLoading(fileId, true);
 
       const result = await ResultAsync.fromPromise(
-        fetchPostComments(postId, page),
+        fetchPostComments(params),
         (error) => new ExploreError(`Error fetching comments: ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {
@@ -29,21 +31,20 @@ export const useFetchPostComments = (postId: string, page: number = 1) => {
       });
 
       if (result.isErr()) {
-        setLoading(postId, false);
+        setLoading(fileId, false);
         throw result.error;
       }
 
-      // Update Zustand store
       if (page === 1) {
-        setComments(postId, result.value.data);
+        setComments(fileId, result.value.data);
       } else {
-        appendComments(postId, result.value.data);
+        appendComments(fileId, result.value.data);
       }
 
-      setLoading(postId, false);
-      return result.value;
+      setLoading(fileId, false);
+      return result.value as TComments;
     },
-    enabled: !!postId && !!userId,
+    enabled: !!fileId && !!userId,
     staleTime: 30_000, // 30 seconds
     retry: 2,
   });
