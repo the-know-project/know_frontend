@@ -4,12 +4,16 @@ import { useState } from "react";
 import { Textarea } from "@/src/shared/ui/textarea";
 import { formatDistanceToNow } from "date-fns";
 import { usePostComments } from "../hooks/use-post-comments";
+import { showLog } from "@/src/utils/logger";
+import { AnimatePresence, motion } from "framer-motion";
+import { Comment } from "../state/interface/explore-comment.interface";
+import { BlankProfilePicture } from "@/src/constants/constants";
 
 interface ExploreCommentSectionProps {
-  postId: string;
+  fileId: string;
 }
 
-const ExploreCommentSection = ({ postId }: ExploreCommentSectionProps) => {
+const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
   const {
     comments,
     currentUser,
@@ -19,7 +23,14 @@ const ExploreCommentSection = ({ postId }: ExploreCommentSectionProps) => {
     isAdding,
     addComment,
     deleteComment,
-  } = usePostComments(postId);
+  } = usePostComments({
+    fileId,
+  });
+
+  const variants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
+  };
 
   const [commentText, setCommentText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -93,23 +104,25 @@ const ExploreCommentSection = ({ postId }: ExploreCommentSectionProps) => {
         </div>
       ) : (
         <div className="space-y-10">
-          {comments.map((comment) => {
-            const isOptimistic =
-              comment.isOptimistic || comment.id.startsWith("temp-");
-
+          <AnimatePresence></AnimatePresence>
+          {comments.map((comment: Comment, index) => {
             return (
-              <div
+              <motion.div
                 key={comment.id}
-                className={`flex items-start gap-3 transition-opacity duration-200 ${
-                  isOptimistic ? "opacity-60" : "opacity-100"
-                }`}
+                variants={variants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                transition={{
+                  delay: Math.min(index, 20) * 0.05,
+                  ease: "easeInOut",
+                  duration: 0.09,
+                }}
+                className={`flex items-start gap-3 transition-opacity duration-200`}
               >
                 <div className="h-10 w-10 flex-shrink-0 rounded-full">
                   <img
-                    src={
-                      comment.ProfilePicture ||
-                      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face"
-                    }
+                    src={comment.profilePicture || BlankProfilePicture}
                     alt={`${comment.firstName}'s avatar`}
                     className="h-full w-full rounded-full object-cover"
                   />
@@ -123,11 +136,11 @@ const ExploreCommentSection = ({ postId }: ExploreCommentSectionProps) => {
                       • {formatTimeAgo(comment.createdAt)}
                     </span>
                   </div>
-                  <p className="profile_content !text-[14px]">
+                  <p className="profile_content !text-[12px]">
                     {comment.comment}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
