@@ -71,10 +71,15 @@ export class ApiClient {
 
   static async delete<T = any>(
     url: string,
+    data?: any,
     config?: AxiosRequestConfig,
   ): Promise<T> {
     try {
-      const response: AxiosResponse<T> = await httpClient.delete(url, config);
+      const response: AxiosResponse<T> = await httpClient.delete(url, {
+        ...config,
+        data,
+      });
+
       return response.data;
     } catch (error) {
       throw this.handleError(error);
