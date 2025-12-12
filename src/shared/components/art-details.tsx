@@ -239,7 +239,7 @@ const ArtDetails = () => {
                       {/* Left side for comments */}
                       <div className="lg:col-span-2">
                         <ExploreCommentSection
-                          postId={exploreContent?.id || ""}
+                          fileId={exploreContent?.id || ""}
                         />
                       </div>
                       {/* Right side for artist info */}
