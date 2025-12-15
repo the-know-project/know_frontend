@@ -14,6 +14,7 @@ import Stats from "./artist-stats";
 import ProfileCardSkeletonGrid from "../../layout/profile-card-skeleton";
 import { useCanFetchData } from "@/src/features/auth/hooks/use-optimized-auth";
 import { showLog } from "@/src/utils/logger";
+import ArtistCollection from "./artist-collection";
 
 interface ArtistProfileGridProps {
   user: IUser;
@@ -196,11 +197,9 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
             <Stats />
           </div>
         )}
-        {activeToggle === "drafts" && (
+        {activeToggle === "Collections" && (
           <div className="flex w-full flex-col items-center justify-center py-20 lg:col-span-2">
-            <p className="font-bricolage text-gray-500">
-              Collections coming soon...
-            </p>
+            <ArtistCollection />
           </div>
         )}
       </div>
