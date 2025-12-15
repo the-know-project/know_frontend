@@ -1,6 +1,6 @@
 const ExploreCardSkeleton: React.FC = () => {
   return (
-    <div className="flex h-[300px] w-full max-w-[500px] flex-col gap-2 rounded-[15px] px-6 py-3">
+    <div className="flex h-[300px] w-full max-w-[500px] flex-col items-center justify-center gap-2 rounded-[15px] px-6 py-3">
       <div className="flex w-full flex-col rounded-[15px] shadow-sm">
         <div className="h-[220px] w-full animate-pulse rounded-[15px] bg-gray-200" />
       </div>
