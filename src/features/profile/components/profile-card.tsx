@@ -58,7 +58,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
         </div>
         <div className="mt-2 flex w-full max-w-[400px] justify-between">
           <div className="flex flex-col items-start font-medium text-neutral-600">
-            <h3 className="font-bricolage sm:text-normal text-sm text-neutral-900 capitalize">
+            <h3 className="font-bricolage sm:text-normal text-sm font-bold text-neutral-900 capitalize">
               {title}
             </h3>
             <p className="font-bricolage text-xs font-light text-[#666666] capitalize sm:text-sm">
