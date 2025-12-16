@@ -1,6 +1,6 @@
 import React from "react";
 import { hero1, hero2, hero3, hero4 } from "../assets";
-import { IconPalette, IconShoppingBag } from "@tabler/icons-react";
+import { IconPalette, IconSearch, IconShoppingBag } from "@tabler/icons-react";
 
 export const INavItems = [
   {
@@ -332,7 +332,7 @@ export const ArtistProfileToggle = [
   },
   {
     id: 3,
-    name: "drafts",
+    name: "collections",
   },
 ];
 
@@ -352,5 +352,32 @@ export const posts = [
     comments: 2,
     createdAt: "1 month ago",
     image: "/Art2.png",
+  },
+];
+
+export const CollectionData = [
+  {
+    id: 1,
+    title: "Individualism",
+    firstName: "John",
+    lastName: "Doe",
+    numOfArt: 10,
+    src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 2,
+    title: "Son of Egbu",
+    firstName: "John",
+    lastName: "Doe",
+    numOfArt: 10,
+    src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 3,
+    title: "Passive In nature",
+    firstName: "John",
+    lastName: "Doe",
+    numOfArt: 10,
+    src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 ];
