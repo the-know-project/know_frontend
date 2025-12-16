@@ -197,7 +197,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
             <Stats />
           </div>
         )}
-        {activeToggle === "Collections" && (
+        {activeToggle === "collections" && (
           <div className="flex w-full flex-col items-center justify-center py-20 lg:col-span-2">
             <ArtistCollection />
           </div>
