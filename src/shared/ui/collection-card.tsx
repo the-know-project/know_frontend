@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDateToReadable } from "@/src/utils/date";
+import { IconArrowRight } from "@tabler/icons-react";
 import { Settings2Icon } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -66,7 +67,7 @@ const CollectionCard: React.FC<ICollectionCard> = ({
           }}
         />
 
-        {/* MAIN IMAGE CARD (STRAIGHT) */}
+        {/* Main Image Card: Straight */}
         <motion.div
           className="absolute inset-0 overflow-hidden rounded-3xl"
           initial={{ scale: 0.95, opacity: 0 }}
@@ -95,22 +96,21 @@ const CollectionCard: React.FC<ICollectionCard> = ({
         </div>
 
         <div className="group absolute bottom-7 z-30 w-full max-w-sm self-center rounded-3xl px-4 py-2 shadow-lg backdrop-blur-2xl md:max-w-md">
-          <div className="flex flex-col items-center justify-center transition-all duration-300 group-hover:scale-105 active:scale-95">
-            <p className="font-bebas flex self-center text-center font-bold tracking-wider text-white">
-              View Collection
-            </p>
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-col items-start">
+              <h3 className="font-bricolage text-sm font-bold text-white capitalize">
+                {title}
+              </h3>
+              <p className="font-mono text-xs font-light text-white capitalize">
+                {formatDateToReadable(date)}
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-neutral-700 bg-neutral-700 p-2 shadow-lg backdrop-blur-2xl">
+              <IconArrowRight width={24} height={24} className="text-white" />
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* TEXT */}
-      <div className="mt-2">
-        <h3 className="font-bricolage sm:text-normal text-sm font-bold text-neutral-900 capitalize">
-          {title}
-        </h3>
-        <p className="font-bricolage text-xs font-light text-[#666666] capitalize sm:text-sm">
-          {formatDateToReadable(date)}
-        </p>
       </div>
     </div>
   );
