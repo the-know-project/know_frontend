@@ -83,18 +83,16 @@ const ExploreForm = ({
                 <FormControl>
                   <div className="relative flex w-full">
                     {/* Search Icon - Responsive sizing */}
-                    <IconSearch
-                      className="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 transform text-neutral-500 sm:left-3 sm:h-5 sm:w-5"
-                    />
-                    
+                    <IconSearch className="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 transform text-neutral-500 sm:left-3 sm:h-5 sm:w-5" />
+
                     {/* Input Field - Responsive padding and font size */}
                     <Input
-                      className="font-bricolage placeholder:font-bricolage !important flex h-9 w-full rounded-lg bg-neutral-100 py-2 pr-9 pl-8 text-sm text-neutral-700 placeholder:text-xs placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0 sm:h-10 sm:pr-10 sm:pl-10 sm:text-base sm:placeholder:text-sm sm:placeholder:text-neutral-700"
+                      className="font-bricolage placeholder:font-bebas !important flex h-9 w-full rounded-lg bg-neutral-100 py-2 pr-9 pl-8 text-sm text-neutral-700 placeholder:text-xs placeholder:tracking-wider placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0 sm:h-10 sm:pr-10 sm:pl-10 sm:text-base sm:placeholder:text-sm sm:placeholder:text-neutral-700"
                       placeholder={placeholder}
                       {...field}
                       autoComplete="off"
                     />
-                    
+
                     {/* Clear Button - Responsive sizing */}
                     {hasQuery && (
                       <button
@@ -108,7 +106,7 @@ const ExploreForm = ({
                     )}
                   </div>
                 </FormControl>
-                
+
                 {/* Error Message - Responsive positioning */}
                 <div className="absolute top-full left-2 sm:left-3">
                   <FormMessage className="font-bebas text-xs tracking-wide sm:text-sm sm:tracking-widest" />
