@@ -4,7 +4,6 @@ import { formatTimestampToReadable } from "@/src/utils/date";
 import { IconChecks, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useDeleteUserNotifications } from "../hooks/use-delete-user-notifications";
-import Spinner from "@/src/shared/components/spinner";
 import { showLog } from "@/src/utils/logger";
 
 interface NotificationProps {
@@ -20,8 +19,7 @@ interface INotificationCard {
 }
 
 const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
-  const { mutateAsync: deleteNotifications, isPending } =
-    useDeleteUserNotifications();
+  const { mutateAsync: deleteNotifications } = useDeleteUserNotifications();
 
   showLog({
     context: "Nofication Card",
@@ -51,14 +49,9 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
         <button
           className="group flex items-center gap-2"
           onClick={handleDeleteAll}
-          disabled={isPending}
         >
           <div className="font-grotesk text-xs text-gray-400 capitalize">
-            {isPending ? (
-              <Spinner borderColor="border-blue-600" />
-            ) : (
-              <p>Mark all as read</p>
-            )}
+            <p>Mark all as read</p>
           </div>
           <IconChecks
             width={20}
@@ -114,7 +107,6 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
 
                 <button
                   onClick={() => handleDeleteSingle(String(notification.id))}
-                  disabled={isPending}
                   className="group flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 disabled:opacity-50"
                 >
                   <IconX
