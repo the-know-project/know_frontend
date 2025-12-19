@@ -17,6 +17,7 @@ import {
   useCanFetchData,
   useAuthReady,
 } from "../../auth/hooks/use-optimized-auth";
+import { useFetchNotifications } from "../../notifications/state/store/notifications.store";
 
 interface IExploreNavOptions {
   toggleShareButton?: boolean;
@@ -29,8 +30,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
     useState<boolean>(false);
   const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
   const [shouldShake, setShouldShake] = useState<boolean>(false);
-  const [notifications, setNotifications] =
-    useState<INotificationData[]>(MockNotifications);
   const [isClient, setIsClient] = useState(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -41,6 +40,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   const [isSearchToggled, setIsSearchToggled] = useState<boolean>(false);
 
   const { data: notificationData } = useFetchUserNotifications();
+  const notifications = useFetchNotifications(user?.id || "");
 
   useEffect(() => {
     setIsClient(true);
@@ -48,32 +48,11 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
 
   useEffect(() => {
     if (isClient && !user) {
-      setNotifications([]);
       setIsNotificationClicked(false);
       setIsProfileClicked(false);
       setShouldShake(false);
     }
   }, [isClient, user]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const updateNotifications = () => {
-      if (isClient && canFetchData && isReady && user) {
-        if (mounted && notificationData?.data) {
-          setNotifications(notificationData.data);
-        } else if (mounted) {
-          setNotifications(MockNotifications);
-        }
-      }
-    };
-
-    updateNotifications();
-
-    return () => {
-      mounted = false;
-    };
-  }, [isClient, user, notificationData, canFetchData, isReady]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -112,7 +91,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   };
 
   const handleCtaNavigate = () => {
-    // Guard against undefined role
     if (!role || !user) return;
 
     if (role.toLowerCase() === "artist") {
@@ -123,7 +101,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   };
 
   const handleNotificationClicked = () => {
-    // Only allow notification click if user is authenticated
     if (!user || !isReady) return;
 
     setIsNotificationClicked((prev) => !prev);
@@ -131,7 +108,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   };
 
   const handleProfileClicked = () => {
-    // Only allow profile click if user is authenticated
     if (!user || !isReady) return;
 
     setIsProfileClicked((prev) => !prev);
@@ -146,7 +122,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
     setIsSearchToggled((prev) => !prev);
   };
 
-  // Shake animation for notifications (only when user is authenticated)
   useEffect(() => {
     if (notifications.length > 0 && user && isReady) {
       const interval = setInterval(() => {
@@ -160,7 +135,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
     }
   }, [notifications.length, user, isReady]);
 
-  // Check if user is fully authenticated
   const isAuthenticated = canFetchData && isReady && user;
 
   return (
