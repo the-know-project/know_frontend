@@ -155,7 +155,7 @@ export const PostPerformanceDashboard = () => {
               </div>
 
               <div className="col-span-3 flex items-center">
-                <p className="stats_content">
+                <p className="!font-mono !text-xs text-[#666666]">
                   {new Date(post.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
@@ -207,7 +207,7 @@ export const PostPerformanceDashboard = () => {
                   </div>
                 </div>
 
-                <p className="profile_content mt-2 !text-xs">
+                <p className="mt-2 !font-mono !text-xs text-[#666666]">
                   {new Date(post.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",

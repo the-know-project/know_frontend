@@ -85,7 +85,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           <p className="font-bricolage text-[12px] text-neutral-600">
             {emailAddress}
           </p>
-          <button className="font-bricolage relative mt-[10px] inline-flex w-fit items-center gap-[8px] self-center rounded-[15px] bg-[#1E3A8A] pt-[8px] pr-[8px] pb-[8px] pl-[8px] text-[12px] font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95">
+          <button className="font-bebas relative mt-[10px] inline-flex w-fit items-center gap-[8px] self-center rounded-2xl bg-[#1E3A8A] pt-[8px] pr-[8px] pb-[8px] pl-[8px] text-[12px] font-light tracking-wider text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95">
             Upgrade to premium
           </button>
         </div>
@@ -97,7 +97,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           return (
             <button
               key={item.id}
-              className="motion-preset-blur-down motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
+              className="motion-preset-slide-down motion-duration-500 motion-delay-100 group flex w-full flex-col items-start"
               style={{
                 animationDelay: `${index * 100}ms`,
               }}

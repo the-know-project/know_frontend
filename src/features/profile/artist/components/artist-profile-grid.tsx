@@ -171,7 +171,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
               onClick={() => setActiveToggle(toggle.name)}
             >
               <p
-                className={`font-bricolage text-[16px] capitalize hover:scale-105 active:scale-95 lg:text-[18px] ${
+                className={`font-bebas text-[16px] tracking-wider capitalize hover:scale-105 active:scale-95 lg:text-[18px] ${
                   activeToggle === toggle.name
                     ? "font-semibold text-neutral-900 transition-colors duration-300"
                     : "text-neutral-500"

@@ -61,14 +61,14 @@ const ProfileCard: React.FC<IProfileCard> = ({
             <h3 className="font-bricolage sm:text-normal text-sm font-bold text-neutral-900 capitalize">
               {title}
             </h3>
-            <p className="font-bricolage text-xs font-light text-[#666666] capitalize sm:text-sm">
+            <p className="font-mono text-xs font-light text-[#666666] capitalize">
               {createdAt}
             </p>
           </div>
           <div className="flex items-center gap-3 text-black">
             <div className="flex items-center gap-1">
               <IconEye width={15} height={15} />
-              <p className="font-bricolage text-sm capitalize">
+              <p className="font-mono text-sm capitalize">
                 {formatViewCount(views)}
               </p>
             </div>
@@ -78,9 +78,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
               className="flex cursor-pointer items-center gap-1 transition-all duration-200 hover:scale-105 active:scale-95"
             >
               <IconPencil width={15} height={15} />
-              <p className="font-bricolage text-xs capitalize sm:text-sm">
-                Edit
-              </p>
+              <p className="font-mono text-xs capitalize sm:text-sm">Edit</p>
             </button>
           </div>
         </div>
