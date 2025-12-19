@@ -97,7 +97,7 @@ const Sidebar = () => {
 
             <button
               onClick={handleEditProfile}
-              className="font-bricolage relative mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1E3A8A] px-4 py-2.5 text-xs font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:bg-[#1a3474] active:scale-95 sm:mt-5 sm:w-fit sm:text-sm"
+              className="font-bebas relative mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1E3A8A] px-4 py-2.5 text-xs font-bold tracking-wider text-white outline outline-[#fff2f21f] transition-all duration-200 hover:bg-[#1a3474] active:scale-95 sm:mt-5 sm:w-fit sm:text-sm"
             >
               Edit profile information
             </button>
