@@ -1,15 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
+import { useEffect } from "react";
 import { useTokenStore } from "../../auth/state/store";
 import { fetchUserNotifications } from "../api/fetch-notifications/route";
 import { NOTIFICATION_ERROR_MESSAGES } from "../data/notifications.data";
 import { NotificationError } from "../error/notification.error";
 import { selectUser } from "../../auth/state/selectors/token.selectors";
+import { INotificationResponseDto } from "../types/notification.types";
+import { useNotificationActions } from "../state/store/notifications.store";
+import { INotification } from "../state/interface/notifications.interface";
 
 export const useFetchUserNotifications = (options?: { enabled?: boolean }) => {
   const user = useTokenStore(selectUser);
+  const { addNotifications } = useNotificationActions();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [`fetch-user-notifications-${user?.id}`],
     enabled:
       options?.enabled !== undefined ? options.enabled && !!user : !!user,
@@ -38,8 +43,17 @@ export const useFetchUserNotifications = (options?: { enabled?: boolean }) => {
         throw result.error;
       }
 
-      return result.value;
+      return result.value as INotificationResponseDto;
     },
+
     staleTime: 10000,
   });
+
+  useEffect(() => {
+    if (query.isSuccess && query.data?.data && user) {
+      addNotifications(user.id as string, query.data.data as INotification[]);
+    }
+  }, [query.isSuccess, query.data, user, addNotifications]);
+
+  return query;
 };
