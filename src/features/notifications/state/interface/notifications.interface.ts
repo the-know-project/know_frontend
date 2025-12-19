@@ -14,6 +14,6 @@ export interface INotificationState {
   addNotifications: (userId: string, notifications: INotification[]) => void;
   fetchNotifications: (userId: string) => INotification[];
 
-  deleteNotification: (userId: string, id: string) => void;
+  deleteNotification: (userId: string, ids: (string | number)[]) => void;
   deleteAllNotifications: (userId: string) => void;
 }
