@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const Pagination = z.object({
   currentPage: z.number().min(1),
-  totalPages: z.number().min(1).max(100),
+  totalPages: z.number().min(1),
   totalItems: z.number(),
   itemsPerPage: z.number(),
   hasNextPage: z.boolean(),
