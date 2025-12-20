@@ -74,7 +74,6 @@ export const useSimpleInfiniteUserPosts = ({
     enabled: !!targetUserId,
   });
 
-  // Reset state when userId changes
   useEffect(() => {
     setAllPosts([]);
     setCurrentPage(1);
@@ -84,7 +83,6 @@ export const useSimpleInfiniteUserPosts = ({
     setIsLoadingMore(false);
   }, [targetUserId]);
 
-  // Handle data updates
   useEffect(() => {
     if (data?.data) {
       const { assets: newPosts, pagination } = data.data;
@@ -107,7 +105,6 @@ export const useSimpleInfiniteUserPosts = ({
     }
   }, [data, currentPage]);
 
-  // Handle loading more state
   useEffect(() => {
     if (isLoading && currentPage > 1) {
       setIsLoadingMore(true);
