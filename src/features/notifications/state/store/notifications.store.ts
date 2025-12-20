@@ -35,7 +35,9 @@ export const useNotificationStore = create<INotificationState>()(
 
         fetchNotifications: (userId) => {
           const notifications = get().userNotification[userId] || [];
-          return notifications.slice().sort((a, b) => b.createdAt - a.createdAt);
+          return notifications
+            .slice()
+            .sort((a, b) => b.createdAt - a.createdAt);
         },
 
         deleteNotification: (userId, ids) =>
@@ -44,7 +46,9 @@ export const useNotificationStore = create<INotificationState>()(
               const idsToDelete = new Set(ids.map(String));
               state.userNotification[userId] = state.userNotification[
                 userId
-              ].filter((notification) => !idsToDelete.has(String(notification.id)));
+              ].filter(
+                (notification) => !idsToDelete.has(String(notification.id)),
+              );
             }
           }),
 
@@ -82,9 +86,9 @@ export const useNotificationStore = create<INotificationState>()(
 );
 
 export const useFetchNotifications = (userId: string) => {
-  const notifications = useNotificationStore((state) =>
-    state.fetchNotifications(userId),
-  );
+  const notifications = useNotificationStore
+    .getState()
+    .fetchNotifications(userId);
   return notifications;
 };
 
