@@ -34,8 +34,6 @@ const ExploreCanvasContent = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
-  // const canFetch = useCanFetchData();
-
   const assetsHookResult = useSimpleInfiniteAssets({
     categories,
     filters,
