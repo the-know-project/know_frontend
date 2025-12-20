@@ -2,10 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
 
-import {
-  PostPerformanceError,
-  PostPerformanceUnauthorizedError,
-} from "@/src/features/profile/artist/error/artist.error";
+import { ArtistError } from "@/src/features/profile/artist/error/artist.error";
 import { useTokenStore } from "@/src/features/auth/state/store";
 import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
 import { useRoleStore } from "@/src/features/auth/state/store";
@@ -51,7 +48,7 @@ export const usePostPerformance = ({
     queryKey: ["postPerformance", targetUserId, currentPage, limit],
     queryFn: async (): Promise<PostPerformanceResponse> => {
       if (!targetUserId) {
-        throw new PostPerformanceUnauthorizedError();
+        throw new ArtistError("Unauthorized, please login");
       }
 
       const result = await ResultAsync.fromPromise(
@@ -61,16 +58,14 @@ export const usePostPerformance = ({
           limit,
         }),
         (error) =>
-          new PostPerformanceError(
+          new ArtistError(
             `Error fetching post performance: ${error instanceof Error ? error.message : String(error)}`,
           ),
       ).andThen((data: any) => {
         if (data.status === 200) {
           return ok(data as PostPerformanceResponse);
         } else {
-          return err(
-            new PostPerformanceError("Failed to fetch post performance"),
-          );
+          return err(new ArtistError("Failed to fetch post performance"));
         }
       });
 
