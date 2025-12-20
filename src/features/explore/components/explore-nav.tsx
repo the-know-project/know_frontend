@@ -26,18 +26,18 @@ interface IExploreNavOptions {
 const ExploreNav: React.FC<IExploreNavOptions> = ({
   toggleShareButton = true,
 }): ReactElement => {
+  const canFetchData = useCanFetchData();
+  const router = useRouter();
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
   const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
   const [shouldShake, setShouldShake] = useState<boolean>(false);
   const [isClient, setIsClient] = useState(false);
+  const [isSearchToggled, setIsSearchToggled] = useState<boolean>(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const canFetchData = useCanFetchData();
   const { user, role, isReady } = useAuthReady();
-  const router = useRouter();
-  const [isSearchToggled, setIsSearchToggled] = useState<boolean>(false);
 
   const { data: notificationData } = useFetchUserNotifications();
   const notifications = useFetchNotifications(user?.id || "");
@@ -67,7 +67,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
         profileRef.current &&
         !profileRef.current.contains(event.target as Node)
       ) {
-        // setIsProfileClicked(false);
       }
     };
 
