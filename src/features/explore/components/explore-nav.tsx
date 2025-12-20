@@ -1,6 +1,5 @@
 "use client";
 
-import { MockNotifications } from "@/src/constants/constants";
 import { type ReactElement } from "react";
 import { IconBellRinging, IconSearch, IconUser } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import NotificationCard from "../../notifications/components/notification-card";
 import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
-import { INotificationData } from "../../notifications/types/notification.types";
 import ProfileModal from "../../profile/components/profile-modal";
 import ExploreForm from "./explore-form";
 import {
