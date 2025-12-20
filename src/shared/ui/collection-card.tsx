@@ -25,19 +25,19 @@ const CollectionCard: React.FC<ICollectionCard> = ({
 }) => {
   return (
     <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-md">
-      <div className="relative h-80 w-[300px] overflow-visible">
+      <div className="relative h-80 w-full overflow-visible">
         {/* Back Card Stack: Far */}
         <motion.div
           className="absolute inset-0 rounded-3xl"
           style={{
             background:
               "linear-gradient(135deg, rgba(99,102,241,0.35), rgba(236,72,153,0.35))",
-            filter: "blur(7px)",
+            filter: "blur(10px)",
             transformOrigin: "center",
           }}
           animate={{
             scale: 0.95,
-            y: -30,
+            y: -5,
             rotate: -40,
           }}
           transition={{
@@ -52,12 +52,12 @@ const CollectionCard: React.FC<ICollectionCard> = ({
           className="absolute inset-0 rounded-3xl"
           style={{
             background: "linear-gradient(135deg, rgba(59,130,246,0.45)",
-            filter: "blur(7px)",
+            filter: "blur(10px)",
             transformOrigin: "center",
           }}
           animate={{
             scale: 0.98,
-            y: -30,
+            y: -5,
             rotate: 30,
           }}
           transition={{
@@ -82,7 +82,7 @@ const CollectionCard: React.FC<ICollectionCard> = ({
             src={src}
             alt={title}
             draggable={false}
-            className="h-[300px] w-[400px] object-cover"
+            className="h-[300px] w-full object-cover"
           />
         </motion.div>
         <div className="absolute top-2 left-2 z-30 rounded-3xl bg-transparent p-2 shadow-lg backdrop-blur-2xl">
