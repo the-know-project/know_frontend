@@ -77,13 +77,12 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
           {data.length > 0 &&
             data.map((notification: NotificationProps, index) => (
               <motion.div
-                key={index}
+                key={notification.id}
                 variants={variants}
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
                 className="flex w-full flex-col gap-2"
-                key={notification.id}
               >
                 <div
                   className="motion-preset-blur-down motion-duration-700 flex items-center gap-5"
