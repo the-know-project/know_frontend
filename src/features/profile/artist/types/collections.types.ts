@@ -1,4 +1,12 @@
 import { z } from "zod";
-import { FetchAllCollectionsDto } from "../dto/collections.dto";
+import {
+  CollectionData,
+  FetchAllCollectionsDto,
+  FetchAllCollectionsResponse,
+} from "../dto/collections.dto";
 
 export type IFetchAllCollections = z.infer<typeof FetchAllCollectionsDto>;
+export type FetchAllCollectionsResponseDto = z.infer<
+  typeof FetchAllCollectionsResponse
+>;
+export type TCollectionData = z.infer<typeof CollectionData>;
