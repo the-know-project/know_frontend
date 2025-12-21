@@ -4,6 +4,7 @@ import { formatDateToReadable } from "@/src/utils/date";
 import { IconArrowRight } from "@tabler/icons-react";
 import { Settings2Icon } from "lucide-react";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 
 type ICollectionCard = {
   id: string | number;
@@ -17,12 +18,17 @@ type ICollectionCard = {
 const date = new Date(Date.now()).toISOString();
 
 const CollectionCard: React.FC<ICollectionCard> = ({
+  id,
   title,
   src,
   firstName,
   lastName,
   numOfArt,
 }) => {
+  const router = useRouter();
+  const handleRoute = () => {
+    router.push(`/collection/${id as string}`);
+  };
   return (
     <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-md">
       <div className="relative h-80 w-full overflow-visible">
@@ -107,7 +113,12 @@ const CollectionCard: React.FC<ICollectionCard> = ({
             </div>
 
             <div className="rounded-3xl border border-neutral-700 bg-neutral-700 p-2 shadow-lg backdrop-blur-2xl">
-              <IconArrowRight width={24} height={24} className="text-white" />
+              <IconArrowRight
+                onClick={handleRoute}
+                width={24}
+                height={24}
+                className="text-white"
+              />
             </div>
           </div>
         </div>
