@@ -3,14 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
 
 import { ArtistError } from "../error/artist.error";
+
+import { useTokenStore } from "@/src/features/auth/state/store";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
+import { fetchArtistCollections } from "@/src/features/collection/api/fetch-artist-collections/route";
 import {
   FetchAllCollectionsResponseDto,
   IFetchAllCollections,
   TCollectionData,
-} from "../types/collections.types";
-import { useTokenStore } from "@/src/features/auth/state/store";
-import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
-import { fetchAllCollections } from "../api/collections/fetch-all-collections/route";
+} from "@/src/features/collection/types/collections.type";
 
 interface UseSimpleInfiniteArtistCollectionsProps {
   userId?: string;
@@ -45,7 +46,7 @@ export const useSimpleInfiniteArtistCollections = ({
       }
 
       const result = await ResultAsync.fromPromise(
-        fetchAllCollections(queryParams),
+        fetchArtistCollections(queryParams),
         (error) =>
           new ArtistError(`Error fetching artist collections: ${error}`),
       ).andThen((data: any) => {
