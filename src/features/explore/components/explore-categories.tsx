@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ExploreFilters } from "@/src/constants/constants";
 import { IconFilter2Edit } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import ArtSelectionSkeleton from "../../personalize/components/art-selection-skeleton";
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
 import { useGetCategories } from "../../personalize/hooks";
@@ -68,9 +68,24 @@ const ExploreCategories = ({
 }: ExploreCategoriesProps = {}) => {
   const { data, isLoading, error } = useGetCategories();
 
-  const [activeButton, setActiveButton] = useState<"for-you" | "following">(
-    "for-you",
-  );
+  const [activeButton, setActiveButton] = useState<
+    "for-you" | "following" | "collections"
+  >("following");
+
+  const buttonRefs = {
+    "for-you": useRef<HTMLButtonElement>(null),
+    following: useRef<HTMLButtonElement>(null),
+    collections: useRef<HTMLButtonElement>(null),
+  };
+
+  const [sliderStyle, setSliderStyle] = useState<{
+    left: number;
+    width: number;
+  }>({
+    left: 0,
+    width: 0,
+  });
+
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
     propSelectedPreferences,
   );
@@ -160,6 +175,16 @@ const ExploreCategories = ({
     }
   }, [debouncedFilters, handleFiltersChange]);
 
+  useEffect(() => {
+    const ref = buttonRefs[activeButton];
+    if (ref.current) {
+      setSliderStyle({
+        left: ref.current.offsetLeft,
+        width: ref.current.offsetWidth,
+      });
+    }
+  }, [activeButton]);
+
   const handleSelection = (pref: string) => {
     setSelectedPreferences((prev) =>
       prev.includes(pref) ? prev.filter((p) => p !== pref) : [...prev, pref],
@@ -231,19 +256,21 @@ const ExploreCategories = ({
           <div className="relative flex items-center rounded-lg bg-neutral-100 p-1">
             {/* Sliding background */}
             <div
-              className={`absolute top-1 bottom-1 rounded-lg bg-[#1E3A8A] px-2 transition-all duration-300 ease-in-out ${
-                activeButton === "for-you"
-                  ? "left-1 w-[calc(50%-6px)]"
-                  : "right-1 w-[calc(50%-2px)]"
-              }`}
+              className="absolute top-1 bottom-1 rounded-lg bg-[#1E3A8A] transition-all duration-300 ease-in-out"
+              style={{
+                left: sliderStyle.left,
+                width: sliderStyle.width,
+                pointerEvents: "none",
+              }}
             />
 
             {/* Buttons */}
             <button
+              ref={buttonRefs["for-you"]}
               onClick={() => setActiveButton("for-you")}
               className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "for-you"
-                  ? "text-neutral-300"
+                  ? "text-white"
                   : "text-neutral-800 hover:text-neutral-500"
               }`}
             >
@@ -251,14 +278,27 @@ const ExploreCategories = ({
             </button>
 
             <button
+              ref={buttonRefs["following"]}
               onClick={() => setActiveButton("following")}
               className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "following"
-                  ? "text-neutral-300"
+                  ? "text-white"
                   : "text-neutral-800 hover:text-neutral-500"
               }`}
             >
               Following
+            </button>
+
+            <button
+              ref={buttonRefs["collections"]}
+              onClick={() => setActiveButton("collections")}
+              className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
+                activeButton === "collections"
+                  ? "text-white"
+                  : "text-neutral-800 hover:text-neutral-500"
+              }`}
+            >
+              Collections
             </button>
           </div>
         </div>
