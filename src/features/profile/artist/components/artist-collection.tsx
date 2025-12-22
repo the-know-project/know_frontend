@@ -5,6 +5,7 @@ import { useInfiniteScroll } from "@/src/features/explore/hooks/use-infinite-scr
 import { showLog } from "@/src/utils/logger";
 import InfiniteLoadingIndicator from "@/src/features/explore/components/infinite-loading-indicator";
 import CollectionCardSkeleton from "@/src/features/collection/components/collection-card-skeleton";
+import ProfileCardSkeletonGrid from "../../layout/profile-card-skeleton";
 
 const ArtistCollection = () => {
   const collectionHookResult = useSimpleInfiniteArtistCollections({});
@@ -35,12 +36,8 @@ const ArtistCollection = () => {
 
   if (isLoading && collections.length === 0) {
     return (
-      <section className="relative -mt-[50px] flex min-h-screen w-full flex-col">
-        <div className="grid w-full grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <CollectionCardSkeleton key={index} />
-          ))}
-        </div>
+      <section className="relative -mt-[50px] flex min-h-screen w-full flex-col items-center justify-center space-y-3">
+        <ProfileCardSkeletonGrid />
       </section>
     );
   }
