@@ -1,5 +1,5 @@
 import { IFetchAllCollections } from "@/src/features/profile/artist/types/collections.types";
-import { COLLECTION_OP } from "@/src/features/profile/data/collection.route";
+import { COLLECTION_OP } from "@/src/features/collection/data/collection.route";
 import { ApiClient } from "@/src/lib/api-client";
 
 export async function fetchArtistCollections(ctx: IFetchAllCollections) {
