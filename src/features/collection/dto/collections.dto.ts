@@ -30,3 +30,8 @@ export const FetchAllCollectionsResponse = z.object({
   data: z.array(CollectionData),
   meta: Pagination,
 });
+
+export const FetchCollectionDto = z.object({
+  userId: z.string().uuid(),
+  collectionId: z.string().uuid(),
+});
