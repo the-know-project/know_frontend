@@ -74,7 +74,7 @@ export const FetchCollectionData = z.object({
   assetData: z.array(FetchCollectionAssetData).optional(),
 });
 
-export const FetchCollectionResponseDto = z.object({
+export const FetchCollectionResponse = z.object({
   status: z.number(),
   message: z.string(),
   data: FetchCollectionData,
