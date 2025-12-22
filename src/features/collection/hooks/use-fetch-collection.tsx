@@ -2,7 +2,10 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { useTokenStore } from "../../auth/state/store";
 import { CollectionError } from "../error/collection.error";
-import { IFetchCollection } from "../types/collections.type";
+import {
+  FetchCollectionResponseDto,
+  IFetchCollection,
+} from "../types/collections.type";
 import { fetchCollection } from "../api/fetch-collection/route";
 import { useQuery } from "@tanstack/react-query";
 
@@ -41,7 +44,9 @@ export const useFetchCollection = (param: fetchCollectionParams) => {
         throw result.error;
       }
 
-      return result.value;
+      return result.value as FetchCollectionResponseDto;
     },
+    enabled: !!userId,
+    retry: 2,
   });
 };
