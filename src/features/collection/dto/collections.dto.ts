@@ -63,14 +63,16 @@ export const FetchCollectionAssetData = z.object({
 export const FetchCollectionData = z.object({
   id: z.string().uuid(),
   title: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
   description: z.string().optional(),
   price: z.string(),
   tags: z.array(z.string()).optional(),
   numOfLikes: z.number().min(0),
+  numOfArt: z.number().min(0),
   currency: z.string(),
   imageUrl: z.string().optional(),
   bannerUrl: z.string(),
-  profileUrl: z.string(),
   assetData: z.array(FetchCollectionAssetData).optional(),
 });
 
