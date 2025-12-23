@@ -4,6 +4,7 @@ import {
   CollectionData,
   FetchAllCollectionsDto,
   FetchAllCollectionsResponse,
+  FetchCollectionAssetData,
   FetchCollectionDto,
   FetchCollectionResponse,
 } from "../dto/collections.dto";
@@ -17,4 +18,7 @@ export type TCollectionData = z.infer<typeof CollectionData>;
 export type IFetchCollection = z.infer<typeof FetchCollectionDto>;
 export type FetchCollectionResponseDto = z.infer<
   typeof FetchCollectionResponse
+>;
+export type IFetchCollectionAssetData = z.infer<
+  typeof FetchCollectionAssetData
 >;
