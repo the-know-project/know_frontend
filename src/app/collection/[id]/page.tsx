@@ -4,6 +4,7 @@ import React from "react";
 import { showLog } from "@/src/utils/logger";
 import { useFetchCollection } from "@/src/features/collection/hooks/use-fetch-collection";
 import CollectionHeaderForm from "@/src/features/collection/components/collection-header-form";
+import CollectionAsset from "@/src/features/collection/components/collection-asset";
 
 interface ICollection {
   params: Promise<{
@@ -18,6 +19,7 @@ const Page: React.FC<ICollection> = ({ params }) => {
   });
 
   const collectionData = data?.data;
+  const assetData = collectionData?.assetData;
 
   showLog({
     context: "Dynamic Collection Page",
@@ -26,7 +28,7 @@ const Page: React.FC<ICollection> = ({ params }) => {
     },
   });
   return (
-    <section>
+    <section className="flex w-full">
       <CollectionHeaderForm
         title={collectionData?.title || ""}
         bannerUrl={collectionData?.bannerUrl || ""}
@@ -37,6 +39,14 @@ const Page: React.FC<ICollection> = ({ params }) => {
         numOfArt={collectionData?.numOfArt || 0}
         price={collectionData?.price || ""}
       />
+
+      <div className="flex flex-col gap-2 px-6">
+        <h2 className="font-helvetica text-[32px] text-black sm:text-[52px] lg:text-[62px]">
+          Art Works
+        </h2>
+
+        <CollectionAsset data={assetData} />
+      </div>
     </section>
   );
 };
