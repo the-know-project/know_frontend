@@ -13,7 +13,9 @@ import {
   IconBrandInstagram,
   IconBrandX,
   IconCamera,
+  IconCurrencyDollar,
   IconLink,
+  IconTag,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -152,10 +154,47 @@ const CollectionHeaderForm: React.FC<ICollectionHeaderForm> = ({
       </div>
 
       {/*Title*/}
-      <div className="mt-5 flex w-full flex-col px-6">
-        <h1 className="font-helvetica text-[32px] font-bold text-neutral-900 sm:text-[52px] lg:text-[62px]">
-          {title}
-        </h1>
+      <div className="mt-5 flex w-full flex-col items-start px-6">
+        <input
+          {...register("title")}
+          type="text"
+          placeholder={title}
+          className="font-helvetica w-full border-b border-transparent bg-transparent text-[32px] font-bold text-black transition-colors outline-none placeholder:text-black sm:text-[52px] lg:text-[62px]"
+          autoComplete="off"
+        />
+
+        {/*Artist and Price*/}
+        <div className="font-bricolage flex flex-row items-center gap-2 px-1 text-sm md:px-4">
+          {/*Artist Name*/}
+          <p className="text-xs font-bold text-neutral-800 uppercase sm:text-sm">{`Curated by ${firstName} ${lastName}`}</p>
+
+          {/*Price Tag*/}
+          <div className="flex flex-row items-center gap-2 rounded-3xl bg-green-700 p-2 shadow-lg">
+            <IconTag width={15} height={15} color="white" />
+            <p className="font-bebas flex items-center font-bold tracking-wider text-nowrap text-white">
+              <span>$</span> {Number(price).toFixed(2)}
+            </p>
+          </div>
+
+          <div className="flex">
+            <div className="font-bebas flex items-center rounded-3xl bg-black p-2 font-bold tracking-wider shadow-lg backdrop-blur-2xl">
+              <p className="text-xs text-white md:text-sm">
+                {numOfArt} {numOfArt > 1 ? "items" : "item"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/*Description*/}
+        <div className="mt-[30px] flex w-full max-w-prose flex-col items-start gap-1 px-2 md:px-4">
+          <textarea
+            {...register("description")}
+            placeholder={description}
+            className="font-bricolage text-neutal-800 w-full resize-none border-b border-transparent bg-transparent text-[14px] font-normal transition-colors outline-none placeholder:text-neutral-800"
+            rows={5}
+            autoComplete="on"
+          />
+        </div>
       </div>
     </form>
   );
