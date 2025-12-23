@@ -1,24 +1,22 @@
 "use client";
 
 import { showLog } from "@/src/utils/logger";
-import { ICollectionHeaderForm } from "../interface/collection.interface";
-import { useForm } from "react-hook-form";
-import { ICollectionHeaderSchema } from "../types/collections.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CollectionHeaderSchema } from "../schema/collection.schema";
-import { useEffect, useState } from "react";
 import {
   IconArrowLeft,
   IconBrandGmail,
   IconBrandInstagram,
   IconBrandX,
   IconCamera,
-  IconCurrencyDollar,
   IconLink,
   IconTag,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { ICollectionHeaderForm } from "../interface/collection.interface";
+import { CollectionHeaderSchema } from "../schema/collection.schema";
+import { ICollectionHeaderSchema } from "../types/collections.type";
 
 const CollectionHeaderForm: React.FC<ICollectionHeaderForm> = ({
   firstName,
@@ -84,12 +82,12 @@ const CollectionHeaderForm: React.FC<ICollectionHeaderForm> = ({
     },
   });
 
-  const onSubmit = () => {
+  const onSubmit = (ctx: ICollectionHeaderSchema) => {
     showLog({
       context: "Collection header form",
       data: {
         message: "Is submitting",
-        bannerImage: bannerImage,
+        ctx: ctx,
       },
     });
   };
@@ -171,9 +169,15 @@ const CollectionHeaderForm: React.FC<ICollectionHeaderForm> = ({
           {/*Price Tag*/}
           <div className="flex flex-row items-center gap-2 rounded-3xl bg-green-700 p-2 shadow-lg">
             <IconTag width={15} height={15} color="white" />
-            <p className="font-bebas flex items-center font-bold tracking-wider text-nowrap text-white">
-              <span>$</span> {Number(price).toFixed(2)}
-            </p>
+            <div className="font-bebas flex items-center font-bold tracking-wider text-nowrap text-white">
+              <span>$</span>{" "}
+              <input
+                {...register("price")}
+                type="text"
+                placeholder={Number(price).toFixed(2)}
+                className="text-white outline-none placeholder:text-white"
+              />
+            </div>
           </div>
 
           <div className="flex">
