@@ -4,7 +4,13 @@ import { cn } from "@/lib/utils";
 import { ExploreFilters } from "@/src/constants/constants";
 import { IconFilter2Edit } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState, useCallback, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useLayoutEffect,
+} from "react";
 import ArtSelectionSkeleton from "../../personalize/components/art-selection-skeleton";
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
 import { useGetCategories } from "../../personalize/hooks";
@@ -70,7 +76,7 @@ const ExploreCategories = ({
 
   const [activeButton, setActiveButton] = useState<
     "for-you" | "following" | "collections"
-  >("following");
+  >("for-you");
 
   const buttonRefs = {
     "for-you": useRef<HTMLButtonElement>(null),
@@ -175,14 +181,21 @@ const ExploreCategories = ({
     }
   }, [debouncedFilters, handleFiltersChange]);
 
-  useEffect(() => {
-    const ref = buttonRefs[activeButton];
-    if (ref.current) {
-      setSliderStyle({
-        left: ref.current.offsetLeft,
-        width: ref.current.offsetWidth,
-      });
-    }
+  useLayoutEffect(() => {
+    const updateSlider = () => {
+      const ref = buttonRefs[activeButton];
+      if (!ref.current) return;
+      if (ref.current) {
+        setSliderStyle({
+          left: ref.current.offsetLeft,
+          width: ref.current.offsetWidth,
+        });
+      }
+    };
+
+    updateSlider();
+    window.addEventListener("resize", updateSlider);
+    return () => window.removeEventListener("resize", updateSlider);
   }, [activeButton]);
 
   const handleSelection = (pref: string) => {

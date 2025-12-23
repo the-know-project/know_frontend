@@ -50,7 +50,7 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
   };
 
   return (
-    <section className="scrollbar-hide relative flex max-h-[600px] min-h-[300px] min-w-[350px] scroll-m-2 flex-col overflow-auto scroll-smooth rounded-[15px] border border-white/20 bg-transparent px-2 py-4 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)] backdrop-blur-2xl">
+    <section className="scrollbar-hide relative flex max-h-[600px] min-h-[300px] min-w-[350px] scroll-m-2 flex-col overflow-auto scroll-smooth rounded-[15px] border border-white/20 bg-white px-2 py-4 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)] backdrop-blur-2xl">
       <div className="mb-5 flex w-full flex-col items-end justify-end">
         <button
           className="group flex items-center gap-2"
