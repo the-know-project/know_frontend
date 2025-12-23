@@ -30,10 +30,7 @@ const Page: React.FC<ICollection> = ({ params }) => {
       <CollectionHeaderForm
         title={collectionData?.title || ""}
         bannerUrl={collectionData?.bannerUrl || ""}
-        description={
-          collectionData?.description ||
-          "Brought to you by Know, The ultimate partner for creatives"
-        }
+        description={collectionData?.description || ""}
         firstName={collectionData?.firstName || ""}
         lastName={collectionData?.lastName || ""}
         profileUrl={collectionData?.assetData?.[0]?.artistProfileUrl || ""}
