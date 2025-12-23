@@ -10,6 +10,7 @@ import {
   useCallback,
   useRef,
   useLayoutEffect,
+  useMemo,
 } from "react";
 import ArtSelectionSkeleton from "../../personalize/components/art-selection-skeleton";
 import { DummyArtPreferences } from "../../personalize/data/personalize.data";
@@ -78,11 +79,18 @@ const ExploreCategories = ({
     "for-you" | "following" | "collections"
   >("for-you");
 
-  const buttonRefs = {
-    "for-you": useRef<HTMLButtonElement>(null),
-    following: useRef<HTMLButtonElement>(null),
-    collections: useRef<HTMLButtonElement>(null),
-  };
+  const forYouRef = useRef<HTMLButtonElement>(null);
+  const followingRef = useRef<HTMLButtonElement>(null);
+  const collectionsRef = useRef<HTMLButtonElement>(null);
+
+  const buttonRefs = useMemo(
+    () => ({
+      "for-you": forYouRef,
+      following: followingRef,
+      collections: collectionsRef,
+    }),
+    [],
+  );
 
   const [sliderStyle, setSliderStyle] = useState<{
     left: number;
@@ -196,7 +204,7 @@ const ExploreCategories = ({
     updateSlider();
     window.addEventListener("resize", updateSlider);
     return () => window.removeEventListener("resize", updateSlider);
-  }, [activeButton]);
+  }, [activeButton, buttonRefs, isLoading]);
 
   const handleSelection = (pref: string) => {
     setSelectedPreferences((prev) =>
