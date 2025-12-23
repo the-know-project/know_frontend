@@ -36,7 +36,7 @@ const ArtistCollection = () => {
 
   if (isLoading && collections.length === 0) {
     return (
-      <section className="relative -mt-[50px] flex min-h-screen w-full flex-col items-center justify-center space-y-3 lg:w-[400px]">
+      <section className="relative -mt-[50px] grid w-full grid-cols-1 gap-4 md:grid-cols-2">
         <ProfileCardSkeletonGrid />
       </section>
     );
