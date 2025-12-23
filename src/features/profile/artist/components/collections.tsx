@@ -1,5 +1,5 @@
+import { TCollectionData } from "@/src/features/collection/types/collections.type";
 import CollectionCard from "@/src/shared/ui/collection-card";
-import { TCollectionData } from "../types/collections.types";
 interface ICollections {
   collections: TCollectionData[];
 }
