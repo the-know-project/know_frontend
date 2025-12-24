@@ -1,7 +1,6 @@
 import { showLog } from "@/src/utils/logger";
 import { IFetchCollectionAssetData } from "../types/collections.type";
 import { IconCancel } from "@tabler/icons-react";
-import ProfileCard from "../../profile/components/profile-card";
 import ExploreCard from "../../explore/components/explore-card";
 
 interface ICollectionAsset {
