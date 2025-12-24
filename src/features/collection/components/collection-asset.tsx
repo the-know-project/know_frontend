@@ -32,7 +32,7 @@ const CollectionAsset: React.FC<ICollectionAsset> = ({
     );
   }
   return (
-    <section className="grid min-h-screen grid-cols-1 gap-5 space-y-[50px] md:grid-cols-2 lg:grid-cols-3">
+    <section className="grid min-h-screen grid-cols-1 gap-5 space-y-[50px] sm:grid-cols-2 lg:grid-cols-3">
       {data.map((_asset) => (
         <ExploreCard
           key={_asset.fileId}
@@ -56,6 +56,7 @@ const CollectionAsset: React.FC<ICollectionAsset> = ({
           }}
           tags={_asset.artTags}
           userId={_asset.artistId}
+          isEditingCollection={true}
         />
       ))}
     </section>
