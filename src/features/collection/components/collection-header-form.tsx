@@ -175,14 +175,14 @@ const CollectionHeaderForm: React.FC<ICollectionHeaderForm> = ({
                 {...register("price")}
                 type="text"
                 placeholder={Number(price).toFixed(2)}
-                className="w-[50px] text-white outline-none placeholder:text-white"
+                className="w-[50px] text-xs text-white outline-none placeholder:text-white"
               />
             </div>
           </div>
 
           <div className="flex">
-            <div className="font-bebas flex items-center rounded-3xl bg-black p-2 font-bold tracking-wider shadow-lg backdrop-blur-2xl">
-              <p className="text-xs text-white md:text-sm">
+            <div className="font-bebas flex items-center rounded-3xl bg-neutral-800 p-2 font-bold tracking-wider shadow-lg backdrop-blur-2xl">
+              <p className="text-xs text-white">
                 {numOfArt} {numOfArt > 1 ? "items" : "item"}
               </p>
             </div>
