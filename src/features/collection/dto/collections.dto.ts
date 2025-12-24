@@ -57,6 +57,9 @@ export const FetchCollectionAssetData = z.object({
   isArtLocked: z.boolean(),
   numOfLikes: z.number().min(0),
   artistProfileUrl: z.string(),
+  artistId: z.string().uuid(),
+  artPrice: z.number(),
+  artViewCount: z.number(),
   artCreatedAt: z.date(),
 });
 
