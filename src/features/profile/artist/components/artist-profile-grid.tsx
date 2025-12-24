@@ -112,8 +112,9 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
               exit="hidden"
               transition={{
                 delay: Math.min(index, 20) * 0.05,
-                ease: "easeInOut",
-                duration: 0.09,
+                type: "spring",
+                stiffness: 220,
+                damping: 24,
               }}
               className="flex w-full max-w-sm space-y-[50px] lg:max-w-none"
             >
