@@ -77,7 +77,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
         {artwork.isListed && (
           <div className="text-center">
             <div className="font-bebas rounded-lg bg-[#1E3A8A] px-4 py-2 text-xl font-semibold tracking-wider text-white">
-              ${artwork.price}
+              ${artwork.price.toFixed(2)}
             </div>
           </div>
         )}
