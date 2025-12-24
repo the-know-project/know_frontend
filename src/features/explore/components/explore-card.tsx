@@ -13,6 +13,7 @@ import { useCart } from "../../cart/hooks/use-cart";
 import { useCartHydration } from "../../cart/state/cart.store";
 import { useAssetLike } from "../hooks/use-asset-like";
 import { useToggleExploreContent } from "../state/explore-content.store";
+import { Settings2Icon } from "lucide-react";
 
 interface ExploreCardProps {
   id: number | string;
@@ -35,6 +36,7 @@ interface ExploreCardProps {
   description: string | null;
   categories: string[];
   tags: string[] | undefined;
+  isEditingCollection?: boolean;
 }
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
@@ -55,6 +57,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   role,
   categories,
   tags,
+  isEditingCollection = false,
 }) => {
   const isCartHydrated = useCartHydration();
 
@@ -155,6 +158,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           }}
           priority
         />
+        {isEditingCollection && (
+          <div className="absolute top-2 left-2 z-30 rounded-3xl bg-neutral-500/10 p-2 shadow-lg backdrop-blur-2xl">
+            <Settings2Icon width={24} height={25} className="text-white" />
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between">
