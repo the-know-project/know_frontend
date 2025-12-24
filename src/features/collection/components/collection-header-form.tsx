@@ -157,7 +157,7 @@ const CollectionHeaderForm: React.FC<ICollectionHeaderForm> = ({
           {...register("title")}
           type="text"
           placeholder={title}
-          className="font-helvetica w-full border-b border-transparent bg-transparent text-[32px] font-bold text-black transition-colors outline-none placeholder:text-black sm:text-[52px] lg:text-[62px]"
+          className="font-bricolage w-full border-b border-transparent bg-transparent text-[32px] font-bold text-black capitalize transition-colors outline-none placeholder:text-black sm:text-[52px] lg:text-[62px]"
           autoComplete="off"
         />
 
@@ -169,13 +169,13 @@ const CollectionHeaderForm: React.FC<ICollectionHeaderForm> = ({
           {/*Price Tag*/}
           <div className="flex flex-row items-center gap-2 rounded-3xl bg-green-700 p-2 shadow-lg">
             <IconTag width={15} height={15} color="white" />
-            <div className="font-bebas flex items-center font-bold tracking-wider text-nowrap text-white">
+            <div className="font-bebas flex w-fit items-center font-bold tracking-wider text-nowrap text-white">
               <span>$</span>{" "}
               <input
                 {...register("price")}
                 type="text"
                 placeholder={Number(price).toFixed(2)}
-                className="text-white outline-none placeholder:text-white"
+                className="w-[50px] text-white outline-none placeholder:text-white"
               />
             </div>
           </div>
