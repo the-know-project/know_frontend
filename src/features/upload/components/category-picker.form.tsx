@@ -14,7 +14,7 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
   onSaveDraft,
 }) => {
   const { uploadData, updateCategories } = useUploadContext();
-  const { data, isLoading, error } = useGetCategories();
+  const { data, isLoading } = useGetCategories();
   const [animatingCategory, setAnimatingCategory] = useState<string | null>(
     null,
   );
@@ -23,10 +23,8 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
     let newCategories: string[];
 
     if (uploadData.categories.includes(category)) {
-      // Remove category
       newCategories = uploadData.categories.filter((cat) => cat !== category);
     } else {
-      // Add category with animation
       newCategories = [...uploadData.categories, category];
       setAnimatingCategory(category);
       setTimeout(() => setAnimatingCategory(null), 600);
@@ -61,16 +59,6 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
               className="h-12 animate-pulse rounded-lg bg-gray-600"
             />
           ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="editor_container">
-        <div className="py-4 text-center text-red-500">
-          Error loading categories. Please try again.
         </div>
       </section>
     );
