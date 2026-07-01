@@ -5,5 +5,6 @@ export const EnvConfig = {
     PROD_URL: process.env.NEXT_PUBLIC_PROD_URL || "",
     STAGING_URL:
       process.env.NEXT_PUBLIC_STAGING_URL || `http://localhost:${PORT}`,
+    APP_API_KEY: process.env.NEXT_PUBLIC_APP_API_KEY || "",
   },
 };
