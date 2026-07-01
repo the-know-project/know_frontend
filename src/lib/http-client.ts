@@ -284,20 +284,15 @@ class HttpClient {
     error?: string;
   }> {
     try {
-      console.log(" HTTP Client: Starting refresh token request...");
+      console.log("HTTP Client: Starting refresh token request...");
 
-      const response = await axios.post(
-        `${this.axiosInstance.defaults.baseURL}/api/auth/refreshToken`,
+      const response = await this.axiosInstance.post(
+        "/api/auth/refreshToken",
         {},
-        {
-          withCredentials: true,
-          timeout: 10000,
-        },
+        { withCredentials: true, timeout: 10000 },
       );
 
-      console.log(" HTTP Client: Refresh response status:", response.status);
-      console.log(" HTTP Client: Refresh response data:", response.data);
-      console.log(" HTTP Client: Response headers:", response.headers);
+      console.log("HTTP Client: Refresh response status:", response.status);
 
       if (response.status >= 200 && response.status < 300) {
         let accessToken =
@@ -532,7 +527,7 @@ class HttpClient {
 
   public async logout(): Promise<void> {
     const tokenStore = useTokenStore.getState();
-    // Clear auth state first
+
     tokenStore.clearAuth();
 
     try {
