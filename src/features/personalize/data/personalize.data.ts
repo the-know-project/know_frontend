@@ -11,3 +11,8 @@ export const DummyArtPreferences = [
   "futurism",
   "photography",
 ];
+
+export const PersonalizeErrorMessages = {
+  FAILED_TO_FETCH_CATEGORIES: "Failed to fetch categories",
+};
+
