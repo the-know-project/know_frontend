@@ -35,6 +35,7 @@ class HttpClient {
       timeout: 30000,
       headers: {
         "Content-Type": "application/json",
+        "x-api-key": config.APP_API_KEY,
       },
       withCredentials: true,
     });
@@ -43,26 +44,24 @@ class HttpClient {
   private setupInterceptors(): void {
     this.axiosInstance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        // Only access token store on client side
         if (typeof window !== "undefined") {
           const token = useTokenStore.getState().accessToken;
           const isAuthenticated = useTokenStore.getState().isAuthenticated;
 
-          // DEBUG LOGS
-          console.log('🔑 Request Interceptor Debug:', {
+          console.log("Request Interceptor Debug:", {
             url: config.url,
             hasToken: !!token,
             tokenLength: token?.length,
             isAuthenticated,
-            requiresAuth: this.requiresAuth(config)
+            requiresAuth: this.requiresAuth(config),
           });
 
           if (token && this.requiresAuth(config)) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log('✅ Auth header set for:', config.url);
+            console.log("Auth header set for:", config.url);
           } else if (this.requiresAuth(config) && !token) {
             console.warn(
-              `⚠️ HTTP Client: Request requires auth but no token available for ${config.url}`,
+              `HTTP Client: Request requires auth but no token available for ${config.url}`,
             );
           }
         }
@@ -95,7 +94,6 @@ class HttpClient {
           !originalRequest._retry &&
           this.requiresAuth(originalRequest)
         ) {
-          // Only proceed with refresh on client side
           if (typeof window === "undefined") {
             return Promise.reject(error);
           }
@@ -109,7 +107,7 @@ class HttpClient {
 
           if (this.isRefreshing) {
             console.log(
-              "🔄 HTTP Client: Token refresh already in progress, queuing request",
+              " HTTP Client: Token refresh already in progress, queuing request",
             );
             return new Promise((resolve, reject) => {
               this.requestQueue.push({
@@ -124,16 +122,16 @@ class HttpClient {
 
           try {
             console.log(
-              "🔄 HTTP Client: Access token expired, attempting silent refresh...",
+              "HTTP Client: Access token expired, attempting silent refresh...",
             );
             console.log(
-              `🔄 HTTP Client: Current queue size: ${this.requestQueue.length}`,
+              ` HTTP Client: Current queue size: ${this.requestQueue.length}`,
             );
 
             const refreshResponse = await this.attemptSilentRefresh();
 
             if (refreshResponse.success && refreshResponse.accessToken) {
-              console.log("✅ HTTP Client: Token refresh successful");
+              console.log("HTTP Client: Token refresh successful");
 
               const userToStore =
                 refreshResponse.user ||
@@ -147,7 +145,7 @@ class HttpClient {
                   .setAccessToken(refreshResponse.accessToken, userToStore);
               } else {
                 console.log(
-                  "🔄 HTTP Client: Using refreshAccessToken to maintain existing user state",
+                  "HTTP Client: Using refreshAccessToken to maintain existing user state",
                 );
                 if (typeof window !== "undefined") {
                   useTokenStore
@@ -166,18 +164,18 @@ class HttpClient {
               if (originalRequest.headers) {
                 originalRequest.headers.Authorization = `Bearer ${refreshResponse.accessToken}`;
                 console.log(
-                  "🔄 HTTP Client: Authorization header updated for retry",
+                  "HTTP Client: Authorization header updated for retry",
                 );
               } else {
                 console.warn(
-                  "⚠️ HTTP Client: No headers object found on originalRequest",
+                  "HTTP Client: No headers object found on originalRequest",
                 );
                 originalRequest.headers = originalRequest.headers || {};
                 originalRequest.headers.Authorization = `Bearer ${refreshResponse.accessToken}`;
               }
 
               console.log(
-                `🔄 HTTP Client: Retrying original request to ${originalRequest.url} with new token`,
+                ` HTTP Client: Retrying original request to ${originalRequest.url} with new token`,
               );
 
               await new Promise((resolve) => setTimeout(resolve, 50));
@@ -204,9 +202,7 @@ class HttpClient {
               (refreshError as any)?.response?.status === 403;
 
             if (isAuthError) {
-              console.warn(
-                "🚨 HTTP Client: Refresh token invalid, logging out",
-              );
+              console.warn(" HTTP Client: Refresh token invalid, logging out");
               this.handleAuthFailure();
             }
 
@@ -252,7 +248,7 @@ class HttpClient {
     const delay = Math.pow(2, retryCount - 1) * 1000;
 
     console.log(
-      `🔄 HTTP Client: Network error detected, retrying request (attempt ${retryCount}/3) after ${delay}ms delay...`,
+      ` HTTP Client: Network error detected, retrying request (attempt ${retryCount}/3) after ${delay}ms delay...`,
     );
 
     await new Promise((resolve) => setTimeout(resolve, delay));
@@ -260,7 +256,7 @@ class HttpClient {
     try {
       const response = await this.axiosInstance(config);
       console.log(
-        `✅ HTTP Client: Network retry successful on attempt ${retryCount}`,
+        `HTTP Client: Network retry successful on attempt ${retryCount}`,
       );
       return response;
     } catch (retryError) {
@@ -288,7 +284,7 @@ class HttpClient {
     error?: string;
   }> {
     try {
-      console.log("🔄 HTTP Client: Starting refresh token request...");
+      console.log(" HTTP Client: Starting refresh token request...");
 
       const response = await axios.post(
         `${this.axiosInstance.defaults.baseURL}/api/auth/refreshToken`,
@@ -299,9 +295,9 @@ class HttpClient {
         },
       );
 
-      console.log("🔄 HTTP Client: Refresh response status:", response.status);
-      console.log("🔄 HTTP Client: Refresh response data:", response.data);
-      console.log("🔄 HTTP Client: Response headers:", response.headers);
+      console.log(" HTTP Client: Refresh response status:", response.status);
+      console.log(" HTTP Client: Refresh response data:", response.data);
+      console.log(" HTTP Client: Response headers:", response.headers);
 
       if (response.status >= 200 && response.status < 300) {
         let accessToken =
@@ -324,7 +320,7 @@ class HttpClient {
           response.data.length > 100
         ) {
           console.log(
-            "🔄 HTTP Client: Response data appears to be a token directly",
+            "HTTP Client: Response data appears to be a token directly",
           );
           accessToken = response.data;
         }
@@ -339,7 +335,7 @@ class HttpClient {
               const parts = obj.split(".");
               if (parts.length === 3) {
                 console.log(
-                  `🔄 HTTP Client: Found potential JWT at ${path || "root"}`,
+                  ` HTTP Client: Found potential JWT at ${path || "root"}`,
                 );
                 return obj;
               }
@@ -356,8 +352,8 @@ class HttpClient {
           accessToken = scanForJWT(response.data) || undefined;
         }
 
-        console.log("🔄 HTTP Client: Extracted access token:", !!accessToken);
-        console.log("🔄 HTTP Client: Extracted user data:", !!user);
+        console.log(" HTTP Client: Extracted access token:", !!accessToken);
+        console.log(" HTTP Client: Extracted user data:", !!user);
 
         if (accessToken) {
           return {
@@ -366,42 +362,39 @@ class HttpClient {
             user: user,
           };
         } else {
-          console.warn("🔄 HTTP Client: No access token found in response");
+          console.warn(" HTTP Client: No access token found in response");
           console.warn(
-            "🔄 HTTP Client: Available response keys:",
+            " HTTP Client: Available response keys:",
             Object.keys(response.data || {}),
           );
           if (response.data?.data) {
             console.warn(
-              "🔄 HTTP Client: Available nested data keys:",
+              "HTTP Client: Available nested data keys:",
               Object.keys(response.data.data || {}),
             );
           }
           console.warn(
-            "🔄 HTTP Client: Response data type:",
+            "HTTP Client: Response data type:",
             typeof response.data,
           );
-          console.warn("🔄 HTTP Client: Full response data:", response.data);
+          console.warn(" HTTP Client: Full response data:", response.data);
           return {
             success: false,
             error: "No access token in refresh response",
           };
         }
       } else {
-        console.warn(
-          "🔄 HTTP Client: Non-success status code:",
-          response.status,
-        );
+        console.warn(" HTTP Client: Non-success status code:", response.status);
         return {
           success: false,
           error: `Refresh failed with status: ${response.status}`,
         };
       }
     } catch (error) {
-      console.error("🔄 Refresh request failed:", error);
+      console.error(" Refresh request failed:", error);
 
       if (axios.isAxiosError(error)) {
-        console.error("🔄 Axios error details:", {
+        console.error("Axios error details:", {
           status: error.response?.status,
           data: error.response?.data,
           headers: error.response?.headers,
@@ -420,7 +413,7 @@ class HttpClient {
 
   private processQueue(error: any, newToken?: string): void {
     console.log(
-      `🔄 HTTP Client: Processing ${this.requestQueue.length} queued requests`,
+      ` HTTP Client: Processing ${this.requestQueue.length} queued requests`,
     );
 
     this.requestQueue.forEach(({ resolve, reject, config }, index) => {
@@ -429,28 +422,25 @@ class HttpClient {
         reject(error);
       } else {
         console.log(
-          `🔄 HTTP Client: Processing queued request ${index + 1}: ${config.url}`,
+          ` HTTP Client: Processing queued request ${index + 1}: ${config.url}`,
         );
         if (newToken) {
-          // Create proper headers object for axios
           const headers = config.headers || {};
-          
-          // Ensure we're setting it correctly for axios
-          if (typeof headers === 'object' && headers !== null) {
+
+          if (typeof headers === "object" && headers !== null) {
             (headers as any).Authorization = `Bearer ${newToken}`;
             config.headers = headers;
             console.log(
-              `✅ HTTP Client: Updated Authorization header for queued request ${index + 1}`,
+              `HTTP Client: Updated Authorization header for queued request ${index + 1}`,
             );
           } else {
             console.warn(
-              `⚠️ HTTP Client: Invalid headers on queued request ${index + 1}, creating new headers object`,
+              `HTTP Client: Invalid headers on queued request ${index + 1}, creating new headers object`,
             );
             config.headers = { Authorization: `Bearer ${newToken}` } as any;
           }
         }
-        
-        // Retry the request with the axios instance
+
         resolve(this.axiosInstance(config));
       }
     });
@@ -461,7 +451,7 @@ class HttpClient {
 
   private handleAuthFailure(): void {
     console.warn(
-      "🚨 HTTP Client: Authentication failure - clearing local auth state",
+      " HTTP Client: Authentication failure - clearing local auth state",
     );
 
     if (typeof window !== "undefined") {
@@ -475,7 +465,6 @@ class HttpClient {
     }
   }
 
-  // Public HTTP methods
   public get<T = any>(
     url: string,
     config?: AxiosRequestConfig,
