@@ -1,5 +1,5 @@
 import ArtSelection from "@/src/features/personalize/components/art-selection";
-import { getCategoriesQueryOptions } from "@/src/features/personalize/queries/get-categories.queries";
+import { getCategoriesQueryOptions } from "@/src/features/personalize/hooks/use-get-categories";
 
 import { TitleText } from "@/src/shared/layout/header";
 import {
