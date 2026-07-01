@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useUploadContext } from "../context/upload-context";
 import { useGetCategories } from "@/src/features/personalize/hooks";
-import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
 interface CategoryPickerFormProps {
