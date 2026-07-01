@@ -13,10 +13,12 @@ export enum AUTH_OP {
 
 export const SKIP_AUTH = [
   "/api/auth/login",
+  "/api/auth/google-login",
   "/api/auth/registerUser",
   "/api/auth/refreshToken",
   "/api/mail-list/addToMailList",
   "/api/categories/getCategories",
   "/api/auth/send-otp-to-existing-email",
+  "/api/auth/validate-otp",
   "/api/auth/create-new-password",
 ];
