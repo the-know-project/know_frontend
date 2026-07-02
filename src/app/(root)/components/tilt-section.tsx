@@ -45,6 +45,7 @@ export default function TiltSection({
           className={`${glow_color} relative rotate-[-6deg] transform-gpu rounded-xl ${isVisible ? "motion-preset-expand motion-duration-1000" : "opacity-0"}`}
           style={{
             padding: "20px", // Add padding to prevent clipping
+            width: "400px",
           }}
         >
           <div className="overflow-hidden rounded-xl">
