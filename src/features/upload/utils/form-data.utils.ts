@@ -54,6 +54,12 @@ export function convertToFormDataWithJSON(data: IUploadAssetServer): FormData {
   formData.append("fileName", data.fileName);
 
   formData.append("asset", data.asset);
+  formData.append(
+    "description",
+    data.description
+      ? data.description
+      : "Brought to you by Know, The ultimate partner for creatives.",
+  );
 
   formData.append("size", JSON.stringify(data.size));
   formData.append("categories", JSON.stringify(data.categories));
