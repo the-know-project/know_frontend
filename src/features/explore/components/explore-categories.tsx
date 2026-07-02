@@ -66,7 +66,7 @@ const ExploreCategories = ({
   selectedPreferences: propSelectedPreferences = [],
   selectedFilters: propSelectedFilters = {},
 }: ExploreCategoriesProps = {}) => {
-  const { data, isLoading, error } = useGetCategories();
+  const { data, isLoading } = useGetCategories();
 
   const [activeButton, setActiveButton] = useState<"for-you" | "following">(
     "for-you",
@@ -195,9 +195,6 @@ const ExploreCategories = ({
     return <ArtSelectionSkeleton />;
   }
 
-  if (error) {
-    return <div className="text-red-500">Error fetching categories</div>;
-  }
   const artPreferences = data ? data.data : DummyArtPreferences;
 
   return (
