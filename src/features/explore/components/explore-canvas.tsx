@@ -34,8 +34,6 @@ const ExploreCanvasContent = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
-  // const canFetch = useCanFetchData();
-
   const assetsHookResult = useSimpleInfiniteAssets({
     categories,
     filters,
@@ -52,11 +50,6 @@ const ExploreCanvasContent = ({
   showLog({
     context: "Explore Canvas",
     data: `is content toggled: ${isExploreContentToggled} : ${toggledContentId}`,
-  });
-
-  showLog({
-    context: "Explore Canvas: User Following",
-    data: following,
   });
 
   useEffect(() => {
@@ -130,7 +123,7 @@ const ExploreCanvasContent = ({
     return <ExploreCardSkeletonGrid />;
   }
 
-  if (error && assets.length === 0) {
+  if (error) {
     return (
       <section className="flex w-full flex-col items-center justify-center py-20">
         <div className="text-center">
@@ -151,7 +144,11 @@ const ExploreCanvasContent = ({
   if (isEmpty) {
     return (
       <section className="flex w-full flex-col items-center justify-center py-20">
-        <div className="text-center"></div>
+        <div className="text-center">
+          <p className="font-bricolage text-sm text-gray-400">
+            You've reached the end of the gallery
+          </p>
+        </div>
       </section>
     );
   }
