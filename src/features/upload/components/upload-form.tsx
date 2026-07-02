@@ -180,7 +180,7 @@ const UploadForm = ({
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="font-bricolage placeholder:font-bricolage bg-transparent text-[32px] text-[#666666] placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0 lg:text-[35px]"
+                    className="font-bricolage placeholder:font-bricolage bg-transparent text-[35px] text-[#666666] placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
                     placeholder="Title of your project"
                     {...field}
                     onChange={(e) => {
