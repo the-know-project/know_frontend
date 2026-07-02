@@ -25,11 +25,11 @@ export default function JoinCTA() {
       <TitleText textStyles={`flex flex-col w-full items-start`}>
         <div className="relative z-10 max-w-3xl gap-5">
           <p className="font-bebas mb-2 text-lg text-neutral-300 uppercase">
-            Ready to join?
+            Stay updated
           </p>
           <h2 className="font-bricolage mb-6 max-w-prose text-3xl font-bold capitalize md:text-4xl">
-            Start your journey today. Showcase your talent or discover
-            incredible art.
+            Be the first to know about our latest releases, exclusive offers,
+            and exciting events.
           </h2>
           <JoinCtaForm />
         </div>
