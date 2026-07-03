@@ -1,6 +1,5 @@
 "use client";
 
-import { MockNotifications } from "@/src/constants/constants";
 import { type ReactElement } from "react";
 import { IconBellRinging, IconSearch, IconUser } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -9,8 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import NotificationCard from "../../notifications/components/notification-card";
-import { useFetchUserNotifications } from "../../notifications/hooks/use-fetch-user-notifications";
-import { INotificationData } from "../../notifications/types/notification.types";
+import { useNotifications } from "../../notifications/hooks/use-notifications";
 import ProfileModal from "../../profile/components/profile-modal";
 import ExploreForm from "./explore-form";
 import {
@@ -29,8 +27,6 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
     useState<boolean>(false);
   const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
   const [shouldShake, setShouldShake] = useState<boolean>(false);
-  const [notifications, setNotifications] =
-    useState<INotificationData[]>(MockNotifications);
   const [isClient, setIsClient] = useState(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -40,7 +36,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   const router = useRouter();
   const [isSearchToggled, setIsSearchToggled] = useState<boolean>(false);
 
-  const { data: notificationData } = useFetchUserNotifications();
+  const { notifications } = useNotifications();
 
   useEffect(() => {
     setIsClient(true);
@@ -48,32 +44,11 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
 
   useEffect(() => {
     if (isClient && !user) {
-      setNotifications([]);
       setIsNotificationClicked(false);
       setIsProfileClicked(false);
       setShouldShake(false);
     }
   }, [isClient, user]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const updateNotifications = () => {
-      if (isClient && canFetchData && isReady && user) {
-        if (mounted && notificationData?.data) {
-          setNotifications(notificationData.data);
-        } else if (mounted) {
-          setNotifications(MockNotifications);
-        }
-      }
-    };
-
-    updateNotifications();
-
-    return () => {
-      mounted = false;
-    };
-  }, [isClient, user, notificationData, canFetchData, isReady]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -260,41 +235,21 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
 
               <div className="absolute top-[50px] right-[270px] z-50 w-full lg:right-[270px]">
                 <AnimatePresence>
-                  {isNotificationClicked &&
-                    isAuthenticated &&
-                    notifications.length > 0 && (
-                      <motion.div
-                        variants={variants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                        transition={{
-                          delay: 0.05,
-                          ease: "easeInOut",
-                          duration: 0.09,
-                        }}
-                      >
-                        <NotificationCard data={notifications} />
-                      </motion.div>
-                    )}
-
-                  {isNotificationClicked &&
-                    isAuthenticated &&
-                    notifications.length < 1 && (
-                      <motion.div
-                        variants={variants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                        transition={{
-                          delay: 0.05,
-                          ease: "easeInOut",
-                          duration: 0.09,
-                        }}
-                      >
-                        <NotificationCard data={notifications} />
-                      </motion.div>
-                    )}
+                  {isNotificationClicked && isAuthenticated && (
+                    <motion.div
+                      variants={variants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      transition={{
+                        delay: 0.05,
+                        ease: "easeInOut",
+                        duration: 0.09,
+                      }}
+                    >
+                      <NotificationCard />
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </div>
             </div>
