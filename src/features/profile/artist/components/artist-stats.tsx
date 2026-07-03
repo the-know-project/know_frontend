@@ -34,7 +34,9 @@ const Stats = () => {
           <div className="rounded-full bg-orange-100 p-2">
             <FaPeopleGroup className="h-5 w-5 text-orange-500" />
           </div>
-          <h3 className="stats_title">Your audience</h3>
+          <h3 className="font-helvetica text-[20px] text-neutral-800 capitalize md:text-[24px]">
+            Your audience
+          </h3>
         </div>
         <ArtistAudienceStats audienceMetrics={audienceMetrics} />
       </div>

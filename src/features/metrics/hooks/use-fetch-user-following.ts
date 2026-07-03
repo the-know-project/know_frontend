@@ -40,7 +40,7 @@ export const useFetchUserFollowing = (params: FetchUserFollowingParams) => {
         throw new MetricsError("User ID is required to fetch following list");
       }
       const result = await ResultAsync.fromPromise(
-        fetchUserFollowing({ userId, page: currentPage, limit }),
+        fetchUserFollowing({ page: currentPage, limit }),
         (error) =>
           new MetricsError(`Error fetching user following list: ${error}`),
       ).andThen((data) => {

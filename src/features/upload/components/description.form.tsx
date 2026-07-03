@@ -49,7 +49,7 @@ const DescriptionForm: React.FC<DescriptionFormProps> = ({ onSaveDraft }) => {
           />
 
           {/* Word count indicator */}
-          <div className="font-bricolage absolute right-3 bottom-2 text-xs text-neutral-500">
+          <div className="font-bebas absolute right-3 bottom-2 text-xs text-neutral-500">
             {wordCount}/{maxWords} words
           </div>
         </div>

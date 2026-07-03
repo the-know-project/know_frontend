@@ -15,7 +15,6 @@ export const useIncrementPostViews = () => {
     mutationFn: async (ctx: Omit<IIncrementViewCount, "userId">) => {
       const result = await ResultAsync.fromPromise(
         incrementViewCount({
-          userId: userId as string,
           fileId: ctx.fileId,
         }),
         (error) => new MetricsError(`Error incrementing view count ${error}`),

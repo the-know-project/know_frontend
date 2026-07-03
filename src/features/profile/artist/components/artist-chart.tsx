@@ -75,13 +75,12 @@ const ArtistChart = () => {
         <div className="flex items-center justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-gray-500" />
-              <CardTitle className="stats_title">
+              <CardTitle className="font-grotesk text-[20px] text-neutral-800 capitalize md:text-[24px]">
                 ${totalRevenue.toLocaleString()}
               </CardTitle>
             </div>
             <CardDescription>
-              Total Revenue -{" "}
+              Revenue -{" "}
               {period === "yearly" ? "Last 12 Months" : "Last 30 Days"}
             </CardDescription>
           </div>
@@ -90,20 +89,20 @@ const ArtistChart = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setPeriod("monthly")}
-              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              className={`font-bebas rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 period === "monthly"
                   ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  : "bg-gray-100 text-neutral-600 hover:bg-gray-200"
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setPeriod("yearly")}
-              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              className={`font-bebas rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 period === "yearly"
                   ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  : "bg-gray-100 text-neutral-600 hover:bg-gray-200"
               }`}
             >
               Yearly
@@ -146,7 +145,7 @@ const ArtistChart = () => {
             </LineChart>
           </ChartContainer>
         ) : (
-          <div className="flex h-64 items-center justify-center text-gray-500">
+          <div className="font-grotesk flex h-64 items-center justify-center text-sm font-light text-[#666666] capitalize sm:text-[16px]">
             No revenue data available for this period
           </div>
         )}

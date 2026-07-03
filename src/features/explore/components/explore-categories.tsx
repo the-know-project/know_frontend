@@ -205,7 +205,7 @@ const ExploreCategories = ({
           {artPreferences?.map((pref, index) => (
             <button
               key={index}
-              className={`motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"} `}
+              className={`motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal tracking-wider text-nowrap text-neutral-600 capitalize transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"} `}
               style={{
                 animationDelay: `${index * 100}ms`,
               }}
@@ -224,7 +224,7 @@ const ExploreCategories = ({
       </div>
       <div className="flex items-center justify-between">
         {/* Following */}
-        <div className="font-bricolage motion-preset-expand motion-duration-700 motion-delay-700 relative flex items-center gap-2 tracking-wide">
+        <div className="font-bebas motion-preset-expand motion-duration-700 motion-delay-700 relative flex items-center gap-2 tracking-wider">
           <div className="relative flex items-center rounded-lg bg-neutral-100 p-1">
             {/* Sliding background */}
             <div
@@ -266,7 +266,7 @@ const ExploreCategories = ({
             {artPreferences?.map((pref, index) => (
               <button
                 key={index}
-                className={`motion-duration-500 motion-preset-expand font-bricolage group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal text-nowrap text-black transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"}`}
+                className={`motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal tracking-wider text-nowrap text-neutral-600 transition-all duration-300 hover:scale-110 active:scale-95 lg:text-[16px] ${isItemSelected(pref) && "bg-[#1E3A8A] text-white transition-all duration-100"}`}
                 style={{
                   animationDelay: `${index * 100}ms`,
                 }}
@@ -289,8 +289,12 @@ const ExploreCategories = ({
           onClick={handleToggleFilter}
           className="motion-preset-expand motion-duration-700 motion-delay-700 flex w-fit gap-1 rounded-lg border bg-neutral-100 px-2 py-1 text-black transition-all hover:scale-105 active:scale-95 sm:px-4 sm:py-2"
         >
-          <IconFilter2Edit color="black" width={20} height={20} />
-          <p className="font-bricolage text-sm font-medium text-black lg:text-[16px]">
+          <IconFilter2Edit
+            width={20}
+            height={20}
+            className="text-neutral-600"
+          />
+          <p className="font-bebas text-sm font-medium tracking-wider text-neutral-600 lg:text-[16px]">
             Filter
           </p>
         </button>
@@ -317,7 +321,7 @@ const ExploreCategories = ({
                   key={ctx.id}
                   className="flex flex-shrink-0 flex-col items-start"
                 >
-                  <h3 className="font-bricolage mb-2 text-sm font-medium text-neutral-700">
+                  <h3 className="font-grotesk mb-2 text-sm font-medium text-neutral-700">
                     {ctx.name}
                   </h3>
                   <div className="flex items-center gap-[3px] sm:gap-2">
@@ -326,16 +330,16 @@ const ExploreCategories = ({
                         key={item.id}
                         onClick={() => handleFilterSelection(item.name)}
                         className={cn(
-                          "font-bricolage motion-preset-expand motion-duration-700 flex items-center gap-3 rounded-lg p-1 px-2.5 py-2 tracking-wide whitespace-nowrap transition-all duration-300",
+                          "font-bebas motion-preset-expand motion-duration-700 flex items-center gap-3 rounded-lg p-1 px-2.5 py-2 tracking-wider whitespace-nowrap transition-all duration-300",
                           isFilterSelected(item.name)
                             ? "bg-[#1E3A8A] text-white transition-all duration-200"
-                            : "bg-neutral-300 text-black transition-all duration-200 hover:bg-neutral-400",
+                            : "bg-neutral-300 text-neutral-800 transition-all duration-200 hover:bg-neutral-400",
                         )}
                         style={{
                           animationDelay: `${index * 100}ms`,
                         }}
                       >
-                        <p className="hover-scale-105 text-[13px] transition-all duration-200 active:scale-95 sm:text-sm">
+                        <p className="hover-scale-105 text-[12px] transition-all duration-200 active:scale-95 sm:text-sm">
                           {item.name}
                         </p>
                       </button>

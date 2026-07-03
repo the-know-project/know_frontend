@@ -1,7 +1,8 @@
 "use client";
 import {
-  IconArrowRightCircleFilled,
-  IconSettingsFilled,
+  IconFileSettings,
+  IconSettings,
+  IconSettingsAutomation,
 } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
@@ -10,6 +11,7 @@ import {
   useToggleEditProfile,
   useIsEditProfileToggled,
 } from "../artist/store/artist-profile.store";
+import { Settings, Settings2Icon } from "lucide-react";
 
 interface IProfileEditToggle {
   id: string;
@@ -66,21 +68,11 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
         <button
           onClick={toggleEdit}
           type="button"
-          className="flex w-full max-w-[90px] touch-manipulation flex-row items-center gap-[24px] rounded-[36px] bg-white px-4 py-2 opacity-25 shadow-sm backdrop-blur-md hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 active:opacity-100"
+          className="flex w-[fit] touch-manipulation flex-row items-center rounded-[15px] bg-white/50 p-2 shadow-sm backdrop-blur-md hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 active:opacity-100"
         >
-          <IconSettingsFilled color="black" width={20} height={20} />
-          <IconArrowRightCircleFilled
-            color="black"
-            width={20}
-            height={20}
-            className={`${
-              editToggled
-                ? "rotate-90 transition-transform duration-300"
-                : "transition-transform duration-300"
-            }`}
-          />
+          <Settings2Icon className="motion-preset-expand motion-duration-200 h-4 w-4 text-neutral-300" />
         </button>
-        <div className="absolute flex w-full px-4">
+        <div className="absolute top-10 flex w-full px-4">
           <AnimatePresence>
             {editToggled && (
               <motion.div
@@ -94,7 +86,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                   duration: 0.3,
                 }}
               >
-                <div className="flex w-[138px] touch-manipulation flex-col gap-[8px] rounded-[9px] bg-[#F4F4F4] px-4 pt-[12px] pb-[12px] opacity-75 sm:gap-[16px]">
+                <div className="flex w-[fit] touch-manipulation flex-col gap-1 rounded-[15px] bg-white/50 p-2 shadow-sm backdrop-blur-md">
                   {ProfileToggleData.map((item, index) => (
                     <button
                       key={item.id}
@@ -102,9 +94,9 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                       style={{
                         animationDelay: `${index * 100}ms`,
                       }}
-                      className="motion-preset-blur-down motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
+                      className="motion-preset-blur-up motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
                     >
-                      <p className="font-bricolage text-[12px] font-semibold text-black transition-all duration-200 group-hover:scale-105 group-active:scale-95 sm:text-sm">
+                      <p className="font-grotesk text-[12px] font-medium text-white transition-all duration-200 group-hover:scale-105 group-active:scale-95">
                         {item.name}
                       </p>
                     </button>

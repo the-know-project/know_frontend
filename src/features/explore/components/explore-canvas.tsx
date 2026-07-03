@@ -145,7 +145,7 @@ const ExploreCanvasContent = ({
     return (
       <section className="flex w-full flex-col items-center justify-center py-20">
         <div className="text-center">
-          <p className="font-bricolage text-sm text-gray-400">
+          <p className="font-bebas text-sm tracking-wider text-neutral-600">
             You've reached the end of the gallery
           </p>
         </div>
@@ -154,7 +154,7 @@ const ExploreCanvasContent = ({
   }
 
   return (
-    <section className="relative flex w-full flex-col items-center">
+    <section className="relative flex min-h-screen w-full flex-col items-center">
       {isExploreContentToggled && <ArtDetails />}
       <section className="flex w-full flex-col items-center justify-center">
         <div className="grid grid-cols-1 gap-5 space-y-[50px] md:grid-cols-2 lg:grid-cols-3">
@@ -200,8 +200,8 @@ const ExploreCanvasContent = ({
         )}
 
         {!hasNextPage && assets.length > 0 && (
-          <div className="mt-8 w-full py-8 text-center">
-            <p className="font-bricolage text-sm text-gray-400">
+          <div className="absolute right-0 bottom-0 left-0 w-full text-center">
+            <p className="font-bebas text-sm tracking-wider text-neutral-600">
               You've reached the end of the gallery
             </p>
           </div>

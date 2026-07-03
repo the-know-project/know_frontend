@@ -23,7 +23,6 @@ export const useFetchArtistSalesMetrics = (duration?: ISalesDuration) => {
 
       const result = await ResultAsync.fromPromise(
         fetchArtistSalesMetrics({
-          userId,
           duration,
         }),
         (error) =>

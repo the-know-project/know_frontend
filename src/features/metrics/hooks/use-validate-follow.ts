@@ -18,7 +18,6 @@ export const useValidateFollow = (params: FollowUserParams) => {
     queryFn: async () => {
       const result = await ResultAsync.fromPromise(
         validateUserFollowing({
-          followerId: followerId!,
           followingId: params.followingId,
         }),
         (error) => new MetricsError(`Error validating follow ${error}`),

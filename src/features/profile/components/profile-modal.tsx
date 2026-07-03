@@ -79,13 +79,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           className="rounded-full object-cover"
         />
         <div className="flex flex-col items-center justify-center text-center">
-          <h3 className="font-bricolage text-[20px] font-bold text-neutral-900 capitalize">
+          <h3 className="font-helvetica text-[20px] font-bold text-neutral-900 capitalize">
             {firstName}
           </h3>
-          <p className="font-bricolage text-[12px] text-neutral-600">
+          <p className="font-grotesk text-[12px] text-neutral-600">
             {emailAddress}
           </p>
-          <button className="font-bricolage relative mt-[10px] inline-flex w-fit items-center gap-[8px] self-center rounded-[15px] bg-[#1E3A8A] pt-[8px] pr-[8px] pb-[8px] pl-[8px] text-[12px] font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95">
+          <button className="font-bebas relative mt-[10px] inline-flex w-fit items-center gap-[8px] self-center rounded-[15px] bg-[#1E3A8A] pt-[8px] pr-[8px] pb-[8px] pl-[8px] text-[12px] font-medium tracking-wider text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95">
             Upgrade to premium
           </button>
         </div>
@@ -105,7 +105,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               disabled={isSignOutButton && isLoggingOut}
             >
               {isSignOutButton && isLoggingOut && <Spinner />}
-              <p className="font-bricolage text-sm text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
+              <p className="font-grotesk text-sm text-neutral-600 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
                 {item.title}
               </p>
             </button>

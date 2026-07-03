@@ -43,7 +43,9 @@ const EngagementInsights: React.FC<IEnagagementInsights> = ({
         <div className="rounded-full bg-orange-100 p-2">
           <IconTrendingUp className="h-5 w-5 text-orange-500" />
         </div>
-        <h2 className="stats_title">Buyer Engagement Insights</h2>
+        <h2 className="font-helvetica text-[20px] text-neutral-800 capitalize md:text-[24px]">
+          Buyer Engagement Insights
+        </h2>
       </div>
 
       {/* Main Content */}
@@ -114,7 +116,7 @@ const EngagementInsights: React.FC<IEnagagementInsights> = ({
           {/* Top Interested Buyers */}
           <div className="flex items-center gap-3">
             <div className="flex h-3 w-3 rounded-full bg-[#F97316] p-1" />
-            <span className="stats_content motion-preset-expand motion-duration-300">
+            <span className="font-grotesk motion-preset-expand motion-duration-300 text-sm font-light text-[#666666] capitalize sm:text-[16px]">
               Top Interested Buyers ({topInterestedBuyers}%)
             </span>
           </div>
@@ -122,7 +124,7 @@ const EngagementInsights: React.FC<IEnagagementInsights> = ({
           {/* Conversion Rate */}
           <div className="flex items-center gap-3">
             <div className="h-3 w-3 rounded-full bg-[#34A853]" />
-            <span className="stats_content motion-preset-expand motion-duration-300">
+            <span className="font-grotesk motion-preset-expand motion-duration-300 text-sm font-light text-[#666666] capitalize sm:text-[16px]">
               Conversion Rate ({conversionRate}%)
             </span>
           </div>

@@ -17,6 +17,7 @@ interface IProfileCard {
   createdAt: string;
   image: string;
   role?: string;
+  onClick?: () => void;
 }
 
 const ProfileCard: React.FC<IProfileCard> = ({
@@ -25,12 +26,12 @@ const ProfileCard: React.FC<IProfileCard> = ({
   views,
   createdAt,
   image,
+  onClick,
 }) => {
   const role = useRoleStore((state) => state.role);
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
   const toggleEditProfile = useToggleEditProfile(); // ← Add this hook
 
-  // Add click handler for edit button
   const handleEditClick = () => {
     console.log("✏️ Edit button clicked! ID:", id);
     toggleEditProfile(id as string);
@@ -53,22 +54,23 @@ const ProfileCard: React.FC<IProfileCard> = ({
             height={300}
             className={`rounded-[15px] object-contain transition-all duration-300 select-none ${
               isEditProfileToggled ? "blur-xs" : ""
-            }`}
+            } ${onClick ? "cursor-pointer" : ""}`}
+            onClick={onClick}
           />
         </div>
         <div className="mt-2 flex w-full max-w-[400px] justify-between">
-          <div className="flex flex-col items-start font-medium text-neutral-600">
-            <h3 className="font-bricolage sm:text-normal text-sm text-neutral-900 capitalize">
+          <div className="flex flex-col items-start">
+            <h3 className="font-helvetica sm:text-normal text-sm text-neutral-800 capitalize">
               {title}
             </h3>
-            <p className="font-bricolage text-xs font-light text-[#666666] capitalize sm:text-sm">
+            <p className="font-grotesk text-[12px] font-light text-neutral-600 capitalize">
               {createdAt}
             </p>
           </div>
-          <div className="flex items-center gap-3 text-black">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-              <IconEye width={15} height={15} />
-              <p className="font-bricolage text-sm capitalize">
+              <IconEye width={15} height={15} className="text-neutral-600" />
+              <p className="font-grotesk text-[12px] font-light text-neutral-600 capitalize">
                 {formatViewCount(views)}
               </p>
             </div>
@@ -77,8 +79,8 @@ const ProfileCard: React.FC<IProfileCard> = ({
               onClick={handleEditClick}
               className="flex cursor-pointer items-center gap-1 transition-all duration-200 hover:scale-105 active:scale-95"
             >
-              <IconPencil width={15} height={15} />
-              <p className="font-bricolage text-xs capitalize sm:text-sm">
+              <IconPencil width={15} height={15} className="text-neutral-600" />
+              <p className="font-grotesk text-[12px] font-light text-neutral-600 capitalize">
                 Edit
               </p>
             </button>

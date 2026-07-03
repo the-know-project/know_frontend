@@ -25,7 +25,7 @@ export const useUnfollowUser = () => {
         throw new MetricsError("User not authenticated");
       }
       const result = await ResultAsync.fromPromise(
-        unfollowUser({ ...params, followerId }),
+        unfollowUser({ followingId: params.followingId }),
         (error) => new MetricsError(`Error unfollowing user: ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {

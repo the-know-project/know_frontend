@@ -187,17 +187,17 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
 
             return (
               <div key={dimension.key} className="space-y-2">
-                <label className="font-bricolage text-sm font-light text-neutral-800">
+                <label className="font-bebas text-sm font-light tracking-wide text-neutral-500">
                   {dimension.label}
                 </label>
 
                 <div className="flex items-center gap-2">
                   {/* Input with integrated unit dropdown */}
-                  <div className="relative flex-1 rounded-md border border-gray-300 bg-white">
+                  <div className="relative flex-1 rounded-[15px] border border-gray-300 bg-white">
                     <Input
                       type="number"
                       placeholder="0"
-                      className="font-bricolage [appearance:textfield] rounded-[15px] border-0 bg-transparent pr-16 text-sm font-normal text-neutral-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="font-bricolage [appearance:textfield] border-0 bg-transparent pr-16 text-sm font-normal text-neutral-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       value={currentValue}
                       onChange={(e) =>
                         handleInputChange(dimension.key, e.target.value)
@@ -209,11 +209,11 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
                       ref={(el) => {
                         dropdownRefs.current[dimension.key] = el;
                       }}
-                      className="absolute top-0 right-3 h-full"
+                      className="absolute top-0 right-0 h-full rounded-tr-[15px] rounded-br-[15px] bg-neutral-800"
                     >
                       <button
                         type="button"
-                        className="font-bricolage flex h-full w-fit items-center gap-1 bg-transparent px-3 text-neutral-800 uppercase"
+                        className="font-bebas flex h-full w-fit items-center gap-1 px-3 text-neutral-50"
                         onClick={() => toggleDropdown(dimension.key)}
                       >
                         {currentUnit}
@@ -226,12 +226,12 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
                       </button>
 
                       {openDropdowns[dimension.key] && (
-                        <div className="absolute top-full right-0 z-10 mt-1 w-20 overflow-hidden rounded-md border border-gray-300 bg-white shadow-lg">
+                        <div className="motion-preset-expand motion-duration-150 absolute top-full right-0 z-10 mt-1 w-20 overflow-hidden rounded-md border border-gray-300 bg-white shadow-lg">
                           {getUnitOptions(dimension.key).map((unit) => (
                             <button
                               key={unit}
                               type="button"
-                              className="font-bricolage font-bolf w-full px-3 py-2 text-left text-sm text-neutral-800 uppercase hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                              className="font-bebas w-full px-3 py-2 text-left text-sm text-neutral-800 uppercase hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
                               onClick={() => {
                                 handleUnitChange(dimension.key, unit);
                                 setOpenDropdowns((prev) => ({

@@ -94,7 +94,7 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
                 </div>
 
                 <div className="flex flex-1 flex-col gap-1 capitalize">
-                  <h3 className="font-bricolage text-[12px] font-bold sm:text-sm">
+                  <h3 className="font-grotesk text-[12px] font-bold sm:text-sm">
                     {notification.content}
                   </h3>
                   <p className="font-grotesk text-[9px] text-gray-400 sm:text-xs">

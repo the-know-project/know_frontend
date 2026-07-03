@@ -71,7 +71,7 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
             {uploadData.tags.map((tag, index) => (
               <div
                 key={index}
-                className={`font-bricolage flex transform items-center gap-2 rounded-full px-3 py-1 text-xs tracking-wide text-neutral-800 capitalize shadow-md transition-all duration-500 ${
+                className={`font-bebas flex transform items-center gap-2 rounded-full px-3 py-1 text-xs tracking-wide text-neutral-500 capitalize shadow-md transition-all duration-500 ${
                   animatingTag === tag
                     ? "scale-110 animate-pulse shadow-lg"
                     : "scale-100 hover:scale-105"

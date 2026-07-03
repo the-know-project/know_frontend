@@ -175,10 +175,10 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           </div>
 
           <div className="flex flex-col items-start">
-            <p className="font-bricolage text-[18px] font-black text-neutral-800 capitalize">
+            <p className="font-helvetica text-[16px] text-neutral-800 capitalize sm:text-[18px]">
               {artistName}
             </p>
-            <h3 className="font-bricolage text-sm font-semibold text-neutral-700 underline">
+            <h3 className="font-grotesk text-sm font-medium text-neutral-600 underline">
               {artName}
             </h3>
           </div>
@@ -211,7 +211,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               <IconThumbUpFilled
                 width={30}
                 height={30}
-                className="text-blue-600"
+                className="text-[#1E3A8A]"
               />
             ) : (
               <IconThumbUp
@@ -222,7 +222,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
             )}
           </button>
 
-          <p className="font-bricolage text-[16px] font-bold text-neutral-900">
+          <p className="font-grotesk text-[16px] font-bold text-neutral-800">
             {formatViewCount(currentLikeCount)}
           </p>
         </div>

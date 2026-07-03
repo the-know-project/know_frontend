@@ -67,15 +67,15 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
           >
             <div className="relative h-[90vh] w-full max-w-7xl overflow-hidden rounded-2xl bg-white shadow-2xl">
               {/* Close Button */}
-              <button
-                onClick={handleClose}
-                className="absolute top-4 right-4 z-10 rounded-full bg-gray-100 p-2 transition-colors hover:bg-gray-200"
-              >
-                <IconX size={24} />
-              </button>
 
               {/* Content */}
               <div className="h-full overflow-y-auto">
+                <button
+                  onClick={handleClose}
+                  className="absolute top-2 right-4 z-10 rounded-full bg-gray-100 p-2 transition-colors hover:bg-gray-200"
+                >
+                  <IconX size={24} className="text-red-500" />
+                </button>
                 <EditProfileForm userId={userId} onClose={handleClose} />
               </div>
             </div>

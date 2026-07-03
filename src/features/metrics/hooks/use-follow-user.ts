@@ -31,7 +31,7 @@ export const useFollowUser = () => {
       }
 
       const result = await ResultAsync.fromPromise(
-        followUser({ ...params, followerId }),
+        followUser({ followingId: params.followingId }),
         (error) => new MetricsError(`Error following user: ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {

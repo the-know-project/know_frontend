@@ -21,7 +21,7 @@ export const useFetchUserFollowers = (params: FetchUserFollowersParams) => {
         throw new MetricsError("User ID is required to fetch followers");
       }
       const result = await ResultAsync.fromPromise(
-        fetchUserFollowers({ userId, page, limit }),
+        fetchUserFollowers({ page, limit }),
         (error) => new MetricsError(`Error fetching user followers: ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {

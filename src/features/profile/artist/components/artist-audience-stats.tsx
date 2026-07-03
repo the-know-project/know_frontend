@@ -24,10 +24,12 @@ const ArtistAudienceStats: React.FC<IArtistAudienceStats> = ({
               animationDelay: `${index * 100}ms`,
             }}
           >
-            <h4 className="font-bricolage text-[20px] font-semibold text-neutral-800 capitalize md:text-[32px]">
+            <h4 className="font-grotesk text-[20px] font-semibold text-neutral-800 capitalize md:text-[32px]">
               {metric.value}
             </h4>
-            <p className="stats_content">{metric.context}</p>
+            <p className="font-grotesk text-sm font-light text-[#666666] capitalize sm:text-[16px]">
+              {metric.context}
+            </p>
             <hr className="mt-7 hidden w-full border-t border-neutral-200 md:block" />
           </div>
         ))}

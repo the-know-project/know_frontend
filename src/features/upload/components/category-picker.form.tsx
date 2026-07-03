@@ -80,18 +80,10 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
                   type="checkbox"
                   checked={isCategorySelected(category)}
                   onChange={() => handleCategoryToggle(category)}
-                  className="peer sr-only"
+                  className="h-5 w-5 cursor-pointer rounded-[15px] accent-neutral-800"
                 />
-                <div className="h-5 w-5 rounded border-2 border-neutral-800 bg-white transition-all peer-checked:bg-black">
-                  {isCategorySelected(category) && (
-                    <Check
-                      size={12}
-                      className="absolute top-0.5 left-0.5 text-white"
-                    />
-                  )}
-                </div>
               </div>
-              <span className="font-bricolage text-sm font-normal text-neutral-800 capitalize">
+              <span className="font-bricolage text-sm text-neutral-700 capitalize">
                 {category}
               </span>
             </label>

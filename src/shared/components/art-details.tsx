@@ -165,18 +165,19 @@ const ArtDetails = () => {
                       <h1 className="font-bricolage text-lg font-bold text-white capitalize">
                         {exploreContent?.artName}
                       </h1>
-                      <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
-                        <p>{exploreContent?.creatorName} • </p>
-
-                        <button
-                          onClick={() =>
-                            handleFollowUser(exploreContent?.userId || "")
-                          }
-                          className="font-bricolage text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
-                        >
-                          {isFollowing === true ? "Unfollow" : "Follow"}
-                        </button>
-                      </div>
+                      {followerId !== exploreContent?.userId && (
+                        <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
+                          <p>{exploreContent?.creatorName} • </p>
+                          <button
+                            onClick={() =>
+                              handleFollowUser(exploreContent?.userId || "")
+                            }
+                            className="font-bricolage text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
+                          >
+                            {isFollowing === true ? "Unfollow" : "Follow"}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <button

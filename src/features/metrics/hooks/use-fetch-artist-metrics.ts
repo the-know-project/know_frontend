@@ -19,7 +19,7 @@ export const useFetchArtistMetrics = () => {
       }
 
       const result = await ResultAsync.fromPromise(
-        fetchArtistMetrics(userId),
+        fetchArtistMetrics(),
         (error) => new ArtistError(`Error fetching artist metrics ${error}`),
       ).andThen((data) => {
         if (data.status === 200) {

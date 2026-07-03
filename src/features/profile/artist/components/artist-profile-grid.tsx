@@ -13,7 +13,12 @@ import { IUser } from "@/src/features/auth/state/interface/auth.interface";
 import Stats from "./artist-stats";
 import ProfileCardSkeletonGrid from "../../layout/profile-card-skeleton";
 import { useCanFetchData } from "@/src/features/auth/hooks/use-optimized-auth";
-import { showLog } from "@/src/utils/logger";
+import ArtDetails from "@/src/shared/components/art-details";
+import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
+import {
+  useIsExploreContentToggled,
+  useToggleExploreContent,
+} from "@/src/features/explore/state/explore-content.store";
 
 interface ArtistProfileGridProps {
   user: IUser;
@@ -25,6 +30,39 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const tabContainerRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  const { isExploreContentToggled } = useIsExploreContentToggled();
+  const toggleExploreContent = useToggleExploreContent();
+
+  const handleOpenArtDetails = (post: TUserAssetData) => {
+    const content: IExploreContent = {
+      id: post.fileId,
+      userId: user.id,
+      creatorProfileUrl: user.imageUrl,
+      creatorName:
+        `${post.firstName || user.firstName} ${post.lastName || ""}`.trim(),
+      artName: post.name,
+      description: post.description ?? null,
+      artWorkUrl: post.url,
+      highResUrl: post.highResUrl || post.url,
+      categories: post.categories,
+      tags: post.tags,
+      price: post.price,
+      size: { width: post.size.width, height: post.size.height },
+      numOfLikes: post.numOfLikes,
+      numOfViews: post.numOfViews,
+      numOfComments: 0,
+      isListed: post.isListed,
+      createdAt: post.createdAt,
+    };
+
+    const viewportPosition = {
+      scrollY: window.scrollY,
+      viewportHeight: window.innerHeight,
+    };
+
+    toggleExploreContent(post.fileId, content, viewportPosition);
+  };
 
   useEffect(() => {
     const activeTabElement = tabRefs.current.get(activeToggle);
@@ -93,7 +131,9 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
       return (
         <div className="col-span-2 flex flex-col items-center justify-center py-20">
           <div className="text-center">
-            <p className="font-bricolage text-gray-500">No posts found</p>
+            <p className="font-bebas tracking-wider text-neutral-600">
+              No posts found
+            </p>
           </div>
         </div>
       );
@@ -114,7 +154,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="flex w-full max-w-sm space-y-[50px] lg:max-w-none"
+              className="flex w-full max-w-sm lg:max-w-none"
             >
               <ProfileCard
                 id={post.fileId}
@@ -123,13 +163,14 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                 createdAt={formatDateToReadable(post.createdAt.toString())}
                 image={post.url}
                 role={user.role as string}
+                onClick={() => handleOpenArtDetails(post)}
               />
             </motion.div>
           ))}
         </AnimatePresence>
 
         {isLoadingMore && (
-          <div className="flex w-full justify-center py-4 lg:col-span-2">
+          <div className="absolute right-0 bottom-0 left-0 flex w-full justify-center py-4">
             <InfiniteLoadingIndicator />
           </div>
         )}
@@ -138,13 +179,13 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         {canLoadMore && (
           <div
             ref={sentinelRef}
-            className="flex h-10 w-full items-center justify-center lg:col-span-2"
+            className="absolute right-0 bottom-0 left-0 flex h-10 w-full items-center justify-center"
           />
         )}
 
         {!hasNextPage && posts.length > 0 && (
-          <div className="w-full py-8 text-center lg:col-span-2">
-            <p className="font-bricolage text-sm text-gray-400">
+          <div className="absolute right-0 bottom-0 left-0 w-full text-center">
+            <p className="font-bebas text-sm tracking-wider text-neutral-600">
               You've reached the end of the posts
             </p>
           </div>
@@ -155,6 +196,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
 
   return (
     <section className="lg:px- -mt-[50px] flex w-full flex-col px-4">
+      {isExploreContentToggled && <ArtDetails />}
       <div className="w-full items-center justify-center">
         <div
           ref={tabContainerRef}
@@ -170,7 +212,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
               onClick={() => setActiveToggle(toggle.name)}
             >
               <p
-                className={`font-bricolage text-[16px] capitalize hover:scale-105 active:scale-95 lg:text-[18px] ${
+                className={`font-bebas text-[16px] capitalize hover:scale-105 active:scale-95 lg:text-[18px] ${
                   activeToggle === toggle.name
                     ? "font-semibold text-neutral-900 transition-colors duration-300"
                     : "text-neutral-500"
@@ -189,7 +231,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
           ></div>
         </div>
       </div>
-      <div className="mt-4 flex w-full flex-col items-center justify-center gap-4 bg-white lg:grid lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
+      <div className="relative mt-4 flex min-h-screen w-full flex-col items-center gap-4 bg-white pb-16 lg:grid lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
           <div className="flex w-full flex-col items-center justify-center lg:col-span-2">

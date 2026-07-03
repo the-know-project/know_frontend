@@ -19,11 +19,13 @@ const ArtistSalesStats = () => {
           <Coins className="h-5 w-5 text-orange-500" />
         </div>
         <div className="flex w-full flex-row items-center justify-between">
-          <h2 className="stats_title">Earnings</h2>
+          <h2 className="font-helvetica text-[20px] text-neutral-800 capitalize md:text-[24px]">
+            Earnings
+          </h2>
         </div>
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger>
-            <div className="stats_content flex items-center gap-1 rounded-[15px] border border-gray-300 px-4 py-1">
+            <div className="font-grotesk flex items-center gap-1 rounded-[15px] border border-gray-300 px-4 py-1 text-sm font-light text-[#666666] capitalize sm:text-[16px]">
               <p
                 key={selectedPeriod}
                 className="motion-preset-expand motion-duration-300"
@@ -38,7 +40,7 @@ const ArtistSalesStats = () => {
           </PopoverTrigger>
           <PopoverContent className="flex w-fit flex-col items-center gap-2 px-4 py-2">
             <p
-              className="stats_content !text-[14px] transition-all duration-200 hover:scale-105 active:scale-95"
+              className="font-grotesk text-sm font-light text-[#666666] capitalize transition-all duration-200 hover:scale-105 active:scale-95"
               onClick={() => {
                 setSelectedPeriod("Monthly");
                 setIsPopoverOpen(false);
@@ -47,7 +49,7 @@ const ArtistSalesStats = () => {
               Monthly
             </p>
             <p
-              className="stats_content !text-[14px] transition-all duration-200 hover:scale-105 active:scale-95"
+              className="font-grotesk text-sm font-light text-[#666666] capitalize transition-all duration-200 hover:scale-105 active:scale-95"
               onClick={() => {
                 setSelectedPeriod("Yearly");
                 setIsPopoverOpen(false);
