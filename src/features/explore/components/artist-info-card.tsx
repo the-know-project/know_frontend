@@ -35,7 +35,11 @@ const ArtistInfoCard = ({ artistId }: ArtistInfoCardProps) => {
   }
 
   if (!artistResponse?.data) {
-    return <div className="text-red-500">Artist not found.</div>;
+    return (
+      <div className="font-grotesk text-xs font-light text-red-500">
+        Artist not found.
+      </div>
+    );
   }
 
   const artist = artistResponse.data;
@@ -55,10 +59,12 @@ const ArtistInfoCard = ({ artistId }: ArtistInfoCardProps) => {
           />
         </div>
         <div>
-          <h3 className="profile_title">
+          <h3 className="font-helvetica text-sm font-bold text-neutral-800 capitalize">
             {`${capitalizeFirstLetter(artist.firstName)} ${capitalizeFirstLetter(artist.lastName)}`}
           </h3>
-          <p className="profile_content">Lagos, Nigeria</p>
+          <p className="font-grotesk text-[12px] font-light text-neutral-600">
+            Lagos, Nigeria
+          </p>
         </div>
       </div>
 

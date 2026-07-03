@@ -243,7 +243,7 @@
   }
 
   .profile_title {
-    @apply font-bricolage font-bold text-neutral-900 capitalize sm:text-lg;
+    @apply font-helvetica font-bold text-neutral-800 capitalize sm:text-lg;
   }
 
   .order_title {
@@ -255,7 +255,7 @@
   }
 
   .profile_content {
-    @apply font-bricolage text-xs text-[#666666] sm:text-sm;
+    @apply font-grotesk text-xs text-[#666666] sm:text-sm;
   }
 }
 .purple-glow {

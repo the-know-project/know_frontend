@@ -73,7 +73,7 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
           <form onSubmit={onSubmit}>
             <Textarea
               placeholder="What are your thoughts on this project?"
-              className="profile_content w-full bg-transparent"
+              className="font-grotesk ringed-none w-full bg-transparent text-xs font-light text-neutral-600 focus:ring-0 focus:outline-none sm:text-sm"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               disabled={isAdding}
@@ -83,7 +83,7 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
               <button
                 type="submit"
                 disabled={isAdding || !commentText.trim()}
-                className="font-bebas rounded bg-gray-300 px-4 py-1 text-sm font-medium tracking-wider text-gray-600 transition-colors hover:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+                className="font-bebas rounded bg-[#1E3A8A] px-4 py-1 text-sm font-medium tracking-wider text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isAdding ? "Posting..." : "Share your work"}
               </button>
@@ -94,11 +94,13 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
 
       {isLoadingInitial ? (
         <div className="py-8 text-center">
-          <p className="profile_content">Loading comments...</p>
+          <p className="font-grotesk text-xs font-light text-neutral-600 sm:text-sm">
+            Loading comments...
+          </p>
         </div>
       ) : comments.length === 0 ? (
         <div className="py-8 text-center">
-          <p className="profile_content">
+          <p className="font-grotesk text-xs font-light text-neutral-600 sm:text-sm">
             No comments yet. Be the first to comment!
           </p>
         </div>
@@ -129,14 +131,14 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
                 </div>
                 <div className="flex-1">
                   <div className="mb-1 flex items-center gap-2">
-                    <span className="profile_title !text-sm">
+                    <span className="font-helvetica text-sm font-bold text-neutral-800 capitalize">
                       {comment.firstName} {comment.lastName}
                     </span>
-                    <span className="profile_content !text-[12px]">
+                    <span className="font-grotesk text-[12px] font-light text-neutral-600">
                       • {formatTimeAgo(comment.createdAt)}
                     </span>
                   </div>
-                  <p className="profile_content !text-[12px]">
+                  <p className="font-grotesk text-[12px] font-light text-neutral-600 sm:text-sm">
                     {comment.comment}
                   </p>
                 </div>

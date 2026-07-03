@@ -16,9 +16,11 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
       <div className="mb-4">
-        <h2 className="profile_title">{artwork.artName}</h2>
+        <h2 className="font-helvetica text-sm font-bold text-neutral-800 capitalize">
+          {artwork.artName}
+        </h2>
         {artwork.size && (
-          <div className="profile_content">
+          <div className="font-grotesk text-[12px] font-light text-neutral-600">
             <p>Height: {artwork.size.height}cm</p>
             <p>Width: {artwork.size.width}cm</p>
           </div>
@@ -26,7 +28,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
       </div>
 
       {/* Stats */}
-      <div className="mb-4 flex items-center gap-4 text-sm text-gray-500">
+      <div className="font-grotesk mb-4 flex items-center gap-4 text-sm text-neutral-500">
         <div className="flex items-center gap-1">
           <svg
             className="h-4 w-4"
@@ -47,7 +49,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
             />
           </svg>
-          <span>{artwork.numOfViews || "0"}</span>
+          <span className="font-medium">{artwork.numOfViews || "0"}</span>
         </div>
         <div className="flex items-center gap-1">
           <svg
@@ -63,12 +65,12 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
               d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
             />
           </svg>
-          <span>Likes: {artwork.numOfLikes}</span>
+          <span className="font-medium">{artwork.numOfLikes}</span>
         </div>
       </div>
 
       {/* Published Date */}
-      <p className="profile_content">
+      <p className="font-grotesk text-[12px] font-light text-neutral-600">
         Published on: {new Date(artwork.createdAt).toLocaleDateString()}
       </p>
 

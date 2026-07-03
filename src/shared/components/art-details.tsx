@@ -162,7 +162,7 @@ const ArtDetails = () => {
                       />
                     </div>
                     <div>
-                      <h1 className="font-bricolage text-lg font-bold text-white capitalize">
+                      <h1 className="font-helvetica text-lg font-bold text-white capitalize">
                         {exploreContent?.artName}
                       </h1>
                       {followerId !== exploreContent?.userId && (
@@ -172,7 +172,7 @@ const ArtDetails = () => {
                             onClick={() =>
                               handleFollowUser(exploreContent?.userId || "")
                             }
-                            className="font-bricolage text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
+                            className="font-grotesk text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
                           >
                             {isFollowing === true ? "Unfollow" : "Follow"}
                           </button>
@@ -194,10 +194,10 @@ const ArtDetails = () => {
                 <div className="custom-scrollbar flex-1 overflow-auto bg-[#141414]">
                   <div className="space-y-6">
                     <div className="p-6">
-                      <h2 className="font-bricolage mb-4 text-2xl font-bold text-white capitalize">
+                      <h2 className="font-helvetica mb-4 text-2xl font-bold text-white capitalize">
                         {exploreContent?.artName}
                       </h2>
-                      <p className="font-bricolage max-w-prose text-xs leading-relaxed text-neutral-300 sm:text-sm">
+                      <p className="font-grotesk max-w-prose text-xs font-light text-neutral-300 sm:text-sm">
                         {exploreContent?.description === null
                           ? "Brought to you by Know, The ultimate partner for creatives."
                           : exploreContent?.description}
