@@ -3,45 +3,30 @@
 import { formatTimestampToReadable } from "@/src/utils/date";
 import { IconChecks, IconX } from "@tabler/icons-react";
 import Image from "next/image";
-import { useDeleteUserNotifications } from "../hooks/use-delete-user-notifications";
 import Spinner from "@/src/shared/components/spinner";
-import { showLog } from "@/src/utils/logger";
+import { useNotifications } from "../hooks/use-notifications";
 
-interface NotificationProps {
-  id: string | number;
-  image: string;
-  secondaryImage?: string | null;
-  content: string;
-  createdAt: number;
-}
-
-interface INotificationCard {
-  data: NotificationProps[];
-}
-
-const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
-  const { mutateAsync: deleteNotifications, isPending } =
-    useDeleteUserNotifications();
-
-  showLog({
-    context: "Nofication Card",
-    data: data,
-  });
-
-  const handleDeleteNotifications = async (notificationIds: string[]) => {
-    await deleteNotifications({
-      notificationIds,
-    });
-  };
+const NotificationCard = () => {
+  const {
+    notifications,
+    isDeleting,
+    deleteNotification,
+    deleteAllNotifications,
+  } = useNotifications();
 
   const handleDeleteSingle = async (notificationId: string) => {
-    await handleDeleteNotifications([notificationId]);
+    try {
+      await deleteNotification(notificationId);
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
+    }
   };
 
   const handleDeleteAll = async () => {
-    if (data.length > 0) {
-      const allIds = data.map((notification) => String(notification.id));
-      await handleDeleteNotifications(allIds);
+    try {
+      await deleteAllNotifications();
+    } catch (error) {
+      console.error("Failed to delete notifications:", error);
     }
   };
 
@@ -51,14 +36,10 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
         <button
           className="group flex items-center gap-2"
           onClick={handleDeleteAll}
-          disabled={isPending}
+          disabled={isDeleting || notifications.length === 0}
         >
           <div className="font-grotesk text-xs text-gray-400 capitalize">
-            {isPending ? (
-              <Spinner borderColor="border-blue-600" />
-            ) : (
-              <p>Mark all as read</p>
-            )}
+            <p>Mark all as read</p>
           </div>
           <IconChecks
             width={20}
@@ -68,14 +49,14 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
         </button>
       </div>
       <div className="relative z-10 flex w-full flex-col gap-5">
-        {data.length < 1 && (
-          <h3 className="font-bricolage self-center text-sm font-medium">
+        {notifications.length < 1 && (
+          <h3 className="font-bebas self-center text-sm font-medium tracking-wider text-neutral-600">
             All caught up
           </h3>
         )}
 
-        {data.length > 0 &&
-          data.map((notification: NotificationProps, index) => (
+        {notifications.length > 0 &&
+          notifications.map((notification, index) => (
             <div className="flex w-full flex-col gap-2" key={notification.id}>
               <div
                 className="motion-preset-blur-down motion-duration-700 flex items-center gap-5"
@@ -113,8 +94,8 @@ const NotificationCard: React.FC<INotificationCard> = ({ data }) => {
                 )}
 
                 <button
-                  onClick={() => handleDeleteSingle(String(notification.id))}
-                  disabled={isPending}
+                  onClick={() => handleDeleteSingle(notification.id)}
+                  disabled={isDeleting}
                   className="group flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 disabled:opacity-50"
                 >
                   <IconX
