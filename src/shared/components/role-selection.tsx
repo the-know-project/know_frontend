@@ -32,7 +32,7 @@ export default function SelectRole() {
             height={60}
             quality={100}
           />
-          <p className="font-bricolage text-sm font-medium text-neutral-600">
+          <p className="font-grotesk text-sm font-medium text-neutral-600">
             Already have an account?{" "}
             <Link
               href="/login"
@@ -45,11 +45,11 @@ export default function SelectRole() {
 
         <div className="mb-8 flex max-w-prose flex-col gap-2">
           <TitleText textStyles={`w-full`}>
-            <h1 className="font-helvetica text-3xl font-semibold text-black ">
+            <h1 className="font-helvetica text-3xl font-semibold text-neutral-800">
               Select a Role
             </h1>
           </TitleText>
-          <p className="font-bricolage motion-preset-expand motion-duration-700 text-sm text-neutral-500">
+          <p className="font-grotesk motion-preset-expand motion-duration-700 text-sm text-neutral-600">
             To get started, please select your primary role. You can switch
             between roles at any time in your profile.
           </p>
@@ -71,10 +71,10 @@ export default function SelectRole() {
                   {item.icon}
                 </div>
                 <div className="flex flex-col text-start">
-                  <h3 className="font-helvetica text-lg font-medium text-black">
+                  <h3 className="font-grotesk text-lg font-medium text-neutral-800">
                     {item.name}
                   </h3>
-                  <p className="font-bricolage text-sm text-neutral-500">
+                  <p className="font-grotesk text-sm font-light text-neutral-600">
                     {item.content}
                   </p>
                 </div>

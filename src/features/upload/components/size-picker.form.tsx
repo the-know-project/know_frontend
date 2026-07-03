@@ -197,7 +197,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
                     <Input
                       type="number"
                       placeholder="0"
-                      className="font-bricolage [appearance:textfield] border-0 bg-transparent pr-16 text-sm font-normal text-neutral-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="font-grotesk [appearance:textfield] border-0 bg-transparent pr-16 text-sm font-normal text-neutral-600 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       value={currentValue}
                       onChange={(e) =>
                         handleInputChange(dimension.key, e.target.value)

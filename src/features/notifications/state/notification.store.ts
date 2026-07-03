@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { INotificationState } from "./interface/notification.interface";
+import { INotificationData } from "../types/notification.types";
 
 export const useNotificationStore = create<INotificationState>()(
   persist(
@@ -54,9 +55,13 @@ export const useNotificationStore = create<INotificationState>()(
   ),
 );
 
+const EMPTY_NOTIFICATIONS: INotificationData[] = [];
+
 export const useUserNotifications = (userId: string | null) =>
   useNotificationStore((state) =>
-    userId ? state.notifications[userId] || [] : [],
+    userId
+      ? state.notifications[userId] || EMPTY_NOTIFICATIONS
+      : EMPTY_NOTIFICATIONS,
   );
 
 export const useIsNotificationsLoading = (userId: string | null) =>
@@ -65,25 +70,13 @@ export const useIsNotificationsLoading = (userId: string | null) =>
   );
 
 export const useNotificationActions = () => {
-  const setNotifications = useNotificationStore(
-    (state) => state.setNotifications,
-  );
-  const removeNotification = useNotificationStore(
-    (state) => state.removeNotification,
-  );
-  const removeNotifications = useNotificationStore(
-    (state) => state.removeNotifications,
-  );
-  const setLoading = useNotificationStore((state) => state.setLoading);
-  const clearUserNotifications = useNotificationStore(
-    (state) => state.clearUserNotifications,
-  );
+  const state = useNotificationStore.getState();
 
   return {
-    setNotifications,
-    removeNotification,
-    removeNotifications,
-    setLoading,
-    clearUserNotifications,
+    setNotifications: state.setNotifications,
+    removeNotification: state.removeNotification,
+    removeNotifications: state.removeNotifications,
+    setLoading: state.setLoading,
+    clearUserNotifications: state.clearUserNotifications,
   };
 };

@@ -22,6 +22,7 @@ import { useForm } from "react-hook-form";
 import { useUploadContext } from "../context/upload-context";
 import { UploadFormSchema } from "../schema/upload.schema";
 import { IUploadFormState } from "../types/upload.types";
+import { Settings2Icon } from "lucide-react";
 
 interface UploadFormProps {
   onSaveDraft?: (data: IUploadFormState) => void;
@@ -38,7 +39,7 @@ const UploadForm = ({
 }: UploadFormProps) => {
   const [dragging, setDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const { uploadData, updateBasicInfo } = useUploadContext();
+  const { uploadData, updateBasicInfo, setIsEditorOpen } = useUploadContext();
 
   const form = useForm<IUploadFormState>({
     resolver: zodResolver(UploadFormSchema),
@@ -127,7 +128,7 @@ const UploadForm = ({
           <IconX width={20} height={20} color="white" />
         </button>
         <div className="flex gap-4 px-[50px]">
-          <button
+          {/*<button
             className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#F97316] sm:text-[16px]"
             onClick={handleSaveDraft}
             type="button"
@@ -137,13 +138,13 @@ const UploadForm = ({
             <div className="flex items-center justify-center rounded-full bg-orange-200 p-2 sm:hidden">
               <IconCloudDownload className="flex text-[#F97316]" />
             </div>
-          </button>
+          </button>*/}
 
           {isPending ? (
             <Spinner borderColor="border-blue" />
           ) : (
             <button
-              className="font-bricolage sm: relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#1E3A8A] sm:text-[16px]"
+              className="font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
               onClick={() => {
                 if (watchedFile && watchedTitle) {
                   const data: IUploadFormState = {
@@ -155,12 +156,16 @@ const UploadForm = ({
               }}
               disabled={!watchedFile || !watchedTitle}
             >
-              <p className="hidden sm:flex">Continue</p>
-              <div className="flex items-center justify-center rounded-full bg-blue-200 p-2 sm:hidden">
-                <IconCheck className="flex text-[#1E3A8A]" />
-              </div>
+              <p className="flex">Continue</p>
             </button>
           )}
+
+          <button
+            onClick={() => setIsEditorOpen(true)}
+            className="font-bebas relative z-10 rounded-lg bg-neutral-800 px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
+          >
+            <Settings2Icon className="motion-preset-expand motion-duration-200 h-4 w-4 text-neutral-300" />
+          </button>
         </div>
       </div>
 
@@ -180,7 +185,7 @@ const UploadForm = ({
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="font-bricolage placeholder:font-bricolage bg-transparent text-[35px] text-[#666666] placeholder:text-lg placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0"
+                    className="font-grotesk placeholder:font-grotesk bg-transparent text-lg font-medium text-neutral-600 placeholder:text-lg placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0"
                     placeholder="Title of your project"
                     {...field}
                     onChange={(e) => {
@@ -231,24 +236,24 @@ const UploadForm = ({
                             />
                           ) : null}
                           <div className="bg-opacity-20 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity hover:opacity-100">
-                            <p className="font-bricolage text-sm text-white">
+                            <p className="font-grotesk text-sm font-light text-white">
                               Click to change file
                             </p>
                           </div>
                         </div>
                       ) : (
                         <>
-                          <IconFileUpload className="mb-2 text-4xl text-gray-500" />
-                          <p className="font-bricolage font-semibold text-gray-600">
+                          <IconFileUpload className="mb-2 text-4xl text-neutral-400" />
+                          <p className="font-grotesk font-medium text-neutral-600">
                             Drag and drop an image, or{" "}
-                            <span className="font-semibold text-blue-600 underline">
+                            <span className="text-blue-600 underline">
                               Browse
                             </span>
                           </p>
-                          <p className="font-bricolage mt-2 text-sm text-gray-400">
+                          <p className="font-grotesk mt-2 text-sm font-light text-neutral-600">
                             Max 120mb each (25mb for videos)
                           </p>
-                          <div className="font-bricolage mt-4 space-y-1 text-sm text-gray-500">
+                          <div className="font-grotesk mt-4 space-y-1 text-sm font-light text-neutral-600">
                             <p>- Only upload media you own the rights to</p>
                             <p>- Video (mp4)</p>
                             <p>- Upload high resolution images (png, jpg)</p>
@@ -272,10 +277,10 @@ const UploadForm = ({
 
           {/* File Preview */}
           {watchedFile && (
-            <div className="font-bricolage mt-6 text-center">
-              <p className="text-sm text-gray-600">Selected file:</p>
-              <p className="text-base font-medium">{watchedFile.name}</p>
-              <p className="text-sm text-gray-400">
+            <div className="font-groetsk mt-6 text-center text-sm font-normal">
+              <p className="text-sm text-neutral-600">Selected file:</p>
+              <p className="text-sm font-medium">{watchedFile.name}</p>
+              <p className="text-sm text-neutral-400">
                 {(watchedFile.size / (1024 * 1024)).toFixed(2)} MB
               </p>
             </div>

@@ -52,13 +52,13 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
 
   return (
     <section className="editor_container">
-      <div className="space-y-4">
+      <div className="space-y-2">
         {/* Tag Input */}
         <div className="flex items-center justify-between rounded-lg bg-transparent p-3">
           <Input
             type="text"
-            placeholder="Add tags"
-            className="placeholder:font-bricolage font-bricolage border border-neutral-500 bg-white text-neutral-800 placeholder:text-neutral-500"
+            placeholder="Tags"
+            className="placeholder:font-grotesk font-grotesk border bg-white text-sm text-neutral-600 placeholder:text-neutral-600 focus:ring-0 focus:outline-none"
             value={inputValue}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}

@@ -83,7 +83,7 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
                   className="h-5 w-5 cursor-pointer rounded-[15px] accent-neutral-800"
                 />
               </div>
-              <span className="font-bricolage text-sm text-neutral-700 capitalize">
+              <span className="font-grotesk text-sm text-neutral-600 capitalize">
                 {category}
               </span>
             </label>

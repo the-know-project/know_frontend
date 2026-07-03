@@ -40,7 +40,9 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">What is Know?</div>
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
+                    What is Know?
+                  </div>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="origin-left">
@@ -57,7 +59,7 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
                     How do artists get paid?
                   </div>
                 </div>
@@ -76,7 +78,7 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
                     Do buyers need to use cryptocurrency?
                   </div>
                 </div>
@@ -94,7 +96,7 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
                     Is it safe to buy art on Know?
                   </div>
                 </div>
@@ -112,7 +114,7 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
                     What currencies are supported?
                   </div>
                 </div>
@@ -131,7 +133,7 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
                     How long does delivery take?
                   </div>
                 </div>
@@ -150,7 +152,9 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">Can I track my order?</div>
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
+                    Can I track my order?
+                  </div>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="origin-left">
@@ -165,7 +169,7 @@ const Faq = () => {
               <AccordionTrigger className="w-full py-0.5 text-left text-zinc-950 dark:text-zinc-50">
                 <div className="flex items-center">
                   <IconChevronRight className="h-4 w-4 text-zinc-950 transition-transform duration-200 group-data-expanded:rotate-90 dark:text-zinc-50" />
-                  <div className="accordion_title">
+                  <div className="font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50">
                     Do I need a crypto wallet to use Know?
                   </div>
                 </div>

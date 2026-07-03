@@ -55,7 +55,7 @@ const TextEffectWithExit: React.FC<ITextEffect> = ({ text, style }) => {
 
   return (
     <TextEffect
-      className={`font-grotesk inline-flex text-sm font-bold capitalize lg:text-lg ${style}`}
+      className={`font-grotesk inline-flex text-sm font-light capitalize lg:text-lg ${style}`}
       per="char"
       variants={blurSlideVariants}
       trigger={trigger}

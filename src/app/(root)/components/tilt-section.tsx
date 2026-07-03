@@ -33,7 +33,7 @@ export default function TiltSection({
           <p className="font-bebas text-lg text-neutral-400 uppercase">
             {role}
           </p>
-          <h2 className="font-bricolage mb-4 text-2xl font-medium capitalize md:text-3xl">
+          <h2 className="font-helvetica mb-4 text-2xl font-medium capitalize md:text-3xl">
             {title}
           </h2>
           <p className="about_content_text">{subtitle}</p>

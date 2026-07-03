@@ -16,7 +16,7 @@ const SignUp = () => {
             height={60}
             quality={100}
           />
-          <p className="font-bricolage text-sm font-medium text-neutral-600">
+          <p className="font-grotesk text-sm font-medium text-neutral-600">
             Already have an account?{" "}
             <Link
               href="/login"

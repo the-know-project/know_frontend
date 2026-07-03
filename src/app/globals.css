@@ -163,7 +163,7 @@
   }
 
   .title_text {
-    @apply font-helvetica text-4xl font-semibold text-black capitalize;
+    @apply font-helvetica text-3xl font-semibold text-neutral-800 capitalize;
   }
 
   .button_icon {
@@ -171,27 +171,27 @@
   }
 
   .accordion_title {
-    @apply font-bricolage ml-2 font-medium text-nowrap text-zinc-950 capitalize sm:text-lg lg:text-xl dark:text-zinc-50;
+    @apply font-helvetica ml-2 font-medium text-nowrap text-neutral-800 capitalize sm:text-lg lg:text-xl dark:text-neutral-50;
   }
 
   .accordion_content {
-    @apply font-bricolage max-w-prose pr-2 pl-6 text-zinc-500 dark:text-zinc-400;
+    @apply font-grotesk max-w-prose pr-2 pl-6 text-neutral-600 dark:text-neutral-400;
   }
 
   .about_content_text {
-    @apply font-bricolage max-w-prose text-sm text-gray-800 md:text-[16px] lg:text-[18px] dark:text-gray-200;
+    @apply font-grotesk max-w-prose text-sm text-neutral-600 md:text-[16px] lg:text-[18px] dark:text-gray-200;
   }
 
   .signup_form_label {
-    @apply font-helvetica text-sm font-bold tracking-wide text-neutral-700 uppercase;
+    @apply font-grotesk text-sm font-bold tracking-wide text-neutral-600 uppercase;
   }
 
   .signup_form_input {
-    @apply font-bricolage placeholder:font-bricolage flex w-full rounded-sm bg-neutral-100 text-neutral-700 shadow-sm placeholder:text-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0 md:max-w-[600px];
+    @apply font-grotesk placeholder:font-grotesk flex w-full rounded-sm bg-neutral-50 text-sm text-neutral-600 shadow-sm placeholder:text-sm placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0 md:max-w-[600px];
   }
 
   .signup_error_message {
-    @apply font-bricolage text-xs font-light text-red-500 capitalize;
+    @apply font-grotesk text-xs font-light text-red-500 capitalize;
   }
 
   .explore_logo_wrapper {
@@ -215,7 +215,7 @@
   }
 
   .editor_title_font {
-    @apply font-helvetica text-[20px] font-bold text-neutral-900 capitalize;
+    @apply font-helvetica text-[20px] font-bold text-neutral-800 capitalize;
   }
 
   .notification_card {

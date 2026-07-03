@@ -50,7 +50,8 @@ export const RoleSelectionItems = [
   {
     id: 2,
     name: "Buyer",
-    content: "Discover unique artworks, connect with artists, and build you",
+    content:
+      "Discover unique artworks, connect with artists, and build your collection",
     icon: React.createElement(IconShoppingBag, { size: 24, stroke: 1.5 }),
   },
 ] as const;

@@ -96,7 +96,7 @@ const JoinCtaForm = () => {
               <FormItem>
                 <FormControl>
                   <Input
-                    className="font-bricolage placeholder:font-bebas !important flex w-full rounded-lg bg-neutral-100 text-neutral-700 shadow-sm placeholder:text-sm placeholder:text-neutral-700 focus-visible:shadow-none focus-visible:ring-0 md:min-w-[400px]"
+                    className="font-grotesk placeholder:font-grotesk !important flex w-full rounded-lg bg-neutral-50 font-light text-neutral-600 shadow-sm placeholder:text-sm placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0 md:min-w-[400px]"
                     placeholder="Enter your email"
                     {...field}
                   />

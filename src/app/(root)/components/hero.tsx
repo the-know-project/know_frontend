@@ -17,10 +17,9 @@ export default function Hero() {
               </h3>
             </GradientText>
             <div className="flex w-full flex-col gap-[80px] lg:gap-[50px]">
-              <p className="font-bricolage max-w-prose text-lg font-medium text-neutral-100 capitalize md:text-2xl lg:text-xl">
-                A blockchain-powered platform connecting{" "}
-                <br className="hidden md:block" /> artist and buyers like never
-                before
+              <p className="font-grotesk max-w-prose text-lg font-medium text-white capitalize md:text-2xl lg:text-xl">
+                connecting <br className="hidden md:block" /> artists and buyers
+                like never before
               </p>
               <NavbarButton
                 colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
@@ -28,7 +27,7 @@ export default function Hero() {
               >
                 <Link
                   href={`/role`}
-                  className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-xl font-medium text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 lg:text-lg"
+                  className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1.5 text-lg font-medium tracking-wider text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
                 >
                   Join The Movement
                   <IconArrowRight

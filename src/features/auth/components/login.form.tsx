@@ -170,7 +170,7 @@ const LoginForm = () => {
                 <div className="flex w-full flex-col items-end justify-end">
                   <Link
                     href="/forgot-password"
-                    className="font-bricolage flex cursor-pointer text-sm text-red-500"
+                    className="font-grotesk flex cursor-pointer text-sm font-medium text-red-500"
                   >
                     Forgot password?
                   </Link>
