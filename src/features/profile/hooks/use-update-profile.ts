@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTokenStore } from "@/src/features/auth/state/store";
+import { useRoleStore, useTokenStore } from "@/src/features/auth/state/store";
 import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
 import { IUpdateProfileRequest } from "../types/user.types";
 import { ProfileError } from "../error/profile.error";
@@ -7,6 +7,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { updateProfile } from "../api/update-profile/route";
 import { IUpdateProfileResponseDto } from "../types/profile.types";
 import { showLog } from "@/src/utils/logger";
+import { IRole } from "../../auth/types/auth.types";
 
 type UpdateProfileParams = Omit<IUpdateProfileRequest, "userId">;
 export const useUpdateProfile = () => {
@@ -44,13 +45,22 @@ export const useUpdateProfile = () => {
       return result.value as IUpdateProfileResponseDto;
     },
 
-    onSuccess: (result) => {
+    onSuccess: (result, params) => {
+      const updateUser = useTokenStore.getState().updateUser;
+      if (result.data) {
+        updateUser(result.data);
+      }
+
+      if (params.role) {
+        if (params.role !== useRoleStore.getState().role) {
+          console.log("Role has changed, updating role in store");
+          useRoleStore.getState().setRole(result.data.role as IRole);
+        }
+      }
+
       queryClient.invalidateQueries({
         queryKey: ["user", "fetch-explore-asset"],
       });
-
-      const updateUser = useTokenStore.getState().updateUser;
-      if (result.data) updateUser(result.data);
     },
 
     onError: (error: Error) => {
