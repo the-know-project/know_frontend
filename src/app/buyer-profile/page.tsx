@@ -90,9 +90,11 @@ const Page = () => {
                   {`${item.artistFirstName} ${item.artistLastName}`}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-xs text-gray-600 sm:text-sm">
+                  <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-600 sm:text-sm">
                     <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span>{item.viewCount || 0}</span>
+                    <span className="font-grotesk font-semibold text-neutral-800">
+                      {item.viewCount || 0}
+                    </span>
                   </div>
                   <Link href={`/checkout?orderId=${item.id}`}>
                     <button className="flex items-center gap-1 text-xs font-medium text-blue-600 transition-colors hover:text-blue-700 sm:text-sm">
@@ -329,7 +331,7 @@ const Page = () => {
                 if (el) tabRefs.current.set(tab, el);
               }}
               onClick={() => setActiveTab(tab)}
-              className={`font-bricolage text-[14px] capitalize hover:scale-105 active:scale-95 sm:text-[16px] lg:text-[18px] ${
+              className={`font-bebas text-[16px] capitalize hover:scale-105 active:scale-95 lg:text-[18px] ${
                 activeTab === tab
                   ? "font-semibold text-neutral-900 transition-colors duration-300"
                   : "text-neutral-500"
@@ -378,7 +380,9 @@ const EmptyState = ({ message }: { message: string }) => (
     <div className="rounded-full bg-gray-100 p-4 sm:p-6">
       <ShoppingCart className="h-10 w-10 text-gray-400 sm:h-12 sm:w-12" />
     </div>
-    <p className="order_sub_title">{message}</p>
+    <p className="font-bebas text-sm tracking-wider text-neutral-600">
+      {message}
+    </p>
     <p className="profile_content">
       Browse our collection to find something you love
     </p>
