@@ -52,6 +52,7 @@ export const UpdateProfileRequestSchema = z.object({
   oldPassword: z.string().optional(),
   newPassword: z.string().optional(),
   profilePicture: z.instanceof(File).optional(),
+  role: z.enum(["ARTIST", "BUYER"]).optional(),
 });
 
 export type IUpdateProfileRequest = z.infer<typeof UpdateProfileRequestSchema>;
