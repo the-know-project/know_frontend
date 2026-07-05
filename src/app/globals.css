@@ -203,11 +203,11 @@
   }
 
   .upload_editor_button {
-    @apply font-bricolage relative inline-flex w-fit items-center gap-1 rounded-lg bg-orange-600 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] sm:text-[16px];
+    @apply font-grotesk relative inline-flex w-fit items-center gap-1 rounded-lg bg-orange-600 px-2.5 py-1.5 text-sm font-medium text-white capitalize outline outline-[#fff2f21f] sm:text-[16px];
   }
 
   .upload_editor_input {
-    @apply placeholder:font-bricolage font-bricolage ml-3 [appearance:textfield] bg-transparent text-right font-bold text-white outline outline-[#fff2f21f] placeholder:text-white focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none;
+    @apply placeholder:font-grotesk font-grotesk ml-3 [appearance:textfield] bg-transparent text-right font-bold text-white outline outline-[#fff2f21f] placeholder:text-white focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none;
   }
 
   .editor_container {
@@ -247,11 +247,11 @@
   }
 
   .order_title {
-    @apply font-bricolage font-bold text-neutral-900 capitalize sm:text-2xl lg:text-3xl;
+    @apply font-helvetica font-bold text-neutral-800 capitalize sm:text-2xl lg:text-3xl;
   }
 
   .order_sub_title {
-    @apply font-bricolage text-sm font-semibold text-neutral-800 capitalize sm:text-[16px];
+    @apply font-grotesk text-sm font-semibold text-neutral-600 capitalize sm:text-[16px];
   }
 
   .profile_content {
