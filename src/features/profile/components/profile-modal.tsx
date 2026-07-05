@@ -13,8 +13,9 @@ import {
   useToggleEditProfile,
 } from "@/src/features/profile/artist/store/artist-profile.store";
 import EditProfileModal from "./edit-profile-modal";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { showLog } from "@/src/utils/logger";
+import { useUpdateProfile } from "../hooks/use-update-profile";
 
 interface ProfileModalProps {
   firstName: string;
@@ -37,6 +38,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const toggleEditProfile = useToggleEditProfile();
   const isOpen = useIsEditProfileToggled(userId);
   const { mutate: handleLogout, isPending: isLoggingOut } = useLogout();
+  const { mutateAsync: updateProfile, isPending: isUpdating } =
+    useUpdateProfile();
 
   useEffect(() => {
     return () => {
@@ -49,21 +52,41 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       ? ProfileModalItemsBuyer
       : ProfileModalItemsArtist;
 
-  const handleNavigation = (ctx: string) => {
+  const handleNavigation = async (ctx: string) => {
     const action = ctx.toLowerCase();
 
-    if (action === "my profile") {
-      if (role.toLowerCase() === "buyer") {
-        router.push("/buyer-profile");
-      } else if (role.toLowerCase() === "artist") {
-        router.push("/artist-profile");
-      }
-    } else if (action === "sign out") {
-      handleLogout();
-    } else if (action === "edit profile") {
-      if (userId) {
-        toggleEditProfile(userId);
-      }
+    switch (action) {
+      case "my profile":
+        if (role.toLowerCase() === "buyer") {
+          router.push("/buyer-profile");
+        } else if (role.toLowerCase() === "artist") {
+          router.push("/artist-profile");
+        }
+        break;
+      case "sign out":
+        handleLogout();
+        break;
+      case "edit profile":
+        if (userId) {
+          toggleEditProfile(userId);
+        }
+        break;
+      case "switch to artist":
+        if (role.toLowerCase() === "buyer") {
+          await updateProfile({ role: "ARTIST" });
+          break;
+        }
+      case "switch to buyer":
+        if (role.toLowerCase() === "artist") {
+          await updateProfile({ role: "BUYER" });
+          break;
+        }
+      default:
+        showLog({
+          context: "Profile Modal Navigation",
+          data: `Unhandled action: ${action}`,
+        });
+        break;
     }
   };
 
