@@ -45,7 +45,9 @@ export const useUpdateProfile = () => {
     },
 
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({
+        queryKey: ["user", "fetch-explore-asset"],
+      });
 
       const updateUser = useTokenStore.getState().updateUser;
       if (result.data) updateUser(result.data);
