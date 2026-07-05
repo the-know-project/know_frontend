@@ -8,5 +8,3 @@ export const selectIsAuthenticated = (state: ITokenState) =>
 export const selectHasHydrated = (state: ITokenState) => state.hasHydrated;
 
 export const updateUser = (state: ITokenState) => state.updateUser;
-
-export const setRole = (state: IRoleState) => state.setRole;
