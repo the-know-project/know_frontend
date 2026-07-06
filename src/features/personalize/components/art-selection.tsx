@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { DummyArtPreferences } from "../data/personalize.data";
 import { useGetCategories, usePersonalizeExp } from "../hooks";
 import ArtSelectionSkeleton from "./art-selection-skeleton";
+import { logger } from "@/src/utils/logger";
 
 interface IPersonalizeExp {
   status: number;
@@ -23,6 +24,8 @@ const ArtSelection = () => {
   const { mutateAsync: personalizeExp, isPending } = usePersonalizeExp();
   const [selectedArt, setSelectedArt] = useState<string[]>([]);
   const router = useRouter();
+
+  logger.info("ArtSelection component rendered. Data:", data);
 
   const handleSelection = (pref: string) => {
     setSelectedArt((prev) => {
@@ -104,7 +107,7 @@ const ArtSelection = () => {
         {artPreferences?.map((pref, index) => (
           <button
             key={index}
-            className="motion-duration-500 motion-preset-expand font-bebas group inline-flex w-fit rounded-md bg-black px-2 py-1 text-[16px] font-bold text-nowrap text-white shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
+            className="motion-duration-500 motion-preset-expand font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
             style={{
               animationDelay: `${index * 100}ms`,
             }}
