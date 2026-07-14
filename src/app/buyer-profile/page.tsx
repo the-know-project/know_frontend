@@ -134,7 +134,7 @@ const Page = () => {
     }
 
     return (
-      <div className="grid grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 lg:gap-6">
+      <div className="grid grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
         <AnimatePresence>
           {cartItems.map((item, index) => (
             <motion.div
@@ -401,7 +401,7 @@ const Page = () => {
 
   return (
     <BuyerGuard>
-      <div className="-mt-[50px] flex w-full flex-col items-center justify-center px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <div className="-mt-[50px] flex w-full flex-col items-center justify-center px-4 py-4 sm:px-6 sm:py-6 lg:items-start lg:justify-start lg:px-8">
         {isExploreContentToggled && <ArtDetails />}
         {/* Tabs */}
         <div
@@ -516,7 +516,7 @@ const LoadingPendingOrders = () => (
 );
 
 const EmptyState = ({ message }: { message: string }) => (
-  <div className="flex min-h-[300px] flex-col items-center justify-center py-8 sm:min-h-[400px] sm:py-12">
+  <div className="flex min-h-[300px] flex-col items-center justify-center self-center py-8 sm:min-h-[400px] sm:py-12">
     <div className="rounded-full bg-gray-100 p-4 sm:p-6">
       <ShoppingCart className="h-10 w-10 text-gray-400 sm:h-12 sm:w-12" />
     </div>
