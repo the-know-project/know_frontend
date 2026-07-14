@@ -222,15 +222,15 @@ const ArtDetails = () => {
                     {/* Artwork Image */}
                     <div className="mt-8 flex w-full">
                       <div className="relative w-full overflow-hidden">
-                        <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
+                        <div className="flex min-h-[400px] items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200 lg:min-h-[600px]">
                           <Image
                             src={exploreContent?.highResUrl || empty}
                             alt="art_work"
                             quality={100}
                             priority
-                            width={700}
-                            height={500}
-                            className="w-full object-contain object-center"
+                            width={1920}
+                            height={1080}
+                            className="h-auto w-full object-cover object-center"
                           />
                         </div>
                       </div>
@@ -248,6 +248,7 @@ const ArtDetails = () => {
                         {exploreContent?.userId && (
                           <ExploreArtistInfo
                             artistId={exploreContent.userId}
+                            userId={followerId}
                             artwork={exploreContent}
                           />
                         )}
