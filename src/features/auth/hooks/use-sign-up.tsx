@@ -1,9 +1,8 @@
 import { handleAxiosError } from "@/src/utils/handle-axios-error";
 import { useMutation } from "@tanstack/react-query";
 import { signUp } from "../api/sign-up/route";
-import { SignUpResponseDto } from "../dto/auth.dto";
 import { useRoleStore } from "../state/store/role.store";
-import { ISignUpForm } from "../types/auth.types";
+import { ISignUpForm, ISignUpResponseDto } from "../types/auth.types";
 
 export const useSignUp = () => {
   const role = useRoleStore((state) => state.role);
@@ -14,7 +13,7 @@ export const useSignUp = () => {
           ...ctx,
           role: role,
         });
-        return SignUpResponseDto.parse(result);
+        return result as ISignUpResponseDto;
       } catch (error) {
         handleAxiosError(error);
 
