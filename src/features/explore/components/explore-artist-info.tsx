@@ -8,13 +8,19 @@ import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 interface ExploreArtistInfoProps {
   artistId: string;
   artwork: IExploreContent;
+
+  userId?: string;
 }
 
-const ExploreArtistInfo = ({ artistId, artwork }: ExploreArtistInfoProps) => {
+const ExploreArtistInfo = ({
+  artistId,
+  artwork,
+  userId,
+}: ExploreArtistInfoProps) => {
   return (
     <div className="w-full space-y-4">
       {/* Artist Info Card with Follow/Checkout */}
-      <ArtistInfoCard artistId={artistId} />
+      {userId && userId === artistId && <ArtistInfoCard artistId={artistId} />}
 
       {/* Art Info Card with Details and Price */}
       <ArtInfoCard artwork={artwork} />
