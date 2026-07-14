@@ -72,7 +72,6 @@ export const useRemoveFromCart = ({
           user.id,
         ]);
 
-        // 4. Optimistically update React Query cache
         if (previousCart) {
           queryClient.setQueryData<IUserCart>(
             ["fetch-user-cart", user.id],
@@ -82,9 +81,12 @@ export const useRemoveFromCart = ({
 
               const newItem: TCart = {
                 id: oldData?.id || "",
+                artistId: oldData?.artistId || "",
+                artistProfilePicture: oldData?.artistProfilePicture || "",
                 price: oldData?.price || 0,
                 quantity: oldData?.quantity || 1,
                 url: oldData?.url || "",
+                highResUrl: oldData?.highResUrl || "",
                 fileId,
                 artistFirstName: oldData?.artistFirstName || "",
                 artistLastName: oldData?.artistLastName || "",
