@@ -67,9 +67,12 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
 
             const newItem: TCart = {
               id: oldData?.id || "",
+              artistId: oldData?.artistId || "",
+              artistProfilePicture: oldData?.artistProfilePicture || "",
               price: oldData?.price || 0,
               quantity: oldData?.quantity || 1,
               url: oldData?.url || "",
+              highResUrl: oldData?.highResUrl || "",
               fileId,
               artistFirstName: oldData?.artistFirstName || "",
               artistLastName: oldData?.artistLastName || "",
