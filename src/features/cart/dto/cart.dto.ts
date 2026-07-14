@@ -14,6 +14,18 @@ export const CartData = z.object({
   fileId: z.string(),
   quantity: z.number().min(1).max(100),
   price: z.number().min(0).max(1000),
+  size: z.object({
+    width: z.number(),
+    height: z.number(),
+    weight: z.number(),
+    depth: z.number().optional(),
+    diameter: z.number().optional(),
+    length: z.number().optional(),
+    weightUnit: z.string().optional(),
+    dimensionUnit: z.string().optional(),
+    aspectRatio: z.string().optional(),
+  }),
+  tags: z.array(z.string()).optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
