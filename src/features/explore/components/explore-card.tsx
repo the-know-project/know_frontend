@@ -13,6 +13,7 @@ import { useCart } from "../../cart/hooks/use-cart";
 import { useCartHydration } from "../../cart/state/cart.store";
 import { useAssetLike } from "../hooks/use-asset-like";
 import { useToggleExploreContent } from "../state/explore-content.store";
+import { ShoppingCart } from "lucide-react";
 
 interface ExploreCardProps {
   id: number | string;
@@ -188,16 +189,16 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           {showCartButton && (
             <button onClick={toggleCart} className="group">
               {isCartHydrated && isItemInCart ? (
-                <IconShoppingCartFilled
+                <ShoppingCart
                   width={30}
                   height={30}
-                  className="text-purple-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
+                  className="text-[#1E3A8A] transition-all duration-200 group-hover:scale-105 group-active:scale-95"
                 />
               ) : (
-                <IconShoppingCart
+                <ShoppingCart
                   width={30}
                   height={30}
-                  className="text-neutral-700 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
+                  className="text-neutral-600 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
                 />
               )}
             </button>
