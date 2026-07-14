@@ -1,3 +1,4 @@
+"use server";
 const SECRET = "temp-secret-123456";
 
 export async function encryptData(data: any) {
