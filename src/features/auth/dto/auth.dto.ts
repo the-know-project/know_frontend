@@ -7,11 +7,21 @@ const AuthSuccessDataDto = z.object({
     id: z.string().uuid(),
     email: z.string().email().min(1).max(100),
     firstName: z.string().min(1).max(100),
-    // FIX: Remove the max(100) constraint for imageUrl
-    imageUrl: z.string().url().optional(), // ✅ Changed from .min(1).max(100)
+    imageUrl: z.string().url().optional(),
     role: RoleSchema.optional(),
     isFirstTime: z.boolean().optional(),
   }),
+});
+
+const SignUpSuccessDataDto = z.object({
+  id: z.string().uuid(),
+  email: z.string().email().min(1).max(100),
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  role: RoleSchema.optional(),
+  authProvider: z.string().min(1).max(100),
+  isFirstTime: z.boolean().optional(),
+  imageUrl: z.string().url().optional(),
 });
 
 export const SendOtpResponseDto = z.object({
@@ -35,7 +45,7 @@ export const ResetPasswordResponseDto = z.object({
 export const SignUpResponseDto = z.object({
   status: z.number(),
   message: z.string().min(1).max(100),
-  data: z.string().min(1).max(100).optional(),
+  data: SignUpSuccessDataDto,
 });
 
 export const LoginResponseDto = z.object({
