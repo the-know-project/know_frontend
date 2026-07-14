@@ -23,6 +23,13 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
           <div className="font-grotesk text-[12px] font-light text-neutral-600">
             <p>Height: {artwork.size.height}cm</p>
             <p>Width: {artwork.size.width}cm</p>
+            <p>Depth: {artwork.size.depth}cm</p>
+            <p>
+              Weight: {artwork.size.weight}
+              {artwork.size.weightUnit}
+            </p>
+            <p>Diameter: {artwork.size.diameter}cm</p>
+            <p>Aspect Ratio: {artwork.size.aspectRatio}</p>
           </div>
         )}
       </div>
