@@ -14,6 +14,9 @@ import { useCartHydration } from "../../cart/state/cart.store";
 import { useAssetLike } from "../hooks/use-asset-like";
 import { useToggleExploreContent } from "../state/explore-content.store";
 import { ShoppingCart } from "lucide-react";
+import { useTokenStore } from "../../auth/state/store";
+import { selectUserId } from "../../auth/state/selectors/token.selectors";
+import { logger } from "@/src/utils/logger";
 
 interface ExploreCardProps {
   id: number | string;
@@ -71,6 +74,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   });
 
   const toggleExploreContent = useToggleExploreContent();
+  const artistId = useTokenStore(selectUserId);
 
   const showCartButton = useMemo(() => {
     return isCartHydrated && role.toLowerCase() === "buyer" && isListed;
@@ -111,6 +115,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   if (error) {
     console.log(error);
   }
+
+  logger.debug("ExploreCard", {
+    userId: userId,
+    artistId: artistId,
+  });
 
   return (
     <section
@@ -187,7 +196,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
 
         <div className="flex items-center gap-2">
           {showCartButton && (
-            <button onClick={toggleCart} className="group">
+            <button
+              disabled={userId === artistId}
+              onClick={toggleCart}
+              className="group"
+            >
               {isCartHydrated && isItemInCart ? (
                 <ShoppingCart
                   width={30}
@@ -198,7 +211,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
                 <ShoppingCart
                   width={30}
                   height={30}
-                  className="text-neutral-600 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
+                  className="text-neutral-500 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
                 />
               )}
             </button>
