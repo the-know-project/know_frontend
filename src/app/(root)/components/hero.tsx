@@ -18,8 +18,7 @@ export default function Hero() {
             </GradientText>
             <div className="flex w-full flex-col gap-[80px] lg:gap-[50px]">
               <p className="font-grotesk max-w-prose text-lg font-medium text-white capitalize md:text-2xl lg:text-xl">
-                connecting <br className="hidden md:block" /> artists and buyers
-                like never before
+                connecting artists and buyers like never before
               </p>
               <NavbarButton
                 colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
