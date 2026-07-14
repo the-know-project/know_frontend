@@ -130,7 +130,7 @@ const ArtSelection = () => {
         className="mt-[150px] flex w-full items-center justify-center self-center"
       >
         <button
-          className="font-bebas group relative inline-flex w-full items-center justify-center gap-1 self-center rounded-lg bg-black px-2.5 py-1.5 text-[16px] font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-300 hover:scale-110 active:scale-95"
+          className="font-bebas group relative inline-flex w-full items-center justify-center gap-1 self-center rounded-lg bg-[#1E3A8A] px-2.5 py-1.5 text-[16px] font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-300 hover:scale-110 active:scale-95"
           onClick={handlePersonalizeExp}
           disabled={isPending || selectedArt.length === 0}
         >
