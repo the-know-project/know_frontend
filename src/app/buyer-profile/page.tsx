@@ -1,10 +1,17 @@
 "use client";
 import { BuyerGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
+import { TCart } from "@/src/features/cart/types/cart.types";
+import {
+  useIsExploreContentToggled,
+  useToggleExploreContent,
+} from "@/src/features/explore/state/explore-content.store";
 import { useFetchOrdersSummary } from "@/src/features/orders/hooks/use-fetch-orders-summary";
 import { useFetchUserOrders } from "@/src/features/orders/hooks/use-fetch-user-orders";
+import { TOrdersData } from "@/src/features/orders/types/orders.types";
+import ArtDetails from "@/src/shared/components/art-details";
+import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { formatDate } from "@/src/utils/date";
-import { showLog } from "@/src/utils/logger";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye, ShoppingCart } from "lucide-react";
 import Image from "next/image";
@@ -43,6 +50,65 @@ const Page = () => {
 
   const { data: ordersSummary } = useFetchOrdersSummary();
 
+  const { isExploreContentToggled } = useIsExploreContentToggled();
+  const toggleExploreContent = useToggleExploreContent();
+
+  const openArtDetails = (id: string, content: IExploreContent) => {
+    const viewportPosition = {
+      scrollY: window.scrollY,
+      viewportHeight: window.innerHeight,
+    };
+    toggleExploreContent(id, content, viewportPosition);
+  };
+
+  const handleOpenCartArtDetails = (item: TCart) => {
+    const content: IExploreContent = {
+      id: item.fileId,
+      userId: item.artistId,
+      creatorProfileUrl: item.artistProfilePicture || "",
+      creatorName: `${item.artistFirstName} ${item.artistLastName}`.trim(),
+      artName: item.title,
+      description: null,
+      artWorkUrl: item.url,
+      highResUrl: item.url,
+      categories: [],
+      tags: undefined,
+      price: item.price,
+      size: { width: 0, height: 0 },
+      numOfLikes: 0,
+      numOfViews: item.viewCount || 0,
+      numOfComments: 0,
+      isListed: true,
+      createdAt: new Date(item.createdAt),
+    };
+
+    openArtDetails(item.fileId, content);
+  };
+
+  const handleOpenOrderArtDetails = (order: TOrdersData) => {
+    const content: IExploreContent = {
+      id: order.fileId,
+      userId: order.sellerId,
+      creatorProfileUrl: order.artistProfilePicture || "",
+      creatorName: `${order.artistFirstName} ${order.artistLastName}`.trim(),
+      artName: order.name,
+      description: null,
+      artWorkUrl: order.assetUrl,
+      highResUrl: order.assetUrl,
+      categories: [],
+      tags: undefined,
+      price: parseFloat(order.price),
+      size: { width: 0, height: 0 },
+      numOfLikes: 0,
+      numOfViews: 0,
+      numOfComments: 0,
+      isListed: true,
+      createdAt: new Date(order.createdAt),
+    };
+
+    openArtDetails(order.fileId, content);
+  };
+
   const variants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
@@ -74,7 +140,8 @@ const Page = () => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="w-fit items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              className="w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              onClick={() => handleOpenCartArtDetails(item)}
             >
               <Image
                 src={item.url || "/placeholder-art.jpg"}
@@ -82,7 +149,7 @@ const Page = () => {
                 quality={100}
                 width={400}
                 height={300}
-                className="object-contain object-center"
+                className="rounded-[15px] object-cover transition-all duration-300"
               />
               <div className="p-3 sm:p-4">
                 <h3 className="profile_title">{item.title || "Untitled"}</h3>
@@ -96,8 +163,11 @@ const Page = () => {
                       {item.viewCount || 0}
                     </span>
                   </div>
-                  <Link href={`/checkout?orderId=${item.id}`}>
-                    <button className="flex items-center gap-1 text-xs font-medium text-blue-600 transition-colors hover:text-blue-700 sm:text-sm">
+                  <Link
+                    href={`/checkout?orderId=${item.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button className="flex items-center gap-1 text-xs font-medium text-[#1E3A8A] transition-colors hover:text-blue-700 sm:text-sm">
                       <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
                       Checkout
                     </button>
@@ -140,7 +210,10 @@ const Page = () => {
               className="grid grid-cols-1 gap-4 rounded-lg bg-white p-4 shadow sm:p-6 lg:grid-cols-2 lg:gap-6"
             >
               {/* Left Side - Artwork Image */}
-              <div className="flex w-fit items-center justify-center">
+              <div
+                className="flex w-fit cursor-pointer items-center justify-center"
+                onClick={() => handleOpenOrderArtDetails(order)}
+              >
                 <Image
                   src={`${order.assetUrl}` || "/placeholder-art.jpg"}
                   alt={order.name || "Artwork"}
@@ -269,7 +342,8 @@ const Page = () => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="w-fit overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              className="w-fit cursor-pointer overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              onClick={() => handleOpenOrderArtDetails(order)}
             >
               <Image
                 src={`${order.assetUrl}` || "/placeholder-art.jpg"}
@@ -304,6 +378,7 @@ const Page = () => {
                   <Link
                     href={`/orders/${order.id}`}
                     className="text-xs font-medium text-blue-600 hover:text-blue-700 sm:ml-auto sm:text-sm"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     View Details
                   </Link>
@@ -319,6 +394,7 @@ const Page = () => {
   return (
     <BuyerGuard>
       <div className="-mt-[50px] flex w-full flex-col items-center justify-center px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+        {isExploreContentToggled && <ArtDetails />}
         {/* Tabs */}
         <div
           ref={tabContainerRef}
@@ -387,7 +463,7 @@ const EmptyState = ({ message }: { message: string }) => (
       Browse our collection to find something you love
     </p>
     <Link href="/explore">
-      <button className="font-bebas mt-4 rounded-lg bg-blue-600 px-5 py-2 text-xs font-medium tracking-wider text-white transition-colors hover:bg-blue-700 sm:mt-6 sm:px-6 sm:py-2.5 sm:text-sm">
+      <button className="font-bebas mt-4 rounded-lg bg-[#1E3A8A] px-5 py-2 text-xs font-medium tracking-wider text-white transition-colors hover:bg-blue-700 sm:mt-6 sm:px-6 sm:py-2.5 sm:text-sm">
         Browse Artworks
       </button>
     </Link>
