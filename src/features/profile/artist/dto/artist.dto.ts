@@ -42,6 +42,7 @@ export const UserAssetData = z.object({
     length: z.number().optional(),
     weightUnit: z.string().optional(),
     dimensionUnit: z.string().optional(),
+    aspectRatio: z.string().optional(),
   }),
   tags: z.array(z.string()),
   numOfLikes: z.number(),
