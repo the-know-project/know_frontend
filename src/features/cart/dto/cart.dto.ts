@@ -3,6 +3,7 @@ import { z } from "zod";
 export const CartData = z.object({
   id: z.string().uuid(),
   url: z.string().url(),
+  highResUrl: z.string().url(),
   title: z.string(),
   userId: z.string().uuid(),
   artistId: z.string().uuid(),
