@@ -27,8 +27,14 @@ interface ExploreCardProps {
   highResUrl: string;
   price: number;
   size: {
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
+    depth?: number;
+    diameter?: number;
+    aspectRatio?: string;
+    weight?: number;
+    weightUnit?: string;
+    dimensionUnit?: string;
   };
   numOfViews: number;
   createdAt: Date;
