@@ -12,6 +12,7 @@ import { TOrdersData } from "@/src/features/orders/types/orders.types";
 import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { formatDate } from "@/src/utils/date";
+import { logger } from "@/src/utils/logger";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye, ShoppingCart } from "lucide-react";
 import Image from "next/image";
@@ -53,11 +54,18 @@ const Page = () => {
   const { isExploreContentToggled } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
 
+  logger.debug("Cart data,", {
+    cartOrdersData: cartOrdersData,
+  });
+
   const openArtDetails = (id: string, content: IExploreContent) => {
     const viewportPosition = {
       scrollY: window.scrollY,
       viewportHeight: window.innerHeight,
     };
+    logger.debug("Opening art details for ID:", {
+      content: content,
+    });
     toggleExploreContent(id, content, viewportPosition);
   };
 
@@ -70,7 +78,7 @@ const Page = () => {
       artName: item.title,
       description: null,
       artWorkUrl: item.url,
-      highResUrl: item.url,
+      highResUrl: item.highResUrl,
       categories: [],
       tags: undefined,
       price: item.price,
@@ -94,7 +102,7 @@ const Page = () => {
       artName: order.name,
       description: null,
       artWorkUrl: order.assetUrl,
-      highResUrl: order.assetUrl,
+      highResUrl: order.highResUrl,
       categories: [],
       tags: undefined,
       price: parseFloat(order.price),
@@ -147,9 +155,9 @@ const Page = () => {
                 src={item.url || "/placeholder-art.jpg"}
                 alt={"Artwork"}
                 quality={100}
-                width={400}
+                width={500}
                 height={300}
-                className="rounded-[15px] object-cover transition-all duration-300"
+                className="h-[300px] w-full rounded-[15px] object-cover transition-all duration-300"
               />
               <div className="p-3 sm:p-4">
                 <h3 className="profile_title">{item.title || "Untitled"}</h3>
@@ -185,7 +193,7 @@ const Page = () => {
     const pendingOrders = pendingOrdersData?.data?.orders || [];
 
     if (pendingOrdersLoading) {
-      return <LoadingGrid />;
+      return <LoadingPendingOrders />;
     }
 
     if (pendingOrders.length === 0) {
@@ -211,16 +219,16 @@ const Page = () => {
             >
               {/* Left Side - Artwork Image */}
               <div
-                className="flex w-fit cursor-pointer items-center justify-center"
+                className="flex cursor-pointer items-center justify-center overflow-hidden"
                 onClick={() => handleOpenOrderArtDetails(order)}
               >
                 <Image
                   src={`${order.assetUrl}` || "/placeholder-art.jpg"}
                   alt={order.name || "Artwork"}
                   quality={100}
-                  width={400}
+                  width={500}
                   height={300}
-                  className="rounded-lg object-contain object-center"
+                  className="h-full w-full rounded-lg object-cover object-center"
                 />
               </div>
 
@@ -342,16 +350,16 @@ const Page = () => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="w-fit cursor-pointer overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              className="w-full cursor-pointer overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
               onClick={() => handleOpenOrderArtDetails(order)}
             >
               <Image
                 src={`${order.assetUrl}` || "/placeholder-art.jpg"}
                 alt={order.name || "Artwork"}
                 quality={100}
-                width={400}
+                width={500}
                 height={300}
-                className="rounded-lg object-contain object-center"
+                className="h-[300px] w-full rounded-lg object-cover object-center"
               />
               <div className="p-3 sm:p-4">
                 <h3 className="order_title capitalize">
@@ -433,17 +441,73 @@ const Page = () => {
   );
 };
 
+// Loading state for Cart and Completed Orders (grid layout)
 const LoadingGrid = () => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
+  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
     {[1, 2, 3, 4].map((i) => (
-      <div key={i} className="overflow-hidden rounded-lg bg-white shadow">
-        <div className="h-48 w-full animate-pulse bg-gray-200 sm:h-64" />
+      <div
+        key={i}
+        className="w-full overflow-hidden rounded-lg bg-white shadow"
+      >
+        <div className="h-[300px] w-full animate-pulse bg-gray-200" />
         <div className="space-y-2 p-3 sm:space-y-3 sm:p-4">
           <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200 sm:h-5" />
           <div className="h-3 w-1/2 animate-pulse rounded bg-gray-200 sm:h-4" />
           <div className="flex justify-between">
             <div className="h-3 w-12 animate-pulse rounded bg-gray-200 sm:h-4 sm:w-16" />
             <div className="h-3 w-16 animate-pulse rounded bg-gray-200 sm:h-4 sm:w-20" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+// Loading state for Pending Orders (horizontal card layout)
+const LoadingPendingOrders = () => (
+  <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+    {[1, 2, 3].map((i) => (
+      <div
+        key={i}
+        className="grid grid-cols-1 gap-4 rounded-lg bg-white p-4 shadow sm:p-6 lg:grid-cols-2 lg:gap-6"
+      >
+        {/* Left Side - Image Skeleton */}
+        <div className="flex items-center justify-center overflow-hidden">
+          <div className="h-64 w-full animate-pulse rounded-lg bg-gray-200 lg:h-80" />
+        </div>
+
+        {/* Right Side - Order Details Skeleton */}
+        <div className="flex flex-col justify-between">
+          {/* Order Header */}
+          <div>
+            <div className="h-3 w-1/2 animate-pulse rounded bg-gray-200 sm:h-4" />
+            <div className="mt-2 h-5 w-3/4 animate-pulse rounded bg-gray-200 sm:h-6" />
+            <div className="mt-3 flex items-center justify-between border-b pb-3 sm:mt-4 sm:pb-4">
+              <div className="h-5 w-20 animate-pulse rounded bg-gray-200 sm:h-6 sm:w-24" />
+              <div className="h-3 w-16 animate-pulse rounded bg-gray-200 sm:h-4" />
+            </div>
+          </div>
+
+          {/* Order Tracking */}
+          <div className="mt-4 sm:mt-6">
+            <div className="mb-3 h-4 w-32 animate-pulse rounded bg-gray-200 sm:h-5" />
+            <div className="space-y-3 sm:space-y-4">
+              {[1, 2, 3].map((j) => (
+                <div key={j} className="flex items-start gap-2 sm:gap-3">
+                  <div className="mt-1 h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-gray-300 sm:h-3 sm:w-3" />
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="h-3 w-24 animate-pulse rounded bg-gray-200 sm:h-4" />
+                    <div className="h-2 w-32 animate-pulse rounded bg-gray-200 sm:h-3" />
+                  </div>
+                  <div className="h-2 w-16 animate-pulse rounded bg-gray-200 sm:h-3" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Order Actions */}
+          <div className="mt-4 flex gap-3 sm:mt-6">
+            <div className="h-9 flex-1 animate-pulse rounded-lg bg-gray-200 sm:h-10" />
           </div>
         </div>
       </div>
