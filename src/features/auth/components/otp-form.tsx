@@ -62,90 +62,75 @@ const OtpForm = () => {
   };
 
   const onSubmit = async (data: IOtpForm) => {
-  if (isProcessing) return;
+    if (isProcessing) return;
 
-  setIsProcessing(true);
+    setIsProcessing(true);
 
-  try {
-    // Step 1: Validate OTP
-    console.log("Step 1: Validating OTP...");
-    const result = await handleValidateOtp(data);
+    try {
+      const result = await handleValidateOtp(data);
 
-    if (result.status !== 200) {
-      handleToast(false, result.message || "Invalid OTP. Please try again.");
-      setIsProcessing(false);
-      return;
-    }
+      if (result.status !== 200) {
+        handleToast(false, result.message || "Invalid OTP. Please try again.");
+        setIsProcessing(false);
+        return;
+      }
 
-    console.log("✅ OTP validated successfully");
-    handleToast(true, result.message);
+      handleToast(true, result.message);
 
-    // Step 2: Retrieve sign-up data from session
-    const ctxData = sessionStorage.getItem("sign-up");
+      const ctxData = sessionStorage.getItem("sign-up");
 
-    if (!ctxData) {
-      handleToast(false, "Session expired. Please start registration again.");
-      setIsProcessing(false);
-      setTimeout(() => router.push("/signup"), 2000);
-      return;
-    }
+      if (!ctxData) {
+        handleToast(false, "Session expired. Please start registration again.");
+        setIsProcessing(false);
+        setTimeout(() => router.push("/signup"), 2000);
+        return;
+      }
 
-    // Step 3: Decrypt and sanitize signup data
-    console.log("🔐 Decrypting signup data...");
-    const decrypted = await decryptData(ctxData);
-    const ctx = JSON.parse(decrypted);
+      const decrypted = await decryptData(ctxData);
+      const ctx = JSON.parse(decrypted);
 
-    console.log("Decrypted signup data:", ctx);
+      const sanitizedCtx = Object.fromEntries(
+        Object.entries(ctx).map(([key, value]) => [
+          key,
+          value === null || value === undefined ? "" : String(value),
+        ]),
+      );
 
-    // ✅ Sanitize: convert null/undefined → "", force all values to strings
-    const sanitizedCtx = Object.fromEntries(
-      Object.entries(ctx).map(([key, value]) => [
-        key,
-        value === null || value === undefined ? "" : String(value),
-      ])
-    );
+      const signUpData = await handleSignUp(sanitizedCtx as ISignUpForm);
 
-    console.log("Sanitized signup data:", sanitizedCtx);
+      console.log("Registration successful");
+      handleToast(true, signUpData.message || "Registration successful!");
 
-    // Step 4: Attempt registration
-    console.log("Attempting registration...");
-    const signUpData = await handleSignUp(sanitizedCtx as ISignUpForm);
-
-    console.log("Registration successful");
-    handleToast(true, signUpData.message || "Registration successful!");
-
-    // Clear session storage and redirect
-    sessionStorage.removeItem("sign-up");
-    setTimeout(() => router.push("/login"), 1500);
-
-  } catch (signUpError: any) {
-    console.error("Registration error:", signUpError);
-
-    const errorData = signUpError?.response?.data;
-    const errorMessage =
-      errorData?.message ||
-      signUpError?.message ||
-      "Registration failed";
-
-    const isDuplicateError =
-      errorMessage.toLowerCase().includes("duplicate") ||
-      errorMessage.toLowerCase().includes("already exists") ||
-      errorMessage.toLowerCase().includes("unique constraint") ||
-      errorMessage.toLowerCase().includes("email_unique") ||
-      errorData?.statusCode === 409;
-
-    if (isDuplicateError) {
-      console.log("⚠️ Duplicate email detected - treating as success");
-      handleToast(true, "Your account has been created! Redirecting to login...");
       sessionStorage.removeItem("sign-up");
-      setTimeout(() => router.push("/login"), 2000);
-    } else {
-      handleToast(false, errorMessage);
-      setIsProcessing(false);
-    }
-  }
-};
+      setTimeout(() => router.push("/login"), 1500);
+    } catch (signUpError: any) {
+      console.error("Registration error:", signUpError);
 
+      const errorData = signUpError?.response?.data;
+      const errorMessage =
+        errorData?.message || signUpError?.message || "Registration failed";
+
+      const isDuplicateError =
+        errorMessage.toLowerCase().includes("duplicate") ||
+        errorMessage.toLowerCase().includes("already exists") ||
+        errorMessage.toLowerCase().includes("unique constraint") ||
+        errorMessage.toLowerCase().includes("email_unique") ||
+        errorData?.statusCode === 409;
+
+      if (isDuplicateError) {
+        console.log("⚠️ Duplicate email detected - treating as success");
+        handleToast(
+          true,
+          "Your account has been created! Redirecting to login...",
+        );
+        sessionStorage.removeItem("sign-up");
+        setTimeout(() => router.push("/login"), 2000);
+      } else {
+        handleToast(false, errorMessage);
+        setIsProcessing(false);
+      }
+    }
+  };
 
   const handleResendOTP = async () => {
     try {
@@ -173,7 +158,7 @@ const OtpForm = () => {
   // Handle input change to auto-focus next field
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     const value = e.target.value;
     if (value && !/^\d+$/.test(value)) return;
@@ -185,7 +170,7 @@ const OtpForm = () => {
       const pastedValue = value.replace(/\D/g, "").substring(0, 6);
       form.setValue("otp", pastedValue);
       const lastInput = document.getElementById(
-        `otp-${pastedValue.length - 1}`
+        `otp-${pastedValue.length - 1}`,
       );
       if (lastInput) lastInput.focus();
       return;
@@ -202,7 +187,7 @@ const OtpForm = () => {
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     if (e.key === "Backspace" && !e.currentTarget.value && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
@@ -256,7 +241,7 @@ const OtpForm = () => {
           className="flex w-full items-center justify-center"
         >
           <button
-            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50"
             type="submit"
             disabled={isPending || isProcessing}
           >
@@ -282,7 +267,7 @@ const OtpForm = () => {
         <div className="flex justify-center">
           <button
             type="button"
-            className="text-sm text-blue-500 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-sm text-blue-500 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleResendOTP}
             disabled={isProcessing}
           >
