@@ -43,31 +43,31 @@ const Sidebar = () => {
               />
             ) : (
               <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 sm:h-18 sm:w-18">
-                <span className="text-xl font-bold text-gray-500 sm:text-2xl">
+                <span className="font-helvetica text-xl font-bold text-neutral-800 sm:text-2xl">
                   {user?.firstName?.[0]?.toUpperCase() || "U"}
                 </span>
               </div>
             )}
 
             <div className="flex flex-col items-start sm:items-center">
-              <h2 className="font-bricolage text-base font-bold capitalize sm:text-lg">
+              <h2 className="font-helvetica text-lg font-bold text-neutral-800 capitalize">
                 {user?.firstName || "User"}
               </h2>
-              <p className="font-bricolage text-xs text-neutral-600 capitalize sm:text-sm">
+              <p className="font-grotesk text-sm font-medium text-neutral-600 capitalize">
                 {role?.toLowerCase() || "buyer"}
               </p>
             </div>
 
             <div className="mt-2 flex gap-1.5 text-sm text-neutral-700 sm:gap-2">
               <IconLocation className="h-4 w-4 sm:h-5 sm:w-5" />
-              <p className="font-bricolage text-xs font-medium capitalize sm:text-sm">
+              <p className="font-grotesk text-sm font-medium capitalize sm:text-sm">
                 Nigeria
               </p>
             </div>
 
             <button
               onClick={handleEditProfile}
-              className="font-bricolage relative mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1E3A8A] px-4 py-2.5 text-xs font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:bg-[#1a3474] active:scale-95 sm:mt-5 sm:w-fit sm:text-sm"
+              className="font-bebas relative mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1E3A8A] px-4 py-2.5 text-xs font-medium tracking-wide text-white outline outline-[#fff2f21f] transition-all duration-200 hover:bg-[#1a3474] active:scale-95 sm:mt-5 sm:w-fit sm:text-sm"
             >
               Edit profile information
             </button>
