@@ -18,6 +18,7 @@ export const OrdersData = z.object({
   name: z.string(),
   artistFirstName: z.string(),
   artistLastName: z.string(),
+  artistProfilePicture: z.string().nullable(),
   quantity: z.number().min(1).max(100),
   price: z.string(),
   totalAmount: z.string(),
