@@ -35,8 +35,6 @@ export const useRemoveFromCart = ({
           throw new CartError("Cannot remove from cart: Operation not allowed");
         }
 
-        console.log("🗑️ Removing from cart:", { userId: user.id, fileId });
-
         const result = await ResultAsync.fromPromise(
           removeFromCart({
             userId: user.id,
@@ -84,6 +82,18 @@ export const useRemoveFromCart = ({
                 artistId: oldData?.artistId || "",
                 artistProfilePicture: oldData?.artistProfilePicture || "",
                 price: oldData?.price || 0,
+                size: oldData?.size || {
+                  width: 0,
+                  height: 0,
+                  weight: 0,
+                  depth: 0,
+                  diameter: 0,
+                  length: 0,
+                  weightUnit: "kg",
+                  dimensionUnit: "cm",
+                  aspectRatio: "1:1",
+                },
+                tags: oldData?.tags || [],
                 quantity: oldData?.quantity || 1,
                 url: oldData?.url || "",
                 highResUrl: oldData?.highResUrl || "",
