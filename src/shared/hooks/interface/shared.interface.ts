@@ -11,8 +11,15 @@ export interface IExploreContent {
   tags: string[] | undefined;
   price: number;
   size: {
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
+    weight?: number;
+    depth?: number;
+    diameter?: number;
+    length?: number;
+    aspectRatio?: string;
+    weightUnit?: string;
+    dimensionUnit?: string;
   };
   numOfLikes: number;
   numOfViews: number;
