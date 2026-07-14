@@ -107,7 +107,7 @@ const ArtSelection = () => {
         {artPreferences?.map((pref, index) => (
           <button
             key={index}
-            className="motion-duration-500 motion-preset-expand font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
+            className="motion-duration-500 motion-preset-expand font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2"
             style={{
               animationDelay: `${index * 100}ms`,
             }}
