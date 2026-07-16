@@ -155,7 +155,7 @@ const Page = () => {
         <AnimatePresence>
           {cartItems.map((item, index) => (
             <motion.div
-              key={item.id}
+              key={index}
               variants={variants}
               initial="hidden"
               animate="visible"
@@ -166,9 +166,9 @@ const Page = () => {
                 duration: 0.09,
               }}
               className="w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
-              onClick={() => handleOpenCartArtDetails(item)}
             >
               <Image
+                onClick={() => handleOpenCartArtDetails(item)}
                 src={item.url || "/placeholder-art.jpg"}
                 alt={"Artwork"}
                 quality={100}
@@ -472,7 +472,6 @@ const Page = () => {
   );
 };
 
-// Loading state for Cart and Completed Orders (grid layout)
 const LoadingGrid = () => (
   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
     {[1, 2, 3, 4].map((i) => (
@@ -494,7 +493,6 @@ const LoadingGrid = () => (
   </div>
 );
 
-// Loading state for Pending Orders (horizontal card layout)
 const LoadingPendingOrders = () => (
   <div className="space-y-4 sm:space-y-6 lg:space-y-8">
     {[1, 2, 3].map((i) => (
