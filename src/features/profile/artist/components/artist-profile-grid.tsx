@@ -115,7 +115,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   };
 
   const renderPostsContent = () => {
-    if (!canFetch || posts.length === 0) {
+    if (!canFetch) {
       return <ProfileCardSkeletonGrid />;
     }
 
