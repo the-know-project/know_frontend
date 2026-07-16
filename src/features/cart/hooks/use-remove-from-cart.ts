@@ -57,22 +57,19 @@ export const useRemoveFromCart = ({
       onMutate: async (fileId: string) => {
         if (!user?.id) return;
 
-        console.log("⚡ Optimistic update: Removing item", fileId);
-
         removeFromLocalCart(fileId);
 
         await queryClient.cancelQueries({
-          queryKey: ["fetch-user-cart", user.id],
+          queryKey: [`fetch-user-cart-${user.id}`],
         });
 
         const previousCart = queryClient.getQueryData<IUserCart>([
-          "fetch-user-cart",
-          user.id,
+          `fetch-user-cart-${user.id}`,
         ]);
 
         if (previousCart) {
           queryClient.setQueryData<IUserCart>(
-            ["fetch-user-cart", user.id],
+            [`fetch-user-cart-${user.id}`],
             (old) => {
               if (!old) return old;
               const oldData = old?.data?.find((data) => data.fileId === fileId);
@@ -126,7 +123,7 @@ export const useRemoveFromCart = ({
         if (context?.previousCart && user?.id) {
           console.log(" Rolling back optimistic update");
           queryClient.setQueryData(
-            ["fetch-user-cart", user.id],
+            [`fetch-user-cart-${user.id}`],
             context.previousCart,
           );
         }
@@ -139,7 +136,7 @@ export const useRemoveFromCart = ({
           removeFromLocalCart(fileId);
 
           queryClient.invalidateQueries({
-            queryKey: ["fetch-user-cart", user.id],
+            queryKey: [`fetch-user-cart-${user.id}`],
           });
 
           queryClient.invalidateQueries({
@@ -152,7 +149,7 @@ export const useRemoveFromCart = ({
         if (user?.id) {
           console.log(" Invalidating cart queries");
           queryClient.invalidateQueries({
-            queryKey: ["fetch-user-cart", user.id],
+            queryKey: [`fetch-user-cart-${user.id}`],
           });
         }
       },

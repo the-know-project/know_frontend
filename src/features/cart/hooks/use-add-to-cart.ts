@@ -50,17 +50,16 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
       addToLocalCart(fileId);
 
       await queryClient.cancelQueries({
-        queryKey: ["fetch-user-cart", userId],
+        queryKey: [`fetch-user-cart-${userId}`],
       });
 
       const previousCart = queryClient.getQueryData<IUserCart>([
-        "fetch-user-cart",
-        userId,
+        `fetch-user-cart-${userId}`,
       ]);
 
       if (previousCart) {
         queryClient.setQueryData<IUserCart>(
-          ["fetch-user-cart", userId],
+          [`fetch-user-cart-${userId}`],
           (old) => {
             if (!old) return old;
             const oldData = old?.data?.find((data) => data.fileId === fileId);
@@ -113,7 +112,7 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
 
       if (context?.previousCart) {
         queryClient.setQueryData(
-          ["fetch-user-cart", userId],
+          [`fetch-user-cart-${userId}`],
           context.previousCart,
         );
       }
@@ -127,7 +126,7 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
     onSettled: () => {
       console.log(" Invalidating cart queries");
       queryClient.invalidateQueries({
-        queryKey: ["fetch-user-cart", userId],
+        queryKey: [`fetch-user-cart-${userId}`],
       });
     },
   });
