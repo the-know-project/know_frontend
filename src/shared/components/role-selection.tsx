@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { RoleSelectionItems } from "@/src/constants/constants";
 import { TitleText } from "../layout/header";
 import { useRoleStore } from "@/src/features/auth/state/store/role.store";
+import { hero3 } from "@/src/assets";
 
 export default function SelectRole() {
   const router = useRouter();
@@ -86,7 +87,7 @@ export default function SelectRole() {
 
       <div className="motion-preset-blur-right-lg motion-duration-700 relative hidden md:block">
         <Image
-          src="/roleselect.png"
+          src={hero3}
           alt="role_selection_image"
           quality={100}
           fill

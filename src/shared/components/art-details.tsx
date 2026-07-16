@@ -222,7 +222,7 @@ const ArtDetails = () => {
                     {/* Artwork Image */}
                     <div className="mt-8 flex w-full">
                       <div className="relative w-full overflow-hidden">
-                        <div className="flex min-h-[400px] items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200 lg:min-h-[600px]">
+                        <div className="flex items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
                           <Image
                             src={exploreContent?.highResUrl || empty}
                             alt="art_work"

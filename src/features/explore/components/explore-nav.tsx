@@ -1,7 +1,12 @@
 "use client";
 
 import { type ReactElement } from "react";
-import { IconBellRinging, IconSearch, IconUser } from "@tabler/icons-react";
+import {
+  IconBellRinging,
+  IconSearch,
+  IconShoppingCart,
+  IconUser,
+} from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +20,7 @@ import {
   useCanFetchData,
   useAuthReady,
 } from "../../auth/hooks/use-optimized-auth";
+import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 
 interface IExploreNavOptions {
   toggleShareButton?: boolean;
@@ -23,6 +29,7 @@ interface IExploreNavOptions {
 const ExploreNav: React.FC<IExploreNavOptions> = ({
   toggleShareButton = true,
 }): ReactElement => {
+  const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
   const [isNotificationClicked, setIsNotificationClicked] =
     useState<boolean>(false);
   const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
@@ -197,11 +204,15 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
               <p className="block">Share works</p>
             </button>
           ) : isAuthenticated && role?.toLowerCase() === "buyer" ? (
-            <button
-              className="font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
-              onClick={handleCtaNavigate}
-            >
-              <p className="block">View cart</p>
+            <button onClick={handleCtaNavigate}>
+              <div className="relative flex flex-row items-center">
+                <IconShoppingCart className="h-[32px] w-[32px] text-neutral-600" />
+                <div className="absolute -top-2 -right-2 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 p-2 text-[10px] font-medium text-white">
+                  {(cartOrdersData?.data?.length || 0) > 99
+                    ? "99+"
+                    : cartOrdersData?.data?.length}
+                </div>
+              </div>
             </button>
           ) : null}
 

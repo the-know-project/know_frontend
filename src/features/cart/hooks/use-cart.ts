@@ -14,7 +14,9 @@ interface IUseCartProps {
 }
 
 export const useCart = ({ fileId, enabled = true }: IUseCartProps) => {
-  const { mutateAsync: handleAddToCart, isPending: isAdding } = useAddToCart({ enabled });
+  const { mutateAsync: handleAddToCart, isPending: isAdding } = useAddToCart({
+    enabled,
+  });
   const { mutateAsync: handleRemoveFromCart, isPending: isRemoving } =
     useRemoveFromCart({ enabled });
 
@@ -69,7 +71,6 @@ export const useItemInCart = (fileId: string) => {
   const isItemInCart = useIsItemInCart(fileId);
   return isItemInCart;
 };
-
 export const useBulkCartActions = () => {
   const { initializeCart, clearCartItems } = useCartActions();
 

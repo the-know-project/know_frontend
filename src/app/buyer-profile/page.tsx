@@ -1,6 +1,7 @@
 "use client";
 import { BuyerGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
+import { useRemoveFromCart } from "@/src/features/cart/hooks/use-remove-from-cart";
 import { TCart } from "@/src/features/cart/types/cart.types";
 import {
   useIsExploreContentToggled,
@@ -14,7 +15,7 @@ import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { formatDate } from "@/src/utils/date";
 import { logger } from "@/src/utils/logger";
 import { AnimatePresence, motion } from "framer-motion";
-import { Eye, ShoppingCart } from "lucide-react";
+import { Eye, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
@@ -36,6 +37,8 @@ const Page = () => {
       });
     }
   }, [activeTab]);
+
+  const { mutateAsync: removeItem } = useRemoveFromCart({ enabled: true });
 
   const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
 
@@ -127,6 +130,10 @@ const Page = () => {
     openArtDetails(order.fileId, content);
   };
 
+  const handleRemoveFromCart = async (fileId: string) => {
+    await removeItem(fileId);
+  };
+
   const variants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
@@ -144,7 +151,7 @@ const Page = () => {
     }
 
     return (
-      <div className="grid grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
+      <div className="grid w-full grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
         <AnimatePresence>
           {cartItems.map((item, index) => (
             <motion.div
@@ -167,7 +174,7 @@ const Page = () => {
                 quality={100}
                 width={500}
                 height={300}
-                className="h-[300px] w-full rounded-[15px] object-cover transition-all duration-300"
+                className="w-full rounded-[15px] object-cover transition-all duration-300"
               />
               <div className="p-3 sm:p-4">
                 <h3 className="profile_title">{item.title || "Untitled"}</h3>
@@ -181,15 +188,29 @@ const Page = () => {
                       {item.viewCount || 0}
                     </span>
                   </div>
-                  <Link
-                    href={`/checkout?orderId=${item.id}`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button className="flex items-center gap-1 text-xs font-medium text-[#1E3A8A] transition-colors hover:text-blue-700 sm:text-sm">
-                      <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
-                      Checkout
+
+                  <div className="font-grotesk flex flex-col items-end gap-1 text-right">
+                    <button
+                      onClick={() => handleRemoveFromCart(item.fileId)}
+                      className="group flex items-center gap-1 text-xs font-medium transition-colors sm:text-sm"
+                    >
+                      <Trash2 className="h-3 w-3 text-red-500 group-hover:scale-105 group-active:scale-95 sm:h-4 sm:w-4" />
+                      <p className="text-red-500 group-hover:scale-105 group-active:scale-95">
+                        Delete
+                      </p>
                     </button>
-                  </Link>
+                    <Link
+                      href={`/checkout?orderId=${item.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button className="group flex items-center gap-1 text-xs font-medium text-[#1E3A8A] transition-colors hover:text-blue-700 sm:text-sm">
+                        <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <p className="group-hover:scale-105 group-active:scale-95">
+                          Checkout
+                        </p>
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </motion.div>

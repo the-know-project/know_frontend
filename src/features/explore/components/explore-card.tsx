@@ -208,13 +208,13 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               className="group"
             >
               {isCartHydrated && isItemInCart ? (
-                <ShoppingCart
+                <IconShoppingCartFilled
                   width={30}
                   height={30}
                   className="text-[#1E3A8A] transition-all duration-200 group-hover:scale-105 group-active:scale-95"
                 />
               ) : (
-                <ShoppingCart
+                <IconShoppingCart
                   width={30}
                   height={30}
                   className="text-neutral-500 transition-all duration-200 group-hover:scale-105 group-active:scale-95"
