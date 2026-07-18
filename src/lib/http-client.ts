@@ -5,10 +5,10 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { isProduction } from "../config/environment";
-import { env } from "../config/schemas/env";
 import { useTokenStore } from "../features/auth/state/store";
 import { SKIP_AUTH } from "../features/auth/data/auth.path";
+
+const API_PROXY_BASE_URL = "/api/backend";
 
 interface QueuedRequest {
   resolve: (value: any) => void;
@@ -27,15 +27,11 @@ class HttpClient {
   }
 
   private createAxiosInstance() {
-    const config = env.env;
-    const baseURL = isProduction() ? config.PROD_URL : config.STAGING_URL;
-
     return axios.create({
-      baseURL,
+      baseURL: API_PROXY_BASE_URL,
       timeout: 30000,
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": config.APP_API_KEY,
       },
       withCredentials: true,
     });
@@ -48,21 +44,11 @@ class HttpClient {
           const token = useTokenStore.getState().accessToken;
           const isAuthenticated = useTokenStore.getState().isAuthenticated;
 
-          console.log("Request Interceptor Debug:", {
-            url: config.url,
-            hasToken: !!token,
-            tokenLength: token?.length,
-            isAuthenticated,
-            requiresAuth: this.requiresAuth(config),
-          });
-
           if (token && this.requiresAuth(config)) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log("Auth header set for:", config.url);
           } else if (this.requiresAuth(config) && !token) {
-            console.warn(
-              `HTTP Client: Request requires auth but no token available for ${config.url}`,
-            );
+            // The upstream server will decide whether the request is allowed.
+            // Do not log request details or token state in the browser.
           }
         }
 
@@ -153,11 +139,6 @@ class HttpClient {
                     .refreshAccessToken(refreshResponse.accessToken);
                 }
               }
-
-              const verifyToken =
-                typeof window !== "undefined"
-                  ? useTokenStore.getState().accessToken
-                  : null;
 
               this.processQueue(null, refreshResponse.accessToken);
 
@@ -539,7 +520,7 @@ class HttpClient {
         },
       );
 
-      console.log("✅ HTTP Client: Server logout successful");
+      console.log("HTTP Client: Server logout successful");
     } catch (error) {
       console.warn(
         "⚠️ HTTP Client: Server logout failed, but local state is already cleared:",
