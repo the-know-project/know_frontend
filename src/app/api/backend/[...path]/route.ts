@@ -24,6 +24,23 @@ function getForwardHeaders(request: NextRequest): Headers {
   return headers;
 }
 
+/**
+ * Cookies from the HTTPS API are returned through this proxy. When the app is
+ * accessed over HTTP during LAN/local development, the browser will reject a
+ * Secure cookie (and SameSite=None also requires Secure), so adapt those
+ * attributes to the browser-facing protocol.
+ */
+function rewriteSetCookieForClient(cookie: string, request: NextRequest): string {
+  if (request.nextUrl.protocol === "https:") {
+    return cookie;
+  }
+
+  return cookie
+    .replace(/;\s*Secure\b/gi, "")
+    .replace(/;\s*SameSite=None\b/gi, "; SameSite=Lax")
+    .replace(/;\s*Partitioned\b/gi, "");
+}
+
 async function proxy(
   request: NextRequest,
   path: string[],
@@ -50,7 +67,10 @@ async function proxy(
     for (const cookie of response.headers.getSetCookie()) {
       responseHeaders.append(
         "set-cookie",
-        cookie.replace(/;\s*Domain=[^;]*/gi, ""),
+        rewriteSetCookieForClient(
+          cookie.replace(/;\s*Domain=[^;]*/gi, ""),
+          request,
+        ),
       );
     }
 
