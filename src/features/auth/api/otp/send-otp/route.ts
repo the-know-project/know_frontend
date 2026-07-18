@@ -1,7 +1,7 @@
 import { encryptData } from "@/src/utils/crypto";
 import { AUTH_OP } from "../../../data/auth.path";
 import { ISignUp } from "../../../types/auth.types";
-import { AuthenticatedApiClient } from "../../http/authenticated-client";
+import { ApiClient } from "@/src/lib/api-client";
 
 export async function sendOtp(ctx: ISignUp) {
   if (typeof window !== "undefined") {
@@ -9,7 +9,7 @@ export async function sendOtp(ctx: ISignUp) {
     sessionStorage.setItem("email", ctx.email);
   }
 
-  return await AuthenticatedApiClient.post(AUTH_OP.SEND_OTP, {
+  return await ApiClient.post(AUTH_OP.SEND_OTP, {
     email: ctx.email,
   });
 }
