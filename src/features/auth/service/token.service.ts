@@ -1,7 +1,4 @@
-import { isProduction } from "@/src/config/environment";
-import { env } from "@/src/config/schemas/env";
 import { ApiClient } from "@/src/lib/api-client";
-import { createUrl } from "@/src/utils/url-factory";
 import { AUTH_OP } from "../data/auth.path";
 import { IUser } from "../state/interface/auth.interface";
 import {
@@ -140,21 +137,11 @@ export class TokenService {
   }
 
   private buildRefreshUrl(): string {
-    const config = env.env;
-    const baseUrl = isProduction() ? config.PROD_URL : config.STAGING_URL;
-    return createUrl({
-      baseUrl,
-      path: AUTH_OP.REFRESH_TOKEN,
-    });
+    return AUTH_OP.REFRESH_TOKEN;
   }
 
   private buildLogoutUrl(): string {
-    const config = env.env;
-    const baseUrl = isProduction() ? config.PROD_URL : config.STAGING_URL;
-    return createUrl({
-      baseUrl,
-      path: AUTH_OP.LOGOUT,
-    });
+    return AUTH_OP.LOGOUT;
   }
 
   private delay(ms: number): Promise<void> {
