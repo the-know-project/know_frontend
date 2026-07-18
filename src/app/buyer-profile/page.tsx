@@ -182,13 +182,13 @@ const Page = () => {
                   {`${item.artistFirstName} ${item.artistLastName}`}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
+                  /** * @todo: Swap this out for quantity toggle. */
                   <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-600 sm:text-sm">
                     <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
                     <span className="font-grotesk font-semibold text-neutral-800">
                       {item.viewCount || 0}
                     </span>
                   </div>
-
                   <div className="font-grotesk flex flex-col items-end gap-1 text-right">
                     <button
                       onClick={() => handleRemoveFromCart(item.fileId)}
