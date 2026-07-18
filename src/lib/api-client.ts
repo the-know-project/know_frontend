@@ -1,4 +1,6 @@
 import { httpClient } from "./http-client";
+import { isProduction } from "@/src/config/environment";
+import { env } from "@/src/config/schemas/env";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 /**
@@ -6,6 +8,10 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
  * Automatically handles authentication and provides consistent error handling
  */
 export class ApiClient {
+  static getBaseUrl(): string {
+    const baseUrl = isProduction() ? env.env.PROD_URL : env.env.STAGING_URL;
+    return baseUrl.replace(/\/$/, "");
+  }
   static async get<T = any>(
     url: string,
     config?: AxiosRequestConfig,
@@ -86,6 +92,9 @@ export class ApiClient {
     }
   }
 
+  static window(path: string) {
+    window.location.href = `${this.getBaseUrl()}${path}`;
+  }
   private static handleError(error: any): Error {
     return error;
   }
