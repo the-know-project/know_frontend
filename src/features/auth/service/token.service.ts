@@ -112,10 +112,9 @@ export class TokenService {
     try {
       const url = this.buildLogoutUrl();
       await ApiClient.post(url, { refreshToken });
-      console.log("✅ Token revocation successful");
+      console.log(" Token revocation successful");
     } catch (error) {
-      console.error("❌ Token revocation error:", error);
-      // Don't throw error - logout should continue even if server revocation fails
+      console.error("Token revocation error:", error);
     }
   }
 
