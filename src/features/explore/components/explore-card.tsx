@@ -17,6 +17,9 @@ import { ShoppingCart } from "lucide-react";
 import { useTokenStore } from "../../auth/state/store";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { logger } from "@/src/utils/logger";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 
 interface ExploreCardProps {
   id: number | string;
@@ -91,6 +94,32 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     enabled: showCartButton,
   });
 
+  const processAddToCart = (userId: string, artistId: string) => {
+    if (userId === artistId) {
+      toast("Invalid action", {
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription
+            description={`Can not add your own artwork to the cart`}
+          />
+        ),
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+
+      return;
+    }
+
+    toggleCart();
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Disable Ctrl+S, Ctrl+Shift+I, F12, etc.
@@ -122,14 +151,9 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
     console.log(error);
   }
 
-  logger.debug("ExploreCard", {
-    userId: userId,
-    artistId: artistId,
-  });
-
   return (
     <section
-      className="explore_card_wrapper transition-all duration-300 hover:scale-105 active:scale-95"
+      className="explore_card_wrapper transition-all"
       onContextMenu={handleContextMenu}
     >
       <div className="relative flex w-full flex-col rounded-[15px] shadow-sm">
@@ -139,7 +163,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           quality={100}
           width={500}
           height={300}
-          className="rounded-[15px] object-cover select-none"
+          className="rounded-[15px] object-cover transition-all duration-300 select-none hover:scale-105 active:scale-95"
           onClick={() => {
             const viewportPosition = {
               scrollY: window.scrollY,
@@ -203,8 +227,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
         <div className="flex items-center gap-2">
           {showCartButton && (
             <button
-              disabled={userId === artistId}
-              onClick={toggleCart}
+              onClick={() => processAddToCart(artistId!, userId)}
               className="group"
             >
               {isCartHydrated && isItemInCart ? (
