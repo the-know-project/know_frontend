@@ -22,7 +22,7 @@ export const useCart = ({ fileId, enabled = true }: IUseCartProps) => {
 
   const isItemInCart = useIsItemInCart(fileId);
   const totalItemsInCart = useGetTotalItemsCount();
-  const { addToCart, removeFromCart } = useCartActions();
+  const { addToCart, removeFromCart, getItemQuantity } = useCartActions();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -61,6 +61,7 @@ export const useCart = ({ fileId, enabled = true }: IUseCartProps) => {
   return {
     isItemInCart,
     totalItemsInCart,
+    getItemQuantity,
     toggleCart,
     isLoading: isAdding || isRemoving,
     error,
