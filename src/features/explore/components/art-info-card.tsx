@@ -20,7 +20,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
           {artwork.artName}
         </h2>
         {artwork.size && (
-          <div className="font-grotesk text-[12px] font-light text-neutral-600">
+          <div className="font-grotesk py-4 text-[12px] font-light text-neutral-600">
             <p>Height: {artwork.size.height}cm</p>
             <p>Width: {artwork.size.width}cm</p>
             <p>Depth: {artwork.size.depth}cm</p>
@@ -82,7 +82,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
       </p>
 
       {/* Price and Checkout Button */}
-      <div className="space-y-3">
+      <div className="space-y-4 py-4">
         {artwork.isListed && (
           <div className="text-center">
             <div className="font-bebas rounded-lg bg-[#1E3A8A] px-4 py-2 text-xl font-semibold tracking-wider text-white">
