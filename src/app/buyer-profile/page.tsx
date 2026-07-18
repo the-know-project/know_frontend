@@ -155,7 +155,7 @@ const Page = () => {
         <AnimatePresence>
           {cartItems.map((item, index) => (
             <motion.div
-              key={index}
+              key={item.id}
               variants={variants}
               initial="hidden"
               animate="visible"
@@ -165,7 +165,7 @@ const Page = () => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              className="w-full max-w-[400px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
             >
               <Image
                 onClick={() => handleOpenCartArtDetails(item)}
@@ -182,7 +182,6 @@ const Page = () => {
                   {`${item.artistFirstName} ${item.artistLastName}`}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
-                  /** * @todo: Swap this out for quantity toggle. */
                   <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-600 sm:text-sm">
                     <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
                     <span className="font-grotesk font-semibold text-neutral-800">
