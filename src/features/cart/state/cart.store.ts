@@ -150,6 +150,9 @@ export const useCartActions = () => {
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const clearCartItems = useCartStore((state) => state.clearCartItems);
   const initializeCart = useCartStore((state) => state.initializeCart);
+
+  const getItemQuantity = useCartStore((state) => state.getItemQuantity);
+
   const incrementQuantity = useCartStore(
     (state) => state.incrementItemQuantity,
   );
@@ -164,5 +167,6 @@ export const useCartActions = () => {
     initializeCart,
     incrementQuantity,
     decrementQuantity,
+    getItemQuantity,
   };
 };
