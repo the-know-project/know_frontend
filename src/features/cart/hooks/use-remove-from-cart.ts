@@ -4,7 +4,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { CartError } from "../error/cart.error";
 import { removeFromCart } from "../api/remove-from-cart/route";
 import { selectUser } from "../../auth/state/selectors/token.selectors";
-import { IUserCart, TCart } from "../types/cart.types";
+import { IUserCart } from "../types/cart.types";
 import { useCartActions } from "../state/cart.store";
 
 export type RemoveFromCartResult = {
@@ -72,41 +72,10 @@ export const useRemoveFromCart = ({
             [`fetch-user-cart-${user.id}`],
             (old) => {
               if (!old) return old;
-              const oldData = old?.data?.find((data) => data.fileId === fileId);
-
-              const newItem: TCart = {
-                id: oldData?.id || "",
-                artistId: oldData?.artistId || "",
-                artistProfilePicture: oldData?.artistProfilePicture || "",
-                price: oldData?.price || 0,
-                size: oldData?.size || {
-                  width: 0,
-                  height: 0,
-                  weight: 0,
-                  depth: 0,
-                  diameter: 0,
-                  length: 0,
-                  weightUnit: "kg",
-                  dimensionUnit: "cm",
-                  aspectRatio: "1:1",
-                },
-                tags: oldData?.tags || [],
-                quantity: oldData?.quantity || 1,
-                url: oldData?.url || "",
-                highResUrl: oldData?.highResUrl || "",
-                fileId,
-                artistFirstName: oldData?.artistFirstName || "",
-                artistLastName: oldData?.artistLastName || "",
-                title: oldData?.title || "",
-                viewCount: oldData?.viewCount || 0,
-                userId: user.id!,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              };
 
               return {
                 ...old,
-                data: [...(old.data ?? []), newItem],
+                data: (old.data ?? []).filter((item) => item.fileId !== fileId),
               };
             },
           );
