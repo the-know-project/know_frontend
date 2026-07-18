@@ -14,6 +14,7 @@ import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { formatDate } from "@/src/utils/date";
 import { logger } from "@/src/utils/logger";
+import { IconTag, IconTagFilled } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -174,7 +175,7 @@ const Page = () => {
                 quality={100}
                 width={500}
                 height={300}
-                className="w-full rounded-[15px] object-cover transition-all duration-300"
+                className="w-full rounded-tl-[15px] rounded-tr-[15px] object-cover transition-all duration-300"
               />
               <div className="p-3 sm:p-4">
                 <h3 className="profile_title">{item.title || "Untitled"}</h3>
@@ -183,9 +184,9 @@ const Page = () => {
                 </p>
                 <div className="mt-3 flex items-center justify-between">
                   <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-600 sm:text-sm">
-                    <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <IconTag className="h-3 w-3 text-neutral-800 sm:h-4 sm:w-4" />
                     <span className="font-grotesk font-semibold text-neutral-800">
-                      {item.viewCount || 0}
+                      {item.price || "N/A"}
                     </span>
                   </div>
                   <div className="font-grotesk flex flex-col items-end gap-1 text-right">
