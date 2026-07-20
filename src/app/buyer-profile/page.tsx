@@ -2,6 +2,7 @@
 import { BuyerGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
 import { useRemoveFromCart } from "@/src/features/cart/hooks/use-remove-from-cart";
+import { useUpdateQuantity } from "@/src/features/cart/hooks/use-update-quantity";
 import { useCartActions } from "@/src/features/cart/state/cart.store";
 import { IAddToLocalCart, TCart } from "@/src/features/cart/types/cart.types";
 import {
@@ -15,12 +16,7 @@ import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { formatDate } from "@/src/utils/date";
 import { logger } from "@/src/utils/logger";
-import {
-  IconCaretLeft,
-  IconCaretLeftFilled,
-  IconCaretRight,
-  IconCaretRightFilled,
-} from "@tabler/icons-react";
+import { IconCaretLeftFilled, IconCaretRightFilled } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -46,6 +42,9 @@ const Page = () => {
   }, [activeTab]);
 
   const { mutateAsync: removeItem } = useRemoveFromCart({ enabled: true });
+  const { mutateAsync: updateQuantity } = useUpdateQuantity({
+    enabled: true,
+  });
 
   const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
   const { getItemProps } = useCartActions();
@@ -204,12 +203,28 @@ const Page = () => {
                     </div>
 
                     <div className="flex w-full max-w-md items-center justify-between">
-                      <IconCaretLeftFilled className="h-4 w-4 text-white sm:h-5 sm:w-5" />
+                      <IconCaretLeftFilled
+                        onClick={() =>
+                          updateQuantity({
+                            fileId: item.fileId,
+                            opts: "remove",
+                          })
+                        }
+                        className="h-4 w-4 text-white sm:h-5 sm:w-5"
+                      />
                       <span className="font-grotesk font-semibold text-neutral-50">
                         {getItemProps(item.fileId).quantity}
                       </span>
 
-                      <IconCaretRightFilled className="h-4 w-4 text-white sm:h-5 sm:w-5" />
+                      <IconCaretRightFilled
+                        onClick={() =>
+                          updateQuantity({
+                            fileId: item.fileId,
+                            opts: "add",
+                          })
+                        }
+                        className="h-4 w-4 text-white sm:h-5 sm:w-5"
+                      />
                     </div>
                   </div>
 
