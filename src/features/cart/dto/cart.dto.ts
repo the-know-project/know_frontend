@@ -7,6 +7,11 @@ export const IAddToLocalCartSchema = z.object({
   url: z.string().url(),
 });
 
+export const UpdateCartItemQuantitySchema = z.object({
+  fileId: z.string(),
+  opts: z.enum(["add", "remove"]),
+});
+
 export const CartData = z.object({
   id: z.string().uuid(),
   url: z.string().url(),
