@@ -246,6 +246,10 @@
     @apply font-helvetica font-bold text-neutral-800 capitalize sm:text-lg;
   }
 
+  .profile_title_2 {
+    @apply font-helvetica font-bold text-neutral-50 capitalize sm:text-lg;
+  }
+
   .order_title {
     @apply font-helvetica font-bold text-neutral-800 capitalize sm:text-2xl lg:text-3xl;
   }
@@ -256,6 +260,10 @@
 
   .profile_content {
     @apply font-grotesk text-xs text-[#666666] sm:text-sm;
+  }
+
+  .profile_content_2 {
+    @apply font-grotesk text-xs text-neutral-50 sm:text-sm;
   }
 }
 .purple-glow {
