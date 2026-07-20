@@ -7,7 +7,7 @@ export interface ICartItems {
   fileId: string;
   quantity: number;
 
-  price?: number;
+  price: number;
 
   url: string;
 }
