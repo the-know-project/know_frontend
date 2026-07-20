@@ -113,6 +113,8 @@ const ExploreCanvasContent = ({
       const transformedCartData = cartDataResult.data.map((item: TCart) => ({
         fileId: item.fileId,
         quantity: item.quantity,
+        price: item.price,
+        url: item.url,
       }));
 
       initCart(transformedCartData);
