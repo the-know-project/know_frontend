@@ -94,7 +94,11 @@ export const useUpdateQuantity = ({ enabled }: { enabled: boolean }) => {
         addToCart({
           fileId: context.previousLocalItem.fileId,
           quantity: context.previousLocalItem.quantity,
-          price: context.previousLocalItem.price,
+          price:
+            context.previousLocalItem.quantity > 0
+              ? context.previousLocalItem.price! /
+                context.previousLocalItem.quantity
+              : 0,
           url: context.previousLocalItem.url,
         });
       }
