@@ -90,7 +90,12 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   }, [isCartHydrated, role, isListed]);
 
   const { isItemInCart, toggleCart } = useCart({
-    fileId: id as string,
+    ctx: {
+      fileId: id as string,
+      price: price,
+      quantity: 1,
+      url: artWork,
+    },
     enabled: showCartButton,
   });
 
