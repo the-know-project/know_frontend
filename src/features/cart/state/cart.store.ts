@@ -12,6 +12,17 @@ export interface ICartItems {
   url: string;
 }
 
+const parsePrice = (price: number | string | undefined): number => {
+  if (typeof price === "number") return Number.isFinite(price) ? price : 0;
+
+  if (typeof price === "string") {
+    const parsedPrice = Number(price.replace(/[^\d.-]/g, ""));
+    return Number.isFinite(parsedPrice) ? parsedPrice : 0;
+  }
+
+  return 0;
+};
+
 interface CartState {
   cart: Record<string, ICartItems>;
   _hasHydrated: boolean;
@@ -45,10 +56,12 @@ export const useCartStore = create<CartState>()(
 
         addToCart: (ctx: IAddToLocalCart) =>
           set((state) => {
+            const unitPrice = parsePrice(ctx.price);
+
             state.cart[ctx.fileId] = {
               fileId: ctx.fileId,
               quantity: ctx.quantity,
-              price: ctx.price,
+              price: unitPrice * ctx.quantity,
               url: ctx.url,
             };
           }),
@@ -78,28 +91,45 @@ export const useCartStore = create<CartState>()(
         incrementItemQuantity: (fileId) =>
           set((state) => {
             if (state.cart[fileId]) {
-              state.cart[fileId].quantity += 1;
+              const item = state.cart[fileId];
+              const unitPrice =
+                item.quantity > 0 ? parsePrice(item.price) / item.quantity : 0;
+              item.quantity += 1;
+              item.price = unitPrice * item.quantity;
             }
           }),
 
         decrementItemQuantity: (fileId) =>
           set((state) => {
             if (state.cart[fileId]) {
-              state.cart[fileId].quantity -= 1;
-              if (state.cart[fileId].quantity <= 0) {
+              const item = state.cart[fileId];
+              const unitPrice =
+                item.quantity > 0 ? parsePrice(item.price) / item.quantity : 0;
+              item.quantity -= 1;
+              if (item.quantity <= 0) {
                 delete state.cart[fileId];
+              } else {
+                item.price = unitPrice * item.quantity;
               }
             }
           }),
 
         initializeCart: (ctx) =>
           set((state) => {
+            const previousCart = state.cart;
             state.cart = {};
             ctx.forEach((item) => {
+              const previousItem = previousCart[item.fileId];
+              const unitPrice =
+                parsePrice(item.price) ||
+                (previousItem && previousItem.quantity > 0
+                  ? parsePrice(previousItem.price) / previousItem.quantity
+                  : 0);
+
               state.cart[item.fileId] = {
                 fileId: item.fileId,
                 quantity: item.quantity,
-                price: item.price,
+                price: unitPrice * item.quantity,
                 url: item.url,
               };
             });
