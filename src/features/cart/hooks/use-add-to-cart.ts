@@ -4,7 +4,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { addToCart } from "../api/add-to-cart/route";
 import { CartError } from "../error/cart.error";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
-import { IUserCart, TCart } from "../types/cart.types";
+import { IAddToLocalCart, IUserCart, TCart } from "../types/cart.types";
 import { useCartActions } from "../state/cart.store"; // Import cart store actions
 
 export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
@@ -15,15 +15,15 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
 
   return useMutation({
     mutationKey: ["add-to-cart", userId],
-    mutationFn: async (fileId: string) => {
+    mutationFn: async (ctx: IAddToLocalCart) => {
       if (!enabled || !userId) {
         throw new CartError("Cannot add to cart: User not authenticated");
       }
 
       const result = await ResultAsync.fromPromise(
         addToCart({
-          userId,
-          fileId,
+          userId: userId,
+          fileId: ctx.fileId,
         }),
         (error) => new CartError(`Error adding item to cart: ${error}`),
       ).andThen((data) => {
@@ -46,8 +46,8 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
       return result.value;
     },
 
-    onMutate: async (fileId: string) => {
-      addToLocalCart(fileId);
+    onMutate: async (ctx: IAddToLocalCart) => {
+      addToLocalCart(ctx);
 
       await queryClient.cancelQueries({
         queryKey: [`fetch-user-cart-${userId}`],
@@ -62,7 +62,9 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
           [`fetch-user-cart-${userId}`],
           (old) => {
             if (!old) return old;
-            const oldData = old?.data?.find((data) => data.fileId === fileId);
+            const oldData = old?.data?.find(
+              (data) => data.fileId === ctx.fileId,
+            );
 
             const newItem: TCart = {
               id: oldData?.id || "",
@@ -84,7 +86,7 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
               quantity: oldData?.quantity || 1,
               url: oldData?.url || "",
               highResUrl: oldData?.highResUrl || "",
-              fileId,
+              fileId: ctx.fileId,
               artistFirstName: oldData?.artistFirstName || "",
               artistLastName: oldData?.artistLastName || "",
               title: oldData?.title || "",
@@ -105,10 +107,10 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
       return { previousCart };
     },
 
-    onError: (error, fileId, context) => {
+    onError: (error, ctx, context) => {
       console.error(" Failed to add to cart:", error);
 
-      removeFromLocalCart(fileId);
+      removeFromLocalCart(ctx.fileId);
 
       if (context?.previousCart) {
         queryClient.setQueryData(
@@ -118,9 +120,9 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
       }
     },
 
-    onSuccess: (data, fileId) => {
+    onSuccess: (data, params) => {
       console.log(" Successfully added to cart, syncing stores");
-      addToLocalCart(fileId);
+      addToLocalCart(params);
     },
 
     onSettled: () => {
