@@ -7,22 +7,24 @@ import {
 } from "../state/cart.store";
 import { useAddToCart } from "./use-add-to-cart";
 import { useRemoveFromCart } from "./use-remove-from-cart";
+import { IAddToLocalCart } from "../types/cart.types";
 
 interface IUseCartProps {
-  fileId: string;
+  ctx: IAddToLocalCart;
+
   enabled?: boolean;
 }
 
-export const useCart = ({ fileId, enabled = true }: IUseCartProps) => {
+export const useCart = ({ ctx, enabled = true }: IUseCartProps) => {
   const { mutateAsync: handleAddToCart, isPending: isAdding } = useAddToCart({
     enabled,
   });
   const { mutateAsync: handleRemoveFromCart, isPending: isRemoving } =
     useRemoveFromCart({ enabled });
 
-  const isItemInCart = useIsItemInCart(fileId);
+  const isItemInCart = useIsItemInCart(ctx.fileId);
   const totalItemsInCart = useGetTotalItemsCount();
-  const { addToCart, removeFromCart, getItemQuantity } = useCartActions();
+  const { addToCart, removeFromCart, getItemProps } = useCartActions();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -31,21 +33,21 @@ export const useCart = ({ fileId, enabled = true }: IUseCartProps) => {
 
     try {
       if (!wasInCart) {
-        addToCart(fileId);
+        addToCart(ctx);
       } else {
-        removeFromCart(fileId);
+        removeFromCart(ctx.fileId);
       }
 
       if (!wasInCart) {
-        await handleAddToCart(fileId);
+        await handleAddToCart(ctx);
       } else {
-        await handleRemoveFromCart(fileId);
+        await handleRemoveFromCart(ctx);
       }
     } catch (apiError) {
       if (!wasInCart) {
-        removeFromCart(fileId);
+        removeFromCart(ctx.fileId);
       } else {
-        addToCart(fileId);
+        addToCart(ctx);
       }
 
       const errorMessage =
@@ -61,7 +63,7 @@ export const useCart = ({ fileId, enabled = true }: IUseCartProps) => {
   return {
     isItemInCart,
     totalItemsInCart,
-    getItemQuantity,
+    getItemProps,
     toggleCart,
     isLoading: isAdding || isRemoving,
     error,
