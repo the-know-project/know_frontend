@@ -1,10 +1,15 @@
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { IAddToLocalCart } from "../types/cart.types";
 
 export interface ICartItems {
   fileId: string;
   quantity: number;
+
+  price?: number;
+
+  url: string;
 }
 
 interface CartState {
@@ -12,12 +17,14 @@ interface CartState {
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
 
-  addToCart: (fileId: string) => void;
+  addToCart: (ctx: IAddToLocalCart) => void;
   removeFromCart: (fileId: string) => void;
   isItemInCart: (fileId: string) => boolean;
-  getItemQuantity: (fileId: string) => number;
+  getItemProps: (fileId: string) => ICartItems;
   initializeCart: (items: ICartItems[]) => void;
   clearCartItems: () => void;
+
+  getCartItems: () => ICartItems[];
   incrementItemQuantity: (fileId: string) => void;
   decrementItemQuantity: (fileId: string) => void;
 
@@ -36,11 +43,13 @@ export const useCartStore = create<CartState>()(
             _hasHydrated: state,
           })),
 
-        addToCart: (fileId) =>
+        addToCart: (ctx: IAddToLocalCart) =>
           set((state) => {
-            state.cart[fileId] = {
-              fileId: fileId,
-              quantity: 1,
+            state.cart[ctx.fileId] = {
+              fileId: ctx.fileId,
+              quantity: ctx.quantity,
+              price: ctx.price,
+              url: ctx.url,
             };
           }),
 
@@ -56,9 +65,14 @@ export const useCartStore = create<CartState>()(
           return fileId in state.cart;
         },
 
-        getItemQuantity: (fileId) => {
+        getItemProps: (fileId) => {
           const state = get();
-          return state.cart[fileId]?.quantity || 0;
+          return {
+            fileId: fileId,
+            quantity: state.cart[fileId]?.quantity || 0,
+            price: state.cart[fileId]?.price || 0,
+            url: state.cart[fileId]?.url || "",
+          };
         },
 
         incrementItemQuantity: (fileId) =>
@@ -85,6 +99,8 @@ export const useCartStore = create<CartState>()(
               state.cart[item.fileId] = {
                 fileId: item.fileId,
                 quantity: item.quantity,
+                price: item.price,
+                url: item.url,
               };
             });
           }),
@@ -93,6 +109,11 @@ export const useCartStore = create<CartState>()(
           set((state) => {
             state.cart = {};
           }),
+
+        getCartItems: () => {
+          const state = get();
+          return Object.values(state.cart);
+        },
 
         getItemsFileIds: () => {
           const state = get();
@@ -149,9 +170,10 @@ export const useCartActions = () => {
   const addToCart = useCartStore((state) => state.addToCart);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const clearCartItems = useCartStore((state) => state.clearCartItems);
+  const getCartItems = useCartStore((state) => state.getCartItems);
   const initializeCart = useCartStore((state) => state.initializeCart);
 
-  const getItemQuantity = useCartStore((state) => state.getItemQuantity);
+  const getItemProps = useCartStore((state) => state.getItemProps);
 
   const incrementQuantity = useCartStore(
     (state) => state.incrementItemQuantity,
@@ -162,11 +184,12 @@ export const useCartActions = () => {
 
   return {
     addToCart,
+    getCartItems,
     removeFromCart,
     clearCartItems,
     initializeCart,
     incrementQuantity,
     decrementQuantity,
-    getItemQuantity,
+    getItemProps,
   };
 };
