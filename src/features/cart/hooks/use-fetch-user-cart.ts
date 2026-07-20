@@ -6,7 +6,6 @@ import { CartError } from "../error/cart.error";
 import { IUserCart, TCart } from "../types/cart.types";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
-import { useAddToCart } from "./use-add-to-cart";
 import { useCartActions } from "../state/cart.store";
 
 export const useFetchUserCart = () => {
