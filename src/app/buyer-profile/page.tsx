@@ -2,7 +2,8 @@
 import { BuyerGuard } from "@/src/features/auth/guards/OptimizedAuthGuard";
 import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
 import { useRemoveFromCart } from "@/src/features/cart/hooks/use-remove-from-cart";
-import { TCart } from "@/src/features/cart/types/cart.types";
+import { useCartActions } from "@/src/features/cart/state/cart.store";
+import { IAddToLocalCart, TCart } from "@/src/features/cart/types/cart.types";
 import {
   useIsExploreContentToggled,
   useToggleExploreContent,
@@ -14,7 +15,12 @@ import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { formatDate } from "@/src/utils/date";
 import { logger } from "@/src/utils/logger";
-import { IconTag, IconTagFilled } from "@tabler/icons-react";
+import {
+  IconTag,
+  IconTagFilled,
+  IconToggleLeft,
+  IconToggleRight,
+} from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -42,6 +48,7 @@ const Page = () => {
   const { mutateAsync: removeItem } = useRemoveFromCart({ enabled: true });
 
   const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
+  const { getItemProps } = useCartActions();
 
   const { data: pendingOrdersData, isLoading: pendingOrdersLoading } =
     useFetchUserOrders({
@@ -131,8 +138,13 @@ const Page = () => {
     openArtDetails(order.fileId, content);
   };
 
-  const handleRemoveFromCart = async (fileId: string) => {
-    await removeItem(fileId);
+  const handleRemoveFromCart = async (ctx: IAddToLocalCart) => {
+    await removeItem({
+      fileId: ctx.fileId,
+      price: ctx.price,
+      quantity: ctx.quantity,
+      url: ctx.url,
+    });
   };
 
   const variants = {
@@ -183,15 +195,35 @@ const Page = () => {
                   {`${item.artistFirstName} ${item.artistLastName}`}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
-                  <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-600 sm:text-sm">
-                    <IconTag className="h-3 w-3 text-neutral-800 sm:h-4 sm:w-4" />
-                    <span className="font-grotesk font-semibold text-neutral-800">
-                      {item.price || "N/A"}
-                    </span>
+                  {/*Price and quantity toggle*/}
+                  <div className="flex flex-col items-start gap-2">
+                    <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-600 sm:text-sm">
+                      <IconTag className="h-3 w-3 text-neutral-800 sm:h-4 sm:w-4" />
+                      <span className="font-grotesk font-semibold text-neutral-800">
+                        {getItemProps(item.fileId).price}
+                      </span>
+                    </div>
+
+                    <div className="flex w-full max-w-sm items-center justify-between">
+                      <IconToggleLeft />
+                      <span className="font-grotesk font-semibold text-neutral-800">
+                        Qty: {getItemProps(item.fileId).quantity}
+                      </span>
+
+                      <IconToggleRight />
+                    </div>
                   </div>
+
                   <div className="font-grotesk flex flex-col items-end gap-1 text-right">
                     <button
-                      onClick={() => handleRemoveFromCart(item.fileId)}
+                      onClick={() =>
+                        handleRemoveFromCart({
+                          fileId: item.fileId,
+                          price: item.price,
+                          quantity: item.quantity,
+                          url: item.url,
+                        })
+                      }
                       className="group flex items-center gap-1 text-xs font-medium transition-colors sm:text-sm"
                     >
                       <Trash2 className="h-3 w-3 text-red-500 group-hover:scale-105 group-active:scale-95 sm:h-4 sm:w-4" />
