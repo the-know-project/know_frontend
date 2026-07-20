@@ -8,6 +8,7 @@ import { showLog } from "@/src/utils/logger";
 import { AnimatePresence, motion } from "framer-motion";
 import { Comment } from "../state/interface/explore-comment.interface";
 import { BlankProfilePicture } from "@/src/constants/constants";
+import { Send } from "lucide-react";
 
 interface ExploreCommentSectionProps {
   fileId: string;
@@ -85,7 +86,11 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
                 disabled={isAdding || !commentText.trim()}
                 className="font-bebas rounded bg-[#1E3A8A] px-4 py-1 text-sm font-medium tracking-wider text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isAdding ? "Posting..." : "Share your work"}
+                {isAdding ? (
+                  <Send className="h-4 w-4 text-neutral-600" />
+                ) : (
+                  <Send className="h-4 w-4 text-white" />
+                )}
               </button>
             </div>
           </form>
@@ -130,15 +135,15 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
                   />
                 </div>
                 <div className="flex-1">
-                  <div className="mb-1 flex items-center gap-2">
-                    <span className="font-helvetica text-sm font-bold text-neutral-800 capitalize">
+                  <div className="mb-1 flex flex-col items-start">
+                    <span className="font-helvetica text-sm font-bold text-nowrap text-neutral-800 capitalize sm:text-[16px]">
                       {comment.firstName} {comment.lastName}
                     </span>
                     <span className="font-grotesk text-[12px] font-light text-neutral-600">
                       • {formatTimeAgo(comment.createdAt)}
                     </span>
                   </div>
-                  <p className="font-grotesk text-[12px] font-light text-neutral-600 sm:text-sm">
+                  <p className="font-grotesk text-sm font-light text-neutral-600">
                     {comment.comment}
                   </p>
                 </div>
