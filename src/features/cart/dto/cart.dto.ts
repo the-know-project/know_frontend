@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+export const IAddToLocalCartSchema = z.object({
+  fileId: z.string(),
+  price: z.number().min(0).max(1000),
+  quantity: z.number().min(1).max(100),
+  url: z.string().url(),
+});
+
 export const CartData = z.object({
   id: z.string().uuid(),
   url: z.string().url(),
