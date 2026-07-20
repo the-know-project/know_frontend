@@ -4,12 +4,12 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { CartError } from "../error/cart.error";
 import { removeFromCart } from "../api/remove-from-cart/route";
 import { selectUser } from "../../auth/state/selectors/token.selectors";
-import { IUserCart } from "../types/cart.types";
+import { IAddToLocalCart, IUserCart } from "../types/cart.types";
 import { useCartActions } from "../state/cart.store";
 
 export type RemoveFromCartResult = {
-  mutate: (fileId: string) => void;
-  mutateAsync: (fileId: string) => Promise<any | null>;
+  mutate: (ctx: IAddToLocalCart) => void;
+  mutateAsync: (ctx: IAddToLocalCart) => Promise<any | null>;
   isPending: boolean;
   isError: boolean;
   error: Error | null;
@@ -30,7 +30,7 @@ export const useRemoveFromCart = ({
     useMutation({
       mutationKey: ["remove-from-cart", user?.id],
 
-      mutationFn: async (fileId: string) => {
+      mutationFn: async (ctx: IAddToLocalCart) => {
         if (!enabled || !user?.id) {
           throw new CartError("Cannot remove from cart: Operation not allowed");
         }
@@ -38,7 +38,7 @@ export const useRemoveFromCart = ({
         const result = await ResultAsync.fromPromise(
           removeFromCart({
             userId: user.id,
-            fileId,
+            fileId: ctx.fileId,
           }),
           (error) => new CartError(`Failed to remove item from cart: ${error}`),
         ).andThen((data) => {
@@ -54,10 +54,10 @@ export const useRemoveFromCart = ({
         }
       },
 
-      onMutate: async (fileId: string) => {
+      onMutate: async (ctx: IAddToLocalCart) => {
         if (!user?.id) return;
 
-        removeFromLocalCart(fileId);
+        removeFromLocalCart(ctx.fileId);
 
         await queryClient.cancelQueries({
           queryKey: [`fetch-user-cart-${user.id}`],
@@ -75,7 +75,9 @@ export const useRemoveFromCart = ({
 
               return {
                 ...old,
-                data: (old.data ?? []).filter((item) => item.fileId !== fileId),
+                data: (old.data ?? []).filter(
+                  (item) => item.fileId !== ctx.fileId,
+                ),
               };
             },
           );
@@ -84,10 +86,10 @@ export const useRemoveFromCart = ({
         return { previousCart };
       },
 
-      onError: (error, fileId, context) => {
+      onError: (error, ctx, context) => {
         console.error(" Failed to remove from cart:", error);
 
-        addToLocalCart(fileId);
+        addToLocalCart(ctx);
 
         if (context?.previousCart && user?.id) {
           console.log(" Rolling back optimistic update");
@@ -98,11 +100,11 @@ export const useRemoveFromCart = ({
         }
       },
 
-      onSuccess: (data, fileId) => {
+      onSuccess: (data, ctx) => {
         console.log(" Successfully removed from cart");
 
         if (user?.id) {
-          removeFromLocalCart(fileId);
+          removeFromLocalCart(ctx.fileId);
 
           queryClient.invalidateQueries({
             queryKey: [`fetch-user-cart-${user.id}`],
@@ -126,14 +128,14 @@ export const useRemoveFromCart = ({
 
   return {
     mutate,
-    mutateAsync: async (fileId: string) => {
+    mutateAsync: async (ctx: IAddToLocalCart) => {
       if (!enabled || !user?.id) {
         console.warn(
           " Cannot remove from cart: Not enabled or user not authenticated",
         );
         return null;
       }
-      return mutateAsync(fileId);
+      return mutateAsync(ctx);
     },
     isPending,
     isError,
