@@ -42,12 +42,45 @@ const Page = () => {
   }, [activeTab]);
 
   const { mutateAsync: removeItem } = useRemoveFromCart({ enabled: true });
-  const { mutateAsync: updateQuantity } = useUpdateQuantity({
+  const { mutate: updateQuantity } = useUpdateQuantity({
     enabled: true,
   });
 
   const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
   const { getItemProps } = useCartActions();
+  const quantityUpdateTimeouts = useRef(
+    new Map<string, ReturnType<typeof setTimeout>>(),
+  );
+
+  const handleQuantityUpdate = (ctx: {
+    fileId: string;
+    opts: "add" | "remove";
+  }) => {
+    if (ctx.opts === "remove" && getItemProps(ctx.fileId).quantity <= 1) {
+      return;
+    }
+
+    const existingTimeout = quantityUpdateTimeouts.current.get(ctx.fileId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      quantityUpdateTimeouts.current.delete(ctx.fileId);
+      updateQuantity(ctx);
+    }, 50);
+
+    quantityUpdateTimeouts.current.set(ctx.fileId, timeout);
+  };
+
+  useEffect(() => {
+    return () => {
+      quantityUpdateTimeouts.current.forEach((timeout) => {
+        clearTimeout(timeout);
+      });
+      quantityUpdateTimeouts.current.clear();
+    };
+  }, []);
 
   const { data: pendingOrdersData, isLoading: pendingOrdersLoading } =
     useFetchUserOrders({
@@ -197,28 +230,38 @@ const Page = () => {
                   {/*Price and quantity toggle*/}
                   <div className="flex flex-col items-start gap-2">
                     <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-50 sm:text-sm">
-                      <span className="font-grotesk text-[15px] font-semibold tracking-wide text-neutral-50">
-                        {getItemProps(item.fileId).price}
+                      <span
+                        className="font-grotesk motion-preset-expand motion-duration-700 text-[15px] font-semibold tracking-wide text-neutral-50"
+                        style={{
+                          animationDelay: `${index * 100}ms`,
+                        }}
+                      >
+                        ${getItemProps(item.fileId).price.toFixed(2)}
                       </span>
                     </div>
 
                     <div className="flex w-full max-w-md items-center justify-between">
                       <IconCaretLeftFilled
                         onClick={() =>
-                          updateQuantity({
+                          handleQuantityUpdate({
                             fileId: item.fileId,
                             opts: "remove",
                           })
                         }
                         className="h-4 w-4 text-white sm:h-5 sm:w-5"
                       />
-                      <span className="font-grotesk font-semibold text-neutral-50">
+                      <span
+                        className="font-grotesk motion-preset-expand motion-duration-600 font-semibold text-neutral-50"
+                        style={{
+                          animationDelay: `${index * 100}ms`,
+                        }}
+                      >
                         {getItemProps(item.fileId).quantity}
                       </span>
 
                       <IconCaretRightFilled
                         onClick={() =>
-                          updateQuantity({
+                          handleQuantityUpdate({
                             fileId: item.fileId,
                             opts: "add",
                           })
