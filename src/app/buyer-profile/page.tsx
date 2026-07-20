@@ -16,13 +16,13 @@ import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { formatDate } from "@/src/utils/date";
 import { logger } from "@/src/utils/logger";
 import {
-  IconTag,
-  IconTagFilled,
-  IconToggleLeft,
-  IconToggleRight,
+  IconCaretLeft,
+  IconCaretLeftFilled,
+  IconCaretRight,
+  IconCaretRightFilled,
 } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Eye, ShoppingCart, Trash2 } from "lucide-react";
+import { ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
@@ -178,7 +178,7 @@ const Page = () => {
                 ease: "easeInOut",
                 duration: 0.09,
               }}
-              className="w-full max-w-[400px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              className="relative w-full max-w-[400px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
             >
               <Image
                 onClick={() => handleOpenCartArtDetails(item)}
@@ -189,28 +189,27 @@ const Page = () => {
                 height={300}
                 className="w-full rounded-tl-[15px] rounded-tr-[15px] object-cover transition-all duration-300"
               />
-              <div className="p-3 sm:p-4">
-                <h3 className="profile_title">{item.title || "Untitled"}</h3>
-                <p className="profile_content capitalize">
+              <div className="absolute right-0 bottom-0 left-0 bg-white/10 p-3 backdrop-blur-sm sm:p-4">
+                <h3 className="profile_title_2">{item.title || "Untitled"}</h3>
+                <p className="profile_content_2 capitalize">
                   {`${item.artistFirstName} ${item.artistLastName}`}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
                   {/*Price and quantity toggle*/}
                   <div className="flex flex-col items-start gap-2">
-                    <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-600 sm:text-sm">
-                      <IconTag className="h-3 w-3 text-neutral-800 sm:h-4 sm:w-4" />
-                      <span className="font-grotesk font-semibold text-neutral-800">
+                    <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-50 sm:text-sm">
+                      <span className="font-grotesk text-[15px] font-semibold tracking-wide text-neutral-50">
                         {getItemProps(item.fileId).price}
                       </span>
                     </div>
 
-                    <div className="flex w-full max-w-sm items-center justify-between">
-                      <IconToggleLeft />
-                      <span className="font-grotesk font-semibold text-neutral-800">
-                        Qty: {getItemProps(item.fileId).quantity}
+                    <div className="flex w-full max-w-md items-center justify-between">
+                      <IconCaretLeftFilled className="h-4 w-4 text-white sm:h-5 sm:w-5" />
+                      <span className="font-grotesk font-semibold text-neutral-50">
+                        {getItemProps(item.fileId).quantity}
                       </span>
 
-                      <IconToggleRight />
+                      <IconCaretRightFilled className="h-4 w-4 text-white sm:h-5 sm:w-5" />
                     </div>
                   </div>
 
@@ -224,10 +223,10 @@ const Page = () => {
                           url: item.url,
                         })
                       }
-                      className="group flex items-center gap-1 text-xs font-medium transition-colors sm:text-sm"
+                      className="group flex items-center gap-1 rounded-[15px] bg-neutral-300 p-2 text-xs font-medium shadow-sm transition-colors sm:text-sm"
                     >
                       <Trash2 className="h-3 w-3 text-red-500 group-hover:scale-105 group-active:scale-95 sm:h-4 sm:w-4" />
-                      <p className="text-red-500 group-hover:scale-105 group-active:scale-95">
+                      <p className="font-bold text-red-500 group-hover:scale-105 group-active:scale-95">
                         Delete
                       </p>
                     </button>
@@ -235,9 +234,9 @@ const Page = () => {
                       href={`/checkout?orderId=${item.id}`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <button className="group flex items-center gap-1 text-xs font-medium text-[#1E3A8A] transition-colors hover:text-blue-700 sm:text-sm">
+                      <button className="group flex items-center gap-1 rounded-[15px] bg-neutral-300 p-2 text-xs font-medium text-[#1E3A8A] shadow-sm transition-colors hover:text-blue-700 sm:text-sm">
                         <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <p className="group-hover:scale-105 group-active:scale-95">
+                        <p className="font-bold group-hover:scale-105 group-active:scale-95">
                           Checkout
                         </p>
                       </button>
