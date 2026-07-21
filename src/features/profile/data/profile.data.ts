@@ -15,4 +15,8 @@ export const ProfileToggleData = [
     id: 4,
     name: "Delete",
   },
+  {
+    id: 5,
+    name: "Add to collection",
+  },
 ];
