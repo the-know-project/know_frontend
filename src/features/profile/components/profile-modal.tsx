@@ -66,7 +66,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       case "sign out":
         handleLogout();
         break;
-      case "edit profile":
+      case "settings":
         if (userId) {
           toggleEditProfile(userId);
         }
@@ -92,7 +92,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
   return (
     <section className="scrollbar-hide relative flex min-h-[300px] min-w-[300px] scroll-m-2 flex-col overflow-auto scroll-smooth rounded-[15px] border border-white/20 bg-white px-2 py-4 opacity-95 shadow-[0_8px_32px_0_rgba(31,38,135,0.37),inset_0_1px_0_0_rgba(255,255,255,0.18)] backdrop-blur-2xl">
-      <div className="flex w-full flex-col items-center justify-center gap-5">
+      <div className="z-20 flex w-full flex-col items-center justify-center gap-5">
         <Image
           src={imageUrl}
           alt={firstName}
@@ -121,9 +121,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             <button
               key={item.id}
               className="motion-preset-blur-down motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
-              style={{
-                animationDelay: `${index * 100}ms`,
-              }}
               onClick={() => handleNavigation(item.title)}
               disabled={isSignOutButton && isLoggingOut}
             >
