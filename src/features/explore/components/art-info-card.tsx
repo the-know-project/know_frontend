@@ -21,14 +21,20 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
         </h2>
         {artwork.size && (
           <div className="font-grotesk py-4 text-[12px] font-light text-neutral-600">
-            <p>Height: {artwork.size.height}cm</p>
-            <p>Width: {artwork.size.width}cm</p>
-            <p>Depth: {artwork.size.depth}cm</p>
+            <p>
+              Height: {artwork.size.height}
+              {artwork.size.dimensionUnit}
+            </p>
+            <p>
+              Width: {artwork.size.width}
+              {artwork.size.dimensionUnit}
+            </p>
+            <p>Depth: {artwork.size.depth}</p>
             <p>
               Weight: {artwork.size.weight}
               {artwork.size.weightUnit}
             </p>
-            <p>Diameter: {artwork.size.diameter}cm</p>
+            <p>Diameter: {artwork.size.diameter}mm</p>
             <p>Aspect Ratio: {artwork.size.aspectRatio}</p>
           </div>
         )}
