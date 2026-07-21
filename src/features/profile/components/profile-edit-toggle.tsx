@@ -88,7 +88,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                   duration: 0.3,
                 }}
               >
-                <div className="flex w-full max-w-md touch-manipulation flex-col gap-1 rounded-[15px] bg-white/50 p-2 shadow-sm backdrop-blur-md">
+                <div className="flex w-fit touch-manipulation flex-col gap-1 rounded-[15px] bg-white/50 p-2 text-nowrap shadow-sm backdrop-blur-md">
                   {ProfileToggleData.map((item, index) => (
                     <button
                       key={item.id}
