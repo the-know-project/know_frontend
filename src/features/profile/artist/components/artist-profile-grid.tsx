@@ -173,6 +173,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                 createdAt={formatDateToReadable(post.createdAt.toString())}
                 image={post.url}
                 role={user.role as string}
+                isListed={post.isListed}
                 onClick={() => handleOpenArtDetails(post)}
               />
             </motion.div>
