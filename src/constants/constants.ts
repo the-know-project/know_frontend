@@ -274,12 +274,9 @@ export const ProfileModalItemsBuyer = [
     id: 5,
     title: "Settings",
   },
+
   {
     id: 6,
-    title: "Edit Profile",
-  },
-  {
-    id: 7,
     title: "Sign Out",
   },
 ];
@@ -305,16 +302,9 @@ export const ProfileModalItemsArtist = [
     id: 5,
     title: "Settings",
   },
+
   {
     id: 6,
-    title: "Help",
-  },
-  {
-    id: 7,
-    title: "Edit Profile",
-  },
-  {
-    id: 8,
     title: "Sign Out",
   },
 ];
