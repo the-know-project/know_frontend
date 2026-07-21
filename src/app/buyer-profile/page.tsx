@@ -222,8 +222,10 @@ const Page = () => {
                 className="w-full rounded-tl-[15px] rounded-tr-[15px] object-cover transition-all duration-300"
               />
               <div className="absolute right-0 bottom-0 left-0 bg-white/10 p-3 backdrop-blur-sm sm:p-4">
-                <h3 className="profile_title_2">{item.title || "Untitled"}</h3>
-                <p className="profile_content_2 capitalize">
+                <h3 className="font-helvetica font-bold text-neutral-50 capitalize sm:text-lg">
+                  {item.title || "Untitled"}
+                </h3>
+                <p className="font-grotesk text-xs text-neutral-50 capitalize sm:text-sm">
                   {`${item.artistFirstName} ${item.artistLastName}`}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
