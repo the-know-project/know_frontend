@@ -17,6 +17,8 @@ interface IProfileCard {
   createdAt: string;
   image: string;
   role?: string;
+
+  isListed: boolean;
   onClick?: () => void;
 }
 
@@ -26,6 +28,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
   views,
   createdAt,
   image,
+  isListed,
   onClick,
 }) => {
   const role = useRoleStore((state) => state.role);
@@ -41,7 +44,11 @@ const ProfileCard: React.FC<IProfileCard> = ({
     <div className="relative mt-[30px] flex w-full flex-col px-4">
       <div className="absolute top-1 z-20 px-2">
         {role === "ARTIST" && (
-          <ProfileEditToggle id={id as string} role={role} />
+          <ProfileEditToggle
+            id={id as string}
+            isListed={isListed}
+            role={role}
+          />
         )}
       </div>
       <div className="flex flex-col">
