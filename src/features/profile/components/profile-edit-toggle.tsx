@@ -15,10 +15,15 @@ import { Settings, Settings2Icon } from "lucide-react";
 
 interface IProfileEditToggle {
   id: string;
+  isListed: boolean;
   role?: string;
 }
 
-const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
+const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
+  id,
+  isListed,
+  role,
+}) => {
   const toggleEditProfile = useToggleEditProfile();
   const isEditProfileToggled = useIsEditProfileToggled(id);
   const [editToggled, setEditToggled] = useState(false);
@@ -35,12 +40,9 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
 
   const handleMenuItemClick = (itemId: string) => {
     if (itemId === "edit-profile") {
-      // Open the edit profile modal
       toggleEditProfile(id);
-      // Close the dropdown menu
       setEditToggled(false);
     }
-    // Add other menu item handlers here
   };
 
   useEffect(() => {
@@ -86,21 +88,27 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({ id, role }) => {
                   duration: 0.3,
                 }}
               >
-                <div className="flex w-[fit] touch-manipulation flex-col gap-1 rounded-[15px] bg-white/50 p-2 shadow-sm backdrop-blur-md">
+                <div className="flex w-full max-w-md touch-manipulation flex-col gap-1 rounded-[15px] bg-white/50 p-2 shadow-sm backdrop-blur-md">
                   {ProfileToggleData.map((item, index) => (
                     <button
                       key={item.id}
                       onClick={() => handleMenuItemClick(String(item.id))}
-                      style={{
-                        animationDelay: `${index * 100}ms`,
-                      }}
-                      className="motion-preset-blur-up motion-duration-700 motion-delay-100 group flex w-full flex-col items-start"
+                      className="group flex w-full flex-col items-start"
                     >
-                      <p className="font-grotesk text-[12px] font-medium text-white transition-all duration-200 group-hover:scale-105 group-active:scale-95">
+                      <p className="font-grotesk text-sm font-medium text-white transition-all duration-200 group-hover:scale-105 group-active:scale-95">
                         {item.name}
                       </p>
                     </button>
                   ))}
+                  {isListed ? (
+                    <p className="font-grotesk text-sm font-medium text-white transition-all duration-200 hover:scale-105 active:scale-95">
+                      Unlist
+                    </p>
+                  ) : (
+                    <p className="font-grotesk text-sm font-medium text-white transition-all duration-200 hover:scale-105 active:scale-95">
+                      list
+                    </p>
+                  )}
                 </div>
               </motion.div>
             )}
