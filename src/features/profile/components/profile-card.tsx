@@ -36,7 +36,6 @@ const ProfileCard: React.FC<IProfileCard> = ({
   const toggleEditProfile = useToggleEditProfile(); // ← Add this hook
 
   const handleEditClick = () => {
-    console.log("✏️ Edit button clicked! ID:", id);
     toggleEditProfile(id as string);
   };
 
