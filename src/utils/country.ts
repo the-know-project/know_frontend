@@ -180,7 +180,6 @@ export const countries = [
   "Solomon Islands",
   "Somalia",
   "Sri Lanka",
-  "Sudan",
   "Suriname",
   "Syria",
   "Taiwan",
