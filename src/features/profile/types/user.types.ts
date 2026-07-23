@@ -50,8 +50,8 @@ export const UpdateProfileRequestSchema = z.object({
   sectionTitle: z.string().optional(),
   description: z
     .string()
-    .optional()
-    .max(1000, "Description must be at most 1000 characters"),
+    .max(1000, "Description must be at most 1000 characters")
+    .optional(),
   oldPassword: z.string().optional(),
   newPassword: z.string().optional(),
   profilePicture: z.instanceof(File).optional(),
