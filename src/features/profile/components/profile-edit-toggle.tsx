@@ -1,9 +1,5 @@
 "use client";
-import {
-  IconFileSettings,
-  IconSettings,
-  IconSettingsAutomation,
-} from "@tabler/icons-react";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { ProfileToggleData } from "../data/profile.data";
@@ -11,7 +7,7 @@ import {
   useToggleEditProfile,
   useIsEditProfileToggled,
 } from "../artist/store/artist-profile.store";
-import { Settings, Settings2Icon } from "lucide-react";
+import { Settings2Icon } from "lucide-react";
 
 interface IProfileEditToggle {
   id: string;
