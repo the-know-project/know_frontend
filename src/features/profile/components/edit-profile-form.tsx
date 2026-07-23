@@ -29,6 +29,8 @@ interface IEditProfileForm {
   description?: string | null;
   country?: string | null;
   phoneNumber?: string | null;
+
+  role?: string | null;
   onClose: () => void;
 }
 
@@ -38,6 +40,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({
   description,
   country,
   phoneNumber,
+  role,
 }) => {
   const user = useTokenStore(selectUser);
   const { mutateAsync: updateProfile, isPending: isUpdating } =
@@ -59,7 +62,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({
       firstName: user?.firstName || "",
       lastName: lastName || "",
       email: user?.email || "",
-      role: user?.role || "",
+      role: role || "",
       country: country || "",
       phoneNumber: phoneNumber || "",
       description: description || "",
