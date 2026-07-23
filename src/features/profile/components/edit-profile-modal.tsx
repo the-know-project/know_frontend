@@ -10,6 +10,7 @@ import {
 import EditProfileForm from "./edit-profile-form";
 import ReactDOM from "react-dom";
 import { useFetchProfileDetails } from "../hooks/use-fetch-profile-details";
+import { logger } from "@/src/utils/logger";
 
 interface IEditProfileModal {
   userId: string;
@@ -22,6 +23,10 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
   });
   const isOpen = useIsEditProfileToggled(userId);
   const toggleEditProfile = useToggleEditProfile();
+
+  logger.debug("profile data", {
+    userResponse,
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -86,6 +91,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
                   description={userResponse?.data.description}
                   country={userResponse?.data.country}
                   phoneNumber={userResponse?.data.phoneNumber}
+                  role={userResponse?.data.role}
                   userId={userId}
                   onClose={handleClose}
                 />
