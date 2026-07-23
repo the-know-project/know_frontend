@@ -9,6 +9,7 @@ import {
 } from "@/src/features/profile/artist/store/artist-profile.store";
 import EditProfileForm from "./edit-profile-form";
 import ReactDOM from "react-dom";
+import { useFetchProfileDetails } from "../hooks/use-fetch-profile-details";
 
 interface IEditProfileModal {
   userId: string;
@@ -16,6 +17,9 @@ interface IEditProfileModal {
 
 const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
   const [mounted, setMounted] = useState(false);
+  const { data: userResponse, isLoading } = useFetchProfileDetails({
+    userId: userId,
+  });
   const isOpen = useIsEditProfileToggled(userId);
   const toggleEditProfile = useToggleEditProfile();
 
@@ -76,7 +80,15 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
                 >
                   <IconX size={24} className="text-red-500" />
                 </button>
-                <EditProfileForm userId={userId} onClose={handleClose} />
+                <EditProfileForm
+                  firstName={userResponse?.data.firstName}
+                  lastName={userResponse?.data.lastName}
+                  description={userResponse?.data.description}
+                  country={userResponse?.data.country}
+                  phoneNumber={userResponse?.data.phoneNumber}
+                  userId={userId}
+                  onClose={handleClose}
+                />
               </div>
             </div>
           </motion.div>
