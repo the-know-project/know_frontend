@@ -100,17 +100,15 @@ const SignupForm = () => {
 
   const onSubmit = async (ctx: ISignUpForm) => {
     setActiveButton("regular");
+
     try {
-      // Step 1: Send OTP
       const data = await handleSendOtp(ctx);
 
-      // Step 2: Save user signup data for OTP verification step
       if (data.status === 200 || data.status === 201) {
         const encrypted = await encryptData(JSON.stringify(ctx));
         sessionStorage.setItem("sign-up", encrypted);
       }
 
-      // Step 3: Notify and redirect
       handleToast(data, ctx);
     } catch (error) {
       console.error("Failed to send OTP:", error);
@@ -242,7 +240,7 @@ const SignupForm = () => {
 
         {/* Country and password */}
         <div className="flex flex-row items-center justify-between gap-5">
-          <div className="relative flex w-fit flex-col">
+          <div className="relative flex w-[210px] max-w-sm flex-col">
             <FormField
               control={form.control}
               name="country"
@@ -250,8 +248,11 @@ const SignupForm = () => {
                 <FormItem>
                   <FormLabel className="signup_form_label">Country</FormLabel>
                   <FormControl>
-                    <select {...field} className="signup_form_input">
-                      <option value="">Select a country</option>{" "}
+                    <select
+                      {...field}
+                      className="signup_form_input px-1 py-2.5"
+                    >
+                      <option value="">Nigeria</option>{" "}
                       {countries.map((country) => (
                         <option key={country} value={country}>
                           {country}
