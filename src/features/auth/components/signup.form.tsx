@@ -27,6 +27,7 @@ import { useSendOtp } from "../hooks/use-send-otp";
 import { SendOtpResponseDto } from "../dto/auth.dto";
 import z from "zod";
 import { encryptData } from "@/src/utils/crypto";
+import { countries } from "@/src/utils/country";
 
 type SendOtpData = z.infer<typeof SendOtpResponseDto>;
 
@@ -45,6 +46,7 @@ const SignupForm = () => {
       firstName: "",
       lastName: "",
       email: "",
+      country: "",
       userName: "",
       password: "",
     },
@@ -238,28 +240,55 @@ const SignupForm = () => {
           </div>
         </div>
 
-        {/* Password */}
-        <div className="relative flex w-full flex-col">
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="signup_form_label">Password</FormLabel>
-                <FormControl>
-                  <Input
-                    className="signup_form_input"
-                    placeholder=""
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <div className="absolute right-0 -bottom-5">
-                  <FormMessage className="signup_error_message" />
-                </div>
-              </FormItem>
-            )}
-          />
+        {/* Country and password */}
+        <div className="flex flex-row items-center justify-between gap-5">
+          <div className="relative flex w-fit flex-col">
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="signup_form_label">Country</FormLabel>
+                  <FormControl>
+                    <select {...field} className="signup_form_input">
+                      <option value="">Select a country</option>{" "}
+                      {countries.map((country) => (
+                        <option key={country} value={country}>
+                          {country}
+                        </option>
+                      ))}
+                    </select>
+                  </FormControl>
+                  <div className="absolute right-0 -bottom-5">
+                    <FormMessage className="signup_error_message" />
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="relative flex w-fit flex-col">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="signup_form_label">Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="signup_form_input"
+                      placeholder=""
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <div className="absolute right-0 -bottom-5">
+                    <FormMessage className="signup_error_message" />
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         {/* Create Account Button */}
@@ -268,11 +297,11 @@ const SignupForm = () => {
           className="flex w-full items-center justify-center"
         >
           <button
-            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="font-bebas text-md group relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-blue-500 px-2.5 py-1.5 font-medium text-nowrap text-white capitalize outline outline-[#fff2f21f] transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50"
             type="submit"
-            disabled={isPending && activeButton === 'regular'}
+            disabled={isPending && activeButton === "regular"}
           >
-            {isPending && activeButton === 'regular' ? (
+            {isPending && activeButton === "regular" ? (
               <div className="flex w-full items-center justify-center">
                 <Spinner />
               </div>
@@ -318,7 +347,7 @@ const SignupForm = () => {
 
         {/* Sign Up With Discord */}
         <button
-          className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="font-bebas text-md relative inline-flex h-9 w-full items-center justify-center gap-1 self-center rounded-lg bg-white px-2.5 py-1.5 font-medium text-nowrap text-neutral-900 capitalize shadow-sm outline outline-[#fff2f21f] transition-all duration-200 hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           type="button"
           onClick={handleDiscordSignup}
           disabled={activeButton === "discord"}
