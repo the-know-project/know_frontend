@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -21,6 +22,7 @@
   --font-grotesk: "Space Grotesk", sans-serif;
   --font-marker: "Permanent Marker", cursive;
   --font-bricolage: "Bricolage Grotesque", sans-serif;
+  --font-azeret: "Azeret Mono", monospace;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-bebas: var(--bebas-neue);
@@ -408,4 +410,60 @@
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #222;
   border-radius: 8px;
+}
+
+.text-glow {
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(255, 255, 255, 0.2),
+    0 0 30px rgba(255, 255, 255, 0.2),
+    0 0 40px rgba(255, 255, 255, 0.2);
+}
+
+.text-glow-blue {
+  text-shadow:
+    0 0 10px rgba(59, 130, 246, 0.8),
+    0 0 20px rgba(59, 130, 246, 0.6),
+    0 0 30px rgba(59, 130, 246, 0.4),
+    0 0 40px rgba(59, 130, 246, 0.2);
+}
+
+.text-glow-purple {
+  text-shadow:
+    0 0 10px rgba(168, 85, 247, 0.8),
+    0 0 20px rgba(168, 85, 247, 0.6),
+    0 0 30px rgba(168, 85, 247, 0.4),
+    0 0 40px rgba(168, 85, 247, 0.2);
+}
+
+.text-glow-cyan {
+  text-shadow:
+    0 0 10px rgba(34, 211, 238, 0.8),
+    0 0 20px rgba(34, 211, 238, 0.6),
+    0 0 30px rgba(34, 211, 238, 0.4),
+    0 0 40px rgba(34, 211, 238, 0.2);
+}
+
+@keyframes glow-wave {
+  0%,
+  100% {
+    text-shadow:
+      0 0 5px rgba(255, 255, 255, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(255, 255, 255, 1),
+      0 0 30px rgba(255, 255, 255, 0.8),
+      0 0 40px rgba(255, 255, 255, 0.6),
+      0 0 50px rgba(255, 255, 255, 0.4);
+  }
+}
+
+.glow-letter {
+  display: inline-block;
+  animation: glow-wave 0.6s ease-in-out forwards;
+  text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.3),
+    0 0 10px rgba(255, 255, 255, 0.2);
 }
