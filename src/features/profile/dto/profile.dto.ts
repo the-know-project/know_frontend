@@ -5,6 +5,8 @@ export const UserProfileDataSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   description: z.string(),
+  country: z.string().optional().nullable(),
+  phoneNumber: z.string().optional().nullable(),
   email: z.string().email(),
   imageUrl: z.string().url(),
   username: z.string(),
