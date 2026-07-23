@@ -3,7 +3,7 @@
 import { capitalizeFirstLetter } from "@/src/utils/string-helpers";
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import ExploreFollowButton from "./explore-follow-button";
-import { useFetchProfileDetails } from "../../profile/hooks/use-fetch-artist-details";
+import { useFetchProfileDetails } from "../../profile/hooks/use-fetch-profile-details";
 
 interface ArtistInfoCardProps {
   artistId: string;
