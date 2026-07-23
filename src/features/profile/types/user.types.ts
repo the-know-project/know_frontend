@@ -48,7 +48,10 @@ export const UpdateProfileRequestSchema = z.object({
   country: z.string().optional(),
   phoneNumber: z.string().optional(),
   sectionTitle: z.string().optional(),
-  description: z.string().optional(),
+  description: z
+    .string()
+    .optional()
+    .max(1000, "Description must be at most 1000 characters"),
   oldPassword: z.string().optional(),
   newPassword: z.string().optional(),
   profilePicture: z.instanceof(File).optional(),
