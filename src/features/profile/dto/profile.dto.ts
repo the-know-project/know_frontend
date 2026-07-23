@@ -61,10 +61,9 @@ export const ProfileFormSchema = z
       .email("Invalid email address")
       .optional()
       .or(z.literal("")),
-    userSelection: z.string().optional().or(z.literal("")),
+    role: z.string().optional().or(z.literal("")),
     country: z.string().optional().or(z.literal("")),
     phoneNumber: z.string().optional().or(z.literal("")),
-    sectionTitle: z.string().optional().or(z.literal("")),
     description: z.string().optional().or(z.literal("")),
     oldPassword: z.string().optional().or(z.literal("")),
     newPassword: z.string().optional().or(z.literal("")),
