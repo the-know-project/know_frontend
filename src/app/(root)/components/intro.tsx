@@ -1,6 +1,6 @@
 "use client";
 
-import { about_image, know_artist } from "@/src/assets";
+import { about } from "@/src/assets";
 import useIsVisible from "@/src/shared/hooks/use-is-visible";
 import { TitleText } from "@/src/shared/layout/header";
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
@@ -34,8 +34,8 @@ const Intro = () => {
             className="relative z-10 flex"
           >
             <Image
-              src={know_artist}
-              alt="about_iamge"
+              src={about}
+              alt="about_image"
               width={500}
               height={500}
               quality={100}
