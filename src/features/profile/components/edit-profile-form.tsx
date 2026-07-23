@@ -24,6 +24,11 @@ import { ProfileFormSchema } from "../dto/profile.dto";
 
 interface IEditProfileForm {
   userId: string;
+  firstName?: string;
+  lastName?: string;
+  description?: string | null;
+  country?: string | null;
+  phoneNumber?: string | null;
   onClose: () => void;
 }
 
