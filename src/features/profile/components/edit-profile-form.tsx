@@ -32,7 +32,13 @@ interface IEditProfileForm {
   onClose: () => void;
 }
 
-const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
+const EditProfileForm: React.FC<IEditProfileForm> = ({
+  onClose,
+  lastName,
+  description,
+  country,
+  phoneNumber,
+}) => {
   const user = useTokenStore(selectUser);
   const { mutateAsync: updateProfile, isPending: isUpdating } =
     useUpdateProfile();
@@ -51,13 +57,12 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
     resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
       firstName: user?.firstName || "",
-      lastName: "",
+      lastName: lastName || "",
       email: user?.email || "",
-      userSelection: user?.role || "",
-      country: "",
-      phoneNumber: "",
-      sectionTitle: "",
-      description: "",
+      role: user?.role || "",
+      country: country || "",
+      phoneNumber: phoneNumber || "",
+      description: description || "",
     },
   });
 
@@ -102,10 +107,9 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
         firstName: data.firstName || undefined,
         lastName: data.lastName || undefined,
         email: data.email || undefined,
-        userSelection: data.userSelection || undefined,
+        role: data.role || undefined,
         country: data.country || undefined,
         phoneNumber: data.phoneNumber || undefined,
-        sectionTitle: data.sectionTitle || undefined,
         description: data.description || undefined,
         oldPassword: data.oldPassword || undefined,
         newPassword: data.newPassword || undefined,
@@ -329,7 +333,7 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
                   User Type
                 </label>
                 <select
-                  {...register("userSelection")}
+                  {...register("role")}
                   className="font-grotesk w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-neutral-800 accent-neutral-800 transition-all focus:border-transparent sm:py-3 sm:text-base"
                 >
                   <option value="" className="accent-neutral-800">
@@ -338,9 +342,9 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
                   <option value="ARTIST">Artist</option>
                   <option value="BUYER">Buyer</option>
                 </select>
-                {errors.userSelection && (
+                {errors.role && (
                   <p className="font-grotesk mt-1 text-xs text-red-600 sm:text-sm">
-                    {errors.userSelection.message}
+                    {errors.role.message}
                   </p>
                 )}
               </div>
@@ -353,24 +357,6 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({ onClose }) => {
               About Me
             </h2>
             <div className="space-y-4 sm:space-y-6">
-              <div>
-                <label className="font-grotesk mb-1.5 block text-xs font-medium text-neutral-600 sm:mb-2 sm:text-sm">
-                  Section Title
-                </label>
-                <div className="relative">
-                  <IconInfoCircle
-                    className="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-400"
-                    size={18}
-                  />
-                  <input
-                    {...register("sectionTitle")}
-                    type="text"
-                    className="font-grotesk placeholder:font-grotesk w-full rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 text-sm text-neutral-800 transition-all placeholder:text-[12px] placeholder:text-neutral-600 focus:border-transparent focus:ring-2 focus:ring-black sm:py-3 sm:text-base placeholder:sm:text-sm"
-                    placeholder="e.g., Professional Summary"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="font-grotesk mb-1.5 block text-xs font-medium text-neutral-600 sm:mb-2 sm:text-sm">
                   Description
