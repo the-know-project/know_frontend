@@ -2,9 +2,8 @@
 
 import { capitalizeFirstLetter } from "@/src/utils/string-helpers";
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
-import { useFetchArtistDetails } from "../../profile/hooks/use-fetch-artist-details";
 import ExploreFollowButton from "./explore-follow-button";
-import { showLog } from "@/src/utils/logger";
+import { useFetchProfileDetails } from "../../profile/hooks/use-fetch-artist-details";
 
 interface ArtistInfoCardProps {
   artistId: string;
@@ -12,7 +11,7 @@ interface ArtistInfoCardProps {
 
 const ArtistInfoCard = ({ artistId }: ArtistInfoCardProps) => {
   const { user } = useOptimizedAuth();
-  const { data: artistResponse, isLoading } = useFetchArtistDetails({
+  const { data: artistResponse, isLoading } = useFetchProfileDetails({
     userId: artistId,
   });
 
