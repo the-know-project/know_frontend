@@ -3,6 +3,7 @@ import Link from "next/link";
 import HeroCarousel from "./hero-carousel";
 import GradientText from "@/src/shared/components/gradient-text";
 import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
+import GlowWave from "@/src/shared/components/glow-wave";
 
 export default function Hero() {
   return (
@@ -17,9 +18,11 @@ export default function Hero() {
               </h3>
             </GradientText>
             <div className="flex w-full flex-col gap-[80px] lg:gap-[50px]">
-              <p className="font-grotesk max-w-prose text-lg font-medium text-white capitalize md:text-2xl lg:text-xl">
-                connecting artists and buyers like never before
-              </p>
+              <GlowWave
+                text="Bridging Artists & Buyers Like Never before"
+                className="font-grotesk text-[14px] font-medium text-white sm:text-lg md:text-2xl lg:text-xl"
+                as="p"
+              />
               <NavbarButton
                 colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
                 className="w-fit"
