@@ -19,11 +19,6 @@ export async function updateProfile(ctx: IUpdateProfileRequest) {
     }
   });
 
-  console.log("FormData entries:");
-  for (const [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-
   return await ApiClient.put(PROFILE_OP.UPDATE_PROFILE, formData, {
     headers: {
       "Content-Type": undefined,
