@@ -5,7 +5,7 @@ interface GlowWaveProps {
   className?: string;
   letterDelay?: number;
   animationDuration?: number;
-  as?: React.ElementType; // Allows specifying the HTML element or component to render as
+  as?: React.ElementType;
 }
 
 const GlowWave: React.FC<GlowWaveProps> = ({
