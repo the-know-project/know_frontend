@@ -4,6 +4,7 @@ import About from "./components/about";
 import Faq from "./components/faq";
 import Hero from "./components/hero";
 import JoinCTA from "./components/joincta";
+import FeaturedWorks from "./components/featured-works";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
         <Hero />
       </div>
       <About />
+      <FeaturedWorks />
       <JoinCTA />
       <Faq />
       <Footer />
