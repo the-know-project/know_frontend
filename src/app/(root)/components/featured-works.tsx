@@ -14,7 +14,10 @@ const FeaturedWorks = () => {
           craftsmanship, showcasing the diverse talents within our community.
         </p>
       </TitleText>
-      <FeaturedWorksCarousel />
+
+      <div className="mt-8 flex w-full items-center justify-center">
+        <FeaturedWorksCarousel />
+      </div>
     </section>
   );
 };
