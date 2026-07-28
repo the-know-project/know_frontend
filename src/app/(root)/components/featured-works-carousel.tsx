@@ -10,11 +10,25 @@ import {
 } from "@/src/shared/ui/carousel";
 import * as React from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { featuredSectionsItems } from "@/src/constants/constants";
+import Image from "next/image";
+import { IconArrowsMaximize, IconPalette, IconTag } from "@tabler/icons-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function FeaturedWorksCarousel() {
   const plugin = React.useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true }),
   );
+  const [isClicked, setIsClicked] = React.useState<boolean>(false);
+
+  const handleClick = () => {
+    setIsClicked((prev) => !prev);
+  };
+
+  const variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   return (
     <Carousel
@@ -24,12 +38,70 @@ export function FeaturedWorksCarousel() {
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
+        {featuredSectionsItems.map((_item, index) => (
           <CarouselItem key={index} className="w-full">
             <div className="p-1">
               <Card className="border border-white/20 bg-black shadow-md">
                 <CardContent className="flex aspect-square items-center justify-center p-6 text-white">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
+                  <div className="relative flex aspect-square w-full flex-col">
+                    <Image
+                      onClick={handleClick}
+                      src={_item.image}
+                      alt="featured_art_1"
+                      width={500}
+                      height={500}
+                      quality={100}
+                      priority
+                      className="h-full w-full object-cover"
+                    />
+                    <AnimatePresence>
+                      {!isClicked && ( // Conditionally render based on isClicked
+                        <motion.div
+                          key={_item.id}
+                          variants={variants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="hidden"
+                          transition={{
+                            delay: Math.min(index, 20) * 0.05,
+                            ease: "easeInOut",
+                            duration: 0.09,
+                          }}
+                          className="absolute inset-x-0 bottom-0 flex w-full flex-col items-start bg-white/10 p-3 backdrop-blur-sm sm:p-4"
+                        >
+                          <div className="flex w-full items-start justify-between">
+                            {" "}
+                            {/* Ensure this container takes full width and justifies content */}
+                            <div className="flex flex-col items-start">
+                              <h3 className="font-helvetica text-glow text-lg font-black text-white capitalize sm:text-2xl">
+                                {_item.title}
+                              </h3>
+                              <p className="font-grotesk text-glow text-sm font-bold text-neutral-50 sm:text-lg">
+                                {_item.artist}
+                              </p>
+                            </div>
+                            <p className="font-bebas text-glow flex text-lg font-bold tracking-wider text-neutral-50">
+                              {_item.price}
+                            </p>
+                          </div>
+
+                          <div className="mt-2 flex w-full items-center gap-1">
+                            <IconPalette className="hidden text-neutral-50 sm:flex" />
+                            <p className="font-grotesk sm:text-md max-w-prose text-xs text-neutral-50 uppercase">
+                              {_item.medium}
+                            </p>
+                          </div>
+
+                          <div className="flex w-full items-center gap-1">
+                            <IconArrowsMaximize className="hidden text-neutral-50 sm:flex" />
+                            <p className="font-grotesk sm:text-md max-w-prose text-xs text-neutral-50 uppercase">
+                              {_item.size}
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </CardContent>
               </Card>
             </div>
