@@ -1,5 +1,5 @@
 import React from "react";
-import { hero1, hero2, hero3, hero4 } from "../assets";
+import { hero1, hero2, hero3, hero4, ija } from "../assets";
 import { IconPalette, IconShoppingBag } from "@tabler/icons-react";
 
 export const INavItems = [
@@ -343,5 +343,17 @@ export const posts = [
     comments: 2,
     createdAt: "1 month ago",
     image: "/Art2.png",
+  },
+];
+
+export const featuredSectionsItems = [
+  {
+    id: 1,
+    title: "Ija",
+    artist: "Paul Adebanjo",
+    image: ija,
+    price: "￡600",
+    medium: "oil pastel, acrylic, spray paint & markers on cardboard",
+    size: "21 x 25 inches",
   },
 ];
