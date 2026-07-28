@@ -10,8 +10,7 @@ const FeaturedWorks = () => {
         </h3>
         <p className="about_content_text mt-4">
           Explore a curated selection of exceptional works from our talented
-          creators. Each piece represents the pinnacle of creativity and
-          craftsmanship, showcasing the diverse talents within our community.
+          creators.
         </p>
       </TitleText>
 
