@@ -20,6 +20,7 @@ import know_artist from "./know_artist.jpg";
 import empty from "./empty.png";
 import audience from "./icons/audience.png";
 import about from "./about.jpg";
+import ija from "./ija.jpg";
 
 export {
   hero1,
@@ -44,4 +45,5 @@ export {
   empty,
   audience,
   about,
+  ija,
 };
