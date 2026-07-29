@@ -55,7 +55,7 @@ export function FeaturedWorksCarousel() {
                       className="h-full w-full object-cover"
                     />
                     <AnimatePresence>
-                      {!isClicked && ( // Conditionally render based on isClicked
+                      {!isClicked && (
                         <motion.div
                           key={_item.id}
                           variants={variants}
