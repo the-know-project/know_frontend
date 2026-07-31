@@ -45,7 +45,7 @@ export const useLogin = () => {
     },
 
     onSuccess: (data) => {
-      auth.login(data.accessToken, data.user, data.role || "NONE");
+      auth.login(data.accessToken, data.user, data.role);
     },
     onError: (error) => {
       auth.logout();
