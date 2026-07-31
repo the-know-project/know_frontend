@@ -8,7 +8,7 @@ const AuthSuccessDataDto = z.object({
     email: z.string().email().min(1).max(100),
     firstName: z.string().min(1).max(100),
     imageUrl: z.string().url().optional(),
-    role: RoleSchema.optional(),
+    role: RoleSchema,
     isFirstTime: z.boolean().optional(),
   }),
 });
