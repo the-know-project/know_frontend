@@ -16,6 +16,8 @@ export const Asset = z.object({
   isLocked: z.boolean(),
   url: z.string().url(),
   highResUrl: z.string().url(),
+  extraUrls: z.array(z.string().url()).optional(),
+  highResExtraUrls: z.array(z.string().url()).optional(),
   description: z.string().nullable(),
   size: z.object({
     width: z.number().optional(),
