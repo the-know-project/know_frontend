@@ -28,7 +28,7 @@ const UploadCanvasContent = () => {
   const handleOnContinue = async () => {
     const formData = getAllFormData();
 
-    if (!formData.file || !formData.title || !formData.size) {
+    if (!formData.files || formData.files.length === 0 || !formData.title || !formData.size) {
       alert("Please fill in title and upload a file");
       return;
     }
@@ -36,7 +36,7 @@ const UploadCanvasContent = () => {
     const uploadData: IUploadAssetClient = {
       fileName: formData.title,
       description: formData.description,
-      asset: formData.file,
+      asset: formData.files,
       size: formData.size,
       categories: formData.categories || [],
       tags: formData.tags || [],
