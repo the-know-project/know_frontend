@@ -38,21 +38,38 @@ const UploadForm = ({
   isPending = false,
 }: UploadFormProps) => {
   const [dragging, setDragging] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previews, setPreviews] = useState<
+    { url: string; name: string; type: string; size: number }[]
+  >([]);
   const { uploadData, updateBasicInfo, setIsEditorOpen } = useUploadContext();
 
   const form = useForm<IUploadFormState>({
     resolver: zodResolver(UploadFormSchema),
     defaultValues: {
       title: uploadData.title,
-      file: uploadData.file || undefined,
+      files: uploadData.files || [],
     },
   });
 
-  const watchedFile = form.watch("file");
+  const watchedFiles = form.watch("files") || [];
   const watchedTitle = form.watch("title");
 
-  const handleDragOver = (e: DragEvent<HTMLLabelElement>) => {
+  // Sync previews with watchedFiles
+  useEffect(() => {
+    const urls = watchedFiles.map((file) => ({
+      url: URL.createObjectURL(file),
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    }));
+    setPreviews(urls);
+
+    return () => {
+      urls.forEach((item) => URL.revokeObjectURL(item.url));
+    };
+  }, [watchedFiles]);
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement | HTMLLabelElement>) => {
     e.preventDefault();
     setDragging(true);
   };
@@ -61,40 +78,48 @@ const UploadForm = ({
     setDragging(false);
   };
 
-  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
+  const processFiles = (newFiles: FileList | File[]) => {
+    const currentFiles = form.getValues("files") || [];
+    const fileArray = Array.from(newFiles);
+
+    // Add to current files, up to a maximum of 5 files
+    const combined = [...currentFiles, ...fileArray].slice(0, 5);
+
+    form.setValue("files", combined);
+    form.trigger("files");
+    updateBasicInfo({ files: combined });
+    console.log(
+      "Files updated:",
+      combined.map((f) => f.name),
+    );
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement | HTMLLabelElement>) => {
     e.preventDefault();
     setDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      form.setValue("file", file);
-      form.trigger("file");
-      updateBasicInfo({ file });
-      console.log("File dropped:", file.name);
-
-      // Create preview URL
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      processFiles(e.dataTransfer.files);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      form.setValue("file", selectedFile);
-      form.trigger("file");
-      updateBasicInfo({ file: selectedFile });
-      console.log("File updated:", selectedFile.name);
-
-      // Create preview URL
-      const url = URL.createObjectURL(selectedFile);
-      setPreviewUrl(url);
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
     }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    const currentFiles = form.getValues("files") || [];
+    const updated = currentFiles.filter((_, i) => i !== index);
+    form.setValue("files", updated);
+    form.trigger("files");
+    updateBasicInfo({ files: updated });
   };
 
   const handleSaveDraft = () => {
     const formData = form.getValues();
     updateBasicInfo(formData);
-    if (formData.file && onSaveDraft) {
+    if (formData.files && formData.files.length > 0 && onSaveDraft) {
       onSaveDraft(formData);
     }
   };
@@ -107,17 +132,8 @@ const UploadForm = ({
     }
   };
 
-  // Cleanup preview URL when component unmounts or file changes
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
-
   return (
-    <div className="flex min-h-screen flex-col items-start px-6 py-10">
+    <div className="flex min-h-screen w-full flex-col items-start px-6 py-10">
       {/* Top Action Buttons */}
       <div className="mb-6 flex w-full items-center justify-between">
         <button
@@ -128,33 +144,21 @@ const UploadForm = ({
           <IconX width={20} height={20} color="white" />
         </button>
         <div className="flex gap-4 px-[50px]">
-          {/*<button
-            className="font-bricolage relative inline-flex w-fit items-center gap-[8px] rounded-lg bg-transparent pt-[12px] pr-[8px] pb-[12px] pl-[12px] text-sm font-medium text-white outline outline-[#fff2f21f] transition-all duration-200 hover:scale-105 active:scale-95 sm:bg-[#F97316] sm:text-[16px]"
-            onClick={handleSaveDraft}
-            type="button"
-            disabled={!watchedFile}
-          >
-            <p className="hidden sm:block">Save as draft</p>
-            <div className="flex items-center justify-center rounded-full bg-orange-200 p-2 sm:hidden">
-              <IconCloudDownload className="flex text-[#F97316]" />
-            </div>
-          </button>*/}
-
           {isPending ? (
             <Spinner borderColor="border-blue" />
           ) : (
             <button
               className="font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
               onClick={() => {
-                if (watchedFile && watchedTitle) {
+                if (watchedFiles.length > 0 && watchedTitle) {
                   const data: IUploadFormState = {
-                    file: watchedFile,
+                    files: watchedFiles,
                     title: watchedTitle,
                   };
                   onSubmit(data);
                 }
               }}
-              disabled={!watchedFile || !watchedTitle}
+              disabled={watchedFiles.length === 0 || !watchedTitle}
             >
               <p className="flex">Continue</p>
             </button>
@@ -203,86 +207,149 @@ const UploadForm = ({
           {/* File Upload Field */}
           <FormField
             control={form.control}
-            name="file"
+            name="files"
             render={() => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
-                    {/* Upload Box */}
-                    <label
-                      onDragOver={handleDragOver}
-                      onDragLeave={handleDragLeave}
-                      onDrop={handleDrop}
-                      htmlFor="file-upload"
-                      className={`font-bricolage flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${
-                        dragging
-                          ? "border-primary bg-blue-50"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {previewUrl && watchedFile ? (
-                        <div className="relative h-full w-full overflow-hidden rounded-md">
-                          {watchedFile.type.startsWith("image/") ? (
-                            <img
-                              src={previewUrl}
-                              alt="Preview"
-                              className="h-full w-full object-cover"
-                            />
-                          ) : watchedFile.type.startsWith("video/") ? (
-                            <video
-                              src={previewUrl}
-                              className="h-full w-full object-cover"
-                              controls
-                            />
-                          ) : null}
-                          <div className="bg-opacity-20 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity hover:opacity-100">
-                            <p className="font-grotesk text-sm font-light text-white">
-                              Click to change file
-                            </p>
+                  <div
+                    className="relative"
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    {watchedFiles.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="flex w-full flex-col items-center gap-4">
+                          <div className="scrollbar-hide flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-x-visible sm:pb-0 md:grid-cols-3">
+                            {previews.map((item, index) => (
+                              <div
+                                key={index}
+                                className="group relative h-64 w-full flex-shrink-0 snap-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-900"
+                              >
+                                {item.type.startsWith("image/") ? (
+                                  <img
+                                    src={item.url}
+                                    alt={item.name}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : item.type.startsWith("video/") ? (
+                                  <video
+                                    src={item.url}
+                                    className="h-full w-full object-cover"
+                                    controls
+                                  />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center bg-neutral-100">
+                                    <p className="truncate px-2 text-sm font-medium text-neutral-500">
+                                      {item.name}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {/* Number Badge (1-indexed order of files) */}
+                                <div className="font-bebas absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-neutral-950/80 text-sm font-bold text-white backdrop-blur-sm">
+                                  {index + 1}
+                                </div>
+
+                                {/* Remove Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveFile(index)}
+                                  className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
+                                  title="Remove file"
+                                >
+                                  <IconX width={16} height={16} />
+                                </button>
+
+                                {/* Hover Overlay */}
+                                <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/90 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
+                                  <p className="truncate text-xs font-semibold text-white">
+                                    {item.name}
+                                  </p>
+                                  <p className="mt-0.5 text-[10px] text-neutral-300">
+                                    {(item.size / (1024 * 1024)).toFixed(2)} MB
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
+
+                          {/* Add More Slot if less than 5 */}
+                          {watchedFiles.length < 5 && (
+                            <label
+                              htmlFor="file-upload"
+                              className={`flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-300 p-4 text-center transition-all hover:border-blue-500 hover:bg-neutral-50/5 ${
+                                dragging ? "border-primary bg-blue-50/10" : ""
+                              }`}
+                            >
+                              <IconFileUpload className="mb-2 text-3xl text-neutral-400" />
+                              <p className="font-grotesk text-sm font-medium text-neutral-300">
+                                Add file ({5 - watchedFiles.length} left)
+                              </p>
+                            </label>
+                          )}
                         </div>
-                      ) : (
-                        <>
-                          <IconFileUpload className="mb-2 text-4xl text-neutral-400" />
-                          <p className="font-grotesk font-medium text-neutral-600">
-                            Drag and drop an image, or{" "}
-                            <span className="text-blue-600 underline">
-                              Browse
-                            </span>
-                          </p>
-                          <p className="font-grotesk mt-2 text-sm font-light text-neutral-600">
-                            Max 120mb each (25mb for videos)
-                          </p>
-                          <div className="font-grotesk mt-4 space-y-1 text-sm font-light text-neutral-600">
-                            <p>- Only upload media you own the rights to</p>
-                            <p>- Video (mp4)</p>
-                            <p>- Upload high resolution images (png, jpg)</p>
-                          </div>
-                        </>
-                      )}
-                      <input
-                        type="file"
-                        id="file-upload"
-                        accept="image/png, image/jpeg, video/mp4"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </label>
+                      </div>
+                    ) : (
+                      /* Big Upload Box */
+                      <label
+                        htmlFor="file-upload"
+                        className={`font-bricolage flex h-96 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed text-center transition-colors ${
+                          dragging
+                            ? "border-primary bg-blue-50/10"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        <IconFileUpload className="mb-2 text-4xl text-neutral-400" />
+                        <p className="font-grotesk font-medium text-neutral-400">
+                          Drag and drop up to 5 images/videos, or{" "}
+                          <span className="text-blue-500 underline">
+                            Browse
+                          </span>
+                        </p>
+                        <p className="font-grotesk mt-2 text-sm font-light text-neutral-500">
+                          Max 120mb each (25mb for videos)
+                        </p>
+                        <div className="font-grotesk mt-4 space-y-1 text-sm font-light text-neutral-500">
+                          <p>- Only upload media you own the rights to</p>
+                          <p>- Video (mp4)</p>
+                          <p>- Upload high resolution images (png, jpg)</p>
+                        </div>
+                      </label>
+                    )}
+
+                    <input
+                      type="file"
+                      id="file-upload"
+                      accept="image/png, image/jpeg, video/mp4"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      multiple
+                    />
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="font-bebas self-center tracking-wider" />
               </FormItem>
             )}
           />
 
-          {/* File Preview */}
-          {watchedFile && (
-            <div className="font-groetsk mt-6 text-center text-sm font-normal">
-              <p className="text-sm text-neutral-600">Selected file:</p>
-              <p className="text-sm font-medium">{watchedFile.name}</p>
-              <p className="text-sm text-neutral-400">
-                {(watchedFile.size / (1024 * 1024)).toFixed(2)} MB
+          {/* Files Summary */}
+          {watchedFiles.length > 0 && (
+            <div className="font-grotesk mt-6 text-center text-sm font-normal">
+              <p className="text-sm font-medium text-neutral-400">
+                Selected files ({watchedFiles.length}):
               </p>
+              <div className="mt-2 flex flex-col items-center gap-1">
+                {watchedFiles.map((file, i) => (
+                  <p key={i} className="text-xs text-neutral-500">
+                    {i + 1}.{" "}
+                    <span className="font-medium text-neutral-400">
+                      {file.name}
+                    </span>{" "}
+                    ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+                  </p>
+                ))}
+              </div>
             </div>
           )}
         </form>
