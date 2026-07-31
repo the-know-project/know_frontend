@@ -7,6 +7,8 @@ export interface IExploreContent {
   description: string | null;
   artWorkUrl: string;
   highResUrl: string;
+  extraUrls: string[] | undefined;
+  highResExtraUrls: string[] | undefined;
   categories: string[];
   tags: string[] | undefined;
   price: number;
