@@ -33,6 +33,8 @@ export const UserAssetData = z.object({
   isLocked: z.boolean(),
   url: z.string().url(),
   highResUrl: z.string().url().optional(),
+  extraUrls: z.array(z.string().url()).optional(),
+  highResExtraUrls: z.array(z.string().url()).optional(),
   size: z.object({
     width: z.number(),
     height: z.number(),
