@@ -1,5 +1,5 @@
 import React from "react";
-import { hero1, hero2, hero3, hero4, ija } from "../assets";
+import { hero1, hero2, hero3, hero4, ija, rebirth } from "../assets";
 import { IconPalette, IconShoppingBag } from "@tabler/icons-react";
 
 export const INavItems = [
@@ -355,5 +355,14 @@ export const featuredSectionsItems = [
     price: "￡600",
     medium: "oil pastel, acrylic, spray paint & markers on cardboard",
     size: "21 x 25 inches",
+  },
+  {
+    id: 2,
+    title: "Rebirth",
+    artist: "Samuel Ajayi",
+    image: rebirth,
+    price: "￡800",
+    medium: "oil pastel, acrylic, spray paint & markers on cardboard",
+    size: "22 x 26 inches",
   },
 ];
