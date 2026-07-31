@@ -7,7 +7,7 @@ import { IUploadFormState, ISizePickerForm } from "../types/upload.types";
 export interface ICompleteUploadForm {
   title: string;
 
-  file: File | null;
+  files: File[];
 
   description: string;
 
@@ -33,7 +33,7 @@ interface UploadContextType {
 
 const defaultUploadData: ICompleteUploadForm = {
   title: "",
-  file: null,
+  files: [],
   description: "",
   size: {
     width: undefined,
