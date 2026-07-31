@@ -21,6 +21,7 @@ import empty from "./empty.png";
 import audience from "./icons/audience.png";
 import about from "./about.jpg";
 import ija from "./ija.jpg";
+import rebirth from "./rebirth.jpg";
 
 export {
   hero1,
@@ -46,4 +47,5 @@ export {
   audience,
   about,
   ija,
+  rebirth,
 };
