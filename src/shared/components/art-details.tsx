@@ -22,9 +22,24 @@ import ReactDOM from "react-dom";
 
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const followerId = useTokenStore(selectUserId);
+
   const { toggledContentId, exploreContent, isExploreContentToggled } =
     useIsExploreContentToggled();
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [toggledContentId]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const width = container.clientWidth;
+    if (width > 0) {
+      const index = Math.round(container.scrollLeft / width);
+      setActiveIndex(index);
+    }
+  };
   const toggleExploreContent = useToggleExploreContent();
   const { mutateAsync: followUser } = useFollowUser();
   const { mutateAsync: unFollowUser } = useUnfollowUser();
@@ -81,6 +96,11 @@ const ArtDetails = () => {
     visible: { opacity: 1, y: 0, scale: 1 },
     exit: { opacity: 0, y: -20, scale: 0.95 },
   };
+
+  const images = [
+    exploreContent?.highResUrl,
+    ...(exploreContent?.highResExtraUrls || []),
+  ].filter(Boolean) as string[];
 
   if (!mounted) return null;
 
@@ -219,21 +239,47 @@ const ArtDetails = () => {
                       </div>
                     </div>
 
-                    {/* Artwork Image */}
-                    <div className="mt-8 flex w-full">
-                      <div className="relative w-full overflow-hidden">
-                        <div className="flex items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
-                          <Image
-                            src={exploreContent?.highResUrl || empty}
-                            alt="art_work"
-                            quality={100}
-                            priority
-                            width={1920}
-                            height={1080}
-                            className="h-auto w-full object-cover object-center"
-                          />
-                        </div>
+                    {/* Artwork Image Carousel */}
+                    <div className="relative mt-8 w-full">
+                      <div
+                        onScroll={handleScroll}
+                        className="scrollbar-hide flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4"
+                      >
+                        {images.map((url, index) => (
+                          <div
+                            key={index}
+                            className="relative w-full flex-shrink-0 snap-center overflow-hidden"
+                          >
+                            <div className="flex items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
+                              <Image
+                                src={url}
+                                alt={`art_work_${index}`}
+                                quality={100}
+                                priority={index === 0}
+                                width={1920}
+                                height={1080}
+                                className="h-auto w-full object-cover object-center"
+                              />
+                            </div>
+                          </div>
+                        ))}
                       </div>
+
+                      {/* Indicator Dots */}
+                      {images.length > 1 && (
+                        <div className="text-glow absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 backdrop-blur-sm">
+                          {images.map((_, index) => (
+                            <div
+                              key={index}
+                              className={`h-1.5 rounded-full transition-all duration-300 ${
+                                activeIndex === index
+                                  ? "w-4 bg-white"
+                                  : "w-1.5 bg-white/50"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] lg:grid-cols-3">
