@@ -2,7 +2,7 @@ import { handleAxiosError } from "@/src/utils/handle-axios-error";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../api/login/route";
 import { LoginResponseDto } from "../dto/auth.dto";
-import { ILogin, ILoginSuccess } from "../types/auth.types";
+import { ILogin, ILoginSuccess, IRole } from "../types/auth.types";
 import { useAuth } from "./use-auth";
 
 export const useLogin = () => {
@@ -45,7 +45,7 @@ export const useLogin = () => {
     },
 
     onSuccess: (data) => {
-      auth.login(data.accessToken, data.user, data.role);
+      auth.login(data.accessToken, data.user, data.role as IRole);
     },
     onError: (error) => {
       auth.logout();
