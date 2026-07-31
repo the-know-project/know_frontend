@@ -122,6 +122,8 @@ const Page = () => {
       description: null,
       artWorkUrl: item.url,
       highResUrl: item.highResUrl,
+      extraUrls: [],
+      highResExtraUrls: [],
       categories: [],
       price: item.price,
       size: {
@@ -156,6 +158,8 @@ const Page = () => {
       description: null,
       artWorkUrl: order.assetUrl,
       highResUrl: order.highResUrl,
+      extraUrls: [],
+      highResExtraUrls: [],
       categories: [],
       tags: undefined,
       price: parseFloat(order.price),
