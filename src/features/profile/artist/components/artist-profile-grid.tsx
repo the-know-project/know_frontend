@@ -45,6 +45,8 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
       description: post.description ?? null,
       artWorkUrl: post.url,
       highResUrl: post.highResUrl || post.url,
+      extraUrls: post.extraUrls || [],
+      highResExtraUrls: post.highResExtraUrls || [],
       categories: post.categories,
       tags: post.tags,
       price: post.price,
