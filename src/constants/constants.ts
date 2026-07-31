@@ -350,7 +350,7 @@ export const featuredSectionsItems = [
   {
     id: 1,
     title: "Ija",
-    artist: "Paul Adebanjo",
+    artist: "Samuel Ajayi",
     image: ija,
     price: "￡600",
     medium: "oil pastel, acrylic, spray paint & markers on cardboard",
