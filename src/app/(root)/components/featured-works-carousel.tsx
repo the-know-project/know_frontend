@@ -12,8 +12,15 @@ import * as React from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { featuredSectionsItems } from "@/src/constants/constants";
 import Image from "next/image";
-import { IconArrowsMaximize, IconPalette, IconTag } from "@tabler/icons-react";
+import {
+  IconArrowsMaximize,
+  IconPalette,
+  IconShoppingCart,
+  IconTag,
+} from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { NavbarButton } from "@/src/shared/ui/resizable-navbar";
+import Link from "next/link";
 
 export function FeaturedWorksCarousel() {
   const plugin = React.useRef(
@@ -80,23 +87,46 @@ export function FeaturedWorksCarousel() {
                                 {_item.artist}
                               </p>
                             </div>
-                            <p className="font-bebas text-glow flex text-lg font-bold tracking-wider text-neutral-50">
-                              {_item.price}
-                            </p>
+                            <div className="flex flex-col items-end">
+                              <p className="font-bebas text-glow flex text-lg font-bold tracking-wider text-neutral-50">
+                                {_item.price}
+                              </p>
+                            </div>
                           </div>
 
-                          <div className="mt-2 flex w-full items-center gap-1">
-                            <IconPalette className="hidden text-neutral-50 sm:flex" />
-                            <p className="font-grotesk sm:text-md max-w-prose text-xs text-neutral-50 uppercase">
-                              {_item.medium}
-                            </p>
-                          </div>
+                          <div className="justfy-between mt-2 flex w-full items-start">
+                            <div className="flex w-full flex-col">
+                              <div className="flex w-full items-center gap-1">
+                                <IconPalette className="hidden text-neutral-50 sm:flex" />
+                                <p className="font-grotesk sm:text-md max-w-prose text-[10px] text-neutral-50 uppercase">
+                                  {_item.medium}
+                                </p>
+                              </div>
 
-                          <div className="flex w-full items-center gap-1">
-                            <IconArrowsMaximize className="hidden text-neutral-50 sm:flex" />
-                            <p className="font-grotesk sm:text-md max-w-prose text-xs text-neutral-50 uppercase">
-                              {_item.size}
-                            </p>
+                              <div className="flex w-full items-center gap-1">
+                                <IconArrowsMaximize className="hidden text-neutral-50 sm:flex" />
+                                <p className="font-grotesk sm:text-md max-w-prose text-[10px] text-neutral-50 uppercase">
+                                  {_item.size}
+                                </p>
+                              </div>
+                            </div>
+
+                            <NavbarButton
+                              colors={[
+                                "#FF5733",
+                                "#33FF57",
+                                "#3357FF",
+                                "#F1C40F",
+                              ]}
+                              className="w-fit"
+                            >
+                              <Link
+                                href={`/login`}
+                                className="font-bebas relative inline-flex w-fit items-center gap-1 rounded-lg bg-black p-1 text-sm font-medium tracking-wider text-white capitalize outline outline-[#fff2f21f] transition-all duration-200"
+                              >
+                                <IconShoppingCart className="text-white" />
+                              </Link>
+                            </NavbarButton>
                           </div>
                         </motion.div>
                       )}
