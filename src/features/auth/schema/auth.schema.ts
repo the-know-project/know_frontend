@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const RoleSchema = z.enum(["ARTIST", "BUYER"]);
+export const RoleSchema = z.enum(["ARTIST", "BUYER", "NONE"]);
 
 export const SignUpSchema = z.object({
   firstName: z.string().min(2).max(100),
