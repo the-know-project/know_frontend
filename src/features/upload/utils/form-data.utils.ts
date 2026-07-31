@@ -16,7 +16,13 @@ export function convertToFormData(data: IUploadAssetServer): FormData {
   formData.append("userId", data.userId);
   formData.append("fileName", data.fileName);
 
-  formData.append("asset", data.asset);
+  if (Array.isArray(data.asset)) {
+    data.asset.forEach((file) => {
+      formData.append("asset", file);
+    });
+  } else {
+    formData.append("asset", data.asset);
+  }
 
   if (data.size) {
     Object.entries(data.size).forEach(([key, value]) => {
@@ -53,7 +59,13 @@ export function convertToFormDataWithJSON(data: IUploadAssetServer): FormData {
   formData.append("userId", data.userId);
   formData.append("fileName", data.fileName);
 
-  formData.append("asset", data.asset);
+  if (Array.isArray(data.asset)) {
+    data.asset.forEach((file) => {
+      formData.append("asset", file);
+    });
+  } else {
+    formData.append("asset", data.asset);
+  }
   formData.append(
     "description",
     data.description
