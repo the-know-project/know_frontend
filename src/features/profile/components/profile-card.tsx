@@ -33,10 +33,10 @@ const ProfileCard: React.FC<IProfileCard> = ({
 }) => {
   const role = useRoleStore((state) => state.role);
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
-  const toggleEditProfile = useToggleEditProfile(); // ← Add this hook
+  const toggleEditProfile = useToggleEditProfile();
 
   const handleEditClick = () => {
-    toggleEditProfile(id as string);
+    toggleEditProfile(id as string, undefined, image);
   };
 
   return (
@@ -44,6 +44,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
       <div className="absolute top-1 z-20 px-2">
         {role === "ARTIST" && (
           <ProfileEditToggle
+            image={image}
             id={id as string}
             isListed={isListed}
             role={role}
