@@ -52,7 +52,7 @@ const ListAssetModal: React.FC<IListAssetModalProps> = ({
             <h2 className="font-bebas mb-4 text-lg font-semibold tracking-wider">
               List Asset
             </h2>
-            <div className="flex flex-col gap-4 mb-4">
+            <div className="mb-4 flex flex-col gap-4">
               <div className="flex justify-center">
                 <Image
                   src={image}
@@ -60,21 +60,21 @@ const ListAssetModal: React.FC<IListAssetModalProps> = ({
                   quality={100}
                   width={400}
                   height={300}
-                  className="rounded-[15px] max-h-48 object-contain transition-all duration-300 select-none"
+                  className="max-h-48 rounded-[15px] object-contain transition-all duration-300 select-none"
                 />
               </div>
-              
-              <ListAssetForm 
+
+              <ListAssetForm
                 onSubmit={(values) => {
                   logger.debug("Asset listed successfully", values);
                   // Add your listing API call here
                   handleClose();
                 }}
               />
-              
+
               <button
                 onClick={handleClose}
-                className="w-full text-center py-2 text-xs font-semibold text-neutral-500 hover:text-neutral-800 transition-colors uppercase tracking-wider"
+                className="font-bebas w-full py-2 text-center text-xs font-semibold tracking-wider text-neutral-500 uppercase transition-colors hover:text-neutral-800"
               >
                 Cancel
               </button>
