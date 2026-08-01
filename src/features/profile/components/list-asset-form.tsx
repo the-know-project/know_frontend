@@ -29,7 +29,7 @@ export const ListAssetSchema = z.object({
       },
       {
         message: "Price must be a valid positive number",
-      }
+      },
     ),
 });
 
@@ -55,7 +55,6 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
   const { setValue, watch } = form;
   const currentPrice = watch("price");
 
-  // Price adjustment functions
   const incrementPrice = () => {
     const parsed = parseFloat(currentPrice);
     const newPrice = isNaN(parsed) ? 1 : Math.max(0, parsed + 1);
@@ -86,13 +85,11 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
             name="price"
             render={({ field }) => (
               <FormItem className="flex flex-col gap-1.5">
-                <FormLabel className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">
+                {/*<FormLabel className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">
                   Asset Value / Price
-                </FormLabel>
+                </FormLabel>*/}
                 <FormControl>
-                  <div
-                    className="flex items-center rounded-2xl bg-neutral-100/70 p-1.5 border border-neutral-200/50 transition-all duration-300 focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500/80 focus-within:bg-white"
-                  >
+                  <div className="flex items-center rounded-2xl border border-neutral-200/50 bg-neutral-100/70 p-1.5 transition-all duration-300 focus-within:border-[#1E3A8A]/80 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-500/10">
                     {/* Currency Selector integrated into the left side */}
                     <FormField
                       control={form.control}
@@ -100,10 +97,10 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
                       render={({ field: currencyField }) => (
                         <select
                           {...currencyField}
-                          className="bg-transparent text-sm font-semibold text-neutral-700 py-2 pl-3 pr-2 focus:outline-none cursor-pointer border-r border-neutral-300/60 hover:text-blue-600 transition-colors"
+                          className="font-grotesk cursor-pointer border-r border-neutral-300/60 bg-transparent py-2 pr-2 pl-3 text-sm font-semibold text-neutral-700 transition-colors hover:text-[#1E3A8A] focus:outline-none"
                         >
-                          <option value="NGN">NGN (₦)</option>
-                          <option value="USD">USD ($)</option>
+                          <option value="NGN">NGN</option>
+                          <option value="USD">USD</option>
                         </select>
                       )}
                     />
@@ -114,31 +111,31 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
                       type="text"
                       inputMode="decimal"
                       placeholder="0.00"
-                      className="w-full bg-transparent border-0 px-3 py-2 text-base font-semibold text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-0 min-w-0"
+                      className="font-grotesk placeholder:font-grotesk w-full min-w-0 border-0 bg-transparent px-3 py-2 text-base font-semibold text-neutral-800 placeholder:text-neutral-400 focus:ring-0 focus:outline-none"
                     />
 
                     {/* Stepper controls (Apple-style segmented design) */}
-                    <div className="flex items-center rounded-xl bg-white border border-neutral-200/60 shadow-xs divide-x divide-neutral-200 overflow-hidden mr-1">
+                    <div className="mr-1 flex items-center divide-x divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200/60 bg-white shadow-xs">
                       <button
                         type="button"
                         onClick={decrementPrice}
-                        className="p-2 text-neutral-500 hover:bg-neutral-50 active:bg-neutral-100 hover:text-neutral-800 transition-all cursor-pointer flex items-center justify-center"
+                        className="flex cursor-pointer items-center justify-center p-2 text-neutral-500 transition-all hover:bg-neutral-50 hover:text-neutral-800 active:bg-neutral-100"
                         title="Decrement Price"
                       >
-                        <IconMinus className="w-4 h-4 stroke-[2.5]" />
+                        <IconMinus className="h-4 w-4 stroke-[2.5]" />
                       </button>
                       <button
                         type="button"
                         onClick={incrementPrice}
-                        className="p-2 text-neutral-500 hover:bg-neutral-50 active:bg-neutral-100 hover:text-neutral-800 transition-all cursor-pointer flex items-center justify-center"
+                        className="flex cursor-pointer items-center justify-center p-2 text-neutral-500 transition-all hover:bg-neutral-50 hover:text-neutral-800 active:bg-neutral-100"
                         title="Increment Price"
                       >
-                        <IconPlus className="w-4 h-4 stroke-[2.5]" />
+                        <IconPlus className="h-4 w-4 stroke-[2.5]" />
                       </button>
                     </div>
                   </div>
                 </FormControl>
-                <FormMessage className="text-xs text-red-500 mt-1 font-medium" />
+                <FormMessage className="font-bebas mt-1 self-center text-xs font-medium tracking-wider text-red-500" />
               </FormItem>
             )}
           />
@@ -147,7 +144,7 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full select-none cursor-pointer flex items-center justify-center rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none text-white py-3.5 px-4 font-semibold text-sm transition-all duration-300 shadow-sm shadow-blue-500/10"
+          className="font-bebas flex w-full cursor-pointer items-center justify-center rounded-2xl bg-[#1E3A8A] px-4 py-3.5 text-sm font-semibold tracking-wider text-white shadow-sm shadow-blue-500/10 transition-all duration-300 select-none hover:bg-blue-500 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
         >
           {isSubmitting ? "Processing..." : "List Asset"}
         </button>
