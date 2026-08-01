@@ -2,6 +2,7 @@ import ReactDOM from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { logger } from "@/src/utils/logger";
 import Image from "next/image";
+import { ListAssetForm } from "./list-asset-form";
 
 export interface IListAssetModalProps {
   image: string;
@@ -51,36 +52,31 @@ const ListAssetModal: React.FC<IListAssetModalProps> = ({
             <h2 className="font-bebas mb-4 text-lg font-semibold tracking-wider">
               List Asset
             </h2>
-            <p className="font-grotesk mb-4 text-sm font-light text-neutral-600">
-              Are you sure you want to list this asset?
-            </p>
-            {/*Asset Image and list form*/}
-            <div className="items-center` mb-4 flex gap-5">
-              <Image
-                src={image}
-                alt="user_asset"
-                quality={100}
-                width={400}
-                height={300}
-                className="rounded-[15px] object-contain transition-all duration-300 select-none"
-              />
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={handleClose}
-                className="font-bebas relative z-10 rounded-lg bg-neutral-500 px-2 py-1 text-sm font-normal tracking-wider text-black shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  // Add your listing logic here
+            <div className="flex flex-col gap-4 mb-4">
+              <div className="flex justify-center">
+                <Image
+                  src={image}
+                  alt="user_asset"
+                  quality={100}
+                  width={400}
+                  height={300}
+                  className="rounded-[15px] max-h-48 object-contain transition-all duration-300 select-none"
+                />
+              </div>
+              
+              <ListAssetForm 
+                onSubmit={(values) => {
+                  logger.debug("Asset listed successfully", values);
+                  // Add your listing API call here
                   handleClose();
                 }}
-                className="font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
+              />
+              
+              <button
+                onClick={handleClose}
+                className="w-full text-center py-2 text-xs font-semibold text-neutral-500 hover:text-neutral-800 transition-colors uppercase tracking-wider"
               >
-                List
+                Cancel
               </button>
             </div>
           </motion.div>
