@@ -128,6 +128,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
 
           {isListModalToggled && (
             <ListAssetModal
+              fileId={id}
               image={image}
               isOpen={isListModalToggled}
               onClose={handleListToggle}
