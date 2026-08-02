@@ -9,6 +9,10 @@ import {
 } from "../artist/store/artist-profile.store";
 import { Settings2Icon } from "lucide-react";
 import ListAssetModal from "./list-asset-modal";
+import { useUnlistAsset } from "../artist/hooks/use-unlist-asset";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 
 interface IProfileEditToggle {
   id: string;
@@ -24,6 +28,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
   isListed,
   role,
 }) => {
+  const { mutateAsync: unlistAsset } = useUnlistAsset();
   const toggleEditProfile = useToggleEditProfile();
   const isEditProfileToggled = useIsEditProfileToggled(id);
   const [editToggled, setEditToggled] = useState(false);
@@ -37,6 +42,52 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
 
   const toggleEdit = () => {
     setEditToggled((prev) => !prev);
+  };
+
+  const handleUnlistAsset = async () => {
+    const unListingToastId = toast.loading("Unlisting Asset", {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+
+    const data = await unlistAsset(id);
+
+    if (data.status === 200) {
+      toast.success("Asset unlisted from sale successfully", {
+        id: unListingToastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription description="Your asset has been unlisted successfully." />
+        ),
+        style: {
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          fontFamily: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "600",
+        },
+      });
+    } else {
+      toast.error("Failed to unlist asset", {
+        id: unListingToastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription description="There was an error unlisting your asset. Please try again." />
+        ),
+        style: {
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          fontFamily: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "600",
+        },
+      });
+    }
   };
 
   const handleListToggle = () => {
@@ -108,6 +159,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                   {isListed ? (
                     <button
                       disabled={!isListed}
+                      onClick={handleUnlistAsset}
                       className="font-grotesk text-sm font-medium text-neutral-600 capitalize transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                       Unlist
