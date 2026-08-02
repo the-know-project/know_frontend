@@ -28,10 +28,25 @@ const UploadCanvasContent = () => {
   const handleOnContinue = async () => {
     const formData = getAllFormData();
 
-    if (!formData.files || formData.files.length === 0 || !formData.title || !formData.size) {
+    if (
+      !formData.files ||
+      formData.files.length === 0 ||
+      !formData.title ||
+      !formData.size
+    ) {
       alert("Please fill in title and upload a file");
       return;
     }
+
+    const uploadToastId = toast.loading(`Uploading Asset: ${formData.title}`, {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
 
     const uploadData: IUploadAssetClient = {
       fileName: formData.title,
@@ -45,7 +60,8 @@ const UploadCanvasContent = () => {
 
     const data = await hanndleUploadAsset(uploadData);
     if (data.status === 200) {
-      toast("", {
+      toast("Asset Uploaded", {
+        id: uploadToastId,
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
         style: {
@@ -60,7 +76,8 @@ const UploadCanvasContent = () => {
       });
       router.push("/explore");
     } else if (data.status === 500) {
-      toast("", {
+      toast("An error occurred", {
+        id: uploadToastId,
         icon: <ToastIcon />,
         description: <ToastDescription description={data.message} />,
         style: {
@@ -74,7 +91,8 @@ const UploadCanvasContent = () => {
         },
       });
     } else {
-      toast("", {
+      toast("An error occurred", {
+        id: uploadToastId,
         icon: <ToastIcon />,
         description: <ToastDescription description={`An error occurred`} />,
         style: {
