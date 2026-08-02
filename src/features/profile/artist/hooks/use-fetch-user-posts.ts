@@ -47,7 +47,7 @@ export const useSimpleInfiniteUserPosts = ({
   };
 
   const { data, isLoading, error } = useQuery({
-    queryKey: [`user-${targetUserId}-posts`, queryParams],
+    queryKey: [`user-${targetUserId}-posts`],
     queryFn: async (): Promise<PostsApiResponse> => {
       if (!targetUserId) {
         throw new ArtistError("User ID is required");
