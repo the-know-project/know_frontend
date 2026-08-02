@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/src/shared/ui/form";
 
-// Define form schema using zod
 export const ListAssetSchema = z.object({
   currency: z.enum(["NGN", "USD"], {
     required_error: "Please select a currency",
