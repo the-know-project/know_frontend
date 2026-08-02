@@ -31,7 +31,10 @@ export const useListAsset = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`user-${userId}-posts`],
+        queryKey: [
+          `user-${userId}-posts`,
+          `fetch-user-notifications-${userId}`,
+        ],
       });
     },
   });
