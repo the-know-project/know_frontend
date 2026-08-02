@@ -2,24 +2,81 @@ import ReactDOM from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { logger } from "@/src/utils/logger";
 import Image from "next/image";
-import { ListAssetForm } from "./list-asset-form";
+import { IListAssetFormValues, ListAssetForm } from "./list-asset-form";
+import { toast } from "sonner";
+import { useListAsset } from "../artist/hooks/use-list-asset";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 
 export interface IListAssetModalProps {
+  fileId: string;
   image: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
 const ListAssetModal: React.FC<IListAssetModalProps> = ({
+  fileId,
   image,
   isOpen,
   onClose,
 }) => {
+  const { mutateAsync: listAsset } = useListAsset();
   logger.debug("ListAssetModal", {
     isOpen,
   });
 
   if (!isOpen) return null;
+
+  const handleListAsset = async (values: IListAssetFormValues) => {
+    const listingToastId = toast.loading("Listing Asset", {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+
+    const data = await listAsset({
+      fileId,
+      currency: values.currency,
+      price: values.price,
+    });
+
+    if (data.status === 200) {
+      toast.success("Asset listed for sale successfully", {
+        id: listingToastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription description="Your asset has been listed successfully." />
+        ),
+        style: {
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          fontFamily: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "600",
+        },
+      });
+    } else {
+      toast.error("Failed to list asset", {
+        id: listingToastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription description="There was an error listing your asset. Please try again." />
+        ),
+        style: {
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          fontFamily: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "600",
+        },
+      });
+    }
+  };
 
   const handleClose = () => {
     onClose();
@@ -67,7 +124,7 @@ const ListAssetModal: React.FC<IListAssetModalProps> = ({
               <ListAssetForm
                 onSubmit={(values) => {
                   logger.debug("Asset listed successfully", values);
-                  // Add your listing API call here
+                  handleListAsset(values);
                   handleClose();
                 }}
               />
