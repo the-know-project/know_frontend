@@ -206,6 +206,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           }}
           priority
         />
+        {highResExtraUrls && highResExtraUrls.length > 0 && (
+          <div className="font-bebas absolute top-2 right-2 flex items-center justify-center rounded-full bg-white/80 px-2 py-1 text-xs font-medium tracking-wider text-neutral-800 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95">
+            <p>{highResExtraUrls.length}</p>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between">
