@@ -11,3 +11,12 @@ export const OrdersErrorMessages = {
   FAILED_TO_FETCH_ORDER_BY_ID: "Failed to fetch order by id",
   FAILED_TO_FETCH_ORDERS_SUMMARY: "Failed to fetch orders summary",
 };
+
+export const checkoutSteps = [
+  { label: "Choose payment method", path: "payment-method" },
+  { label: "Input payment details", path: "card-details" },
+  { label: "Confirm Details", path: "confirm" },
+  { label: "Shipping Info", path: "shipping" },
+];
+
+export type CheckoutStep = (typeof checkoutSteps)[number];
