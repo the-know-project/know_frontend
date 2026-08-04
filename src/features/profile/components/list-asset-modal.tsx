@@ -43,6 +43,7 @@ const ListAssetModal: React.FC<IListAssetModalProps> = ({
       fileId,
       currency: values.currency,
       price: values.price,
+      quantity: values.quantity,
     });
 
     if (data.status === 200) {
