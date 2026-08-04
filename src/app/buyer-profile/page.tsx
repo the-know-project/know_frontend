@@ -242,7 +242,7 @@ const Page = () => {
                           animationDelay: `${index * 100}ms`,
                         }}
                       >
-                        ${getItemProps(item.fileId).price.toFixed(2)}
+                        {item.price}
                       </span>
                     </div>
 
@@ -262,7 +262,7 @@ const Page = () => {
                           animationDelay: `${index * 100}ms`,
                         }}
                       >
-                        {getItemProps(item.fileId).quantity}
+                        {item.quantity}
                       </span>
 
                       <IconCaretRightFilled
