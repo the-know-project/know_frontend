@@ -21,10 +21,10 @@ export function ShippingInfo() {
     <div className="mx-auto w-full max-w-xl space-y-5 px-3 py-4 sm:space-y-6 sm:px-6 sm:py-8 md:px-0">
       {/* Heading */}
       <div className="space-y-1">
-        <h2 className="text-[15px] leading-tight font-semibold text-gray-900 sm:text-base md:text-lg">
+        <h2 className="font-helvetica text-base font-semibold text-neutral-900 capitalize sm:text-lg">
           Shipping Information
         </h2>
-        <p className="text-[11px] leading-snug text-gray-500 sm:text-xs md:text-sm">
+        <p className="font-grotesk text-xs text-neutral-600 sm:text-sm">
           Enter the correct details to ensure successful delivery to this
           address.
         </p>
@@ -35,7 +35,7 @@ export function ShippingInfo() {
         <button
           type="button"
           onClick={() => setDeliveryMethod("delivery")}
-          className={`flex min-h-[44px] flex-1 items-center justify-center gap-1 rounded-lg border px-2 py-2 transition-colors active:scale-95 sm:gap-1.5 sm:px-3 sm:py-2.5 md:gap-2 md:px-4 md:py-3 ${
+          className={`font-bebas flex min-h-[44px] flex-1 items-center justify-center gap-1 rounded-lg border px-2 py-2 tracking-wider transition-colors active:scale-95 sm:gap-1.5 sm:px-3 sm:py-2.5 md:gap-2 md:px-4 md:py-3 ${
             deliveryMethod === "delivery"
               ? "border-orange-500 bg-orange-50"
               : "border-gray-300 bg-white"
@@ -74,7 +74,7 @@ export function ShippingInfo() {
         <button
           type="button"
           onClick={() => setDeliveryMethod("pickup")}
-          className={`flex min-h-[44px] flex-1 items-center justify-center gap-1 rounded-lg border px-2 py-2 transition-colors active:scale-95 sm:gap-1.5 sm:px-3 sm:py-2.5 md:gap-2 md:px-4 md:py-3 ${
+          className={`font-bebas flex min-h-[44px] flex-1 items-center justify-center gap-1 rounded-lg border px-2 py-2 tracking-wider transition-colors active:scale-95 sm:gap-1.5 sm:px-3 sm:py-2.5 md:gap-2 md:px-4 md:py-3 ${
             deliveryMethod === "pickup"
               ? "border-orange-500 bg-orange-50"
               : "border-gray-300 bg-white"
@@ -117,10 +117,7 @@ export function ShippingInfo() {
         {/* Full Name & Email */}
         <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:gap-4">
           <div className="space-y-1.5">
-            <Label
-              htmlFor="full-name"
-              className="text-[12px] font-medium sm:text-xs md:text-sm"
-            >
+            <Label htmlFor="full-name" className="signup_form_label">
               Full Name
             </Label>
             <Input
@@ -134,10 +131,7 @@ export function ShippingInfo() {
           </div>
 
           <div className="space-y-1.5">
-            <Label
-              htmlFor="email"
-              className="text-[12px] font-medium sm:text-xs md:text-sm"
-            >
+            <Label htmlFor="email" className="signup_form_label">
               Email Address
             </Label>
             <Input
@@ -154,10 +148,7 @@ export function ShippingInfo() {
         {/* Phone Number & Country */}
         <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:gap-4">
           <div className="space-y-1.5">
-            <Label
-              htmlFor="phone"
-              className="text-[12px] font-medium sm:text-xs md:text-sm"
-            >
+            <Label htmlFor="phone" className="signup_form_label">
               Phone Number
             </Label>
             <Input
@@ -171,16 +162,13 @@ export function ShippingInfo() {
           </div>
 
           <div className="space-y-1.5">
-            <Label
-              htmlFor="country"
-              className="text-[12px] font-medium sm:text-xs md:text-sm"
-            >
+            <Label htmlFor="country" className="signup_form_label">
               Country
             </Label>
             <select
               id="country"
               name="country"
-              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-11 w-full rounded-md border px-3 py-2 text-[13px] file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:text-sm md:h-11 md:text-base"
+              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring font-grotesk flex h-11 w-full rounded-md border px-3 py-2 text-sm text-[13px] font-medium text-neutral-600 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:text-sm md:h-11 md:text-base"
               required
             >
               <option value="">Select country</option>
@@ -195,10 +183,7 @@ export function ShippingInfo() {
         {/* City, State & ZIP Code */}
         <div className="space-y-4 sm:grid sm:grid-cols-3 sm:gap-3 sm:space-y-0 md:gap-4">
           <div className="space-y-1.5">
-            <Label
-              htmlFor="city"
-              className="text-[12px] font-medium sm:text-xs md:text-sm"
-            >
+            <Label htmlFor="city" className="signup_form_label">
               City
             </Label>
             <Input
@@ -212,10 +197,7 @@ export function ShippingInfo() {
           </div>
 
           <div className="space-y-1.5">
-            <Label
-              htmlFor="state"
-              className="text-[12px] font-medium sm:text-xs md:text-sm"
-            >
+            <Label htmlFor="state" className="signup_form_label">
               State
             </Label>
             <Input
@@ -223,16 +205,13 @@ export function ShippingInfo() {
               name="state"
               type="text"
               placeholder="Enter state"
-              className="h-11 text-[13px] placeholder:text-[12px] sm:h-10 sm:text-sm md:h-11 md:text-base"
+              className="signup_form_label"
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label
-              htmlFor="zip"
-              className="text-[12px] font-medium sm:text-xs md:text-sm"
-            >
+            <Label htmlFor="zip" className="signup_form_label">
               ZIP Code
             </Label>
             <Input
@@ -250,7 +229,7 @@ export function ShippingInfo() {
         <div className="pt-2 sm:pt-3 md:pt-4">
           <Button
             type="submit"
-            className="min-h-[48px] w-full bg-[#1E3A8A] text-[14px] font-semibold text-white transition-transform hover:bg-[#1a3474] active:scale-98 sm:min-h-[44px] sm:text-sm md:min-h-[48px] md:text-base"
+            className="font-bebas min-h-[48px] w-full bg-[#1E3A8A] text-[14px] font-semibold tracking-wider text-white transition-transform hover:bg-[#1a3474] active:scale-98 sm:min-h-[44px] sm:text-sm md:min-h-[48px] md:text-base"
           >
             Make payment
           </Button>
