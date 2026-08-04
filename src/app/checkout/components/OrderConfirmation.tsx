@@ -1,51 +1,75 @@
 "use client";
 import Image from "next/image";
 import { Button } from "@/src/shared/ui/button";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-const cartItems = [
-  {
-    id: 1,
-    title: "Burgeoning",
-    artist: "Tonye Abraham",
-    price: 1200,
-    image: "/Painting1.png",
-  },
-  {
-    id: 2,
-    title: "Bubble Fish",
-    artist: "Hyacinth Luigi",
-    price: 2000,
-    image: "/Painting2.png",
-  },
-];
+import { useEffect, useRef } from "react";
+import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
+import { useUpdateQuantity } from "@/src/features/cart/hooks/use-update-quantity";
+import { useCartActions } from "@/src/features/cart/state/cart.store";
+import Link from "next/link";
 
 export function OrderConfirmation() {
   const router = useRouter();
-  const [quantities, setQuantities] = useState<{ [id: number]: number }>({
-    1: 1,
-    2: 1,
+  const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
+  const { mutate: updateQuantity } = useUpdateQuantity({
+    enabled: true,
   });
-
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * quantities[item.id],
-    0,
+  const { getItemProps } = useCartActions();
+  const quantityUpdateTimeouts = useRef(
+    new Map<string, ReturnType<typeof setTimeout>>(),
   );
-  const shippingFee = 150;
-  const total = subtotal + shippingFee;
 
-  const updateQuantity = (id: number, delta: number) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) + delta),
-    }));
+  const handleQuantityUpdate = (ctx: {
+    fileId: string;
+    opts: "add" | "remove";
+  }) => {
+    if (ctx.opts === "remove" && getItemProps(ctx.fileId).quantity <= 1) {
+      return;
+    }
+
+    const existingTimeout = quantityUpdateTimeouts.current.get(ctx.fileId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      quantityUpdateTimeouts.current.delete(ctx.fileId);
+      updateQuantity(ctx);
+    }, 50);
+
+    quantityUpdateTimeouts.current.set(ctx.fileId, timeout);
   };
+
+  useEffect(() => {
+    return () => {
+      quantityUpdateTimeouts.current.forEach((timeout) => {
+        clearTimeout(timeout);
+      });
+      quantityUpdateTimeouts.current.clear();
+    };
+  }, []);
 
   const handleSubmit = () => {
     router.push("/checkout/success");
   };
+
+  if (cartLoading) {
+    return <LoadingGrid />;
+  }
+
+  const cartItems = cartOrdersData?.data || [];
+
+  if (cartItems.length === 0) {
+    return <EmptyState message="Your cart is empty" />;
+  }
+
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0,
+  );
+  const shippingFee = 150;
+  const total = subtotal + shippingFee;
 
   return (
     <div className="mx-auto max-w-3xl space-y-4 px-4 py-6 sm:space-y-6 sm:px-0 sm:py-8">
@@ -64,7 +88,7 @@ export function OrderConfirmation() {
         {cartItems.map((item) => (
           <div key={item.id} className="flex gap-3 sm:gap-4">
             <Image
-              src={item.image}
+              src={item.url}
               alt={item.title}
               width={80}
               height={80}
@@ -73,7 +97,7 @@ export function OrderConfirmation() {
             <div className="flex min-w-0 flex-1 flex-col justify-between">
               <div>
                 <h4 className="text-xs text-gray-600 sm:text-sm">
-                  {item.artist}
+                  {item.artistFirstName} {item.artistLastName}{" "}
                 </h4>
                 <p className="text-sm font-medium text-gray-900 sm:text-base">
                   {item.title}
@@ -86,17 +110,21 @@ export function OrderConfirmation() {
             <div className="flex h-8 flex-shrink-0 items-center gap-1.5 rounded-md border px-2 sm:h-9 sm:gap-2">
               <button
                 type="button"
-                onClick={() => updateQuantity(item.id, -1)}
+                onClick={() =>
+                  handleQuantityUpdate({ fileId: item.id, opts: "remove" })
+                }
                 className="p-0.5"
               >
                 <Minus className="h-3 w-3 text-gray-500 sm:h-4 sm:w-4" />
               </button>
               <span className="w-4 text-center text-xs sm:text-sm">
-                {quantities[item.id]}
+                {item.quantity}
               </span>
               <button
                 type="button"
-                onClick={() => updateQuantity(item.id, 1)}
+                onClick={() =>
+                  handleQuantityUpdate({ fileId: item.id, opts: "add" })
+                }
                 className="p-0.5"
               >
                 <Plus className="h-3 w-3 text-gray-500 sm:h-4 sm:w-4" />
@@ -139,3 +167,43 @@ export function OrderConfirmation() {
     </div>
   );
 }
+
+const LoadingGrid = () => (
+  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+    {[1, 2, 3, 4].map((i) => (
+      <div
+        key={i}
+        className="w-full overflow-hidden rounded-lg bg-white shadow"
+      >
+        <div className="h-[300px] w-full animate-pulse bg-gray-200" />
+        <div className="space-y-2 p-3 sm:space-y-3 sm:p-4">
+          <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200 sm:h-5" />
+          <div className="h-3 w-1/2 animate-pulse rounded bg-gray-200 sm:h-4" />
+          <div className="flex justify-between">
+            <div className="h-3 w-12 animate-pulse rounded bg-gray-200 sm:h-4 sm:w-16" />
+            <div className="h-3 w-16 animate-pulse rounded bg-gray-200 sm:h-4 sm:w-20" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+const EmptyState = ({ message }: { message: string }) => (
+  <div className="flex min-h-[300px] flex-col items-center justify-center self-center py-8 sm:min-h-[400px] sm:py-12">
+    <div className="rounded-full bg-gray-100 p-4 sm:p-6">
+      <ShoppingCart className="h-10 w-10 text-gray-400 sm:h-12 sm:w-12" />
+    </div>
+    <p className="font-bebas text-sm tracking-wider text-neutral-600">
+      {message}
+    </p>
+    <p className="profile_content">
+      Browse our collection to find something you love
+    </p>
+    <Link href="/explore">
+      <button className="font-bebas mt-4 rounded-lg bg-[#1E3A8A] px-5 py-2 text-xs font-medium tracking-wider text-white transition-colors hover:bg-blue-700 sm:mt-6 sm:px-6 sm:py-2.5 sm:text-sm">
+        Browse Artworks
+      </button>
+    </Link>
+  </div>
+);
