@@ -26,6 +26,7 @@ export const UserAssetData = z.object({
   firstName: z.string().max(255).optional(),
   lastName: z.string().max(255).optional(),
   price: z.number().min(0),
+  quantity: z.number().min(0).optional(),
   availability: z.boolean(),
   categories: z.array(z.string()),
   createdAt: z.date(),
