@@ -1,7 +1,8 @@
 "use client";
-import { checkoutSteps } from "../checkoutSteps";
+
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { checkoutSteps } from "@/src/features/orders/data/orders.data";
 
 export const CheckoutStepper = () => {
   const pathname = usePathname();
@@ -50,10 +51,10 @@ export const CheckoutStepper = () => {
             {/* Label below dot */}
             <span
               className={clsx(
-                "mt-1.5 text-center text-[10px] leading-tight",
+                "font-bebas mt-1.5 text-center text-[10px] tracking-wider transition-colors",
                 index <= activeIndex
-                  ? "font-semibold text-black"
-                  : "font-medium text-gray-400",
+                  ? "font-semibold text-neutral-800"
+                  : "font-medium text-neutral-400",
               )}
             >
               {step.label}
@@ -77,10 +78,10 @@ export const CheckoutStepper = () => {
             {/* Step Label */}
             <span
               className={clsx(
-                "text-xs whitespace-nowrap transition-colors md:text-sm",
+                "font-bebas text-xs tracking-wider whitespace-nowrap transition-colors md:text-sm",
                 index <= activeIndex
-                  ? "font-semibold text-black"
-                  : "font-medium text-gray-400",
+                  ? "font-semibold text-neutral-800"
+                  : "font-medium text-neutral-400",
               )}
             >
               {step.label}
