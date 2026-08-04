@@ -8,6 +8,7 @@ export const Asset = z.object({
   firstName: z.string().min(2).max(100),
   lastName: z.string().min(2).max(100),
   price: z.number().min(0),
+  quantity: z.number().min(0).optional(),
   currency: z.string().min(2).max(10),
   availability: z.boolean(),
   categories: z.array(z.string()).min(1),
