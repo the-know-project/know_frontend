@@ -20,10 +20,10 @@ export function CardDetailsForm() {
     >
       {/* Heading */}
       <div className="space-y-1">
-        <h2 className="text-[15px] leading-tight font-semibold text-gray-900 sm:text-base md:text-lg">
+        <h2 className="font-helvetica text-base font-semibold text-neutral-900 capitalize sm:text-lg">
           Input payment details
         </h2>
-        <p className="text-[11px] leading-snug text-gray-500 sm:text-xs md:text-sm">
+        <p className="font-grotesk text-xs text-neutral-600 sm:text-sm">
           Enter the exact details as they appear on your card.
         </p>
       </div>
