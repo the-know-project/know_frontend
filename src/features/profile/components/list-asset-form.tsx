@@ -18,6 +18,7 @@ export const ListAssetSchema = z.object({
   currency: z.enum(["NGN", "USD"], {
     required_error: "Please select a currency",
   }),
+  quantity: z.number().min(1, "Quantity must be at least 1"),
   price: z
     .string()
     .min(1, "Price is required")
@@ -48,11 +49,13 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
     defaultValues: {
       currency: "NGN",
       price: "",
+      quantity: 1, // Set default quantity
     },
   });
 
   const { setValue, watch } = form;
   const currentPrice = watch("price");
+  const currentQuantity = watch("quantity"); // Watch for current quantity
 
   const incrementPrice = () => {
     const parsed = parseFloat(currentPrice);
@@ -72,6 +75,22 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
     });
   };
 
+  // New functions for quantity
+  const incrementQuantity = () => {
+    setValue("quantity", currentQuantity + 1, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const decrementQuantity = () => {
+    setValue("quantity", Math.max(1, currentQuantity - 1), {
+      // Ensure quantity doesn't go below 1
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
   return (
     <Form {...form}>
       <form
@@ -79,14 +98,15 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
         className="w-full space-y-6 font-sans text-neutral-800"
       >
         <div className="space-y-4">
+          {/* Price Input Field */}
           <FormField
             control={form.control}
             name="price"
             render={({ field }) => (
               <FormItem className="flex flex-col gap-1.5">
-                {/*<FormLabel className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">
-                  Asset Value / Price
-                </FormLabel>*/}
+                <FormLabel className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">
+                  Asset Price
+                </FormLabel>
                 <FormControl>
                   <div className="flex items-center rounded-2xl border border-neutral-200/50 bg-neutral-100/70 p-1.5 transition-all duration-300 focus-within:border-[#1E3A8A]/80 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-500/10">
                     {/* Currency Selector integrated into the left side */}
@@ -128,6 +148,57 @@ export const ListAssetForm: React.FC<ListAssetFormProps> = ({
                         onClick={incrementPrice}
                         className="flex cursor-pointer items-center justify-center p-2 text-neutral-500 transition-all hover:bg-neutral-50 hover:text-neutral-800 active:bg-neutral-100"
                         title="Increment Price"
+                      >
+                        <IconPlus className="h-4 w-4 stroke-[2.5]" />
+                      </button>
+                    </div>
+                  </div>
+                </FormControl>
+                <FormMessage className="font-bebas mt-1 self-center text-xs font-medium tracking-wider text-red-500" />
+              </FormItem>
+            )}
+          />
+
+          {/* Quantity Input Field */}
+          <FormField
+            control={form.control}
+            name="quantity"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-1.5">
+                <FormLabel className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">
+                  Quantity
+                </FormLabel>
+                <FormControl>
+                  <div className="flex items-center rounded-2xl border border-neutral-200/50 bg-neutral-100/70 p-1.5 transition-all duration-300 focus-within:border-[#1E3A8A]/80 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-500/10">
+                    {/* No currency selector for quantity */}
+                    <input
+                      {...field}
+                      type="number" // Use type="number" for quantity
+                      inputMode="numeric"
+                      placeholder="1"
+                      className="font-grotesk placeholder:font-grotesk w-full min-w-0 border-0 bg-transparent px-3 py-2 text-base font-semibold text-neutral-800 placeholder:text-neutral-400 focus:ring-0 focus:outline-none"
+                      onChange={(e) => {
+                        // Ensure the value is a number and at least 1
+                        const value = Math.max(1, Number(e.target.value));
+                        field.onChange(value);
+                      }}
+                    />
+
+                    {/* Stepper controls for quantity */}
+                    <div className="mr-1 flex items-center divide-x divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200/60 bg-white shadow-xs">
+                      <button
+                        type="button"
+                        onClick={decrementQuantity}
+                        className="flex cursor-pointer items-center justify-center p-2 text-neutral-500 transition-all hover:bg-neutral-50 hover:text-neutral-800 active:bg-neutral-100"
+                        title="Decrement Quantity"
+                      >
+                        <IconMinus className="h-4 w-4 stroke-[2.5]" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={incrementQuantity}
+                        className="flex cursor-pointer items-center justify-center p-2 text-neutral-500 transition-all hover:bg-neutral-50 hover:text-neutral-800 active:bg-neutral-100"
+                        title="Increment Quantity"
                       >
                         <IconPlus className="h-4 w-4 stroke-[2.5]" />
                       </button>
