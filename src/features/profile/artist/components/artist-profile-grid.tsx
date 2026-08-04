@@ -50,6 +50,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
       categories: post.categories,
       tags: post.tags,
       price: post.price,
+      quantity: post.quantity,
       size: {
         width: post.size.width,
         height: post.size.height,
