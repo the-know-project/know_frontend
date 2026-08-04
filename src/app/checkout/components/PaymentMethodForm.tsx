@@ -31,10 +31,10 @@ export const PaymentMethodForm = () => {
   return (
     <div className="mx-auto max-w-xl space-y-4 px-4 py-6 sm:space-y-6 sm:px-0 sm:py-8">
       <div>
-        <h2 className="text-base font-semibold sm:text-lg">
+        <h2 className="font-helvetica text-base font-semibold text-neutral-900 capitalize sm:text-lg">
           Choose a payment method
         </h2>
-        <p className="text-xs text-gray-500 sm:text-sm">
+        <p className="font-grotesk text-xs text-neutral-600 sm:text-sm">
           Choose your preferred payment method.
         </p>
       </div>
@@ -46,7 +46,7 @@ export const PaymentMethodForm = () => {
               key={method.value}
               value={method.value}
               className={({ checked }) =>
-                `flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2.5 sm:px-4 sm:py-3 ${
+                `font-grotesk flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2.5 font-semibold text-neutral-600 sm:px-4 sm:py-3 ${
                   checked ? "border-orange-500" : "border-gray-300"
                 }`
               }
@@ -73,7 +73,7 @@ export const PaymentMethodForm = () => {
 
       <button
         onClick={handleProceed}
-        className="w-full cursor-pointer rounded-lg bg-blue-800 py-2.5 text-sm font-semibold text-white sm:py-3 sm:text-base"
+        className="font-bebas relative z-10 mt-[50px] w-full rounded-lg bg-[#1E3A8A] px-2 py-2 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
       >
         Proceed
       </button>
