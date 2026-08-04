@@ -6,9 +6,7 @@ import { IAddToLocalCart } from "../types/cart.types";
 export interface ICartItems {
   fileId: string;
   quantity: number;
-
   price: number;
-
   url: string;
 }
 
