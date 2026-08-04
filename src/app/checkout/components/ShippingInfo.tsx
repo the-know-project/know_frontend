@@ -125,7 +125,7 @@ export function ShippingInfo() {
               name="fullName"
               type="text"
               placeholder="Enter full name"
-              className="h-11 text-[13px] placeholder:text-[12px] sm:h-10 sm:text-sm md:h-11 md:text-base"
+              className="signup_form_input"
               required
             />
           </div>
@@ -139,7 +139,7 @@ export function ShippingInfo() {
               name="email"
               type="email"
               placeholder="Enter email address"
-              className="h-11 text-[13px] placeholder:text-[12px] sm:h-10 sm:text-sm md:h-11 md:text-base"
+              className="signup_form_input"
               required
             />
           </div>
@@ -156,7 +156,7 @@ export function ShippingInfo() {
               name="phone"
               type="tel"
               placeholder="Enter phone number"
-              className="h-11 text-[13px] placeholder:text-[12px] sm:h-10 sm:text-sm md:h-11 md:text-base"
+              className="signup_form_input"
               required
             />
           </div>
@@ -171,7 +171,9 @@ export function ShippingInfo() {
               className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring font-grotesk flex h-11 w-full rounded-md border px-3 py-2 text-sm text-[13px] font-medium text-neutral-600 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:text-sm md:h-11 md:text-base"
               required
             >
-              <option value="">Select country</option>
+              <option value="" className="signup_form_input">
+                Select country
+              </option>
               <option value="NG">Nigeria</option>
               <option value="US">United States</option>
               <option value="GB">United Kingdom</option>
@@ -191,7 +193,7 @@ export function ShippingInfo() {
               name="city"
               type="text"
               placeholder="Enter city"
-              className="h-11 text-[13px] placeholder:text-[12px] sm:h-10 sm:text-sm md:h-11 md:text-base"
+              className="signup_form_input"
               required
             />
           </div>
@@ -205,7 +207,7 @@ export function ShippingInfo() {
               name="state"
               type="text"
               placeholder="Enter state"
-              className="signup_form_label"
+              className="signup_form_input"
               required
             />
           </div>
@@ -219,10 +221,38 @@ export function ShippingInfo() {
               name="zip"
               type="text"
               placeholder="ZIP"
-              className="h-11 text-[13px] placeholder:text-[12px] sm:h-10 sm:text-sm md:h-11 md:text-base"
+              className="signup_form_input"
               required
             />
           </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="house-address" className="signup_form_label">
+            House Address
+          </Label>
+          <Input
+            id="house-address"
+            name="houseAddress"
+            type="text"
+            placeholder="Enter house address"
+            className="signup_form_input"
+            required
+          />
+        </div>
+
+        {/* Landmark */}
+        <div className="space-y-1.5">
+          <Label htmlFor="landmark" className="signup_form_label">
+            Landmark
+          </Label>
+          <Input
+            id="landmark"
+            name="landmark"
+            type="text"
+            placeholder="Enter nearby landmark"
+            className="signup_form_input"
+          />
         </div>
 
         {/* Make Payment Button */}
