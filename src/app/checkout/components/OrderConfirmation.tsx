@@ -64,10 +64,12 @@ export function OrderConfirmation() {
     return <EmptyState message="Your cart is empty" />;
   }
 
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
+  const subtotal = cartItems.reduce((total, item) => {
+    const priceAsString = item.price as unknown as string;
+    const priceAsNumber = parseFloat(priceAsString.replace(/[^0-9.-]+/g, ""));
+    return total + priceAsNumber * item.quantity;
+  }, 0);
+
   const shippingFee = 150;
   const total = subtotal + shippingFee;
 
@@ -75,10 +77,10 @@ export function OrderConfirmation() {
     <div className="mx-auto max-w-3xl space-y-4 px-4 py-6 sm:space-y-6 sm:px-0 sm:py-8">
       {/* Heading */}
       <div>
-        <h2 className="text-base font-semibold text-gray-900 sm:text-lg">
+        <h2 className="font-helvetica text-base font-semibold text-neutral-900 capitalize sm:text-lg">
           Order Details
         </h2>
-        <p className="text-xs text-gray-500 sm:text-sm">
+        <p className="font-grotesk text-xs text-neutral-600 sm:text-sm">
           Review and confirm your order details.
         </p>
       </div>
@@ -96,13 +98,15 @@ export function OrderConfirmation() {
             />
             <div className="flex min-w-0 flex-1 flex-col justify-between">
               <div>
-                <h4 className="text-xs text-gray-600 sm:text-sm">
+                <h4 className="font-grotesk text-xs text-neutral-600 capitalize sm:text-sm">
                   {item.artistFirstName} {item.artistLastName}{" "}
                 </h4>
-                <p className="text-sm font-medium text-gray-900 sm:text-base">
+                <p className="font-helvetica text-lg font-bold text-neutral-800 capitalize">
                   {item.title}
                 </p>
-                <p className="mt-1 text-xs sm:text-sm">${item.price}</p>
+                <p className="font-grotesk motion-preset-expand motion-duration-700 text-sm font-semibold tracking-wide text-neutral-800">
+                  {item.price}
+                </p>
               </div>
             </div>
 
@@ -111,23 +115,23 @@ export function OrderConfirmation() {
               <button
                 type="button"
                 onClick={() =>
-                  handleQuantityUpdate({ fileId: item.id, opts: "remove" })
+                  handleQuantityUpdate({ fileId: item.fileId, opts: "remove" })
                 }
                 className="p-0.5"
               >
-                <Minus className="h-3 w-3 text-gray-500 sm:h-4 sm:w-4" />
+                <Minus className="h-3 w-3 text-neutral-500 sm:h-4 sm:w-4" />
               </button>
-              <span className="w-4 text-center text-xs sm:text-sm">
+              <span className="font-bebas w-4 text-center text-xs tracking-wider sm:text-sm">
                 {item.quantity}
               </span>
               <button
                 type="button"
                 onClick={() =>
-                  handleQuantityUpdate({ fileId: item.id, opts: "add" })
+                  handleQuantityUpdate({ fileId: item.fileId, opts: "add" })
                 }
                 className="p-0.5"
               >
-                <Plus className="h-3 w-3 text-gray-500 sm:h-4 sm:w-4" />
+                <Plus className="h-3 w-3 text-neutral-500 sm:h-4 sm:w-4" />
               </button>
             </div>
           </div>
@@ -135,23 +139,25 @@ export function OrderConfirmation() {
       </div>
 
       {/* Summary */}
-      <div className="space-y-2 border-t pt-4 text-xs text-gray-700 sm:pt-6 sm:text-sm">
+      <div className="font-grotesk space-y-2 border-t pt-4 text-xs text-neutral-600 sm:pt-6 sm:text-sm">
         <div className="flex justify-between">
           <span>Subtotal</span>
-          <span>${subtotal}</span>
+          <span className="font-bold text-neutral-800">
+            {subtotal.toFixed(2)}
+          </span>
         </div>
         <div className="flex justify-between">
           <span>Shipping fee</span>
-          <span>${shippingFee}</span>
+          <span className="font-bold text-neutral-800">{shippingFee}</span>
         </div>
         <div className="flex justify-between text-xs text-blue-600">
           <button type="button" onClick={() => alert("Apply discount flow")}>
             Apply discount code
           </button>
         </div>
-        <div className="flex justify-between border-t pt-3 text-sm font-semibold text-gray-900 sm:pt-4 sm:text-base">
+        <div className="flex justify-between border-t pt-3 text-sm font-semibold text-neutral-800 sm:pt-4 sm:text-base">
           <span>Total</span>
-          <span>${total}</span>
+          <span>{total}</span>
         </div>
       </div>
 
@@ -159,7 +165,7 @@ export function OrderConfirmation() {
       <div className="pt-3 sm:pt-4">
         <Button
           onClick={handleSubmit}
-          className="w-full bg-[#1F3C88] py-2.5 text-sm text-white hover:bg-[#1a3474] sm:py-3 sm:text-base"
+          className="font-bebas w-full bg-[#1F3C88] py-2.5 text-sm tracking-wider text-white hover:bg-[#1a3474] sm:py-3 sm:text-base"
         >
           Confirm Order
         </Button>
