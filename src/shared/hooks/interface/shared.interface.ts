@@ -12,6 +12,7 @@ export interface IExploreContent {
   categories: string[];
   tags: string[] | undefined;
   price: number;
+  quantity?: number;
   size: {
     width?: number;
     height?: number;
