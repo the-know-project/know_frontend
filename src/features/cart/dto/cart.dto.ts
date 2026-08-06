@@ -12,6 +12,12 @@ export const UpdateCartItemQuantitySchema = z.object({
   opts: z.enum(["add", "remove"]),
 });
 
+export const CartMeta = z.object({
+  subtotal: z.string(),
+  totalQuantity: z.number(),
+  fixedShippingFee: z.string(),
+});
+
 export const CartData = z.object({
   id: z.string().uuid(),
   url: z.string().url(),
@@ -46,4 +52,5 @@ export const CartResponseDto = z.object({
   status: z.number(),
   message: z.string(),
   data: z.array(CartData).optional(),
+  meta: CartMeta,
 });
