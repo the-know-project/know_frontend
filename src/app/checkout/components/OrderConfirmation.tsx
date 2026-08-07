@@ -59,19 +59,16 @@ export function OrderConfirmation() {
   }
 
   const cartItems = cartOrdersData?.data || [];
+  const cartMeta = cartOrdersData?.meta || {
+    subtotal: "#0.00",
+    totalQuantity: 0,
+    fixedShippingFee: "#0.00",
+    total: "#0.00",
+  };
 
   if (cartItems.length === 0) {
     return <EmptyState message="Your cart is empty" />;
   }
-
-  const subtotal = cartItems.reduce((total, item) => {
-    const priceAsString = item.price as unknown as string;
-    const priceAsNumber = parseFloat(priceAsString.replace(/[^0-9.-]+/g, ""));
-    return total + priceAsNumber * item.quantity;
-  }, 0);
-
-  const shippingFee = 150;
-  const total = subtotal + shippingFee;
 
   return (
     <div className="mx-auto max-w-3xl space-y-4 px-4 py-6 sm:space-y-6 sm:px-0 sm:py-8">
@@ -143,12 +140,14 @@ export function OrderConfirmation() {
         <div className="flex justify-between">
           <span>Subtotal</span>
           <span className="font-bold text-neutral-800">
-            {subtotal.toFixed(2)}
+            {cartMeta.subtotal}
           </span>
         </div>
         <div className="flex justify-between">
           <span>Shipping fee</span>
-          <span className="font-bold text-neutral-800">{shippingFee}</span>
+          <span className="font-bold text-neutral-800">
+            {cartMeta.fixedShippingFee}
+          </span>
         </div>
         <div className="flex justify-between text-xs text-blue-600">
           <button type="button" onClick={() => alert("Apply discount flow")}>
@@ -157,7 +156,7 @@ export function OrderConfirmation() {
         </div>
         <div className="flex justify-between border-t pt-3 text-sm font-semibold text-neutral-800 sm:pt-4 sm:text-base">
           <span>Total</span>
-          <span>{total}</span>
+          <span>{cartMeta.total}</span>
         </div>
       </div>
 
