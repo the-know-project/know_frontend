@@ -21,6 +21,7 @@ import {
   useAuthReady,
 } from "../../auth/hooks/use-optimized-auth";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
+import CartModal from "../../cart/components/cart-modal";
 
 interface IExploreNavOptions {
   toggleShareButton?: boolean;
@@ -35,6 +36,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
   const [isProfileClicked, setIsProfileClicked] = useState<boolean>(false);
   const [shouldShake, setShouldShake] = useState<boolean>(false);
   const [isClient, setIsClient] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -204,7 +206,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
               <p className="block">Share works</p>
             </button>
           ) : isAuthenticated && role?.toLowerCase() === "buyer" ? (
-            <button onClick={handleCtaNavigate}>
+            <button onClick={() => setIsCartOpen(true)}>
               <div className="relative flex flex-row items-center">
                 <IconShoppingCart className="h-[32px] w-[32px] text-neutral-600" />
                 <div className="absolute -top-2 -right-2 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 p-2 text-[10px] font-medium text-white">
@@ -314,6 +316,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
           </div>
         </div>
       </div>
+      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </nav>
   );
 };
