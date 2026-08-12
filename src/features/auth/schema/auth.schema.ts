@@ -16,8 +16,8 @@ export const SignUpFormSchema = z.object({
   firstName: z.string().min(2, "at least 2 characters").max(100).toLowerCase(),
   lastName: z.string().min(2, "at least 2 characters").max(100).toLowerCase(),
   userName: z.string().min(2, "at least 2 characters").max(100).toLowerCase(),
-  country: z.string().min(2, "at least 2 characters").max(100).toLowerCase(),
-  email: z.string().email(),
+  country: z.string().toLowerCase(),
+  email: z.string().email().min(2, "at least 3 characters"),
   password: z.string().min(6, "at least 6 characters").max(100),
 });
 
