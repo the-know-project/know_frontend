@@ -3,6 +3,7 @@
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import ExploreCheckoutButton from "./explore-checkout-button";
+import { logger } from "@/src/utils/logger";
 
 interface ArtInfoCardProps {
   artwork: IExploreContent;
@@ -12,6 +13,10 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
   const { user, role } = useOptimizedAuth();
 
   const canCheckout = user?.id !== artwork.userId;
+
+  logger.debug("Art work", {
+    artwork,
+  });
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
@@ -49,6 +54,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
             )}
           </div>
         )}
+        +
       </div>
 
       {/* Stats */}
