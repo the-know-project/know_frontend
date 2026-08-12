@@ -17,8 +17,6 @@ import {
 
 const ShippingSchema = z.object({
   deliveryMethod: z.enum(["delivery", "pickup"]),
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
   phone: z.string().min(5, "Phone number is too short"),
   country: z.string().min(1, "Please select a country"),
   city: z.string().min(1, "City is required"),
@@ -37,8 +35,6 @@ export function ShippingInfo() {
     resolver: zodResolver(ShippingSchema),
     defaultValues: {
       deliveryMethod: "delivery",
-      fullName: "",
-      email: "",
       phone: "",
       country: "",
       city: "",
@@ -154,7 +150,7 @@ export function ShippingInfo() {
           </div>
 
           {/* Full Name & Email */}
-          <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:gap-4">
+          {/*<div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:gap-4">
             <FormField
               control={form.control}
               name="fullName"
@@ -191,7 +187,7 @@ export function ShippingInfo() {
                 </FormItem>
               )}
             />
-          </div>
+          </div>*/}
 
           {/* Phone Number & Country */}
           <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:gap-4">
@@ -199,8 +195,10 @@ export function ShippingInfo() {
               control={form.control}
               name="phone"
               render={({ field }) => (
-                <FormItem className="space-y-1.5 flex flex-col relative w-full">
-                  <FormLabel className="signup_form_label">Phone Number</FormLabel>
+                <FormItem className="relative flex w-full flex-col space-y-1.5">
+                  <FormLabel className="signup_form_label">
+                    Phone Number
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
@@ -218,7 +216,7 @@ export function ShippingInfo() {
               control={form.control}
               name="country"
               render={({ field }) => (
-                <FormItem className="space-y-1.5 flex flex-col relative w-full">
+                <FormItem className="relative flex w-full flex-col space-y-1.5">
                   <FormLabel className="signup_form_label">Country</FormLabel>
                   <FormControl>
                     <select
@@ -246,7 +244,7 @@ export function ShippingInfo() {
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem className="space-y-1.5 flex flex-col relative w-full">
+                <FormItem className="relative flex w-full flex-col space-y-1.5">
                   <FormLabel className="signup_form_label">City</FormLabel>
                   <FormControl>
                     <Input
@@ -264,7 +262,7 @@ export function ShippingInfo() {
               control={form.control}
               name="state"
               render={({ field }) => (
-                <FormItem className="space-y-1.5 flex flex-col relative w-full">
+                <FormItem className="relative flex w-full flex-col space-y-1.5">
                   <FormLabel className="signup_form_label">State</FormLabel>
                   <FormControl>
                     <Input
@@ -282,7 +280,7 @@ export function ShippingInfo() {
               control={form.control}
               name="zip"
               render={({ field }) => (
-                <FormItem className="space-y-1.5 flex flex-col relative w-full">
+                <FormItem className="relative flex w-full flex-col space-y-1.5">
                   <FormLabel className="signup_form_label">ZIP Code</FormLabel>
                   <FormControl>
                     <Input
@@ -301,8 +299,10 @@ export function ShippingInfo() {
             control={form.control}
             name="houseAddress"
             render={({ field }) => (
-              <FormItem className="space-y-1.5 flex flex-col relative w-full">
-                <FormLabel className="signup_form_label">House Address</FormLabel>
+              <FormItem className="relative flex w-full flex-col space-y-1.5">
+                <FormLabel className="signup_form_label">
+                  House Address
+                </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter house address"
@@ -320,7 +320,7 @@ export function ShippingInfo() {
             control={form.control}
             name="landmark"
             render={({ field }) => (
-              <FormItem className="space-y-1.5 flex flex-col relative w-full">
+              <FormItem className="relative flex w-full flex-col space-y-1.5">
                 <FormLabel className="signup_form_label">Landmark</FormLabel>
                 <FormControl>
                   <Input
