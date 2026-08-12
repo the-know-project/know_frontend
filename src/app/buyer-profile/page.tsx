@@ -14,6 +14,7 @@ import { useFetchUserOrders } from "@/src/features/orders/hooks/use-fetch-user-o
 import { TOrdersData } from "@/src/features/orders/types/orders.types";
 import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
+import { Button } from "@/src/shared/ui/button";
 import { formatDate } from "@/src/utils/date";
 import { logger } from "@/src/utils/logger";
 import { IconCaretLeftFilled, IconCaretRightFilled } from "@tabler/icons-react";
@@ -22,6 +23,10 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
+import { useClearCart } from "@/src/features/cart/hooks/use-clear-cart";
 
 const tabs = ["Cart", "Pending Orders", "Completed Orders"];
 
@@ -51,6 +56,7 @@ const Page = () => {
   const quantityUpdateTimeouts = useRef(
     new Map<string, ReturnType<typeof setTimeout>>(),
   );
+  const { mutateAsync: clearUserCart } = useClearCart();
 
   const handleQuantityUpdate = (ctx: {
     fileId: string;
@@ -183,6 +189,52 @@ const Page = () => {
     });
   };
 
+  const handleClearCart = async () => {
+    const clearCartToastId = toast.loading(`Clearing user cart`, {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+
+    const data = await clearUserCart();
+
+    if (data.status === 200) {
+      toast("Cart Cleared", {
+        id: clearCartToastId,
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    } else {
+      toast("An error occurred", {
+        id: clearCartToastId,
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
+  };
+
   const variants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
@@ -195,122 +247,146 @@ const Page = () => {
 
     const cartItems = cartOrdersData?.data || [];
 
+    const cartMeta = cartOrdersData?.meta || {
+      subTotal: "#0.00",
+      totalQuantity: 0,
+      fixedShippingFee: "#0.00",
+      total: "#0.00",
+    };
+
     if (cartItems.length === 0) {
       return <EmptyState message="Your cart is empty" />;
     }
 
     return (
-      <div className="grid w-full grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
-        <AnimatePresence>
-          {cartItems.map((item, index) => (
-            <motion.div
-              key={item.id}
-              variants={variants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              transition={{
-                delay: Math.min(index, 20) * 0.05,
-                ease: "easeInOut",
-                duration: 0.09,
-              }}
-              className="relative w-full max-w-[400px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
-            >
-              <Image
-                onClick={() => handleOpenCartArtDetails(item)}
-                src={item.url || "/placeholder-art.jpg"}
-                alt={"Artwork"}
-                quality={100}
-                width={500}
-                height={300}
-                className="w-full rounded-tl-[15px] rounded-tr-[15px] object-cover transition-all duration-300"
-              />
-              <div className="absolute right-0 bottom-0 left-0 bg-white/10 p-3 backdrop-blur-sm sm:p-4">
-                <h3 className="font-helvetica font-bold text-neutral-50 capitalize sm:text-lg">
-                  {item.title || "Untitled"}
-                </h3>
-                <p className="font-grotesk text-xs text-neutral-50 capitalize sm:text-sm">
-                  {`${item.artistFirstName} ${item.artistLastName}`}
-                </p>
-                <div className="mt-3 flex items-center justify-between">
-                  {/*Price and quantity toggle*/}
-                  <div className="flex flex-col items-start gap-2">
-                    <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-50 sm:text-sm">
-                      <span
-                        className="font-grotesk motion-preset-expand motion-duration-700 text-[15px] font-semibold tracking-wide text-neutral-50"
-                        style={{
-                          animationDelay: `${index * 100}ms`,
-                        }}
-                      >
-                        {item.price}
-                      </span>
+      <div className="relative flex w-full flex-col">
+        <div className="grid w-full grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
+          <AnimatePresence>
+            {cartItems.map((item, index) => (
+              <motion.div
+                key={item.id}
+                variants={variants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                transition={{
+                  delay: Math.min(index, 20) * 0.05,
+                  ease: "easeInOut",
+                  duration: 0.09,
+                }}
+                className="relative w-full max-w-[400px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white shadow transition-shadow hover:shadow-lg"
+              >
+                <Image
+                  onClick={() => handleOpenCartArtDetails(item)}
+                  src={item.url || "/placeholder-art.jpg"}
+                  alt={"Artwork"}
+                  quality={100}
+                  width={500}
+                  height={300}
+                  className="w-full rounded-tl-[15px] rounded-tr-[15px] object-cover transition-all duration-300"
+                />
+                <div className="absolute right-0 bottom-0 left-0 bg-white/10 p-3 backdrop-blur-sm sm:p-4">
+                  <h3 className="font-helvetica font-bold text-neutral-50 capitalize sm:text-lg">
+                    {item.title || "Untitled"}
+                  </h3>
+                  <p className="font-grotesk text-xs text-neutral-50 capitalize sm:text-sm">
+                    {`${item.artistFirstName} ${item.artistLastName}`}
+                  </p>
+                  <div className="mt-3 flex items-center justify-between">
+                    {/*Price and quantity toggle*/}
+                    <div className="flex flex-col items-start gap-2">
+                      <div className="font-grotesk flex items-center gap-1 text-xs text-neutral-50 sm:text-sm">
+                        <span
+                          className="font-grotesk motion-preset-expand motion-duration-700 text-[15px] font-semibold tracking-wide text-neutral-50"
+                          style={{
+                            animationDelay: `${index * 100}ms`,
+                          }}
+                        >
+                          {item.price}
+                        </span>
+                      </div>
+
+                      <div className="flex w-full max-w-md items-center justify-between">
+                        <IconCaretLeftFilled
+                          onClick={() =>
+                            handleQuantityUpdate({
+                              fileId: item.fileId,
+                              opts: "remove",
+                            })
+                          }
+                          className="h-4 w-4 text-white sm:h-5 sm:w-5"
+                        />
+                        <span
+                          className="font-grotesk motion-preset-expand motion-duration-600 font-semibold text-neutral-50"
+                          style={{
+                            animationDelay: `${index * 100}ms`,
+                          }}
+                        >
+                          {item.quantity}
+                        </span>
+
+                        <IconCaretRightFilled
+                          onClick={() =>
+                            handleQuantityUpdate({
+                              fileId: item.fileId,
+                              opts: "add",
+                            })
+                          }
+                          className="h-4 w-4 text-white sm:h-5 sm:w-5"
+                        />
+                      </div>
                     </div>
 
-                    <div className="flex w-full max-w-md items-center justify-between">
-                      <IconCaretLeftFilled
+                    <div className="font-grotesk flex flex-col items-end gap-1 text-right">
+                      <button
                         onClick={() =>
-                          handleQuantityUpdate({
+                          handleRemoveFromCart({
                             fileId: item.fileId,
-                            opts: "remove",
+                            price: item.price,
+                            quantity: item.quantity,
+                            url: item.url,
                           })
                         }
-                        className="h-4 w-4 text-white sm:h-5 sm:w-5"
-                      />
-                      <span
-                        className="font-grotesk motion-preset-expand motion-duration-600 font-semibold text-neutral-50"
-                        style={{
-                          animationDelay: `${index * 100}ms`,
-                        }}
+                        className="group flex items-center gap-1 rounded-[15px] bg-neutral-300 p-2 text-xs font-medium shadow-sm transition-colors sm:text-sm"
                       >
-                        {item.quantity}
-                      </span>
-
-                      <IconCaretRightFilled
-                        onClick={() =>
-                          handleQuantityUpdate({
-                            fileId: item.fileId,
-                            opts: "add",
-                          })
-                        }
-                        className="h-4 w-4 text-white sm:h-5 sm:w-5"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="font-grotesk flex flex-col items-end gap-1 text-right">
-                    <button
-                      onClick={() =>
-                        handleRemoveFromCart({
-                          fileId: item.fileId,
-                          price: item.price,
-                          quantity: item.quantity,
-                          url: item.url,
-                        })
-                      }
-                      className="group flex items-center gap-1 rounded-[15px] bg-neutral-300 p-2 text-xs font-medium shadow-sm transition-colors sm:text-sm"
-                    >
-                      <Trash2 className="h-3 w-3 text-red-500 group-hover:scale-105 group-active:scale-95 sm:h-4 sm:w-4" />
-                      <p className="font-bold text-red-500 group-hover:scale-105 group-active:scale-95">
-                        Delete
-                      </p>
-                    </button>
-                    <Link
-                      href={`/checkout?orderId=${item.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button className="group flex items-center gap-1 rounded-[15px] bg-neutral-300 p-2 text-xs font-medium text-[#1E3A8A] shadow-sm transition-colors hover:text-blue-700 sm:text-sm">
-                        <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <p className="font-bold group-hover:scale-105 group-active:scale-95">
-                          Checkout
+                        <Trash2 className="h-3 w-3 text-red-500 group-hover:scale-105 group-active:scale-95 sm:h-4 sm:w-4" />
+                        <p className="font-bold text-red-500 group-hover:scale-105 group-active:scale-95">
+                          Delete
                         </p>
                       </button>
-                    </Link>
+                      <Link
+                        href={`/checkout?orderId=${item.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button className="group flex items-center gap-1 rounded-[15px] bg-neutral-300 p-2 text-xs font-medium text-[#1E3A8A] shadow-sm transition-colors hover:text-blue-700 sm:text-sm">
+                          <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <p className="font-bold group-hover:scale-105 group-active:scale-95">
+                            Checkout
+                          </p>
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/*Checkout & Clear Cart button*/}
+        <div className="flex w-full flex-col self-center">
+          <div className="mx-auto mt-[100px] flex w-full max-w-sm flex-col items-center justify-center gap-3 sm:max-w-xl">
+            <Button className="font-bebas w-full bg-[#1F3C88] py-2.5 text-sm tracking-wider text-white hover:bg-[#1a3474] sm:py-3 sm:text-base">
+              <Link href={`/checkout`}>Checkout: {cartMeta.subTotal}</Link>
+            </Button>
+            <Button
+              onClick={handleClearCart}
+              className="font-bebas w-full bg-neutral-600 py-2.5 text-sm tracking-wider text-white hover:bg-[#1a3474] sm:py-3 sm:text-base"
+            >
+              Clear cart
+            </Button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -568,19 +644,20 @@ const Page = () => {
 };
 
 const LoadingGrid = () => (
-  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+  <div className="grid w-full grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
     {[1, 2, 3, 4].map((i) => (
       <div
         key={i}
-        className="w-full overflow-hidden rounded-lg bg-white shadow"
+        className="relative w-full max-w-[400px] overflow-hidden rounded-lg bg-white shadow"
       >
-        <div className="h-[300px] w-full animate-pulse bg-gray-200" />
-        <div className="space-y-2 p-3 sm:space-y-3 sm:p-4">
-          <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200 sm:h-5" />
-          <div className="h-3 w-1/2 animate-pulse rounded bg-gray-200 sm:h-4" />
-          <div className="flex justify-between">
-            <div className="h-3 w-12 animate-pulse rounded bg-gray-200 sm:h-4 sm:w-16" />
-            <div className="h-3 w-16 animate-pulse rounded bg-gray-200 sm:h-4 sm:w-20" />
+        {/* Pulse Image Skeleton maintaining the same 5:3 aspect ratio as width={500} height={300} */}
+        <div className="aspect-[500/300] w-full animate-pulse bg-gray-200" />
+        <div className="absolute right-0 bottom-0 left-0 space-y-2 bg-white/10 p-3 backdrop-blur-sm sm:p-4">
+          <div className="h-4 w-3/4 animate-pulse rounded bg-gray-300/60 sm:h-5" />
+          <div className="h-3 w-1/2 animate-pulse rounded bg-gray-300/50 sm:h-4" />
+          <div className="flex justify-between pt-2">
+            <div className="h-3 w-12 animate-pulse rounded bg-gray-300/50 sm:h-4 sm:w-16" />
+            <div className="h-3 w-16 animate-pulse rounded bg-gray-300/50 sm:h-4 sm:w-20" />
           </div>
         </div>
       </div>
