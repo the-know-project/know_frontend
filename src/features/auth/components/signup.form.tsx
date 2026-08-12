@@ -46,7 +46,7 @@ const SignupForm = () => {
       firstName: "",
       lastName: "",
       email: "",
-      country: "",
+      country: "Nigeria",
       userName: "",
       password: "",
     },
@@ -252,7 +252,6 @@ const SignupForm = () => {
                       {...field}
                       className="signup_form_input px-1 py-2.5"
                     >
-                      <option value="">Nigeria</option>{" "}
                       {countries.map((country) => (
                         <option key={country} value={country}>
                           {country}
