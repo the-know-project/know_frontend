@@ -60,7 +60,7 @@ export function OrderConfirmation() {
 
   const cartItems = cartOrdersData?.data || [];
   const cartMeta = cartOrdersData?.meta || {
-    subtotal: "#0.00",
+    subTotal: "#0.00",
     totalQuantity: 0,
     fixedShippingFee: "#0.00",
     total: "#0.00",
@@ -140,7 +140,7 @@ export function OrderConfirmation() {
         <div className="flex justify-between">
           <span>Subtotal</span>
           <span className="font-bold text-neutral-800">
-            {cartMeta.subtotal}
+            {cartMeta.subTotal}
           </span>
         </div>
         <div className="flex justify-between">
