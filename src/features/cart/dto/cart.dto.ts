@@ -13,10 +13,10 @@ export const UpdateCartItemQuantitySchema = z.object({
 });
 
 export const CartMeta = z.object({
-  subtotal: z.string(),
+  subTotal: z.string(),
   totalQuantity: z.number(),
   fixedShippingFee: z.string(),
-  total: z.string()
+  total: z.string(),
 });
 
 export const CartData = z.object({
