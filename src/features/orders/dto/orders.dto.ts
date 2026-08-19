@@ -29,13 +29,15 @@ export const OrdersData = z.object({
   completedAt: z.string().datetime().nullable(),
 });
 
-export const OrderItems = z.object({
-  fileId: z.string(),
-  name: z.string(),
-  price: z.number(),
-  quantity: z.number().min(1),
-  userId: z.string().uuid(), // this is the id of the artist who owns the artist
-});
+export const OrderItems = z.array(
+  z.object({
+    fileId: z.string(),
+    name: z.string(),
+    price: z.string(),
+    quantity: z.number().min(1),
+    userId: z.string().uuid(), // this is the id of the artist who owns the art
+  }),
+);
 
 export const OrderSummaryData = z.object({
   totalOrders: z.number(),
@@ -46,8 +48,8 @@ export const OrderSummaryData = z.object({
 });
 
 export const CreateOrderDto = z.object({
-  userId: z.string().uuid(),
-  items: z.array(OrderItems),
+  userId: z.string().uuid().optional(),
+  items: OrderItems,
 });
 
 export const FetchUserOrdersDto = z.object({
@@ -84,4 +86,14 @@ export const FetchUserOrders = z.object({
   page: z.number().optional(),
   limit: z.number().optional(),
   status: OrderStatus.optional(),
+});
+
+export const CreateOrderResponseDto = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: z.object({
+    totalOrders: z.number(),
+    totalQuantity: z.number(),
+    totalAmount: z.string(),
+  }),
 });
