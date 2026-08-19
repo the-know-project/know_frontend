@@ -140,6 +140,41 @@ const Page = () => {
     toggleExploreContent(id, content, viewportPosition);
   };
 
+  const handleOpenOrderArtDetails = (item: TOrdersData) => {
+    const content: IExploreContent = {
+      id: item.fileId,
+      userId: item.sellerId,
+      creatorProfileUrl: item.artistProfilePicture || "",
+      creatorName: `${item.artistFirstName} ${item.artistLastName}`.trim(),
+      artName: item.name,
+      description: null,
+      artWorkUrl: item.assetUrl,
+      highResUrl: item.highResUrl,
+      extraUrls: [],
+      highResExtraUrls: [],
+      categories: [],
+      price: item.price,
+      size: {
+        width: item.size?.width || 0,
+        height: item.size?.height || 0,
+        length: item.size?.length || 0,
+        depth: item.size?.depth || 0,
+        diameter: item.size?.diameter || 0,
+        weight: item.size?.weight || 0,
+      },
+      tags: item.tags || [],
+      numOfLikes: 0,
+      numOfViews: item.viewCount || 0,
+      numOfComments: 0,
+      isListed: true,
+      createdAt: new Date(item.createdAt),
+    };
+    logger.debug("Opening art details for ID:", {
+      content: content,
+    });
+    toggleExploreContent(item.fileId, content);
+  };
+
   const handleOpenCartArtDetails = (item: TCart) => {
     const content: IExploreContent = {
       id: item.fileId,
@@ -174,32 +209,6 @@ const Page = () => {
     };
 
     openArtDetails(item.fileId, content);
-  };
-
-  const handleOpenOrderArtDetails = (order: TOrdersData) => {
-    const content: IExploreContent = {
-      id: order.fileId,
-      userId: order.sellerId,
-      creatorProfileUrl: order.artistProfilePicture || "",
-      creatorName: `${order.artistFirstName} ${order.artistLastName}`.trim(),
-      artName: order.name,
-      description: null,
-      artWorkUrl: order.assetUrl,
-      highResUrl: order.highResUrl,
-      extraUrls: [],
-      highResExtraUrls: [],
-      categories: [],
-      tags: undefined,
-      price: parseFloat(order.price),
-      size: { width: 0, height: 0 },
-      numOfLikes: 0,
-      numOfViews: 0,
-      numOfComments: 0,
-      isListed: true,
-      createdAt: new Date(order.createdAt),
-    };
-
-    openArtDetails(order.fileId, content);
   };
 
   const handleRemoveFromCart = async (ctx: IAddToLocalCart) => {
@@ -455,7 +464,7 @@ const Page = () => {
                   quality={100}
                   width={500}
                   height={300}
-                  className="h-full w-full rounded-lg object-cover object-center"
+                  className="w-full rounded-[15px] object-cover transition-all duration-300"
                 />
               </div>
 
@@ -468,9 +477,7 @@ const Page = () => {
                   </p>
                   <h3 className="order_title">{order.name || "Untitled"}</h3>
                   <div className="mt-3 flex items-center justify-between border-b pb-3 sm:mt-4 sm:pb-4">
-                    <p className="order_title">
-                      ${parseFloat(order.totalAmount).toFixed(2)}
-                    </p>
+                    <p className="order_title">{order.price}</p>
                     <p className="profile_content">Qty: {order.quantity}</p>
                   </div>
                 </div>
@@ -537,11 +544,12 @@ const Page = () => {
 
                 {/* Order Actions */}
                 <div className="mt-4 flex gap-3 sm:mt-6">
-                  <Link href={`/orders/${order.id}`} className="flex-1">
-                    <button className="font-bebas w-full rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium tracking-wider text-neutral-800 transition-colors hover:bg-gray-50 sm:px-4 sm:text-sm">
-                      View Details
-                    </button>
-                  </Link>
+                  <button
+                    onClick={() => handleOpenOrderArtDetails(order)}
+                    className="font-bebas w-full rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium tracking-wider text-neutral-800 transition-colors hover:bg-gray-50 sm:px-4 sm:text-sm"
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
             </motion.div>
