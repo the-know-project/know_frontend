@@ -3,7 +3,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { createOrder } from "../api/create-order/route";
 import { OrdersErrorMessages } from "../data/orders.data";
 import { OrdersError } from "../errors/orders.error";
-import { ICreateOrder } from "../types/orders.types";
+import { ICreateOrder, ICreateOrderResponse } from "../types/orders.types";
 import { useTokenStore } from "../../auth/state/store";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 
@@ -36,7 +36,7 @@ export const useCreateOrder = () => {
         throw result.error;
       }
 
-      return result.value;
+      return result.value as ICreateOrderResponse;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fetch-user-orders"] });
