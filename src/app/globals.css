@@ -270,6 +270,14 @@
   .profile_content_2 {
     @apply font-grotesk text-xs text-neutral-50 sm:text-sm;
   }
+
+  .shipping_info_label {
+    @apply font-grotesk text-sm font-semibold text-neutral-600 capitalize sm:text-[16px];
+  }
+
+  .shipping_info_content {
+    @apply font-grotesk text-xs text-neutral-600 sm:text-sm;
+  }
 }
 .purple-glow {
   filter: drop-shadow(0 0 30px rgba(128, 0, 255, 0.7));
