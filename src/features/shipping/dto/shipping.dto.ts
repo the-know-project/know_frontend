@@ -10,3 +10,23 @@ export const CreateShippingInfoDto = z.object({
   postalCode: z.string().min(1, "Postal code is required"),
   phoneNumber: z.string().min(1, "Phone number is required"),
 });
+
+export const CreateShippingResponseData = z.object({
+  id: z.string(),
+  address: z.string(),
+  countrt: z.string(),
+  city: z.string(),
+  state: z.string(),
+  postalCode: z.string(),
+  phoneNumber: z.string().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  user: z.string(),
+  deliveryMethod: z.string(),
+  landmark: z.string().nullable(),
+});
+export const CreateShippingResponseDto = z.object({
+  status: z.number(),
+  message: z.string(),
+  data: CreateShippingResponseData,
+});
