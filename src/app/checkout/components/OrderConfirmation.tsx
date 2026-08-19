@@ -87,7 +87,7 @@ export function OrderConfirmation() {
 
     cartItems.map((item) => {
       payload.push({
-        fileId: item.id,
+        fileId: item.fileId,
         name: item.title,
         price: item.price,
         quantity: item.quantity,
