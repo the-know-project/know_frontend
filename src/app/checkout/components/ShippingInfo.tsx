@@ -14,9 +14,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/shared/ui/form";
+import { useFetchShippingInfo } from "@/src/features/shipping/hooks/use-fetch-shipping-info";
+import { useCreateShippingInfo } from "@/src/features/shipping/hooks/use-create-shipping-info";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
+
+const DeliveryMethodSchema = z.enum(["delivery", "pickup"]);
+type DeliveryType = z.infer<typeof DeliveryMethodSchema>;
 
 const ShippingSchema = z.object({
-  deliveryMethod: z.enum(["delivery", "pickup"]),
+  deliveryMethod: DeliveryMethodSchema,
   phone: z.string().min(5, "Phone number is too short"),
   country: z.string().min(1, "Please select a country"),
   city: z.string().min(1, "City is required"),
@@ -29,27 +37,85 @@ const ShippingSchema = z.object({
 type ShippingFormValues = z.infer<typeof ShippingSchema>;
 
 export function ShippingInfo() {
+  const { data: shippingInfo, isLoading } = useFetchShippingInfo();
+  const { mutateAsync: updateShippingInfo } = useCreateShippingInfo();
   const router = useRouter();
+
+  const shippingInfoData = shippingInfo?.data;
 
   const form = useForm<ShippingFormValues>({
     resolver: zodResolver(ShippingSchema),
     defaultValues: {
-      deliveryMethod: "delivery",
-      phone: "",
-      country: "",
-      city: "",
-      state: "",
-      zip: "",
-      houseAddress: "",
-      landmark: "",
+      deliveryMethod:
+        (shippingInfoData?.deliveryMethod as DeliveryType) || "delivery",
+      phone: shippingInfoData?.phoneNumber || "",
+      country: shippingInfoData?.country || "",
+      city: shippingInfoData?.city || "",
+      state: shippingInfoData?.state || "",
+      zip: shippingInfoData?.postalCode || "",
+      houseAddress: shippingInfoData?.address || "",
+      landmark: shippingInfoData?.landmark || "",
     },
   });
 
   const deliveryMethod = form.watch("deliveryMethod");
 
-  const onSubmit = (values: ShippingFormValues) => {
+  const onSubmit = async (values: ShippingFormValues) => {
     console.log("Shipping Info Submitted:", values);
-    router.push("/checkout/confirm");
+    const shippingToastId = toast.loading(`Saving shipping information`, {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+
+    const result = await updateShippingInfo({
+      deliveryMethod: values.deliveryMethod,
+      country: values.country,
+      phoneNumber: values.phone,
+      city: values.city,
+      state: values.state,
+      postalCode: values.zip,
+      address: values.houseAddress,
+      landmark: values.landmark,
+    });
+
+    if (result.status === 200 || result.status === 201) {
+      toast.success(`Shipping information saved`, {
+        id: shippingToastId,
+        icon: <ToastIcon />,
+        description: <ToastDescription description={result.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+
+      router.push("/checkout/confirm");
+    } else {
+      toast.error(`Failed to save shipping information`, {
+        id: shippingToastId,
+        icon: <ToastIcon />,
+        description: <ToastDescription description={result.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
   };
 
   return (
