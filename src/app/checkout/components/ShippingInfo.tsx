@@ -19,6 +19,7 @@ import { useCreateShippingInfo } from "@/src/features/shipping/hooks/use-create-
 import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
+import { logger } from "@/src/utils/logger";
 
 const DeliveryMethodSchema = z.enum(["delivery", "pickup"]);
 type DeliveryType = z.infer<typeof DeliveryMethodSchema>;
@@ -42,6 +43,7 @@ export function ShippingInfo() {
   const router = useRouter();
 
   const shippingInfoData = shippingInfo?.data;
+  logger.debug("Shipping Info Data:", shippingInfoData);
 
   const form = useForm<ShippingFormValues>({
     resolver: zodResolver(ShippingSchema),
