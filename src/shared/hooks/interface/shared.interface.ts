@@ -11,7 +11,7 @@ export interface IExploreContent {
   highResExtraUrls: string[] | undefined;
   categories: string[];
   tags: string[] | undefined;
-  price: number;
+  price: number | string;
   quantity?: number;
   size: {
     width?: number;
