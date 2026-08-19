@@ -70,7 +70,7 @@ export const useAddToCart = ({ enabled }: { enabled: boolean }) => {
               id: oldData?.id || "",
               artistId: oldData?.artistId || "",
               artistProfilePicture: oldData?.artistProfilePicture || "",
-              price: oldData?.price || 0,
+              price: oldData?.price || "0.0",
               size: oldData?.size || {
                 width: 0,
                 height: 0,
