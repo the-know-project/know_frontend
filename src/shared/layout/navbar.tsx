@@ -25,6 +25,11 @@ export default function Nav() {
     router.push("/role");
   };
 
+  const handleLogin = () => {
+    setIsMobileMenuOpen(false);
+    router.push("/login");
+  };
+
   const handleSmoothScroll = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string,
@@ -58,7 +63,7 @@ export default function Nav() {
           <NavbarButton colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}>
             <button
               onClick={handleGetStarted}
-              className="button_base group py-1.5 cursor-pointer"
+              className="button_base group cursor-pointer py-1.5"
             >
               Get Started{" "}
               <IconArrowRight width={20} height={20} className="button_icon" />
@@ -90,22 +95,41 @@ export default function Nav() {
               </a>
             ))}
 
-            <NavbarButton
-              className="mt-5 flex w-full items-center justify-center"
-              colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
-            >
-              <button
-                onClick={handleGetStarted}
-                className="group button_base w-full justify-center self-center py-2 text-sm"
+            <div className="flex w-full flex-col items-start">
+              <NavbarButton
+                className="mt-5 flex w-full items-center justify-center"
+                colors={["#FF5733", "#33FF57", "#3357FF", "#F1C40F"]}
               >
-                Get Started{" "}
-                <IconArrowRight
-                  width={20}
-                  height={20}
-                  className="button_icon"
-                />
-              </button>
-            </NavbarButton>
+                <button
+                  onClick={handleGetStarted}
+                  className="group button_base w-full justify-center self-center py-2 text-sm"
+                >
+                  Get Started{" "}
+                  <IconArrowRight
+                    width={20}
+                    height={20}
+                    className="button_icon"
+                  />
+                </button>
+              </NavbarButton>
+
+              <NavbarButton
+                className="mt-5 flex w-full items-center justify-center"
+                colors={["#1E3A8A"]}
+              >
+                <button
+                  onClick={handleLogin}
+                  className="group button_base w-full justify-center self-center py-2 text-sm text-white"
+                >
+                  Login
+                  <IconArrowRight
+                    width={20}
+                    height={20}
+                    className="button_icon"
+                  />
+                </button>
+              </NavbarButton>
+            </div>
           </MobileNavMenu>
         </MobileNav>
       </Navbar>
