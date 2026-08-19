@@ -2,9 +2,14 @@ import { z } from "zod";
 
 export const IAddToLocalCartSchema = z.object({
   fileId: z.string(),
-  price: z.number().min(0).max(1000),
+  price: z.string().or(z.number()),
   quantity: z.number().min(1).max(100),
   url: z.string().url(),
+});
+
+export const BaseResponseDto = z.object({
+  status: z.number(),
+  message: z.string(),
 });
 
 export const UpdateCartItemQuantitySchema = z.object({
@@ -32,7 +37,7 @@ export const CartData = z.object({
   viewCount: z.number().nullable(),
   fileId: z.string(),
   quantity: z.number().min(1).max(100),
-  price: z.number().min(0).max(1000),
+  price: z.string(),
   size: z.object({
     width: z.number(),
     height: z.number(),
