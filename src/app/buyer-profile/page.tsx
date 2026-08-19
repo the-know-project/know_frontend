@@ -27,10 +27,12 @@ import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
 import { useClearCart } from "@/src/features/cart/hooks/use-clear-cart";
+import { useRouter } from "next/navigation";
 
 const tabs = ["Cart", "Pending Orders", "Completed Orders"];
 
 const Page = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Cart");
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const tabContainerRef = useRef<HTMLDivElement>(null);
@@ -47,7 +49,7 @@ const Page = () => {
   }, [activeTab]);
 
   const { mutateAsync: removeItem } = useRemoveFromCart({ enabled: true });
-  const { mutate: updateQuantity } = useUpdateQuantity({
+  const { mutateAsync: updateQuantity } = useUpdateQuantity({
     enabled: true,
   });
 
@@ -71,12 +73,32 @@ const Page = () => {
       clearTimeout(existingTimeout);
     }
 
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(async () => {
       quantityUpdateTimeouts.current.delete(ctx.fileId);
-      updateQuantity(ctx);
+      const data = await updateQuantity(ctx);
+
+      if (data.status !== 200) {
+        toast("An error occurred", {
+          icon: <ToastIcon />,
+          description: <ToastDescription description={data.message} />,
+          style: {
+            backdropFilter: "-moz-initial",
+            opacity: "-moz-initial",
+            backgroundColor: "oklch(62.8% 0.258 29.234)",
+            fontSize: "15px",
+            font: "Space Grotesk",
+            color: "#ffffff",
+            fontWeight: "bolder",
+          },
+        });
+      }
     }, 50);
 
     quantityUpdateTimeouts.current.set(ctx.fileId, timeout);
+  };
+
+  const handleCheckout = () => {
+    router.push("/checkout");
   };
 
   useEffect(() => {
@@ -376,12 +398,15 @@ const Page = () => {
         {/*Checkout & Clear Cart button*/}
         <div className="flex w-full flex-col self-center">
           <div className="mx-auto mt-[100px] flex w-full max-w-sm flex-col items-center justify-center gap-3 sm:max-w-xl">
-            <Button className="font-bebas w-full bg-[#1F3C88] py-2.5 text-sm tracking-wider text-white hover:bg-[#1a3474] sm:py-3 sm:text-base">
-              <Link href={`/checkout`}>Checkout: {cartMeta.subTotal}</Link>
+            <Button
+              onClick={handleCheckout}
+              className="font-bebas w-full bg-[#1F3C88] py-2.5 text-sm tracking-wider text-white transition-all duration-300 hover:scale-110 hover:bg-[#1a3474] active:scale-90 sm:py-3 sm:text-base"
+            >
+              <p>Checkout: {cartMeta.subTotal}</p>
             </Button>
             <Button
               onClick={handleClearCart}
-              className="font-bebas w-full bg-neutral-600 py-2.5 text-sm tracking-wider text-white hover:bg-[#1a3474] sm:py-3 sm:text-base"
+              className="font-bebas w-full bg-neutral-600 py-2.5 text-sm tracking-wider text-white transition-all duration-300 hover:scale-110 hover:bg-[#1a3474] active:scale-90 sm:py-3 sm:text-base"
             >
               Clear cart
             </Button>
