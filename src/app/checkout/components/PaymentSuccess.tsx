@@ -1,4 +1,5 @@
 "use client";
+import { useClearCart } from "@/src/features/cart/hooks/use-clear-cart";
 import { useFetchShippingInfo } from "@/src/features/shipping/hooks/use-fetch-shipping-info";
 import { Button } from "@/src/shared/ui/button";
 import { X } from "lucide-react";
@@ -46,12 +47,14 @@ export function ShippingInformationSkeleton() {
 
 export function PaymentSuccess() {
   const { data: shippingInfo, isLoading, isFetching } = useFetchShippingInfo();
+  const { mutateAsync: clearUserCart } = useClearCart();
   const router = useRouter();
 
   const shippingData = shippingInfo?.data;
 
-  const handleClose = () => {
-    router.push("/");
+  const handleClose = async () => {
+    await clearUserCart();
+    router.push("/explore");
   };
 
   return (
@@ -88,12 +91,12 @@ export function PaymentSuccess() {
 
         {/* Success Message */}
         <div className="text-center">
-          <h2 className="mb-1.5 text-[15px] leading-tight font-semibold text-gray-900 sm:mb-2 sm:text-base md:text-lg">
+          <h2 className="font-bebas mb-1.5 text-lg tracking-wider text-neutral-800 md:text-xl">
             Order successfully completed.
           </h2>
-          <p className="text-[11px] leading-snug text-gray-500 sm:text-xs md:text-sm">
-            Your transaction is complete—check your mail for your support
-            ticket.
+          <p className="font-grotesk text-xs text-neutral-600 sm:text-sm">
+            Your transaction is complete, please check your mail for your
+            support. ticket.
           </p>
         </div>
 
@@ -102,30 +105,24 @@ export function PaymentSuccess() {
 
         {/* Shipping Information Display */}
         <div className="space-y-3 sm:space-y-3.5 md:space-y-4">
-          <h3 className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-            Shipping Information
-          </h3>
+          <h3 className="shipping_info_label">Shipping Information</h3>
 
           {isLoading || isFetching ? (
             <ShippingInformationSkeleton />
           ) : (
-            <div className="space-y-3 sm:space-y-3.5">
+            <div className="font-grotesk space-y-3 sm:space-y-3.5">
               {/* Phone & Country */}
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5 md:gap-4">
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                  <p className="shipping_info_label">Phone Number</p>
+                  <p className="shipping_info_content mb-1">
                     {shippingData?.phoneNumber || ""}
-                  </p>
-                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                    Phone Number
                   </p>
                 </div>
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                  <p className="shipping_info_label">Country</p>
+                  <p className="shipping_info_content mb-1">
                     {shippingData?.country || ""}
-                  </p>
-                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                    Country
                   </p>
                 </div>
               </div>
@@ -133,35 +130,27 @@ export function PaymentSuccess() {
               {/* City, State, Address & ZIP */}
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:gap-4">
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                  <p className="shipping_info_label">City</p>
+                  <p className="shipping_info_content mb-1">
                     {shippingData?.city || ""}
-                  </p>
-                  <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                    City
                   </p>
                 </div>
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                  <p className="shipping_info_label truncate">State</p>
+                  <p className="shipping_info_content mb-1">
                     {shippingData?.state || ""}
                   </p>
-                  <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                    State
-                  </p>
                 </div>
                 <div className="col-span-2 rounded-md bg-gray-50 p-2.5 sm:col-span-1 sm:p-3">
-                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                  <p className="shipping_info_label">Zip Code</p>
+                  <p className="shipping_info_content mb-1">
                     {shippingData?.postalCode || ""}
                   </p>
-                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                    Zip Code
-                  </p>
                 </div>
                 <div className="col-span-2 rounded-md bg-gray-50 p-2.5 sm:col-span-1 sm:p-3">
-                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                  <p className="shipping_info_label">House Address</p>
+                  <p className="shipping_info_content mb-1">
                     {shippingData?.address || ""}
-                  </p>
-                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                    House Address
                   </p>
                 </div>
               </div>
