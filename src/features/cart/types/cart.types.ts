@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  BaseResponseDto,
   CartData,
   CartResponseDto,
   IAddToLocalCartSchema,
@@ -15,3 +16,5 @@ export type IAddToLocalCart = z.infer<typeof IAddToLocalCartSchema>;
 export type IUpdateCartItemQuantity = z.infer<
   typeof UpdateCartItemQuantitySchema
 >;
+
+export type IBaseResponse = z.infer<typeof BaseResponseDto>;
