@@ -114,7 +114,7 @@ export function PaymentSuccess() {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5 md:gap-4">
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
                   <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                    {shippingData?.phoneNumber}
+                    {shippingData?.phoneNumber || ""}
                   </p>
                   <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
                     Phone Number
@@ -122,7 +122,7 @@ export function PaymentSuccess() {
                 </div>
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
                   <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                    {shippingData?.country}
+                    {shippingData?.country || ""}
                   </p>
                   <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
                     Country
@@ -134,7 +134,7 @@ export function PaymentSuccess() {
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:gap-4">
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
                   <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                    {shippingData?.city}
+                    {shippingData?.city || ""}
                   </p>
                   <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
                     City
@@ -142,7 +142,7 @@ export function PaymentSuccess() {
                 </div>
                 <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
                   <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                    {shippingData?.state}
+                    {shippingData?.state || ""}
                   </p>
                   <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
                     State
@@ -150,7 +150,7 @@ export function PaymentSuccess() {
                 </div>
                 <div className="col-span-2 rounded-md bg-gray-50 p-2.5 sm:col-span-1 sm:p-3">
                   <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                    {shippingData?.postalCode}
+                    {shippingData?.postalCode || ""}
                   </p>
                   <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
                     Zip Code
@@ -158,7 +158,7 @@ export function PaymentSuccess() {
                 </div>
                 <div className="col-span-2 rounded-md bg-gray-50 p-2.5 sm:col-span-1 sm:p-3">
                   <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                    {shippingData?.address}
+                    {shippingData?.address || ""}
                   </p>
                   <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
                     House Address
