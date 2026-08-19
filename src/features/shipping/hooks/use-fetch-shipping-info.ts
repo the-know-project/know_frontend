@@ -3,6 +3,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 import { useTokenStore } from "../../auth/state/store";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { fetchShippingInfo } from "../api/fetch-shipping-info/route";
+import { ICreateShippingResponse } from "../types/shipping.types";
 
 export const useFetchShippingInfo = () => {
   const userId = useTokenStore(selectUserId);
