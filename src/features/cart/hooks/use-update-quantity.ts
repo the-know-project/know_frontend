@@ -5,7 +5,11 @@ import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { updateItemQuantity } from "../api/update-item-quantity/route";
 import { CartError } from "../error/cart.error";
 import { useCartActions } from "../state/cart.store";
-import { IUpdateCartItemQuantity, IUserCart } from "../types/cart.types";
+import {
+  IBaseResponse,
+  IUpdateCartItemQuantity,
+  IUserCart,
+} from "../types/cart.types";
 
 export const useUpdateQuantity = ({ enabled }: { enabled: boolean }) => {
   const queryClient = useQueryClient();
@@ -45,7 +49,7 @@ export const useUpdateQuantity = ({ enabled }: { enabled: boolean }) => {
         throw result.error;
       }
 
-      return result.value;
+      return result.value as IBaseResponse;
     },
 
     onMutate: async (ctx: IUpdateCartItemQuantity) => {
