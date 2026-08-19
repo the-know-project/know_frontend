@@ -9,6 +9,7 @@ import {
 import { createShippingInfo } from "../api/create-shipping-info/route";
 
 export const useCreateShippingInfo = () => {
+  const queryClient = useQueryClient();
   const userId = useTokenStore(selectUserId);
 
   return useMutation({
@@ -30,6 +31,12 @@ export const useCreateShippingInfo = () => {
       }
 
       return result.value as ICreateShippingResponse;
+    },
+
+    onSettled(data, error, variables, context) {
+      queryClient.invalidateQueries({
+        queryKey: [`fetch-shipping-info-${userId}`],
+      });
     },
   });
 };
