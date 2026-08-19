@@ -14,7 +14,7 @@ export const CreateShippingInfoDto = z.object({
 export const CreateShippingResponseData = z.object({
   id: z.string(),
   address: z.string(),
-  countrt: z.string(),
+  country: z.string(),
   city: z.string(),
   state: z.string(),
   postalCode: z.string(),
