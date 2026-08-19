@@ -182,7 +182,7 @@ const CartModal: React.FC<ICartModalProps> = ({ isOpen, onClose }) => {
                     <button
                       onClick={handleClearCart}
                       disabled={isClearing}
-                      className="font-bebas flex items-center justify-center gap-1 rounded-lg border border-neutral-300 py-2 text-center text-xs font-semibold tracking-wider text-red-500 uppercase transition-colors hover:bg-neutral-50"
+                      className="font-bebas flex items-center justify-center gap-1 rounded-lg border border-neutral-300 bg-neutral-300 py-2 text-center text-xs font-semibold tracking-wider text-red-500 uppercase transition-colors hover:bg-neutral-50"
                     >
                       <IconTrash className="h-4 w-4" />
                       Clear Cart
@@ -193,7 +193,7 @@ const CartModal: React.FC<ICartModalProps> = ({ isOpen, onClose }) => {
                         onClose();
                         router.push("/buyer-profile");
                       }}
-                      className="font-bebas rounded-lg border border-neutral-300 py-2 text-center text-xs font-semibold tracking-wider text-neutral-600 uppercase transition-colors hover:bg-neutral-50"
+                      className="font-bebas rounded-lg border border-neutral-300 bg-neutral-300 py-2 text-center text-xs font-semibold tracking-wider text-neutral-600 uppercase transition-colors hover:bg-neutral-50"
                     >
                       View Cart
                     </button>
