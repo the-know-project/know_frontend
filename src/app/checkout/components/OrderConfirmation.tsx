@@ -7,11 +7,17 @@ import { useEffect, useRef } from "react";
 import { useFetchUserCart } from "@/src/features/cart/hooks/use-fetch-user-cart";
 import { useUpdateQuantity } from "@/src/features/cart/hooks/use-update-quantity";
 import { useCartActions } from "@/src/features/cart/state/cart.store";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 import Link from "next/link";
+import { useCreateOrder } from "@/src/features/orders/hooks/use-create-order";
+import { IOrderItems } from "@/src/features/orders/types/orders.types";
 
 export function OrderConfirmation() {
   const router = useRouter();
   const { data: cartOrdersData, isLoading: cartLoading } = useFetchUserCart();
+  const { mutateAsync: createOrder } = useCreateOrder();
   const { mutate: updateQuantity } = useUpdateQuantity({
     enabled: true,
   });
@@ -50,8 +56,8 @@ export function OrderConfirmation() {
     };
   }, []);
 
-  const handleSubmit = () => {
-    router.push("/checkout/success");
+  const handleSubmit = async () => {
+    await handleCreateOrder();
   };
 
   if (cartLoading) {
@@ -64,6 +70,68 @@ export function OrderConfirmation() {
     totalQuantity: 0,
     fixedShippingFee: "#0.00",
     total: "#0.00",
+  };
+
+  const handleCreateOrder = async () => {
+    const orderToastId = toast.loading(`Placing your order`, {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+
+    let payload: IOrderItems = [];
+
+    cartItems.map((item) => {
+      payload.push({
+        fileId: item.id,
+        name: item.title,
+        price: item.price,
+        quantity: item.quantity,
+        userId: item.artistId,
+      });
+    });
+
+    const data = await createOrder({
+      items: payload,
+    });
+
+    if (data.status === 200) {
+      toast("Order created", {
+        id: orderToastId,
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: " oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+
+      router.push("/checkout/success");
+    } else {
+      toast("An error occurred", {
+        id: orderToastId,
+        icon: <ToastIcon />,
+        description: <ToastDescription description={data.message} />,
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
   };
 
   if (cartItems.length === 0) {
