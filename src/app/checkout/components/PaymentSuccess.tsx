@@ -1,10 +1,54 @@
 "use client";
+import { useFetchShippingInfo } from "@/src/features/shipping/hooks/use-fetch-shipping-info";
 import { Button } from "@/src/shared/ui/button";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+export function ShippingInformationSkeleton() {
+  return (
+    <div
+      className="space-y-3 sm:space-y-3.5"
+      role="status"
+      aria-label="Loading shipping information"
+    >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5 md:gap-4">
+        {["Full Name", "Email Address"].map((label) => (
+          <div key={label} className="rounded-md bg-gray-50 p-2.5 sm:p-3">
+            <div className="mb-2 h-3 w-20 animate-pulse rounded bg-gray-200" />
+            <div className="h-4 w-28 animate-pulse rounded bg-gray-300" />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5 md:gap-4">
+        {["Phone Number", "Country"].map((label) => (
+          <div key={label} className="rounded-md bg-gray-50 p-2.5 sm:p-3">
+            <div className="mb-2 h-3 w-20 animate-pulse rounded bg-gray-200" />
+            <div className="h-4 w-28 animate-pulse rounded bg-gray-300" />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:gap-4">
+        {["w-16", "w-20", "w-14"].map((width, index) => (
+          <div
+            key={index}
+            className={`rounded-md bg-gray-50 p-2.5 sm:p-3 ${index === 2 ? "col-span-2 sm:col-span-1" : ""}`}
+          >
+            <div className="mb-2 h-3 w-14 animate-pulse rounded bg-gray-200" />
+            <div className={`h-4 ${width} animate-pulse rounded bg-gray-300`} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PaymentSuccess() {
+  const { data: shippingInfo, isLoading, isFetching } = useFetchShippingInfo();
   const router = useRouter();
+
+  const shippingData = shippingInfo?.data;
 
   const handleClose = () => {
     router.push("/");
@@ -62,75 +106,67 @@ export function PaymentSuccess() {
             Shipping Information
           </h3>
 
-          <div className="space-y-3 sm:space-y-3.5">
-            {/* Full Name & Email */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5 md:gap-4">
-              <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                  Full Name
-                </p>
-                <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                  Enter
-                </p>
+          {isLoading || isFetching ? (
+            <ShippingInformationSkeleton />
+          ) : (
+            <div className="space-y-3 sm:space-y-3.5">
+              {/* Phone & Country */}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5 md:gap-4">
+                <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
+                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                    {shippingData?.phoneNumber}
+                  </p>
+                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
+                    Phone Number
+                  </p>
+                </div>
+                <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
+                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                    {shippingData?.country}
+                  </p>
+                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
+                    Country
+                  </p>
+                </div>
               </div>
-              <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                  Email Address
-                </p>
-                <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                  Enter
-                </p>
-              </div>
-            </div>
 
-            {/* Phone & Country */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5 md:gap-4">
-              <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                  Phone Number
-                </p>
-                <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                  Enter
-                </p>
-              </div>
-              <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                  Country
-                </p>
-                <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                  Select country
-                </p>
-              </div>
-            </div>
-
-            {/* City, State & ZIP */}
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:gap-4">
-              <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                  City
-                </p>
-                <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                  Enter city
-                </p>
-              </div>
-              <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
-                <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                  State
-                </p>
-                <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                  Enter state
-                </p>
-              </div>
-              <div className="col-span-2 rounded-md bg-gray-50 p-2.5 sm:col-span-1 sm:p-3">
-                <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
-                  ZIP Code
-                </p>
-                <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
-                  Enter ZIP
-                </p>
+              {/* City, State, Address & ZIP */}
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:gap-4">
+                <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
+                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                    {shippingData?.city}
+                  </p>
+                  <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
+                    City
+                  </p>
+                </div>
+                <div className="rounded-md bg-gray-50 p-2.5 sm:p-3">
+                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                    {shippingData?.state}
+                  </p>
+                  <p className="truncate text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
+                    State
+                  </p>
+                </div>
+                <div className="col-span-2 rounded-md bg-gray-50 p-2.5 sm:col-span-1 sm:p-3">
+                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                    {shippingData?.postalCode}
+                  </p>
+                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
+                    Zip Code
+                  </p>
+                </div>
+                <div className="col-span-2 rounded-md bg-gray-50 p-2.5 sm:col-span-1 sm:p-3">
+                  <p className="mb-1 text-[10px] font-medium text-gray-500 sm:text-xs">
+                    {shippingData?.address}
+                  </p>
+                  <p className="text-[12px] font-semibold text-gray-900 sm:text-xs md:text-sm">
+                    House Address
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Close/Continue Button */}
