@@ -28,7 +28,8 @@ export const CartItem: React.FC<ICartItemProps> = ({ item }) => {
     removeFromCart(item.fileId);
   };
 
-  const subtotal = item.price * item.quantity;
+  const unitPrice = Number(item.price.replace(/[^\d.-]/g, "")) || 0;
+  const subtotal = unitPrice * item.quantity;
 
   return (
     <div className="flex gap-4 border-b border-gray-200 py-4">
@@ -57,7 +58,7 @@ export const CartItem: React.FC<ICartItemProps> = ({ item }) => {
           </button>
         </div>
 
-        <p className="mb-2 text-sm text-gray-500">${item.price}</p>
+        <p className="mb-2 text-sm text-gray-500">${unitPrice.toFixed(2)}</p>
 
         <div className="mt-auto flex items-center justify-between">
           {/* Quantity Controls */}

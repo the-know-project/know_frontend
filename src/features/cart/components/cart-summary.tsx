@@ -12,7 +12,8 @@ export const CartSummary: React.FC<ICartSummaryProps> = ({
   onClose,
 }) => {
   const subtotal = items.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) =>
+      total + (Number(item.price.replace(/[^\d.-]/g, "")) || 0) * item.quantity,
     0,
   );
   const tax = subtotal * 0.1; // 10% tax
