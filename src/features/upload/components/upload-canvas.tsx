@@ -58,43 +58,53 @@ const UploadCanvasContent = () => {
       customMetadata: formData.tags || [],
     };
 
-    const data = await hanndleUploadAsset(uploadData);
-    if (data.status === 200) {
-      toast("Asset Uploaded", {
-        id: uploadToastId,
-        icon: <ToastIcon />,
-        description: <ToastDescription description={data.message} />,
-        style: {
-          backdropFilter: "-moz-initial",
-          opacity: "-moz-initial",
-          backgroundColor: " oklch(62.7% 0.194 149.214)",
-          fontSize: "15px",
-          font: "Space Grotesk",
-          color: "#ffffff",
-          fontWeight: "bolder",
-        },
-      });
-      router.push("/explore");
-    } else if (data.status === 500) {
+    try {
+      const data = await hanndleUploadAsset(uploadData);
+      if (data.status === 200) {
+        toast("Asset Uploaded", {
+          id: uploadToastId,
+          icon: <ToastIcon />,
+          description: <ToastDescription description={data.message} />,
+          style: {
+            backdropFilter: "-moz-initial",
+            opacity: "-moz-initial",
+            backgroundColor: " oklch(62.7% 0.194 149.214)",
+            fontSize: "15px",
+            font: "Space Grotesk",
+            color: "#ffffff",
+            fontWeight: "bolder",
+          },
+        });
+        router.push("/explore");
+      } else {
+        toast("An error occurred", {
+          id: uploadToastId,
+          icon: <ToastIcon />,
+          description: <ToastDescription description={data.message} />,
+          style: {
+            backdropFilter: "-moz-initial",
+            opacity: "-moz-initial",
+            backgroundColor: "oklch(62.8% 0.258 29.234)",
+            fontSize: "15px",
+            font: "Space Grotesk",
+            color: "#ffffff",
+            fontWeight: "bolder",
+          },
+        });
+      }
+    } catch (error) {
       toast("An error occurred", {
         id: uploadToastId,
         icon: <ToastIcon />,
-        description: <ToastDescription description={data.message} />,
-        style: {
-          backdropFilter: "-moz-initial",
-          opacity: "-moz-initial",
-          backgroundColor: "oklch(62.8% 0.258 29.234)",
-          fontSize: "15px",
-          font: "Space Grotesk",
-          color: "#ffffff",
-          fontWeight: "bolder",
-        },
-      });
-    } else {
-      toast("An error occurred", {
-        id: uploadToastId,
-        icon: <ToastIcon />,
-        description: <ToastDescription description={`An error occurred`} />,
+        description: (
+          <ToastDescription
+            description={
+              error instanceof Error
+                ? error.message
+                : "Upload failed. Please try again."
+            }
+          />
+        ),
         style: {
           backdropFilter: "-moz-initial",
           opacity: "-moz-initial",
