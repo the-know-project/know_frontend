@@ -113,7 +113,7 @@ const ExploreCanvasContent = ({
       const transformedCartData = cartDataResult.data.map((item: TCart) => ({
         fileId: item.fileId,
         quantity: item.quantity,
-        price: item.price,
+        price: Number(item.price.replace(/[^\d.-]/g, "")) || 0,
         url: item.url,
       }));
 
