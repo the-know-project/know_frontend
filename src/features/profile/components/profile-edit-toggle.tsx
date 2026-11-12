@@ -13,6 +13,7 @@ import { useUnlistAsset } from "../artist/hooks/use-unlist-asset";
 import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
+import { useDeleteAsset } from "../artist/hooks/use-delete-asset";
 
 interface IProfileEditToggle {
   id: string;
@@ -29,6 +30,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
   role,
 }) => {
   const { mutateAsync: unlistAsset } = useUnlistAsset();
+  const { mutateAsync: deleteAsset } = useDeleteAsset();
   const toggleEditProfile = useToggleEditProfile();
   const isEditProfileToggled = useIsEditProfileToggled(id);
   const [editToggled, setEditToggled] = useState(false);
@@ -94,9 +96,60 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
     setIsListModalToggled((prev) => !prev);
   };
 
+  const handleDeleteAsset = async () => {
+    const deletingToastId = toast.loading("Deleting Asset", {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+
+    const result = await deleteAsset({ fileId: id });
+
+    if (result instanceof Error) {
+      toast.error("Failed to delete asset", {
+        id: deletingToastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription description="There was an error deleting your asset. Please try again." />
+        ),
+        style: {
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          fontFamily: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "600",
+        },
+      });
+      return;
+    }
+
+    toast.success("Asset deleted successfully", {
+      id: deletingToastId,
+      icon: <ToastIcon />,
+      description: (
+        <ToastDescription description="Your asset has been deleted successfully." />
+      ),
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "15px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+  };
+
   const handleMenuItemClick = (itemId: string) => {
     if (itemId === "edit-profile") {
       toggleEditProfile(id);
+      setEditToggled(false);
+    }
+    if (itemId === "4") {
+      void handleDeleteAsset();
       setEditToggled(false);
     }
   };
