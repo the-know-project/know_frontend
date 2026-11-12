@@ -4,10 +4,7 @@ import Image from "next/image";
 import { formatViewCount } from "@/src/utils/number-format";
 import { useRoleStore } from "../../auth/state/store";
 import ProfileEditToggle from "./profile-edit-toggle";
-import {
-  useIsEditProfileToggled,
-  useToggleEditProfile, // ← Add this import
-} from "../artist/store/artist-profile.store";
+import { useIsEditProfileToggled } from "../artist/store/artist-profile.store";
 import { BlankProfilePicture } from "@/src/constants/constants";
 
 interface IProfileCard {
@@ -20,6 +17,7 @@ interface IProfileCard {
 
   isListed: boolean;
   onClick?: () => void;
+  onEditPost?: () => void;
 }
 
 const ProfileCard: React.FC<IProfileCard> = ({
@@ -30,14 +28,10 @@ const ProfileCard: React.FC<IProfileCard> = ({
   image,
   isListed,
   onClick,
+  onEditPost,
 }) => {
   const role = useRoleStore((state) => state.role);
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
-  const toggleEditProfile = useToggleEditProfile();
-
-  const handleEditClick = () => {
-    toggleEditProfile(id as string, undefined, image);
-  };
 
   return (
     <div className="relative mt-[30px] flex w-full flex-col px-4">
@@ -47,7 +41,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
             image={image}
             id={id as string}
             isListed={isListed}
-            role={role}
+            onEditPost={onEditPost}
           />
         )}
       </div>
@@ -83,7 +77,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
             </div>
 
             <button
-              onClick={handleEditClick}
+              onClick={onEditPost}
               className="flex cursor-pointer items-center gap-1 transition-all duration-200 hover:scale-105 active:scale-95"
             >
               <IconPencil width={15} height={15} className="text-neutral-600" />
