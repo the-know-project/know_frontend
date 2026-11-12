@@ -18,6 +18,10 @@ export interface ICompleteUploadForm {
   categories: string[];
 }
 
+export type TUploadInitialData = Partial<Omit<ICompleteUploadForm, "files">> & {
+  files?: File[];
+};
+
 interface UploadContextType {
   uploadData: ICompleteUploadForm;
   isEditorOpen: boolean;
@@ -52,12 +56,18 @@ const defaultUploadData: ICompleteUploadForm = {
 
 const UploadContext = createContext<UploadContextType | undefined>(undefined);
 
-export const UploadProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [uploadData, setUploadData] =
-    useState<ICompleteUploadForm>(defaultUploadData);
-  const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false);
+export const UploadProvider: React.FC<{
+  children: ReactNode;
+  initialData?: TUploadInitialData;
+  initialEditorOpen?: boolean;
+}> = ({ children, initialData, initialEditorOpen = false }) => {
+  const [uploadData, setUploadData] = useState<ICompleteUploadForm>(() => ({
+    ...defaultUploadData,
+    ...initialData,
+    files: initialData?.files ?? [],
+    size: { ...defaultUploadData.size, ...initialData?.size },
+  }));
+  const [isEditorOpen, setIsEditorOpen] = useState<boolean>(initialEditorOpen);
 
   const updateBasicInfo = (data: Partial<IUploadFormState>) => {
     setUploadData((prev) => {
@@ -65,7 +75,6 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
         ...prev,
         ...data,
       };
-      console.log("Context: New upload data after basic info update:", updated);
       return updated;
     });
   };
@@ -79,7 +88,6 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
           ...data,
         },
       };
-      console.log("Context: New upload data after size update:", updated);
       return updated;
     });
   };
@@ -90,10 +98,6 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
         ...prev,
         description,
       };
-      console.log(
-        "Context: New upload data after description update:",
-        updated,
-      );
       return updated;
     });
   };
@@ -104,7 +108,6 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
         ...prev,
         tags,
       };
-      console.log("Context: New upload data after tags update:", updated);
       return updated;
     });
   };
@@ -115,7 +118,6 @@ export const UploadProvider: React.FC<{ children: ReactNode }> = ({
         ...prev,
         categories,
       };
-      console.log("Context: New upload data after categories update:", updated);
       return updated;
     });
   };
