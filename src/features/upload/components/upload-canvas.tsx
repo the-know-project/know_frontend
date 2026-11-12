@@ -9,14 +9,32 @@ import { IUploadAssetClient } from "../types/upload.types";
 import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
+import type { TUserAssetData } from "@/src/features/profile/artist/dto/artist.dto";
+import { useUpdateAsset } from "@/src/features/profile/artist/hooks/use-update-asset";
 
-const UploadCanvasContent = () => {
+interface UploadCanvasProps {
+  mode?: "create" | "edit";
+  asset?: TUserAssetData;
+  onCancel?: () => void;
+  onComplete?: () => void;
+}
+
+const UploadCanvasContent = ({
+  mode = "create",
+  asset,
+  onCancel,
+  onComplete,
+}: UploadCanvasProps) => {
   const router = useRouter();
-  const { mutateAsync: hanndleUploadAsset, isPending } = useUploadAsset();
+  const { mutateAsync: uploadAsset, isPending: isUploading } = useUploadAsset();
+  const { mutateAsync: saveAsset, isPending: isUpdating } = useUpdateAsset();
   const { getAllFormData } = useUploadContext();
+  const isEditing = mode === "edit" && !!asset;
+  const isPending = isUploading || isUpdating;
 
   const handleGoBack = () => {
-    router.back();
+    if (onCancel) onCancel();
+    else router.back();
   };
 
   const handleOnSave = () => {
@@ -28,25 +46,23 @@ const UploadCanvasContent = () => {
   const handleOnContinue = async () => {
     const formData = getAllFormData();
 
-    if (
-      !formData.files ||
-      formData.files.length === 0 ||
-      !formData.title ||
-      !formData.size
-    ) {
+    if (!formData.title || (!isEditing && formData.files.length === 0)) {
       alert("Please fill in title and upload a file");
       return;
     }
 
-    const uploadToastId = toast.loading(`Uploading Asset: ${formData.title}`, {
-      style: {
-        backgroundColor: "oklch(62.7% 0.194 149.214)",
-        fontSize: "12px",
-        fontFamily: "Space Grotesk",
-        color: "#ffffff",
-        fontWeight: "600",
+    const saveToastId = toast.loading(
+      `${isEditing ? "Updating" : "Uploading"} Asset: ${formData.title}`,
+      {
+        style: {
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
+          fontSize: "12px",
+          fontFamily: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "600",
+        },
       },
-    });
+    );
 
     const uploadData: IUploadAssetClient = {
       fileName: formData.title,
@@ -59,10 +75,20 @@ const UploadCanvasContent = () => {
     };
 
     try {
-      const data = await hanndleUploadAsset(uploadData);
+      const data =
+        isEditing && asset
+          ? await saveAsset({
+              fileId: asset.fileId,
+              fileName: formData.title,
+              description: formData.description,
+              size: formData.size,
+              categories: formData.categories || [],
+              tags: formData.tags || [],
+            })
+          : await uploadAsset(uploadData);
       if (data.status === 200) {
-        toast("Asset Uploaded", {
-          id: uploadToastId,
+        toast.success(isEditing ? "Asset updated" : "Asset uploaded", {
+          id: saveToastId,
           icon: <ToastIcon />,
           description: <ToastDescription description={data.message} />,
           style: {
@@ -75,10 +101,11 @@ const UploadCanvasContent = () => {
             fontWeight: "bolder",
           },
         });
-        router.push("/explore");
+        if (isEditing) onComplete?.();
+        else router.push("/explore");
       } else {
         toast("An error occurred", {
-          id: uploadToastId,
+          id: saveToastId,
           icon: <ToastIcon />,
           description: <ToastDescription description={data.message} />,
           style: {
@@ -94,7 +121,7 @@ const UploadCanvasContent = () => {
       }
     } catch (error) {
       toast("An error occurred", {
-        id: uploadToastId,
+        id: saveToastId,
         icon: <ToastIcon />,
         description: (
           <ToastDescription
@@ -125,6 +152,10 @@ const UploadCanvasContent = () => {
         onSaveDraft={handleOnSave}
         onContinue={handleOnContinue}
         isPending={isPending}
+        existingMedia={
+          isEditing && asset ? [asset.url, ...(asset.extraUrls || [])] : []
+        }
+        allowMediaChanges={!isEditing}
       />
       <UploadEditorCanvas />
     </UploadCanvasLayout>
@@ -159,10 +190,33 @@ const UploadCanvasLayout = ({
   );
 };
 
-const UploadCanvas = () => {
+const UploadCanvas = ({
+  mode = "create",
+  asset,
+  onCancel,
+  onComplete,
+}: UploadCanvasProps) => {
+  const initialData = asset
+    ? {
+        title: asset.name,
+        description: asset.description || "",
+        size: asset.size,
+        categories: asset.categories,
+        tags: asset.tags,
+      }
+    : undefined;
+
   return (
-    <UploadProvider>
-      <UploadCanvasContent />
+    <UploadProvider
+      initialData={initialData}
+      initialEditorOpen={mode === "edit"}
+    >
+      <UploadCanvasContent
+        mode={mode}
+        asset={asset}
+        onCancel={onCancel}
+        onComplete={onComplete}
+      />
     </UploadProvider>
   );
 };
