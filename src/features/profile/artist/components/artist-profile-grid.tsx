@@ -20,6 +20,7 @@ import {
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
 import { logger } from "@/src/utils/logger";
+import UploadCanvas from "@/src/features/upload/components/upload-canvas";
 
 interface ArtistProfileGridProps {
   user: IUser;
@@ -31,6 +32,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const tabContainerRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const [editingPost, setEditingPost] = useState<TUserAssetData | null>(null);
 
   const { isExploreContentToggled } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
@@ -184,6 +186,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                 role={user.role as string}
                 isListed={post.isListed}
                 onClick={() => handleOpenArtDetails(post)}
+                onEditPost={() => setEditingPost(post)}
               />
             </motion.div>
           ))}
@@ -216,6 +219,17 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
 
   return (
     <section className="lg:px- -mt-[50px] flex w-full flex-col px-4">
+      {editingPost && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-white">
+          <UploadCanvas
+            key={editingPost.fileId}
+            mode="edit"
+            asset={editingPost}
+            onCancel={() => setEditingPost(null)}
+            onComplete={() => setEditingPost(null)}
+          />
+        </div>
+      )}
       {isExploreContentToggled && <ArtDetails />}
       <div className="w-full items-center justify-center">
         <div
