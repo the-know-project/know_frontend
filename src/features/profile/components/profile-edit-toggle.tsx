@@ -3,10 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { ProfileToggleData } from "../data/profile.data";
-import {
-  useToggleEditProfile,
-  useIsEditProfileToggled,
-} from "../artist/store/artist-profile.store";
 import { Settings2Icon } from "lucide-react";
 import ListAssetModal from "./list-asset-modal";
 import { useUnlistAsset } from "../artist/hooks/use-unlist-asset";
@@ -20,19 +16,17 @@ interface IProfileEditToggle {
 
   image: string;
   isListed: boolean;
-  role?: string;
+  onEditPost?: () => void;
 }
 
 const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
   image,
   id,
   isListed,
-  role,
+  onEditPost,
 }) => {
   const { mutateAsync: unlistAsset } = useUnlistAsset();
   const { mutateAsync: deleteAsset } = useDeleteAsset();
-  const toggleEditProfile = useToggleEditProfile();
-  const isEditProfileToggled = useIsEditProfileToggled(id);
   const [editToggled, setEditToggled] = useState(false);
   const [isListModalToggled, setIsListModalToggled] = useState(false);
   const toggleRef = useRef<HTMLDivElement>(null);
@@ -144,8 +138,8 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
   };
 
   const handleMenuItemClick = (itemId: string) => {
-    if (itemId === "edit-profile") {
-      toggleEditProfile(id);
+    if (itemId === "1") {
+      onEditPost?.();
       setEditToggled(false);
     }
     if (itemId === "4") {
@@ -198,7 +192,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                 }}
               >
                 <div className="flex w-fit touch-manipulation flex-col items-start gap-1 rounded-[15px] bg-white/50 p-2 text-nowrap shadow-sm backdrop-blur-md">
-                  {ProfileToggleData.map((item, index) => (
+                  {ProfileToggleData.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleMenuItemClick(String(item.id))}
