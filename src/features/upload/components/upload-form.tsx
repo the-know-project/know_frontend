@@ -29,6 +29,8 @@ interface UploadFormProps {
   onContinue?: (data: IUploadFormState) => void;
   onCancel?: () => void;
   isPending?: boolean;
+  existingMedia?: string[];
+  allowMediaChanges?: boolean;
 }
 
 const UploadForm = ({
@@ -36,6 +38,8 @@ const UploadForm = ({
   onContinue,
   onCancel,
   isPending = false,
+  existingMedia = [],
+  allowMediaChanges = true,
 }: UploadFormProps) => {
   const [dragging, setDragging] = useState(false);
   const [previews, setPreviews] = useState<
@@ -53,6 +57,16 @@ const UploadForm = ({
 
   const watchedFiles = form.watch("files") || [];
   const watchedTitle = form.watch("title");
+  const mediaItems = [
+    ...existingMedia.map((url, index) => ({
+      url,
+      name: `Existing media ${index + 1}`,
+      type: url.toLowerCase().includes(".mp4") ? "video/mp4" : "image/jpeg",
+      size: 0,
+      existing: true,
+    })),
+    ...previews.map((preview) => ({ ...preview, existing: false })),
+  ];
 
   // Sync previews with watchedFiles
   useEffect(() => {
@@ -150,7 +164,10 @@ const UploadForm = ({
             <button
               className="font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
               onClick={() => {
-                if (watchedFiles.length > 0 && watchedTitle) {
+                if (
+                  (watchedFiles.length > 0 || existingMedia.length > 0) &&
+                  watchedTitle
+                ) {
                   const data: IUploadFormState = {
                     files: watchedFiles,
                     title: watchedTitle,
@@ -158,7 +175,10 @@ const UploadForm = ({
                   onSubmit(data);
                 }
               }}
-              disabled={watchedFiles.length === 0 || !watchedTitle}
+              disabled={
+                (watchedFiles.length === 0 && existingMedia.length === 0) ||
+                !watchedTitle
+              }
             >
               <p className="flex">Continue</p>
             </button>
@@ -175,7 +195,17 @@ const UploadForm = ({
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={(event) => {
+            event.preventDefault();
+            const hasMedia = allowMediaChanges
+              ? watchedFiles.length > 0
+              : existingMedia.length > 0;
+            if (watchedTitle && hasMedia) {
+              onSubmit({ ...form.getValues(), files: watchedFiles });
+            } else {
+              void form.trigger("title");
+            }
+          }}
           className="w-full max-w-3xl space-y-6"
         >
           {/* Title Input Field */}
@@ -213,15 +243,17 @@ const UploadForm = ({
                 <FormControl>
                   <div
                     className="relative"
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
+                    onDragOver={allowMediaChanges ? handleDragOver : undefined}
+                    onDragLeave={
+                      allowMediaChanges ? handleDragLeave : undefined
+                    }
+                    onDrop={allowMediaChanges ? handleDrop : undefined}
                   >
-                    {watchedFiles.length > 0 ? (
+                    {mediaItems.length > 0 ? (
                       <div className="space-y-4">
                         <div className="flex w-full flex-col items-center gap-4">
                           <div className="scrollbar-hide flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-x-visible sm:pb-0 md:grid-cols-3">
-                            {previews.map((item, index) => (
+                            {mediaItems.map((item, index) => (
                               <div
                                 key={index}
                                 className="group relative h-64 w-full flex-shrink-0 snap-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-900"
@@ -252,14 +284,20 @@ const UploadForm = ({
                                 </div>
 
                                 {/* Remove Button */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveFile(index)}
-                                  className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
-                                  title="Remove file"
-                                >
-                                  <IconX width={16} height={16} />
-                                </button>
+                                {!item.existing && allowMediaChanges && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleRemoveFile(
+                                        index - existingMedia.length,
+                                      )
+                                    }
+                                    className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
+                                    title="Remove file"
+                                  >
+                                    <IconX width={16} height={16} />
+                                  </button>
+                                )}
 
                                 {/* Hover Overlay */}
                                 <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/90 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
@@ -275,22 +313,23 @@ const UploadForm = ({
                           </div>
 
                           {/* Add More Slot if less than 5 */}
-                          {watchedFiles.length < 5 && (
-                            <label
-                              htmlFor="file-upload"
-                              className={`flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-300 p-4 text-center transition-all hover:border-blue-500 hover:bg-neutral-50/5 ${
-                                dragging ? "border-primary bg-blue-50/10" : ""
-                              }`}
-                            >
-                              <IconFileUpload className="mb-2 text-3xl text-neutral-400" />
-                              <p className="font-grotesk text-sm font-medium text-neutral-300">
-                                Add file ({5 - watchedFiles.length} left)
-                              </p>
-                            </label>
-                          )}
+                          {allowMediaChanges &&
+                            watchedFiles.length + existingMedia.length < 5 && (
+                              <label
+                                htmlFor="file-upload"
+                                className={`flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-300 p-4 text-center transition-all hover:border-blue-500 hover:bg-neutral-50/5 ${
+                                  dragging ? "border-primary bg-blue-50/10" : ""
+                                }`}
+                              >
+                                <IconFileUpload className="mb-2 text-3xl text-neutral-400" />
+                                <p className="font-grotesk text-sm font-medium text-neutral-300">
+                                  Add file ({5 - watchedFiles.length} left)
+                                </p>
+                              </label>
+                            )}
                         </div>
                       </div>
-                    ) : (
+                    ) : allowMediaChanges ? (
                       /* Big Upload Box */
                       <label
                         htmlFor="file-upload"
@@ -316,16 +355,18 @@ const UploadForm = ({
                           <p>- Upload high resolution images (png, jpg)</p>
                         </div>
                       </label>
-                    )}
+                    ) : null}
 
-                    <input
-                      type="file"
-                      id="file-upload"
-                      accept="image/png, image/jpeg, video/mp4"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      multiple
-                    />
+                    {allowMediaChanges && (
+                      <input
+                        type="file"
+                        id="file-upload"
+                        accept="image/png, image/jpeg, video/mp4"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        multiple
+                      />
+                    )}
                   </div>
                 </FormControl>
                 <FormMessage className="font-bebas self-center tracking-wider" />
