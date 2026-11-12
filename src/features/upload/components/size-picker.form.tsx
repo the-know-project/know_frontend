@@ -31,8 +31,23 @@ const UNITS = {
 const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
   const { uploadData, updateSizeInfo } = useUploadContext();
   const [savedDimensions, setSavedDimensions] = useState<{
-    [key: string]: { value: number; unit: string };
-  }>({});
+    [key: string]: { value: string; unit: string };
+  }>(() => {
+    const initial: { [key: string]: { value: string; unit: string } } = {};
+    DIMENSIONS.forEach((dim) => {
+      const value = uploadData.size?.[dim.key as keyof typeof uploadData.size];
+      if (value !== undefined && value !== null) {
+        initial[dim.key] = {
+          value: String(value),
+          unit:
+            dim.key === "weight"
+              ? uploadData.size.weightUnit || "kg"
+              : uploadData.size.dimensionUnit || "cm",
+        };
+      }
+    });
+    return initial;
+  });
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: string]: boolean;
   }>({});
@@ -43,34 +58,27 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
     defaultValues: uploadData.size,
   });
 
-  useEffect(() => {
-    const initialSaved: { [key: string]: { value: number; unit: string } } = {};
-    DIMENSIONS.forEach((dim) => {
-      const value = uploadData.size?.[dim.key as keyof typeof uploadData.size];
-      if (value !== undefined && value !== null && value !== "") {
-        const unit =
-          dim.key === "weight"
-            ? uploadData.size?.weightUnit || "kg"
-            : uploadData.size?.dimensionUnit || "cm";
-        initialSaved[dim.key] = { value: Number(value), unit };
-      }
-    });
-    setSavedDimensions(initialSaved);
-  }, [uploadData.size]);
-
   const handleInputChange = (dimensionKey: string, value: string) => {
-    if (!value || value.trim() === "" || isNaN(Number(value))) {
+    if (
+      value !== "" &&
+      (!Number.isFinite(Number(value)) || Number(value) < 0)
+    ) {
+      if (Number(value) < 0) value = "0";
+      else return;
+    }
+
+    if (value === "-") {
       return;
     }
 
-    const numValue = Number(value);
+    const numValue = value === "" ? 0 : Number(value);
     const currentUnit =
       savedDimensions[dimensionKey]?.unit ||
       (dimensionKey === "weight" ? "kg" : "cm");
 
     const newSavedDimensions = {
       ...savedDimensions,
-      [dimensionKey]: { value: numValue, unit: currentUnit },
+      [dimensionKey]: { value, unit: currentUnit },
     };
     setSavedDimensions(newSavedDimensions);
 
@@ -196,12 +204,18 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
                   <div className="relative flex-1 rounded-[15px] border border-gray-300 bg-white">
                     <Input
                       type="number"
+                      min={0}
                       placeholder="0"
                       className="font-grotesk [appearance:textfield] border-0 bg-transparent pr-16 text-sm font-normal text-neutral-600 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       value={currentValue}
                       onChange={(e) =>
                         handleInputChange(dimension.key, e.target.value)
                       }
+                      onBlur={() => {
+                        if (savedDimensions[dimension.key]?.value === "") {
+                          handleInputChange(dimension.key, "0");
+                        }
+                      }}
                     />
 
                     {/* Unit Dropdown inside input */}
