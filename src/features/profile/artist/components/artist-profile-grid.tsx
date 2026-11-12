@@ -19,6 +19,7 @@ import {
   useIsExploreContentToggled,
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
+import { logger } from "@/src/utils/logger";
 
 interface ArtistProfileGridProps {
   user: IUser;
@@ -151,6 +152,11 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         </div>
       );
     }
+
+    logger.log({
+      context: "Artists post",
+      data: posts,
+    });
 
     return (
       <>
