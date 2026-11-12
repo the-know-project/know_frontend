@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { err, ok, ResultAsync } from "neverthrow";
 import { deleteAsset } from "../api/delete-asset/route";
 import { IDeleteAsset } from "../types/asset.types";
+import { logger } from "@/src/utils/logger";
 
 export const useDeleteAsset = () => {
   const queryClient = useQueryClient();
@@ -26,14 +27,22 @@ export const useDeleteAsset = () => {
         return result.error;
       }
 
+      logger.log({
+        context: "Asset deleted successfully",
+        data: result.value,
+      });
       return result.value;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          `user-${userId}-posts`,
-          `fetch-user-notifications-${userId}`,
-        ],
+    onSuccess: (data) => {
+      if (data instanceof Error) {
+        return;
+      }
+
+      void queryClient.invalidateQueries({
+        queryKey: [`user-${userId}-posts`],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: [`fetch-user-notifications-${userId}`],
       });
     },
   });
