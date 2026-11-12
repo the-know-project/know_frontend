@@ -17,7 +17,7 @@ export const UploadFormSchema = z.object({
         .refine((file) => {
           const validTypes = ["image/png", "image/jpeg", "video/mp4"];
           return validTypes.includes(file.type);
-        }, "Only PNG, JPEG images and MP4 videos are allowed")
+        }, "Only PNG, JPEG images and MP4 videos are allowed"),
     )
     .min(1, "Please select at least one file")
     .max(5, "Maximum of 5 files allowed")
@@ -40,19 +40,19 @@ export const UploadSchema = z.object({
         .refine((file) => {
           const validTypes = ["image/png", "image/jpeg", "video/mp4"];
           return validTypes.includes(file.type);
-        }, "Only PNG, JPEG images and MP4 videos are allowed")
+        }, "Only PNG, JPEG images and MP4 videos are allowed"),
     )
     .min(1, "Please select at least one file")
     .max(5, "Maximum of 5 files allowed"),
 });
 
 export const SizePickerSchema = z.object({
-  width: z.number().optional(),
-  depth: z.number().optional(),
-  length: z.number().optional(),
-  height: z.number().optional(),
-  weight: z.number(),
-  diameter: z.number().optional(),
+  width: z.number().min(0).optional(),
+  depth: z.number().min(0).optional(),
+  length: z.number().min(0).optional(),
+  height: z.number().min(0).optional(),
+  weight: z.number().min(0),
+  diameter: z.number().min(0).optional(),
   aspectRatio: z.string().optional(),
   dimensionUnit: z.string().optional(),
   weightUnit: z.string().optional(),
@@ -65,10 +65,7 @@ export const UploadAssetSchemaServer = z.object({
     .min(1, "Title is required")
     .max(100, "Title must be less than 100 characters"),
   description: z.string().optional(),
-  asset: z.union([
-    z.instanceof(File),
-    z.array(z.instanceof(File))
-  ]),
+  asset: z.union([z.instanceof(File), z.array(z.instanceof(File))]),
   size: SizePickerSchema,
   categories: z.array(z.string()),
   tags: z.array(z.string()),
@@ -80,10 +77,7 @@ export const UploadAssetSchema = z.object({
     .string()
     .min(1, "Title is required")
     .max(100, "Title must be less than 100 characters"),
-  asset: z.union([
-    z.instanceof(File),
-    z.array(z.instanceof(File))
-  ]),
+  asset: z.union([z.instanceof(File), z.array(z.instanceof(File))]),
   size: SizePickerSchema,
   categories: z.array(z.string()),
   tags: z.array(z.string()),
