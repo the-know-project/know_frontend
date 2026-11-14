@@ -16,7 +16,6 @@ import { useCanFetchData } from "@/src/features/auth/hooks/use-optimized-auth";
 import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import {
-  useIsExploreContentToggled,
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
 import { logger } from "@/src/utils/logger";
@@ -34,7 +33,6 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const [editingPost, setEditingPost] = useState<TUserAssetData | null>(null);
 
-  const { isExploreContentToggled } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
 
   const handleOpenArtDetails = (post: TUserAssetData) => {
@@ -230,7 +228,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
           />
         </div>
       )}
-      {isExploreContentToggled && <ArtDetails />}
+      <ArtDetails />
       <div className="w-full items-center justify-center">
         <div
           ref={tabContainerRef}

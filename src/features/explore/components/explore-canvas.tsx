@@ -157,7 +157,7 @@ const ExploreCanvasContent = ({
 
   return (
     <section className="relative flex min-h-screen w-full flex-col items-center">
-      {isExploreContentToggled && <ArtDetails />}
+      <ArtDetails />
       <section className="flex w-full flex-col items-center justify-center">
         <div className="grid grid-cols-1 gap-5 space-y-[50px] md:grid-cols-2 lg:grid-cols-3">
           {assets.map((item: TAsset, index: number) => (

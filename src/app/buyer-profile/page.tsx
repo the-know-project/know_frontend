@@ -6,7 +6,6 @@ import { useUpdateQuantity } from "@/src/features/cart/hooks/use-update-quantity
 import { useCartActions } from "@/src/features/cart/state/cart.store";
 import { IAddToLocalCart, TCart } from "@/src/features/cart/types/cart.types";
 import {
-  useIsExploreContentToggled,
   useToggleExploreContent,
 } from "@/src/features/explore/state/explore-content.store";
 import { useFetchOrdersSummary } from "@/src/features/orders/hooks/use-fetch-orders-summary";
@@ -122,7 +121,6 @@ const Page = () => {
 
   const { data: ordersSummary } = useFetchOrdersSummary();
 
-  const { isExploreContentToggled } = useIsExploreContentToggled();
   const toggleExploreContent = useToggleExploreContent();
 
   logger.debug("Cart data,", {
@@ -637,7 +635,7 @@ const Page = () => {
   return (
     <BuyerGuard>
       <div className="-mt-[50px] flex w-full flex-col items-center justify-center px-4 py-4 sm:px-6 sm:py-6 lg:items-start lg:justify-start lg:px-8">
-        {isExploreContentToggled && <ArtDetails />}
+        <ArtDetails />
         {/* Tabs */}
         <div
           ref={tabContainerRef}
