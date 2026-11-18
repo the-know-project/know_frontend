@@ -88,6 +88,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({ userId }) => {
                 <EditProfileForm
                   firstName={userResponse?.data.firstName}
                   lastName={userResponse?.data.lastName}
+                  email={userResponse?.data.email}
+                  imageUrl={userResponse?.data.imageUrl}
                   description={userResponse?.data.description}
                   country={userResponse?.data.country}
                   phoneNumber={userResponse?.data.phoneNumber}

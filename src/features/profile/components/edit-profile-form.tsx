@@ -26,6 +26,8 @@ interface IEditProfileForm {
   userId: string;
   firstName?: string;
   lastName?: string;
+  email?: string;
+  imageUrl?: string;
   description?: string | null;
   country?: string | null;
   phoneNumber?: string | null;
@@ -36,7 +38,10 @@ interface IEditProfileForm {
 
 const EditProfileForm: React.FC<IEditProfileForm> = ({
   onClose,
+  firstName,
   lastName,
+  email,
+  imageUrl,
   description,
   country,
   phoneNumber,
@@ -54,26 +59,57 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    reset,
+    formState: { errors, isDirty, dirtyFields },
     watch,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
-      firstName: user?.firstName || "",
-      lastName: lastName || "",
-      email: user?.email || "",
-      role: role || "",
-      country: country || "",
-      phoneNumber: phoneNumber || "",
-      description: description || "",
+      firstName: firstName ?? user?.firstName ?? "",
+      lastName: lastName ?? "",
+      email: email ?? user?.email ?? "",
+      role: role ?? user?.role ?? "",
+      country: country ?? "",
+      phoneNumber: phoneNumber ?? "",
+      description: description ?? "",
     },
   });
+  // Subscribe to dirty fields so async profile resets preserve edits in progress.
+  void dirtyFields;
 
   useEffect(() => {
-    if (user?.imageUrl) {
-      setProfileImage(user.imageUrl);
+    const currentImage = imageUrl || user?.imageUrl;
+    if (currentImage && !imageFile) {
+      setProfileImage(currentImage);
     }
-  }, [user]);
+  }, [imageUrl, user?.imageUrl, imageFile]);
+
+  useEffect(() => {
+    reset(
+      {
+        firstName: firstName ?? user?.firstName ?? "",
+        lastName: lastName ?? "",
+        email: email ?? user?.email ?? "",
+        role: role ?? user?.role ?? "",
+        country: country ?? "",
+        phoneNumber: phoneNumber ?? "",
+        description: description ?? "",
+      },
+      { keepDirtyValues: true },
+    );
+  }, [
+    reset,
+    firstName,
+    lastName,
+    email,
+    role,
+    country,
+    phoneNumber,
+    description,
+    user?.firstName,
+    user?.email,
+    user?.role,
+  ]);
 
   useEffect(() => {
     setHasChanges(isDirty || !!imageFile);
