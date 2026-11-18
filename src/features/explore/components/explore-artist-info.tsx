@@ -12,22 +12,24 @@ interface ExploreArtistInfoProps {
   userId?: string;
 }
 
-const ExploreArtistInfo = ({
-  artistId,
-  artwork,
-  userId,
-}: ExploreArtistInfoProps) => {
+const ExploreArtistInfo = ({ artistId, artwork }: ExploreArtistInfoProps) => {
   return (
-    <div className="w-full space-y-4">
-      {/* Artist Info Card with Follow/Checkout */}
-      {userId && userId === artistId && <ArtistInfoCard artistId={artistId} />}
+    <aside
+      aria-label="Artist and artwork information"
+      className="w-full space-y-3 sm:space-y-4"
+    >
+      <ArtistInfoCard
+        artistId={artistId}
+        artistName={artwork.creatorName}
+        artistImage={artwork.creatorProfileUrl}
+      />
 
-      {/* Art Info Card with Details and Price */}
       <ArtInfoCard artwork={artwork} />
 
-      {/* Tags Filter */}
-      <ArtTagsFilter tags={artwork.tags || []} />
-    </div>
+      {artwork.tags && artwork.tags.length > 0 && (
+        <ArtTagsFilter tags={artwork.tags} />
+      )}
+    </aside>
   );
 };
 

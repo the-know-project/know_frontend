@@ -1,40 +1,29 @@
-"use client";
-
-import { useState } from "react";
-
 interface ArtTagsFilterProps {
   tags: string[];
 }
 
 const ArtTagsFilter = ({ tags }: ArtTagsFilterProps) => {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const handleTagClick = (tag: string) => {
-    console.log("Tag clicked:", tag);
-  };
-
-  const isTagSelected = (tag: string) => {
-    return selectedTags.includes(tag);
-  };
+  if (tags.length === 0) return null;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <section
+      aria-label="Artwork tags"
+      className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5"
+    >
+      <h2 className="font-grotesk mb-3 text-xs font-semibold tracking-[0.16em] text-neutral-400 uppercase">
+        Tags
+      </h2>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => handleTagClick(tag)}
-            className={`font-bebas rounded-full border px-3 py-1 text-xs tracking-wider transition-colors duration-200 ${
-              isTagSelected(tag)
-                ? "border-blue-700 bg-blue-700 text-white"
-                : "bg-[#1E3A8A] text-white"
-            }`}
+        {tags.map((tag, index) => (
+          <span
+            key={`${tag}-${index}`}
+            className="font-grotesk inline-flex min-h-8 items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 text-xs font-medium text-indigo-800"
           >
             {tag}
-          </button>
+          </span>
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 

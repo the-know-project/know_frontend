@@ -105,6 +105,7 @@ export const usePostComments = (params: IFetchPostComments) => {
   return {
     comments,
     currentUser: user,
+    canComment: isAuthenticated && !!user,
     sentinelRef,
     isLoadingInitial: fetchQuery.isLoading && page === 1,
     isLoadingMore: fetchQuery.isLoading && page > 1,

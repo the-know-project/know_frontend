@@ -1,123 +1,136 @@
 "use client";
 
+import { CalendarDays, Eye, Heart, Ruler } from "lucide-react";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import ExploreCheckoutButton from "./explore-checkout-button";
-import { logger } from "@/src/utils/logger";
 
 interface ArtInfoCardProps {
   artwork: IExploreContent;
 }
 
 const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
-  const { user, role } = useOptimizedAuth();
-
+  const { user } = useOptimizedAuth();
   const canCheckout = user?.id !== artwork.userId;
-
-  logger.debug("Art work", {
-    artwork,
-  });
+  const size = artwork.size;
+  const dimensions: { label: string; value: string }[] = [];
+  if (size.width)
+    dimensions.push({
+      label: "Width",
+      value: `${size.width}${size.dimensionUnit || ""}`,
+    });
+  if (size.height)
+    dimensions.push({
+      label: "Height",
+      value: `${size.height}${size.dimensionUnit || ""}`,
+    });
+  if (size.depth)
+    dimensions.push({
+      label: "Depth",
+      value: `${size.depth}${size.dimensionUnit || ""}`,
+    });
+  if (size.length)
+    dimensions.push({
+      label: "Length",
+      value: `${size.length}${size.dimensionUnit || ""}`,
+    });
+  if (size.diameter)
+    dimensions.push({
+      label: "Diameter",
+      value: `${size.diameter}${size.dimensionUnit || ""}`,
+    });
+  if (size.weight)
+    dimensions.push({
+      label: "Weight",
+      value: `${size.weight}${size.weightUnit || ""}`,
+    });
+  const publishedDate = new Date(artwork.createdAt);
+  const formattedDate = Number.isNaN(publishedDate.getTime())
+    ? "Date unavailable"
+    : new Intl.DateTimeFormat("en", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }).format(publishedDate);
+  const price =
+    typeof artwork.price === "number"
+      ? new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(
+          artwork.price,
+        )
+      : artwork.price;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <section className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="mb-4">
-        <h2 className="font-helvetica text-sm font-bold text-neutral-800 capitalize">
+        <p className="font-grotesk text-xs font-semibold tracking-[0.16em] text-neutral-400 uppercase">
+          Artwork details
+        </p>
+        <h2 className="font-helvetica mt-1 text-lg font-bold break-words text-neutral-900">
           {artwork.artName}
         </h2>
-        {artwork.size && (
-          <div className="font-azeret py-4 text-[12px] font-light text-neutral-600">
-            {artwork.size.height && (
-              <p>
-                Height: {artwork.size.height}
-                {artwork.size.dimensionUnit}
-              </p>
-            )}
+      </div>
 
-            {artwork.size.width && (
-              <p>
-                Width: {artwork.size.width}
-                {artwork.size.dimensionUnit}
-              </p>
-            )}
-            {artwork.size.depth && <p>Depth: {artwork.size.depth}</p>}
-            {artwork.size.weight && (
-              <p>
-                Weight: {artwork.size.weight}
-                {artwork.size.weightUnit}
-              </p>
-            )}
-            {artwork.size.diameter && (
-              <p>Diameter: {artwork.size.diameter}mm</p>
-            )}
-            {artwork.size.aspectRatio && (
-              <p>Aspect Ratio: {artwork.size.aspectRatio}</p>
-            )}
+      {artwork.description && (
+        <p className="font-grotesk mb-4 text-sm leading-6 break-words whitespace-pre-wrap text-neutral-600">
+          {artwork.description}
+        </p>
+      )}
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        <span className="font-grotesk inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-neutral-50 px-2.5 text-xs font-medium text-neutral-600">
+          <Eye className="h-3.5 w-3.5" />
+          {artwork.numOfViews || 0} views
+        </span>
+        <span className="font-grotesk inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-rose-50 px-2.5 text-xs font-medium text-rose-700">
+          <Heart className="h-3.5 w-3.5" />
+          {artwork.numOfLikes || 0} likes
+        </span>
+        <span className="font-grotesk inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 text-xs font-medium text-indigo-700">
+          <CalendarDays className="h-3.5 w-3.5" />
+          {formattedDate}
+        </span>
+      </div>
+
+      {dimensions.length > 0 && (
+        <div className="border-t border-neutral-100 pt-4">
+          <div className="mb-2 flex items-center gap-2">
+            <Ruler className="h-4 w-4 text-neutral-500" />
+            <h3 className="font-grotesk text-xs font-semibold text-neutral-700">
+              Dimensions
+            </h3>
           </div>
-        )}
-        +
-      </div>
-
-      {/* Stats */}
-      <div className="font-grotesk mb-4 flex items-center gap-4 text-sm text-neutral-500">
-        <div className="flex items-center gap-1">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
-          <span className="font-medium">{artwork.numOfViews || "0"}</span>
+          <dl className="grid grid-cols-2 gap-2">
+            {dimensions.map((dimension) => (
+              <div
+                key={dimension.label}
+                className="rounded-lg bg-neutral-50 px-3 py-2"
+              >
+                <dt className="font-grotesk text-[10px] text-neutral-400">
+                  {dimension.label}
+                </dt>
+                <dd className="font-grotesk mt-0.5 text-xs font-medium text-neutral-700">
+                  {dimension.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
-        <div className="flex items-center gap-1">
-          <svg
-            className="h-4 w-4"
-            fill={artwork.numOfLikes > 0 ? "red" : "none"}
-            stroke={artwork.numOfLikes > 0 ? "red" : "currentColor"}
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-            />
-          </svg>
-          <span className="font-medium">{artwork.numOfLikes}</span>
-        </div>
-      </div>
+      )}
 
-      {/* Published Date */}
-      <p className="font-grotesk text-[12px] font-light text-neutral-600">
-        Published on: {new Date(artwork.createdAt).toLocaleDateString()}
-      </p>
-
-      {/* Price and Checkout Button */}
-      <div className="space-y-4 py-4">
-        {artwork.isListed && (
-          <div className="text-center">
-            <div className="font-bebas rounded-lg bg-[#1E3A8A] px-4 py-2 text-xl font-semibold tracking-wider text-white">
-              {artwork.price}
-            </div>
+      {artwork.isListed && (
+        <div className="mt-4 border-t border-neutral-100 pt-4">
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <span className="font-grotesk text-xs font-medium text-neutral-500">
+              Listed price
+            </span>
+            <span className="font-helvetica text-xl font-bold text-neutral-900 tabular-nums">
+              {price}
+            </span>
           </div>
-        )}
-        {artwork.isListed && canCheckout && (
-          <ExploreCheckoutButton artworkId={artwork.id} />
-        )}
-      </div>
-    </div>
+          {canCheckout && <ExploreCheckoutButton artworkId={artwork.id} />}
+        </div>
+      )}
+    </section>
   );
 };
 

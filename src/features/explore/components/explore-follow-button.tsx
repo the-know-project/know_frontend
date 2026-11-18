@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/src/shared/ui/button";
-import { PlusCircle } from "lucide-react";
+import { UserRoundCheck, UserRoundPlus } from "lucide-react";
 import { useFollowUser } from "../../metrics/hooks/use-follow-user";
 import { useUnfollowUser } from "../../metrics/hooks/use-unfollow-user";
 import { useFollowActions } from "../../metrics/state/store/metrics.store";
@@ -14,8 +14,10 @@ interface ExploreFollowButtonProps {
 
 const ExploreFollowButton = ({ artistId }: ExploreFollowButtonProps) => {
   const followerId = useTokenStore(selectUserId);
-  const { mutateAsync: followUser } = useFollowUser();
-  const { mutateAsync: unFollowUser } = useUnfollowUser();
+  const { mutateAsync: followUser, isPending: isFollowingUser } =
+    useFollowUser();
+  const { mutateAsync: unFollowUser, isPending: isUnfollowingUser } =
+    useUnfollowUser();
   const { useIsUserFollowing } = useFollowActions();
 
   const isFollowing = useIsUserFollowing(followerId || "", artistId);
@@ -32,12 +34,27 @@ const ExploreFollowButton = ({ artistId }: ExploreFollowButtonProps) => {
     }
   };
 
+  const isPending = isFollowingUser || isUnfollowingUser;
+
   return (
     <Button
+      type="button"
       onClick={handleFollowUser}
-      className="font-bebas w-full cursor-pointer bg-[#1E3A8A] p-6 tracking-wider hover:bg-[#2c52ba]"
+      disabled={isPending}
+      className="font-grotesk min-h-11 w-full cursor-pointer rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold tracking-normal text-white shadow-sm hover:bg-indigo-800"
     >
-      <PlusCircle /> {isFollowing === true ? "Unfollow" : "Follow"}
+      {isFollowing === true ? (
+        <UserRoundCheck className="h-4 w-4" />
+      ) : (
+        <UserRoundPlus className="h-4 w-4" />
+      )}
+      {isFollowingUser
+        ? "Following…"
+        : isUnfollowingUser
+          ? "Unfollowing…"
+          : isFollowing === true
+            ? "Unfollow artist"
+            : "Follow artist"}
     </Button>
   );
 };
