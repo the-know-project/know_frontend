@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 const insightData = z.object({
-  topInterestedBuyersByPercentage: z.string(),
-  conversionRateByPercentage: z.string(),
+  viewsPerFollower: z.number().nonnegative().nullable(),
+  conversionRateByPercentage: z.number().nonnegative(),
 });
 
 export const MetricsData = z.object({

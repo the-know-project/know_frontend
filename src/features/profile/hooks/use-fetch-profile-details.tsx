@@ -14,7 +14,7 @@ export const useFetchProfileDetails = (ctx: IFetchProfileDetails) => {
   const currentUserId = useTokenStore(selectUserId);
 
   return useQuery({
-    queryKey: [`user-profile-${ctx.userId}-${currentUserId ?? ""}`],
+    queryKey: ["user-profile", ctx.userId, currentUserId ?? ""],
     queryFn: async () => {
       const result = await ResultAsync.fromPromise(
         fetchProfile({
@@ -39,5 +39,9 @@ export const useFetchProfileDetails = (ctx: IFetchProfileDetails) => {
       return result.value;
     },
     enabled: !!currentUserId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 };

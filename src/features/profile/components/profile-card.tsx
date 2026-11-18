@@ -34,8 +34,8 @@ const ProfileCard: React.FC<IProfileCard> = ({
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
 
   return (
-    <div className="relative mt-[30px] flex w-full flex-col px-4">
-      <div className="absolute top-1 z-20 px-2">
+    <article className="relative mt-3 flex w-full min-w-0 flex-col sm:mt-4">
+      <div className="absolute top-2 left-2 z-20">
         {role === "ARTIST" && (
           <ProfileEditToggle
             image={image}
@@ -45,50 +45,72 @@ const ProfileCard: React.FC<IProfileCard> = ({
           />
         )}
       </div>
-      <div className="flex flex-col">
-        <div className="relative">
-          <Image
-            src={image ? image : BlankProfilePicture}
-            alt="user_asset"
-            quality={100}
-            width={400}
-            height={300}
-            className={`rounded-[15px] object-contain transition-all duration-300 select-none ${
-              isEditProfileToggled ? "blur-xs" : ""
-            } ${onClick ? "cursor-pointer" : ""}`}
-            onClick={onClick}
-          />
+      <div className="flex min-w-0 flex-col">
+        <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-neutral-900">
+          {onClick ? (
+            <button
+              type="button"
+              onClick={onClick}
+              aria-label={`View details for ${title}`}
+              className="absolute inset-0 z-0 block h-full w-full focus-visible:ring-4 focus-visible:ring-indigo-500 focus-visible:outline-none focus-visible:ring-inset"
+            >
+              <Image
+                src={image || BlankProfilePicture}
+                alt={title ? `Artwork: ${title}` : "Artwork"}
+                quality={90}
+                fill
+                sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                className={`object-contain transition-transform duration-300 select-none group-hover:scale-[1.02] ${
+                  isEditProfileToggled ? "blur-xs" : ""
+                }`}
+              />
+              <span className="font-grotesk pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-3 pt-8 pb-3 text-left text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                View artwork
+              </span>
+            </button>
+          ) : (
+            <Image
+              src={image || BlankProfilePicture}
+              alt={title ? `Artwork: ${title}` : "Artwork"}
+              quality={90}
+              fill
+              sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+              className={`object-contain select-none ${
+                isEditProfileToggled ? "blur-xs" : ""
+              }`}
+            />
+          )}
         </div>
-        <div className="mt-2 flex w-full max-w-[400px] justify-between">
-          <div className="flex flex-col items-start">
-            <h3 className="font-helvetica sm:text-normal text-sm text-neutral-800 capitalize">
+        <div className="mt-3 flex w-full min-w-0 items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-col items-start">
+            <h3 className="font-helvetica w-full truncate text-sm font-semibold text-neutral-900 capitalize sm:text-base">
               {title}
             </h3>
-            <p className="font-grotesk text-[12px] font-light text-neutral-600 capitalize">
+            <p className="font-grotesk mt-0.5 text-xs text-neutral-500">
               {createdAt}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <div className="flex items-center gap-1">
               <IconEye width={15} height={15} className="text-neutral-600" />
-              <p className="font-grotesk text-[12px] font-light text-neutral-600 capitalize">
+              <p className="font-grotesk text-xs text-neutral-600">
                 {formatViewCount(views)}
               </p>
             </div>
 
             <button
+              type="button"
               onClick={onEditPost}
-              className="flex cursor-pointer items-center gap-1 transition-all duration-200 hover:scale-105 active:scale-95"
+              aria-label={`Edit ${title}`}
+              className="font-grotesk inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
             >
               <IconPencil width={15} height={15} className="text-neutral-600" />
-              <p className="font-grotesk text-[12px] font-light text-neutral-600 capitalize">
-                Edit
-              </p>
+              <span>Edit</span>
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 

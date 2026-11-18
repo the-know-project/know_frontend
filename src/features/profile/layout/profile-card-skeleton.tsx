@@ -1,17 +1,14 @@
 const ProfileCardSkeletonGrid = () => (
   <>
     {Array.from({ length: 8 }).map((_, index) => (
-      <div
-        key={index}
-        className="flex w-full max-w-sm space-y-[50px] lg:max-w-none"
-      >
+      <div key={index} className="w-full min-w-0">
         <div className="flex w-full animate-pulse flex-col">
           <div className="flex flex-col">
             {/* Image skeleton */}
-            <div className="aspect-[4/3] w-full rounded-[15px] bg-gray-300"></div>
+            <div className="aspect-[4/3] w-full rounded-2xl bg-neutral-200"></div>
 
             {/* Content skeleton */}
-            <div className="mt-2 flex w-full justify-between">
+            <div className="mt-3 flex w-full justify-between">
               <div className="flex flex-col items-start gap-1">
                 {/* Title skeleton */}
                 <div className="h-4 w-24 rounded bg-gray-300"></div>

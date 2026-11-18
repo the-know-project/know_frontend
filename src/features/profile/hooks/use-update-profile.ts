@@ -61,6 +61,9 @@ export const useUpdateProfile = () => {
       queryClient.invalidateQueries({
         queryKey: ["user", "fetch-explore-asset"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", userId],
+      });
     },
 
     onError: (error: Error) => {

@@ -173,9 +173,11 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
         <button
           onClick={toggleEdit}
           type="button"
-          className="flex w-[fit] touch-manipulation flex-row items-center rounded-[15px] bg-white/50 p-2 shadow-sm backdrop-blur-md hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 active:opacity-100"
+          aria-label="Open artwork actions"
+          aria-expanded={editToggled}
+          className="flex min-h-10 min-w-10 touch-manipulation flex-row items-center justify-center rounded-xl border border-white/20 bg-neutral-950/85 p-2.5 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:bg-neutral-700"
         >
-          <Settings2Icon className="motion-preset-expand motion-duration-200 h-4 w-4 text-neutral-300" />
+          <Settings2Icon className="h-4 w-4 text-white" />
         </button>
         <div className="absolute top-10 flex w-full px-4">
           <AnimatePresence>

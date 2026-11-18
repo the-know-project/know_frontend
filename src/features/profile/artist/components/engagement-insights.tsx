@@ -1,137 +1,154 @@
-import { IconTrendingUp } from "@tabler/icons-react";
-import { TrendingUp } from "lucide-react";
-import { useState, useEffect } from "react";
+"use client";
 
-interface IEnagagementInsights {
-  topInterestedBuyers?: number;
+import { motion, useReducedMotion } from "framer-motion";
+import { Eye, TrendingUp, UsersRound } from "lucide-react";
+
+interface EngagementInsightsProps {
+  viewsPerFollower?: number | null;
   conversionRate?: number;
 }
 
-const EngagementInsights: React.FC<IEnagagementInsights> = ({
-  topInterestedBuyers = 50 / 100,
-  conversionRate = 50 / 100,
-}) => {
-  const [isAnimated, setIsAnimated] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnimated(true);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const radius = 80;
-  const strokeWidth = 20;
-
-  const semicircleLength = Math.PI * radius;
-
-  const topInterestedLength = topInterestedBuyers * semicircleLength;
-  const conversionLength = conversionRate * semicircleLength;
-
-  const topInterestedStrokeDashArray = isAnimated
-    ? `${topInterestedLength} ${semicircleLength}`
-    : `0 ${semicircleLength}`;
-  const conversionStrokeDashArray = isAnimated
-    ? `${conversionLength} ${semicircleLength}`
-    : `0 ${semicircleLength}`;
-  const conversionStrokeDashOffset = isAnimated ? -topInterestedLength : 0;
+const EngagementInsights = ({
+  viewsPerFollower = 0,
+  conversionRate = 0,
+}: EngagementInsightsProps) => {
+  const prefersReducedMotion = useReducedMotion();
+  const shouldAnimate = prefersReducedMotion !== true;
+  const safeViewsPerFollower = Number.isFinite(viewsPerFollower)
+    ? Math.max(viewsPerFollower ?? 0, 0)
+    : null;
+  const safeConversionRate = Number.isFinite(conversionRate)
+    ? Math.max(conversionRate, 0)
+    : 0;
+  const ringProgress = Math.min(safeConversionRate, 100);
+  const radius = 42;
+  const circumference = 2 * Math.PI * radius;
+  const compactNumber =
+    safeViewsPerFollower === null
+      ? "—"
+      : new Intl.NumberFormat("en", {
+          maximumFractionDigits: 1,
+          notation: "compact",
+        }).format(safeViewsPerFollower);
 
   return (
-    <section className="flex flex-col bg-white py-12">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-8">
-        <div className="rounded-full bg-orange-100 p-2">
-          <IconTrendingUp className="h-5 w-5 text-orange-500" />
+    <section className="w-full py-8 sm:py-10">
+      <div className="mb-5 flex items-center gap-3 sm:mb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+          <TrendingUp className="h-5 w-5" />
         </div>
-        <h2 className="font-helvetica text-[20px] text-neutral-800 capitalize md:text-[24px]">
-          Buyer Engagement Insights
-        </h2>
+        <div>
+          <h2 className="font-helvetica text-xl font-bold text-neutral-900 sm:text-2xl">
+            Engagement insights
+          </h2>
+          <p className="font-grotesk mt-1 text-xs text-neutral-500 sm:text-sm">
+            See how people discover and purchase your work.
+          </p>
+        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex items-center gap-4 sm:gap-8">
-        {/* Gauge Chart */}
-        <div className="relative flex-shrink-0">
-          <svg
-            width="200"
-            height="120"
-            viewBox="0 0 200 120"
-            className="h-auto w-full max-w-[150px] sm:max-w-[200px]"
-            role="img"
-            aria-label="Engagement insights gauge chart"
-          >
-            {/* Background arc */}
-            <path
-              d={`M ${100 - radius} 100 A ${radius} ${radius} 0 0 1 ${100 + radius} 100`}
-              fill="none"
-              stroke="#f3f4f6"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-            />
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
+        <motion.article
+          initial={shouldAnimate ? { opacity: 0, y: 12 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: shouldAnimate ? 0.35 : 0 }}
+          className="flex min-h-40 items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5"
+        >
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-50 text-orange-600">
+            <Eye className="h-6 w-6" />
+          </div>
+          <div className="min-w-0">
+            <p className="font-grotesk text-sm font-medium text-neutral-600">
+              Views per follower
+            </p>
+            <p className="font-helvetica mt-1 text-3xl font-bold tracking-tight text-neutral-950 sm:text-4xl">
+              {compactNumber}
+              {safeViewsPerFollower !== null && (
+                <span className="ml-1 text-xl font-semibold text-neutral-500">
+                  ×
+                </span>
+              )}
+            </p>
+            <p className="font-grotesk mt-1 text-xs leading-5 text-neutral-500">
+              {safeViewsPerFollower === null
+                ? "This ratio appears after your first follower."
+                : "Profile and post views divided by followers. Repeat views count."}
+            </p>
+          </div>
+        </motion.article>
 
-            {/* Top Interested Buyers arc  */}
-            <path
-              d={`M ${100 - radius} 100 A ${radius} ${radius} 0 0 1 ${100 + radius} 100`}
-              fill="none"
-              stroke="#F97316"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeDasharray={topInterestedStrokeDashArray}
-              strokeDashoffset="0"
-              className="transition-all duration-1000 ease-out"
-            />
-
-            {/* Conversion Rate arc */}
-            <path
-              d={`M ${100 - radius} 100 A ${radius} ${radius} 0 0 1 ${100 + radius} 100`}
-              fill="none"
-              stroke="#34A853"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeDasharray={conversionStrokeDashArray}
-              strokeDashoffset={conversionStrokeDashOffset}
-              className="transition-all duration-1000 ease-out"
-              style={{ transitionDelay: "300ms" }}
-            />
-
-            {/* Center text */}
-            <text
-              x="100"
-              y="85"
-              textAnchor="middle"
-              className="hidden fill-black md:block"
+        <motion.article
+          initial={shouldAnimate ? { opacity: 0, y: 12 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: shouldAnimate ? 0.35 : 0,
+            delay: shouldAnimate ? 0.08 : 0,
+          }}
+          className="flex min-h-40 items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5"
+        >
+          <div className="relative flex h-[104px] w-[104px] shrink-0 items-center justify-center">
+            <svg
+              viewBox="0 0 112 112"
+              className="absolute inset-0 h-full w-full -rotate-90"
+              role="img"
+              aria-label={`Conversion rate ${safeConversionRate.toFixed(1)} percent`}
             >
-              <tspan x="100" className="stats_content !font-medium">
-                Engagement
-              </tspan>
-              <tspan x="100" dy="16" className="stats_content !font-medium">
-                Insights
-              </tspan>
-            </text>
-          </svg>
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-col gap-3 sm:gap-4">
-          {/* Top Interested Buyers */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-3 w-3 rounded-full bg-[#F97316] p-1" />
-            <span className="font-grotesk motion-preset-expand motion-duration-300 text-sm font-light text-[#666666] capitalize sm:text-[16px]">
-              Top Interested Buyers ({topInterestedBuyers}%)
+              <circle
+                cx="56"
+                cy="56"
+                r={radius}
+                fill="none"
+                stroke="#e5e7eb"
+                strokeWidth="9"
+              />
+              <motion.circle
+                cx="56"
+                cy="56"
+                r={radius}
+                fill="none"
+                stroke="#16a34a"
+                strokeWidth="9"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                initial={
+                  shouldAnimate ? { strokeDashoffset: circumference } : false
+                }
+                animate={{
+                  strokeDashoffset: circumference * (1 - ringProgress / 100),
+                }}
+                transition={{
+                  duration: shouldAnimate ? 1 : 0,
+                  delay: shouldAnimate ? 0.15 : 0,
+                  ease: "easeOut",
+                }}
+              />
+            </svg>
+            <span className="font-helvetica text-lg font-bold text-neutral-900 tabular-nums">
+              {safeConversionRate.toFixed(1)}%
             </span>
           </div>
-
-          {/* Conversion Rate */}
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-[#34A853]" />
-            <span className="font-grotesk motion-preset-expand motion-duration-300 text-sm font-light text-[#666666] capitalize sm:text-[16px]">
-              Conversion Rate ({conversionRate}%)
-            </span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <UsersRound className="h-4 w-4 text-green-700" />
+              <p className="font-grotesk text-sm font-medium text-neutral-600">
+                Sales conversion
+              </p>
+            </div>
+            <p className="font-helvetica mt-1 text-2xl font-bold tracking-tight text-neutral-950 sm:text-3xl">
+              {safeConversionRate.toFixed(1)}%
+            </p>
+            <p className="font-grotesk mt-1 text-xs leading-5 text-neutral-500">
+              Items sold compared with post views.
+            </p>
+            {safeConversionRate > 100 && (
+              <p className="font-grotesk mt-1 text-[11px] leading-4 text-amber-700">
+                Ring fills at 100%; the value can exceed this when multiple
+                items sell per view.
+              </p>
+            )}
           </div>
-        </div>
+        </motion.article>
       </div>
-
-      <hr className="mt-5 block w-full border-t border-neutral-200" />
     </section>
   );
 };

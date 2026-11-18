@@ -3,7 +3,8 @@
 import { ArtistProfileToggle } from "@/src/constants/constants";
 import { formatDateToReadable } from "@/src/utils/date";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type KeyboardEvent } from "react";
+import { Image as ImageIcon, RefreshCw } from "lucide-react";
 import InfiniteLoadingIndicator from "../../../explore/components/infinite-loading-indicator";
 import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
 import ProfileCard from "../../components/profile-card";
@@ -15,10 +16,7 @@ import ProfileCardSkeletonGrid from "../../layout/profile-card-skeleton";
 import { useCanFetchData } from "@/src/features/auth/hooks/use-optimized-auth";
 import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
-import {
-  useToggleExploreContent,
-} from "@/src/features/explore/state/explore-content.store";
-import { logger } from "@/src/utils/logger";
+import { useToggleExploreContent } from "@/src/features/explore/state/explore-content.store";
 import UploadCanvas from "@/src/features/upload/components/upload-canvas";
 
 interface ArtistProfileGridProps {
@@ -29,7 +27,6 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const canFetch = useCanFetchData();
   const [activeToggle, setActiveToggle] = useState<string>("posts");
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
-  const tabContainerRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const [editingPost, setEditingPost] = useState<TUserAssetData | null>(null);
 
@@ -118,22 +115,49 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
     visible: { opacity: 1, x: 0 },
   };
 
+  const handleTabKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentTab: string,
+  ) => {
+    const currentIndex = ArtistProfileToggle.findIndex(
+      (toggle) => toggle.name === currentTab,
+    );
+    let nextIndex = currentIndex;
+
+    if (event.key === "ArrowRight")
+      nextIndex = (currentIndex + 1) % ArtistProfileToggle.length;
+    else if (event.key === "ArrowLeft")
+      nextIndex =
+        (currentIndex - 1 + ArtistProfileToggle.length) %
+        ArtistProfileToggle.length;
+    else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = ArtistProfileToggle.length - 1;
+    else return;
+
+    event.preventDefault();
+    const nextTab = ArtistProfileToggle[nextIndex].name;
+    setActiveToggle(nextTab);
+    tabRefs.current.get(nextTab)?.focus();
+  };
+
   const renderPostsContent = () => {
-    if (!canFetch) {
+    if (!canFetch || isLoading) {
       return <ProfileCardSkeletonGrid />;
     }
 
     if (error && posts.length === 0) {
       return (
-        <div className="col-span-2 flex flex-col items-center justify-center py-20">
+        <div className="col-span-full flex flex-col items-center justify-center py-20">
           <div className="text-center">
             <p className="font-bricolage mb-4 text-gray-500">
               Failed to load posts: {error}
             </p>
             <button
-              onClick={() => window.location.reload()}
-              className="button_base px-4 py-2"
+              type="button"
+              onClick={() => void postsHookResult.refetch()}
+              className="button_base inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2"
             >
+              <RefreshCw className="h-4 w-4" />
               Try Again
             </button>
           </div>
@@ -143,20 +167,21 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
 
     if (isEmpty) {
       return (
-        <div className="col-span-2 flex flex-col items-center justify-center py-20">
-          <div className="text-center">
-            <p className="font-bebas tracking-wider text-neutral-600">
-              No posts found
+        <div className="col-span-full flex flex-col items-center justify-center py-20">
+          <div className="flex flex-col items-center text-center">
+            <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
+              <ImageIcon aria-hidden="true" className="h-6 w-6" />
+            </span>
+            <p className="font-helvetica text-lg font-semibold text-neutral-800">
+              No posts yet
+            </p>
+            <p className="font-grotesk mt-1 max-w-xs text-sm leading-6 text-neutral-500">
+              Artwork shared by this artist will appear here.
             </p>
           </div>
         </div>
       );
     }
-
-    logger.log({
-      context: "Artists post",
-      data: posts,
-    });
 
     return (
       <>
@@ -169,11 +194,11 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
               animate="visible"
               exit="hidden"
               transition={{
-                delay: Math.min(index, 20) * 0.05,
-                ease: "easeInOut",
-                duration: 0.09,
+                delay: Math.min(index, 10) * 0.035,
+                ease: "easeOut",
+                duration: 0.22,
               }}
-              className="flex w-full max-w-sm lg:max-w-none"
+              className="w-full min-w-0"
             >
               <ProfileCard
                 id={post.fileId}
@@ -191,7 +216,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         </AnimatePresence>
 
         {isLoadingMore && (
-          <div className="absolute right-0 bottom-0 left-0 flex w-full justify-center py-4">
+          <div className="col-span-full flex w-full justify-center py-4">
             <InfiniteLoadingIndicator />
           </div>
         )}
@@ -200,12 +225,13 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         {canLoadMore && (
           <div
             ref={sentinelRef}
-            className="absolute right-0 bottom-0 left-0 flex h-10 w-full items-center justify-center"
+            aria-hidden="true"
+            className="col-span-full h-6 w-full"
           />
         )}
 
         {!hasNextPage && posts.length > 0 && (
-          <div className="absolute right-0 bottom-0 left-0 w-full text-center">
+          <div className="col-span-full w-full border-t border-neutral-200 pt-4 text-center">
             <p className="font-bebas text-sm tracking-wider text-neutral-600">
               You've reached the end of the posts
             </p>
@@ -216,7 +242,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   };
 
   return (
-    <section className="lg:px- -mt-[50px] flex w-full flex-col px-4">
+    <section className="-mt-8 flex w-full flex-col px-3 sm:px-5 md:-mt-10 md:px-6 lg:px-8">
       {editingPost && (
         <div className="fixed inset-0 z-[100] overflow-y-auto bg-white">
           <UploadCanvas
@@ -231,7 +257,8 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
       <ArtDetails />
       <div className="w-full items-center justify-center">
         <div
-          ref={tabContainerRef}
+          role="tablist"
+          aria-label="Artist profile sections"
           className="relative flex flex-row items-center justify-between"
         >
           {ArtistProfileToggle.map((toggle) => (
@@ -240,11 +267,17 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
               ref={(el) => {
                 if (el) tabRefs.current.set(toggle.name, el);
               }}
-              className="flex flex-1 flex-col items-center"
+              type="button"
+              role="tab"
+              aria-selected={activeToggle === toggle.name}
+              tabIndex={activeToggle === toggle.name ? 0 : -1}
+              aria-controls="artist-profile-panel"
+              className="flex min-h-12 flex-1 flex-col items-center justify-center rounded-t-xl transition-colors hover:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:outline-none focus-visible:ring-inset"
               onClick={() => setActiveToggle(toggle.name)}
+              onKeyDown={(event) => handleTabKeyDown(event, toggle.name)}
             >
               <p
-                className={`font-bebas text-[16px] capitalize hover:scale-105 active:scale-95 lg:text-[18px] ${
+                className={`font-bebas text-[15px] capitalize sm:text-base lg:text-[18px] ${
                   activeToggle === toggle.name
                     ? "font-semibold text-neutral-900 transition-colors duration-300"
                     : "text-neutral-500"
@@ -255,23 +288,33 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
             </button>
           ))}
           {/* Continuous line background */}
-          <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-gray-300"></div>
+          <div
+            aria-hidden="true"
+            className="absolute right-0 bottom-0 left-0 h-[2px] bg-gray-200"
+          ></div>
           {/* Active section highlight */}
           <div
+            aria-hidden="true"
             className="absolute bottom-0 h-[2px] rounded-full bg-gray-900 transition-all duration-300"
             style={{ left: indicatorStyle.left, width: indicatorStyle.width }}
           ></div>
         </div>
       </div>
-      <div className="relative mt-4 flex min-h-screen w-full flex-col items-center gap-4 bg-white pb-16 lg:grid lg:grid-cols-2 lg:items-start lg:justify-start lg:gap-6">
+      <div
+        id="artist-profile-panel"
+        role="tabpanel"
+        tabIndex={0}
+        aria-label={`${activeToggle} content`}
+        className="mt-4 grid min-h-screen w-full grid-cols-1 items-start gap-y-6 bg-white pb-16 md:grid-cols-2 md:gap-x-5 md:gap-y-8 lg:gap-x-7"
+      >
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
-          <div className="flex w-full flex-col items-center justify-center lg:col-span-2">
+          <div className="col-span-full flex w-full flex-col items-center justify-center">
             <Stats />
           </div>
         )}
         {activeToggle === "drafts" && (
-          <div className="flex w-full flex-col items-center justify-center py-20 lg:col-span-2">
+          <div className="col-span-full flex w-full flex-col items-center justify-center py-20">
             <p className="font-bricolage text-gray-500">
               Collections coming soon...
             </p>

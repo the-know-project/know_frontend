@@ -66,21 +66,24 @@ export function parseInsightData(ctx: IParseAudienceMetrics) {
   const isValidMetrics =
     metrics && typeof metrics === "object" && "data" in metrics;
 
-  const topInterestedBuyer = metricsLoading
-    ? 0
-    : isValidMetrics
-      ? (Number(metrics.data?.insight.topInterestedBuyersByPercentage) ??
-        50 / 100)
-      : 50 / 100;
+  const rawViewsPerFollower = isValidMetrics
+    ? metrics.data?.insight?.viewsPerFollower
+    : null;
+  const viewsPerFollower =
+    metricsLoading || rawViewsPerFollower == null
+      ? null
+      : Number.isFinite(Number(rawViewsPerFollower))
+        ? Math.max(Number(rawViewsPerFollower), 0)
+        : null;
 
   const conversionRate = metricsLoading
     ? 0
     : isValidMetrics
-      ? (Number(metrics.data?.insight.conversionRateByPercentage) ?? 50 / 100)
-      : 50 / 100;
+      ? Number(metrics.data?.insight.conversionRateByPercentage) || 0
+      : 0;
 
   return {
-    topInterestedBuyer,
+    viewsPerFollower,
     conversionRate,
   };
 }

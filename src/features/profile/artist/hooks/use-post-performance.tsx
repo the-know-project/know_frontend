@@ -47,7 +47,7 @@ export const usePostPerformance = ({
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["postPerformance", targetUserId, currentPage, limit],
     queryFn: async (): Promise<PostPerformanceResponse> => {
       if (!targetUserId) {
@@ -156,6 +156,7 @@ export const usePostPerformance = ({
     isLoading: isLoading && currentPage === 1,
     isLoadingMore,
     error: error?.message || null,
+    refetch,
 
     loadMore,
     refresh,
