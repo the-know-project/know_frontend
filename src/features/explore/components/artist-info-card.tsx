@@ -1,11 +1,9 @@
 "use client";
 
-import { capitalizeFirstLetter } from "@/src/utils/string-helpers";
 import Link from "next/link";
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import ExploreFollowButton from "./explore-follow-button";
-import { useFetchProfileDetails } from "../../profile/hooks/use-fetch-profile-details";
-import { BlankProfilePicture } from "@/src/constants/constants";
+import { useArtistInfo } from "../hooks/use-artist-info";
 
 interface ArtistInfoCardProps {
   artistId: string;
@@ -19,13 +17,15 @@ const ArtistInfoCard = ({
   artistImage,
 }: ArtistInfoCardProps) => {
   const { user } = useOptimizedAuth();
-  const { data: artistResponse, isLoading } = useFetchProfileDetails({
-    userId: artistId,
+  const artist = useArtistInfo({
+    artistId,
+    fallbackName: artistName,
+    fallbackImage: artistImage,
   });
 
   const canFollow = user?.id !== artistId;
 
-  if (isLoading) {
+  if (artist.isLoading) {
     return (
       <section className="animate-pulse rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5">
         <div className="mb-4 h-4 w-20 rounded bg-neutral-200"></div>
@@ -41,7 +41,7 @@ const ArtistInfoCard = ({
     );
   }
 
-  if (!artistResponse?.data && !artistName) {
+  if (!artist.hasProfile) {
     return (
       <section className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5">
         <p className="font-grotesk text-sm text-neutral-500">
@@ -50,11 +50,6 @@ const ArtistInfoCard = ({
       </section>
     );
   }
-
-  const artist = artistResponse?.data;
-  const displayName = artist
-    ? `${capitalizeFirstLetter(artist.firstName)} ${capitalizeFirstLetter(artist.lastName)}`.trim()
-    : artistName || "Know creator";
 
   return (
     <section className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5">
@@ -75,17 +70,17 @@ const ArtistInfoCard = ({
       <div className="mb-4 flex min-w-0 items-center gap-3">
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-100 shadow-sm ring-2 ring-white outline outline-neutral-200">
           <img
-            src={artist?.imageUrl || artistImage || BlankProfilePicture}
-            alt={displayName}
+            src={artist.imageUrl}
+            alt={artist.name}
             className="h-full w-full object-cover"
           />
         </div>
         <div className="min-w-0">
           <h3 className="font-helvetica truncate text-base font-bold text-neutral-900 capitalize">
-            {displayName}
+            {artist.name}
           </h3>
           <p className="font-grotesk mt-1 truncate text-xs text-neutral-500">
-            {artist?.country || "Creator on Know"}
+            {artist.country || "Creator on Know"}
           </p>
         </div>
       </div>
