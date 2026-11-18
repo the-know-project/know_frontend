@@ -248,17 +248,17 @@ const ArtDetails = () => {
                         {images.map((url, index) => (
                           <div
                             key={index}
-                            className="relative w-full flex-shrink-0 snap-center overflow-hidden"
+                            className="relative w-full flex-shrink-0 snap-center"
                           >
-                            <div className="flex items-center justify-center bg-gradient-to-br from-orange-200 via-yellow-100 to-blue-200">
+                            <div className="flex h-[42vh] min-h-[240px] max-h-[680px] w-full items-center justify-center overflow-hidden bg-neutral-900 md:h-[58vh]">
                               <Image
                                 src={url}
-                                alt={`art_work_${index}`}
+                                alt={`art_work_${index + 1}`}
                                 quality={100}
                                 priority={index === 0}
                                 width={1920}
                                 height={1080}
-                                className="h-auto w-full object-cover object-center"
+                                className="h-full w-full object-contain object-center"
                               />
                             </div>
                           </div>
