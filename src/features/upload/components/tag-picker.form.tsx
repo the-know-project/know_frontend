@@ -38,32 +38,37 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputValue.trim()) {
-      e.preventDefault();
-      handleAddTag(inputValue);
-      setInputValue("");
-    }
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+    handleAddTag(inputValue);
+    setInputValue("");
+  };
+
   return (
     <section className="editor_container">
-      <div className="space-y-2">
-        {/* Tag Input */}
-        <div className="flex items-center justify-between rounded-lg bg-transparent p-3">
+      <div className="space-y-3">
+        <form onSubmit={handleSubmit} className="flex gap-2">
           <Input
             type="text"
-            placeholder="Tags"
-            className="placeholder:font-grotesk font-grotesk border bg-white text-sm text-neutral-600 placeholder:text-neutral-600 focus:ring-0 focus:outline-none"
+            aria-label="Add a tag"
+            placeholder="Type a keyword"
+            className="placeholder:font-grotesk font-grotesk min-h-11 min-w-0 flex-1 rounded-xl border-neutral-200 bg-white text-sm text-neutral-700 placeholder:text-neutral-500 focus-visible:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-100"
             value={inputValue}
             onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
           />
-        </div>
+          <button
+            type="submit"
+            disabled={!inputValue.trim()}
+            className="font-grotesk min-h-11 rounded-xl bg-neutral-900 px-4 text-sm font-semibold text-white transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Add
+          </button>
+        </form>
 
         {/* Display Tags */}
         {uploadData.tags.length > 0 && (
@@ -71,7 +76,7 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
             {uploadData.tags.map((tag, index) => (
               <div
                 key={index}
-                className={`font-bebas flex transform items-center gap-2 rounded-full px-3 py-1 text-xs tracking-wide text-neutral-500 capitalize shadow-md transition-all duration-500 ${
+                className={`font-grotesk flex min-h-9 transform items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium tracking-wide text-neutral-700 capitalize transition-all duration-500 ${
                   animatingTag === tag
                     ? "scale-110 animate-pulse shadow-lg"
                     : "scale-100 hover:scale-105"
@@ -81,7 +86,8 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  className="rounded-full p-1 transition-colors hover:bg-white/20"
+                  aria-label={`Remove ${tag} tag`}
+                  className="rounded-full p-1 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900"
                 >
                   <IconX width={12} height={12} />
                 </button>

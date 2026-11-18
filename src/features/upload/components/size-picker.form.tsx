@@ -181,7 +181,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
   return (
     <section className="editor_container">
       <Form {...form}>
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:gap-x-4 lg:grid-cols-3">
           {DIMENSIONS.map((dimension) => {
             const isActive = savedDimensions[dimension.key];
             const currentValue = isActive

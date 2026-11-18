@@ -10,6 +10,12 @@ import {
   FormMessage,
 } from "@/src/shared/ui/form";
 import { Input } from "@/src/shared/ui/input";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/src/shared/ui/carousel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconCheck,
@@ -18,6 +24,8 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import React, { DragEvent, useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useUploadContext } from "../context/upload-context";
 import { UploadFormSchema } from "../schema/upload.schema";
@@ -42,10 +50,13 @@ const UploadForm = ({
   allowMediaChanges = true,
 }: UploadFormProps) => {
   const [dragging, setDragging] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [activeSlide, setActiveSlide] = useState(0);
   const [previews, setPreviews] = useState<
     { url: string; name: string; type: string; size: number }[]
   >([]);
   const { uploadData, updateBasicInfo, setIsEditorOpen } = useUploadContext();
+  const shouldReduceMotion = useReducedMotion();
 
   const form = useForm<IUploadFormState>({
     resolver: zodResolver(UploadFormSchema),
@@ -82,6 +93,28 @@ const UploadForm = ({
       urls.forEach((item) => URL.revokeObjectURL(item.url));
     };
   }, [watchedFiles]);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+
+    const updateActiveSlide = () =>
+      setActiveSlide(carouselApi.selectedScrollSnap());
+
+    updateActiveSlide();
+    carouselApi.on("select", updateActiveSlide);
+    carouselApi.on("reInit", updateActiveSlide);
+
+    return () => {
+      carouselApi.off("select", updateActiveSlide);
+      carouselApi.off("reInit", updateActiveSlide);
+    };
+  }, [carouselApi]);
+
+  useEffect(() => {
+    if (!carouselApi || watchedFiles.length === 0) return;
+
+    carouselApi.scrollTo(mediaItems.length - 1);
+  }, [carouselApi, watchedFiles.length, mediaItems.length]);
 
   const handleDragOver = (e: DragEvent<HTMLDivElement | HTMLLabelElement>) => {
     e.preventDefault();
@@ -252,64 +285,141 @@ const UploadForm = ({
                     {mediaItems.length > 0 ? (
                       <div className="space-y-4">
                         <div className="flex w-full flex-col items-center gap-4">
-                          <div className="scrollbar-hide flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-x-visible sm:pb-0 md:grid-cols-3">
-                            {mediaItems.map((item, index) => (
-                              <div
-                                key={index}
-                                className="group relative h-64 w-full flex-shrink-0 snap-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-900"
-                              >
-                                {item.type.startsWith("image/") ? (
-                                  <img
-                                    src={item.url}
-                                    alt={item.name}
-                                    className="h-full w-full object-cover"
-                                  />
-                                ) : item.type.startsWith("video/") ? (
-                                  <video
-                                    src={item.url}
-                                    className="h-full w-full object-cover"
-                                    controls
-                                  />
-                                ) : (
-                                  <div className="flex h-full w-full items-center justify-center bg-neutral-100">
-                                    <p className="truncate px-2 text-sm font-medium text-neutral-500">
-                                      {item.name}
-                                    </p>
-                                  </div>
-                                )}
+                          <div className="w-full px-1 sm:px-10">
+                            <Carousel
+                              setApi={setCarouselApi}
+                              opts={{
+                                align: "start",
+                                containScroll: "trimSnaps",
+                              }}
+                              aria-label="Selected media previews"
+                            >
+                              <CarouselContent className="-ml-3">
+                                {mediaItems.map((item, index) => (
+                                  <CarouselItem
+                                    key={
+                                      item.existing
+                                        ? `existing-${index}-${item.url}`
+                                        : `upload-${index}-${item.name}-${item.size}`
+                                    }
+                                    className="basis-[88%] pl-3 sm:basis-[78%]"
+                                  >
+                                    <motion.div
+                                      initial={
+                                        shouldReduceMotion
+                                          ? false
+                                          : { opacity: 0, y: 14, scale: 0.97 }
+                                      }
+                                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                                      transition={{
+                                        duration: shouldReduceMotion ? 0 : 0.28,
+                                        ease: "easeOut",
+                                      }}
+                                      className="group relative h-64 w-full overflow-hidden rounded-md border border-neutral-200 bg-neutral-900"
+                                    >
+                                      {item.type.startsWith("image/") ? (
+                                        <img
+                                          src={item.url}
+                                          alt={item.name}
+                                          className="h-full w-full object-cover"
+                                        />
+                                      ) : item.type.startsWith("video/") ? (
+                                        <video
+                                          src={item.url}
+                                          className="h-full w-full object-cover"
+                                          controls
+                                        />
+                                      ) : (
+                                        <div className="flex h-full w-full items-center justify-center bg-neutral-100">
+                                          <p className="truncate px-2 text-sm font-medium text-neutral-500">
+                                            {item.name}
+                                          </p>
+                                        </div>
+                                      )}
 
-                                {/* Number Badge (1-indexed order of files) */}
-                                <div className="font-bebas absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-neutral-950/80 text-sm font-bold text-white backdrop-blur-sm">
-                                  {index + 1}
-                                </div>
+                                      {/* Number Badge (1-indexed order of files) */}
+                                      <div className="font-bebas absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-neutral-950/80 text-sm font-bold text-white backdrop-blur-sm">
+                                        {index + 1}
+                                      </div>
 
-                                {/* Remove Button */}
-                                {!item.existing && allowMediaChanges && (
+                                      {/* Remove Button */}
+                                      {!item.existing && allowMediaChanges && (
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            handleRemoveFile(
+                                              index - existingMedia.length,
+                                            )
+                                          }
+                                          className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
+                                          title="Remove file"
+                                        >
+                                          <IconX width={16} height={16} />
+                                        </button>
+                                      )}
+
+                                      {/* Hover Overlay */}
+                                      <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/90 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
+                                        <p className="truncate text-xs font-semibold text-white">
+                                          {item.name}
+                                        </p>
+                                        <p className="mt-0.5 text-[10px] text-neutral-300">
+                                          {(item.size / (1024 * 1024)).toFixed(
+                                            2,
+                                          )}{" "}
+                                          MB
+                                        </p>
+                                      </div>
+                                    </motion.div>
+                                  </CarouselItem>
+                                ))}
+                              </CarouselContent>
+
+                              {mediaItems.length > 1 && (
+                                <>
                                   <button
                                     type="button"
-                                    onClick={() =>
-                                      handleRemoveFile(
-                                        index - existingMedia.length,
-                                      )
-                                    }
-                                    className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-red-600/90 text-white shadow-md transition-transform hover:scale-110 active:scale-95"
-                                    title="Remove file"
+                                    aria-label="Previous media"
+                                    onClick={() => carouselApi?.scrollPrev()}
+                                    disabled={!carouselApi?.canScrollPrev()}
+                                    className="absolute top-1/2 left-2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-neutral-950/80 text-white shadow-lg backdrop-blur transition hover:bg-neutral-800 disabled:opacity-40 sm:-left-10"
                                   >
-                                    <IconX width={16} height={16} />
+                                    <ArrowLeft className="h-4 w-4" />
                                   </button>
-                                )}
-
-                                {/* Hover Overlay */}
-                                <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/90 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
-                                  <p className="truncate text-xs font-semibold text-white">
-                                    {item.name}
-                                  </p>
-                                  <p className="mt-0.5 text-[10px] text-neutral-300">
-                                    {(item.size / (1024 * 1024)).toFixed(2)} MB
-                                  </p>
-                                </div>
+                                  <button
+                                    type="button"
+                                    aria-label="Next media"
+                                    onClick={() => carouselApi?.scrollNext()}
+                                    disabled={!carouselApi?.canScrollNext()}
+                                    className="absolute top-1/2 right-2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-neutral-950/80 text-white shadow-lg backdrop-blur transition hover:bg-neutral-800 disabled:opacity-40 sm:-right-10"
+                                  >
+                                    <ArrowRight className="h-4 w-4" />
+                                  </button>
+                                </>
+                              )}
+                            </Carousel>
+                            {mediaItems.length > 1 && (
+                              <div
+                                className="mt-3 flex items-center justify-center gap-3 text-xs text-neutral-400"
+                                aria-live="polite"
+                              >
+                                <span className="h-1 w-8 rounded-full bg-neutral-700">
+                                  <span
+                                    className="block h-full rounded-full bg-blue-400 transition-[width] duration-200"
+                                    style={{
+                                      width: `${((activeSlide + 1) / mediaItems.length) * 100}%`,
+                                    }}
+                                  />
+                                </span>
+                                <span>
+                                  {Math.min(activeSlide + 1, mediaItems.length)}{" "}
+                                  of {mediaItems.length}
+                                </span>
+                                <span className="hidden sm:inline">
+                                  Swipe or use the arrows to browse
+                                </span>
                               </div>
-                            ))}
+                            )}
                           </div>
 
                           {/* Add More Slot if less than 5 */}

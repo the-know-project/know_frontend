@@ -1,14 +1,9 @@
 "use client";
 
-import {
-  IconArtboard,
-  IconCaretLeft,
-  IconCaretRight,
-} from "@tabler/icons-react";
 import UploadEditor from "./upload-editor";
 import { AnimatePresence, motion } from "framer-motion";
 import { useUploadContext } from "../context/upload-context";
-import { Settings2Icon } from "lucide-react";
+import { ArrowLeft, Settings2Icon } from "lucide-react";
 
 const UploadEditorCanvas = () => {
   const { isEditorOpen, setIsEditorOpen } = useUploadContext();
@@ -27,21 +22,37 @@ const UploadEditorCanvas = () => {
               initial="hidden"
               animate="visible"
               exit="hidden"
-              transition={{
-                delay: 0.05,
-                ease: "easeInOut",
-                duration: 0.09,
-              }}
-              className="flex min-h-screen flex-col gap-5 rounded-tl-[15px] rounded-bl-[15px] bg-neutral-300 px-4 py-10 lg:px-8"
+              transition={{ delay: 0.03, ease: "easeOut", duration: 0.2 }}
+              className="flex h-[100dvh] min-h-screen flex-col overflow-y-auto bg-neutral-100 px-3 pb-4 sm:px-5 md:min-h-0 md:rounded-l-[24px] md:px-7"
             >
-              <motion.button
-                className="font-bebas relative z-10 w-fit rounded-lg bg-neutral-800 px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-3 lg:text-[16px]"
-                type="button"
-                onClick={() => setIsEditorOpen(false)}
-              >
-                <Settings2Icon className="motion-preset-expand motion-duration-200 h-4 w-4" />
-              </motion.button>
-              <UploadEditor />
+              <header className="sticky top-0 z-40 -mx-3 mb-5 flex items-center justify-between border-b border-neutral-200 bg-neutral-100/95 px-3 py-3 backdrop-blur sm:-mx-5 sm:px-5 md:-mx-7 md:px-7">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-700 text-white shadow-sm">
+                    <Settings2Icon className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <h1 className="font-helvetica text-base font-bold text-neutral-900 sm:text-lg">
+                      Upload editor
+                    </h1>
+                    <p className="font-grotesk text-[11px] text-neutral-500 sm:text-xs">
+                      Details that help your work get discovered
+                    </p>
+                  </div>
+                </div>
+                <motion.button
+                  className="font-grotesk inline-flex min-h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:bg-neutral-50"
+                  type="button"
+                  aria-label="Close upload editor"
+                  onClick={() => setIsEditorOpen(false)}
+                >
+                  <ArrowLeft className="h-4 w-4 md:hidden" />
+                  <span className="hidden md:inline">Close</span>
+                  <Settings2Icon className="hidden h-4 w-4 md:block" />
+                </motion.button>
+              </header>
+              <div className="flex-1">
+                <UploadEditor />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
