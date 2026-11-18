@@ -165,49 +165,51 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       className="explore_card_wrapper transition-all"
       onContextMenu={handleContextMenu}
     >
-      <div className="relative flex w-full flex-col rounded-[15px] shadow-sm">
-        <Image
-          src={artWork}
-          alt="Artwork"
-          quality={100}
-          width={500}
-          height={300}
-          className="rounded-[15px] object-cover transition-all duration-300 select-none hover:scale-105 active:scale-95"
-          onClick={() => {
-            const viewportPosition = {
-              scrollY: window.scrollY,
-              viewportHeight: window.innerHeight,
-            };
-            toggleExploreContent(
-              id as string,
-              {
-                id: id as string,
-                userId: userId,
-                artName,
-                artWorkUrl: artWork,
-                highResUrl,
-                extraUrls,
-                highResExtraUrls,
-                description,
-                creatorProfileUrl: artistImage,
-                creatorName: artistName,
-                categories,
-                tags,
-                price: price,
-                size: size,
-                numOfLikes: likeCount,
-                numOfViews: numOfViews,
-                numOfComments: 0,
-                isListed: isListed,
-                createdAt: createdAt,
-              },
-              viewportPosition,
-            );
-          }}
-          priority
-        />
+      <div className="artwork-oak-frame group relative flex w-full flex-col shadow-lg transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.99]">
+        <div className="artwork-oak-mat aspect-[5/3] w-full overflow-hidden">
+          <Image
+            src={artWork}
+            alt="Artwork"
+            quality={100}
+            width={500}
+            height={300}
+            className="h-full w-full cursor-pointer object-contain transition-transform duration-300 select-none group-hover:scale-[1.02]"
+            onClick={() => {
+              const viewportPosition = {
+                scrollY: window.scrollY,
+                viewportHeight: window.innerHeight,
+              };
+              toggleExploreContent(
+                id as string,
+                {
+                  id: id as string,
+                  userId: userId,
+                  artName,
+                  artWorkUrl: artWork,
+                  highResUrl,
+                  extraUrls,
+                  highResExtraUrls,
+                  description,
+                  creatorProfileUrl: artistImage,
+                  creatorName: artistName,
+                  categories,
+                  tags,
+                  price: price,
+                  size: size,
+                  numOfLikes: likeCount,
+                  numOfViews: numOfViews,
+                  numOfComments: 0,
+                  isListed: isListed,
+                  createdAt: createdAt,
+                },
+                viewportPosition,
+              );
+            }}
+            priority
+          />
+        </div>
         {highResExtraUrls && highResExtraUrls.length > 0 && (
-          <div className="font-bebas absolute top-2 right-2 flex items-center justify-center rounded-full bg-white/80 px-2 py-1 text-xs font-medium tracking-wider text-neutral-800 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95">
+          <div className="font-bebas absolute top-2 right-2 z-10 flex items-center justify-center rounded-full bg-white/80 px-2 py-1 text-xs font-medium tracking-wider text-neutral-800 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95">
             <p>{highResExtraUrls.length}</p>
           </div>
         )}
