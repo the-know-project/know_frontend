@@ -190,12 +190,12 @@ const UploadForm = ({
         >
           <IconX width={20} height={20} color="white" />
         </button>
-        <div className="flex gap-4 px-[50px]">
+        <div className="flex items-center gap-2 sm:gap-3">
           {isPending ? (
             <Spinner borderColor="border-blue" />
           ) : (
             <button
-              className="font-bebas relative z-10 rounded-lg bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
+              className="font-bebas relative z-10 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#1E3A8A] px-4 py-2 text-sm font-semibold tracking-wider text-white shadow-sm transition duration-200 hover:bg-indigo-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-12 sm:px-5 sm:text-base"
               onClick={() => {
                 if (
                   (watchedFiles.length > 0 || existingMedia.length > 0) &&
@@ -213,15 +213,18 @@ const UploadForm = ({
                 !watchedTitle
               }
             >
-              <p className="flex">Continue</p>
+              <span>Continue</span>
             </button>
           )}
 
           <button
             onClick={() => setIsEditorOpen(true)}
-            className="font-bebas relative z-10 rounded-lg bg-neutral-800 px-2 py-1 text-sm font-normal tracking-wider text-white shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 lg:text-[16px]"
+            type="button"
+            aria-label="Open upload editor"
+            className="font-grotesk relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-700 shadow-sm transition-colors duration-200 hover:bg-neutral-50 active:scale-[0.98] sm:min-h-12 sm:px-4"
           >
-            <Settings2Icon className="motion-preset-expand motion-duration-200 h-4 w-4 text-neutral-300" />
+            <Settings2Icon className="h-5 w-5 text-indigo-700" />
+            <span>Details</span>
           </button>
         </div>
       </div>

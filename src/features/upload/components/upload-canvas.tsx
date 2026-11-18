@@ -172,7 +172,7 @@ const UploadCanvasLayout = ({
   return (
     <section className="flex w-full flex-row justify-between">
       <div
-        className={`flex flex-col transition-all duration-300 ${
+        className={`flex flex-col transition-[width] duration-300 ease-out ${
           isEditorOpen ? "hidden md:flex md:w-7/12 lg:w-8/12" : "w-full"
         }`}
       >
@@ -180,7 +180,7 @@ const UploadCanvasLayout = ({
       </div>
 
       <div
-        className={`flex flex-col transition-all duration-300 ${
+        className={`flex flex-col overflow-hidden transition-[width] duration-300 ease-out ${
           isEditorOpen ? "w-full md:w-5/12 lg:w-4/12" : "w-0"
         }`}
       >

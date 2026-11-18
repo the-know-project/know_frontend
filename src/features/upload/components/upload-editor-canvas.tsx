@@ -1,28 +1,41 @@
 "use client";
 
 import UploadEditor from "./upload-editor";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useUploadContext } from "../context/upload-context";
 import { ArrowLeft, Settings2Icon } from "lucide-react";
 
 const UploadEditorCanvas = () => {
   const { isEditorOpen, setIsEditorOpen } = useUploadContext();
+  const shouldReduceMotion = useReducedMotion();
   const variants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0 },
+    hidden: shouldReduceMotion
+      ? { opacity: 0 }
+      : { opacity: 0, x: 28, scale: 0.99 },
+    visible: shouldReduceMotion
+      ? { opacity: 1 }
+      : { opacity: 1, x: 0, scale: 1 },
   };
+  const transition = shouldReduceMotion
+    ? { duration: 0.12, ease: "easeOut" as const }
+    : {
+        type: "spring" as const,
+        stiffness: 280,
+        damping: 30,
+        mass: 0.8,
+      };
 
   return (
     <section className="relative flex w-full flex-col">
-      <div className={`flex flex-col ${isEditorOpen ? "flex" : "hidden"}`}>
-        <AnimatePresence>
+      <div className="flex flex-col">
+        <AnimatePresence initial={false}>
           {isEditorOpen && (
             <motion.div
               variants={variants}
               initial="hidden"
               animate="visible"
               exit="hidden"
-              transition={{ delay: 0.03, ease: "easeOut", duration: 0.2 }}
+              transition={transition}
               className="flex h-[100dvh] min-h-screen flex-col overflow-y-auto bg-neutral-100 px-3 pb-4 sm:px-5 md:min-h-0 md:rounded-l-[24px] md:px-7"
             >
               <header className="sticky top-0 z-40 -mx-3 mb-5 flex items-center justify-between border-b border-neutral-200 bg-neutral-100/95 px-3 py-3 backdrop-blur sm:-mx-5 sm:px-5 md:-mx-7 md:px-7">
