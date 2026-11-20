@@ -13,6 +13,9 @@ import {
 } from "@/src/shared/ui/form";
 import { Input } from "@/src/shared/ui/input";
 import { z } from "zod";
+import { useCallback } from "react";
+import { useSemanticSearch } from "../hooks/use-semantic-search";
+import SemanticSearchDialog from "./semantic-search-dialog";
 
 const SearchSchema = z.object({
   query: z.string().min(0),
@@ -57,6 +60,13 @@ const ExploreForm = ({
 
   const watchedQuery = form.watch("query");
   const debouncedQuery = useDebounce(watchedQuery, debounceMs);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const semanticSearch = useSemanticSearch(debouncedQuery);
+  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
+
+  useEffect(() => {
+    if (debouncedQuery.trim()) setIsSearchOpen(true);
+  }, [debouncedQuery]);
 
   // Trigger search when debounced query changes
   useEffect(() => {
@@ -116,6 +126,14 @@ const ExploreForm = ({
           />
         </form>
       </Form>
+      <SemanticSearchDialog
+        query={debouncedQuery.trim()}
+        open={isSearchOpen && Boolean(debouncedQuery.trim())}
+        onClose={closeSearch}
+        results={semanticSearch.data?.data?.assets || []}
+        isLoading={semanticSearch.isLoading}
+        error={semanticSearch.error}
+      />
     </section>
   );
 };

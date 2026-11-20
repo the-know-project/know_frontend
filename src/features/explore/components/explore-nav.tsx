@@ -149,10 +149,11 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
 
   return (
     <nav className="motion-preset-expand motion-duration-700 relative z-50 flex w-full flex-col gap-1 py-1">
-      <div className="flex w-full items-center justify-center sm:hidden">
+      <div className="flex w-full items-center justify-center px-4 sm:hidden">
         <AnimatePresence>
           {isSearchToggled && (
             <motion.div
+              className="w-full"
               variants={searchVariants}
               initial="hidden"
               animate="visible"
