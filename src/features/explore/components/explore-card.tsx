@@ -50,6 +50,7 @@ interface ExploreCardProps {
   description: string | null;
   categories: string[];
   tags: string[] | undefined;
+  onArtistClick?: () => void;
 }
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
@@ -72,6 +73,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   role,
   categories,
   tags,
+  onArtistClick,
 }) => {
   const isCartHydrated = useCartHydration();
 
@@ -217,7 +219,13 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="explore_logo_wrapper">
+          <button
+            type="button"
+            onClick={onArtistClick}
+            aria-label={`View ${artistName}'s profile`}
+            className="explore_logo_wrapper rounded-full focus-visible:outline-2 focus-visible:outline-offset-2"
+            disabled={!onArtistClick}
+          >
             <Image
               src={artistImage}
               alt="logo"
@@ -230,7 +238,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
               onContextMenu={handleContextMenu}
               onDragStart={handleDragStart}
             />
-          </div>
+          </button>
 
           <div className="flex flex-col items-start">
             <p className="font-helvetica text-[16px] text-neutral-800 capitalize sm:text-[18px]">
