@@ -13,6 +13,8 @@ export interface ArtistContentPage {
       imageUrl: string | null;
       description: string | null;
       followerCount: number | null;
+      assetCount: number;
+      collectionCount: number;
     } | null;
     items: Record<string, any>[];
     pagination: {
