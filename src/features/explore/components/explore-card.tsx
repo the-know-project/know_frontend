@@ -170,7 +170,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       <div className="artwork-oak-frame group relative flex w-full flex-col shadow-lg transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.99]">
         <div className="artwork-oak-mat relative aspect-[4/3] w-full overflow-hidden">
           <Image
-            src={artWork}
+            src={highResUrl || artWork}
             alt="Artwork"
             quality={100}
             fill
