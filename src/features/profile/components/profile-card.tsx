@@ -35,7 +35,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
 
   return (
     <article className="relative mt-3 flex w-full min-w-0 flex-col sm:mt-4">
-      <div className="absolute top-2 left-2 z-20">
+      <div className="absolute top-3 left-3 z-20">
         {role === "ARTIST" && (
           <ProfileEditToggle
             image={image}
@@ -46,14 +46,30 @@ const ProfileCard: React.FC<IProfileCard> = ({
         )}
       </div>
       <div className="flex min-w-0 flex-col">
-        <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-neutral-900">
-          {onClick ? (
-            <button
-              type="button"
-              onClick={onClick}
-              aria-label={`View details for ${title}`}
-              className="absolute inset-0 z-0 block h-full w-full focus-visible:ring-4 focus-visible:ring-indigo-500 focus-visible:outline-none focus-visible:ring-inset"
-            >
+        <div className="artwork-oak-frame group relative w-full shadow-lg transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.99]">
+          <div className="artwork-oak-mat aspect-[4/3] w-full overflow-hidden">
+            {onClick ? (
+              <button
+                type="button"
+                onClick={onClick}
+                aria-label={`View details for ${title}`}
+                className="absolute inset-0 z-0 block h-full w-full focus-visible:ring-4 focus-visible:ring-indigo-500 focus-visible:outline-none focus-visible:ring-inset"
+              >
+                <Image
+                  src={image || BlankProfilePicture}
+                  alt={title ? `Artwork: ${title}` : "Artwork"}
+                  quality={90}
+                  fill
+                  sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                  className={`object-contain transition-transform duration-300 select-none group-hover:scale-[1.02] ${
+                    isEditProfileToggled ? "blur-xs" : ""
+                  }`}
+                />
+                <span className="font-grotesk pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-3 pt-8 pb-3 text-left text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                  View artwork
+                </span>
+              </button>
+            ) : (
               <Image
                 src={image || BlankProfilePicture}
                 alt={title ? `Artwork: ${title}` : "Artwork"}
@@ -64,22 +80,8 @@ const ProfileCard: React.FC<IProfileCard> = ({
                   isEditProfileToggled ? "blur-xs" : ""
                 }`}
               />
-              <span className="font-grotesk pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-3 pt-8 pb-3 text-left text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-                View artwork
-              </span>
-            </button>
-          ) : (
-            <Image
-              src={image || BlankProfilePicture}
-              alt={title ? `Artwork: ${title}` : "Artwork"}
-              quality={90}
-              fill
-              sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
-              className={`object-contain select-none ${
-                isEditProfileToggled ? "blur-xs" : ""
-              }`}
-            />
-          )}
+            )}
+          </div>
         </div>
         <div className="mt-3 flex w-full min-w-0 items-center justify-between gap-3">
           <div className="flex min-w-0 flex-col items-start">

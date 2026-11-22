@@ -193,14 +193,14 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                   duration: 0.3,
                 }}
               >
-                <div className="flex w-fit touch-manipulation flex-col items-start gap-1 rounded-[15px] bg-white/50 p-2 text-nowrap shadow-sm backdrop-blur-md">
+                <div className="flex w-fit touch-manipulation flex-col items-start gap-1 rounded-[15px] bg-white/30 p-2 text-nowrap shadow-sm backdrop-blur-md">
                   {ProfileToggleData.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleMenuItemClick(String(item.id))}
                       className="group flex w-full flex-col items-start"
                     >
-                      <p className="font-grotesk text-sm font-medium text-neutral-600 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
+                      <p className="font-grotesk text-sm font-medium text-neutral-50 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
                         {item.name}
                       </p>
                     </button>
@@ -209,7 +209,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                     <button
                       disabled={!isListed}
                       onClick={handleUnlistAsset}
-                      className="font-grotesk text-sm font-medium text-neutral-600 capitalize transition-all duration-200 hover:scale-105 active:scale-95"
+                      className="font-grotesk text-sm font-medium text-neutral-50 capitalize transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                       Unlist
                     </button>
@@ -217,7 +217,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                     <button
                       disabled={isListed}
                       onClick={handleListToggle}
-                      className="font-grotesk text-sm font-medium text-neutral-600 capitalize transition-all duration-200 hover:scale-105 active:scale-95"
+                      className="font-grotesk text-sm font-medium text-neutral-50 capitalize transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                       list
                     </button>
