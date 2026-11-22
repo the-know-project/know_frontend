@@ -113,7 +113,9 @@ const UploadEditor = () => {
       {sections.map(({ number, title, detail, icon: Icon, content }) => (
         <section
           key={number}
-          className="overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-sm"
+          className={`rounded-2xl border border-neutral-200/80 bg-white shadow-sm ${
+            number === "03" ? "relative z-10 overflow-visible" : "overflow-hidden"
+          }`}
         >
           <div className="flex items-start gap-3 px-4 pt-4 sm:px-5 sm:pt-5">
             <span className="font-grotesk mt-0.5 text-xs font-semibold tracking-widest text-neutral-400">
