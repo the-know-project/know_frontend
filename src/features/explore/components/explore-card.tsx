@@ -168,14 +168,14 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       onContextMenu={handleContextMenu}
     >
       <div className="artwork-oak-frame group relative flex w-full flex-col shadow-lg transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.99]">
-        <div className="artwork-oak-mat aspect-[5/3] w-full overflow-hidden">
+        <div className="artwork-oak-mat relative aspect-[4/3] w-full overflow-hidden">
           <Image
             src={artWork}
             alt="Artwork"
             quality={100}
-            width={500}
-            height={300}
-            className="h-full w-full cursor-pointer object-contain transition-transform duration-300 select-none group-hover:scale-[1.02]"
+            fill
+            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+            className="cursor-pointer object-contain transition-transform duration-300 select-none group-hover:scale-[1.02]"
             onClick={() => {
               const viewportPosition = {
                 scrollY: window.scrollY,

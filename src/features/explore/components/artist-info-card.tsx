@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useOptimizedAuth } from "../../auth/hooks/use-optimized-auth";
 import ExploreFollowButton from "./explore-follow-button";
 import { useArtistInfo } from "../hooks/use-artist-info";
+import { useOpenArtistPortal } from "../hooks/use-open-artist-portal";
 
 interface ArtistInfoCardProps {
   artistId: string;
@@ -17,6 +18,7 @@ const ArtistInfoCard = ({
   artistImage,
 }: ArtistInfoCardProps) => {
   const { user } = useOptimizedAuth();
+  const openArtistPortal = useOpenArtistPortal();
   const artist = useArtistInfo({
     artistId,
     fallbackName: artistName,
@@ -68,17 +70,26 @@ const ArtistInfoCard = ({
       </div>
 
       <div className="mb-4 flex min-w-0 items-center gap-3">
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-100 shadow-sm ring-2 ring-white outline outline-neutral-200">
+        <button
+          type="button"
+          onClick={() => openArtistPortal(artistId)}
+          aria-label={`Open ${artist.name}'s profile`}
+          className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-100 shadow-sm ring-2 ring-white outline outline-neutral-200"
+        >
           <img
             src={artist.imageUrl}
             alt={artist.name}
             className="h-full w-full object-cover"
           />
-        </div>
+        </button>
         <div className="min-w-0">
-          <h3 className="font-helvetica truncate text-base font-bold text-neutral-900 capitalize">
+          <button
+            type="button"
+            onClick={() => openArtistPortal(artistId)}
+            className="font-helvetica block max-w-full truncate text-left text-base font-bold text-neutral-900 capitalize hover:underline"
+          >
             {artist.name}
-          </h3>
+          </button>
           <p className="font-grotesk mt-1 truncate text-xs text-neutral-500">
             {artist.country || "Creator on Know"}
           </p>

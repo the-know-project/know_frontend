@@ -18,6 +18,7 @@ interface IProfileCard {
   isListed: boolean;
   onClick?: () => void;
   onEditPost?: () => void;
+  showEditControls?: boolean;
 }
 
 const ProfileCard: React.FC<IProfileCard> = ({
@@ -29,6 +30,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
   isListed,
   onClick,
   onEditPost,
+  showEditControls = true,
 }) => {
   const role = useRoleStore((state) => state.role);
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
@@ -36,7 +38,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
   return (
     <article className="relative mt-3 flex w-full min-w-0 flex-col sm:mt-4">
       <div className="absolute top-3 left-3 z-20">
-        {role === "ARTIST" && (
+        {showEditControls && role === "ARTIST" && (
           <ProfileEditToggle
             image={image}
             id={id as string}
@@ -62,7 +64,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
                   fill
                   sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
                   className={`object-contain transition-transform duration-300 select-none group-hover:scale-[1.02] ${
-                    isEditProfileToggled ? "blur-xs" : ""
+                    showEditControls && isEditProfileToggled ? "blur-xs" : ""
                   }`}
                 />
                 <span className="font-grotesk pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-3 pt-8 pb-3 text-left text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -77,7 +79,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
                 fill
                 sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
                 className={`object-contain transition-transform duration-300 select-none group-hover:scale-[1.02] ${
-                  isEditProfileToggled ? "blur-xs" : ""
+                  showEditControls && isEditProfileToggled ? "blur-xs" : ""
                 }`}
               />
             )}
@@ -100,15 +102,17 @@ const ProfileCard: React.FC<IProfileCard> = ({
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={onEditPost}
-              aria-label={`Edit ${title}`}
-              className="font-grotesk inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
-            >
-              <IconPencil width={15} height={15} className="text-neutral-600" />
-              <span>Edit</span>
-            </button>
+            {showEditControls && (
+              <button
+                type="button"
+                onClick={onEditPost}
+                aria-label={`Edit ${title}`}
+                className="font-grotesk inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+              >
+                <IconPencil width={15} height={15} className="text-neutral-600" />
+                <span>Edit</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
