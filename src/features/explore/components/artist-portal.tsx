@@ -82,13 +82,13 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label="Artist profile"
-        className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_100px_rgba(0,0,0,0.35)] ring-1 ring-black/10"
+        className="flex h-[90vh] max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_100px_rgba(0,0,0,0.35)] ring-1 ring-black/10"
         initial={{ opacity: 0, y: 16, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 10, scale: 0.98 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
       >
-        <header className="relative flex shrink-0 flex-col items-center border-b px-6 pt-8 pb-5 text-center">
+        <header className="relative flex min-h-0 shrink-0 basis-[30%] flex-col items-center overflow-y-auto border-b px-6 pt-5 pb-4 text-center sm:pt-6">
           <button
             type="button"
             onClick={onClose}
