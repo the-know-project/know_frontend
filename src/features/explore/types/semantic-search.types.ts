@@ -11,6 +11,7 @@ export interface SemanticSearchAsset {
   lastName?: string | null;
   imageUrl?: string | null;
   price: number | string | null;
+  formattedPrice?: string | null;
   currency?: string;
   quantity?: number;
   categories?: string[];
