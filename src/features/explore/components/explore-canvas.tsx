@@ -1,7 +1,7 @@
 "use client";
 
 import ArtDetails from "@/src/shared/components/art-details";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useBulkCartActions } from "../../cart/hooks/use-cart";
 import { useFetchUserCart } from "../../cart/hooks/use-fetch-user-cart";
 import { TCart } from "../../cart/types/cart.types";
@@ -18,6 +18,7 @@ import InfiniteLoadingIndicator from "./infinite-loading-indicator";
 import { useCanFetchData } from "../../auth/hooks/use-optimized-auth";
 import { useFetchUserFollowing } from "../../metrics/hooks/use-fetch-user-following";
 import { showLog } from "@/src/utils/logger";
+import ArtistPortal from "./artist-portal";
 
 interface ExploreCanvasProps {
   categories?: string[];
@@ -34,6 +35,7 @@ const ExploreCanvasContent = ({
   categories = [],
   filters = {},
 }: ExploreCanvasProps) => {
+  const [artistPortalId, setArtistPortalId] = useState<string | null>(null);
   const assetsHookResult = useSimpleInfiniteAssets({
     categories,
     filters,
@@ -158,6 +160,12 @@ const ExploreCanvasContent = ({
   return (
     <section className="relative flex min-h-screen w-full flex-col items-center">
       <ArtDetails />
+      {artistPortalId && (
+        <ArtistPortal
+          artistId={artistPortalId}
+          onClose={() => setArtistPortalId(null)}
+        />
+      )}
       <section className="flex w-full flex-col items-center justify-center">
         <div className="grid grid-cols-1 gap-5 space-y-[50px] md:grid-cols-2 lg:grid-cols-3">
           {assets.map((item: TAsset, index: number) => (
@@ -188,6 +196,7 @@ const ExploreCanvasContent = ({
                 size={item.size}
                 numOfViews={item.numOfViews}
                 createdAt={item.createdAt}
+                onArtistClick={() => setArtistPortalId(item.userId)}
               />
             </div>
           ))}
