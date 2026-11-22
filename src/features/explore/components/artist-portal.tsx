@@ -5,6 +5,8 @@ import { useArtistContent } from "../hooks/use-artist-content";
 import { useEffect, useRef, useState } from "react";
 import { X, RefreshCw } from "lucide-react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { createPortal } from "react-dom";
 import ProfileCard from "@/src/features/profile/components/profile-card";
 import { useToggleExploreContent } from "../state/explore-content.store";
 
@@ -15,6 +17,7 @@ interface Props {
 
 export default function ArtistPortal({ artistId, onClose }: Props) {
   const [tab, setTab] = useState<"posts" | "collections">("posts");
+  const [mounted, setMounted] = useState(false);
   const posts = useArtistContent(artistId, "posts", true);
   const collections = useArtistContent(
     artistId,
@@ -28,6 +31,8 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
     posts.data?.pages[0]?.data.profile ??
     collections.data?.pages[0]?.data.profile;
   const items = active.data?.pages.flatMap((page) => page.data.items) ?? [];
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const oldOverflow = document.body.style.overflow;
@@ -60,18 +65,28 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
     tab,
   ]);
 
-  return (
-    <div
-      className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-3 backdrop-blur-sm"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <section
+  if (!mounted) return null;
+
+  return createPortal(
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-3 backdrop-blur-sm sm:p-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) onClose();
+        }}
+      >
+      <motion.section
         role="dialog"
         aria-modal="true"
         aria-label="Artist profile"
-        className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_100px_rgba(0,0,0,0.35)] ring-1 ring-black/10"
+        initial={{ opacity: 0, y: 16, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+        transition={{ duration: 0.22, ease: "easeOut" }}
       >
         <header className="relative flex shrink-0 flex-col items-center border-b px-6 pt-8 pb-5 text-center">
           <button
@@ -104,9 +119,26 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
               {profile.description}
             </p>
           )}
-          <p className="mt-2 text-xs text-neutral-500">
-            {profile?.followerCount ?? 0} followers
-          </p>
+          <div className="mt-4 flex items-center justify-center gap-8 text-center">
+            <div>
+              <p className="text-base font-semibold text-neutral-900">
+                {profile?.followerCount ?? 0}
+              </p>
+              <p className="text-xs text-neutral-500">Followers</p>
+            </div>
+            <div>
+              <p className="text-base font-semibold text-neutral-900">
+                {profile?.assetCount ?? 0}
+              </p>
+              <p className="text-xs text-neutral-500">Artworks</p>
+            </div>
+            <div>
+              <p className="text-base font-semibold text-neutral-900">
+                {profile?.collectionCount ?? 0}
+              </p>
+              <p className="text-xs text-neutral-500">Collections</p>
+            </div>
+          </div>
         </header>
         <div
           role="tablist"
@@ -158,7 +190,9 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                     createdAt={new Date(item.createdAt).toLocaleDateString()}
                     image={item.url}
                     isListed={Boolean(item.isListed)}
-                    onClick={() =>
+                    showEditControls={false}
+                    onClick={() => {
+                      onClose();
                       toggleExploreContent(item.fileId, {
                         id: item.fileId,
                         userId: artistId,
@@ -181,8 +215,8 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                         numOfComments: 0,
                         isListed: Boolean(item.isListed),
                         createdAt: new Date(item.createdAt),
-                      })
-                    }
+                      });
+                    }}
                   />
                 ) : (
                   <article
@@ -220,7 +254,9 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
             <div ref={sentinel} className="h-4" />
           )}
         </div>
-      </section>
-    </div>
+      </motion.section>
+      </motion.div>
+    </AnimatePresence>,
+    document.body,
   );
 }
