@@ -6,6 +6,9 @@ import { selectUserId } from "@/src/features/auth/state/selectors/token.selector
 import { useTokenStore } from "@/src/features/auth/state/store";
 import ExploreArtistInfo from "@/src/features/explore/components/explore-artist-info";
 import ExploreCommentSection from "@/src/features/explore/components/explore-comment-section";
+import ArtistPortal from "@/src/features/explore/components/artist-portal";
+import { useOpenArtistPortal } from "@/src/features/explore/hooks/use-open-artist-portal";
+import { useArtistPortalStore } from "@/src/features/explore/state/artist-portal.store";
 import {
   useIsExploreContentToggled,
   useToggleExploreContent,
@@ -23,6 +26,8 @@ import ReactDOM from "react-dom";
 const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const artistPortalId = useArtistPortalStore((state) => state.artistId);
+  const closeArtistPortal = useArtistPortalStore((state) => state.closeArtistPortal);
   const followerId = useTokenStore(selectUserId);
 
   const { toggledContentId, exploreContent, isExploreContentToggled } =
@@ -41,6 +46,7 @@ const ArtDetails = () => {
     }
   };
   const toggleExploreContent = useToggleExploreContent();
+  const openArtistPortal = useOpenArtistPortal();
   const { mutateAsync: followUser } = useFollowUser();
   const { mutateAsync: unFollowUser } = useUnfollowUser();
   const { useIsUserFollowing } = useFollowActions();
@@ -104,8 +110,10 @@ const ArtDetails = () => {
 
   if (!mounted) return null;
 
-  return ReactDOM.createPortal(
-    <div className="relative flex w-full flex-col items-center justify-center">
+  return (
+    <>
+      {ReactDOM.createPortal(
+        <div className="relative flex w-full flex-col items-center justify-center">
       <AnimatePresence mode="wait">
         {isExploreContentToggled && toggledContentId && (
           <div key={`modal-${toggledContentId}`}>
@@ -169,7 +177,12 @@ const ArtDetails = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between bg-transparent px-4 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 p-1 backdrop-blur-lg">
+                    <button
+                      type="button"
+                      onClick={() => exploreContent?.userId && openArtistPortal(exploreContent.userId)}
+                      aria-label={`Open ${exploreContent?.creatorName || "artist"}'s profile`}
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 p-1 backdrop-blur-lg"
+                    >
                       <Image
                         src={
                           exploreContent?.creatorProfileUrl ||
@@ -180,15 +193,22 @@ const ArtDetails = () => {
                         height={32}
                         className="rounded-full object-contain object-center select-none"
                       />
-                    </div>
+                    </button>
                     <div>
                       <h1 className="font-helvetica text-lg font-bold text-white capitalize">
                         {exploreContent?.artName}
                       </h1>
-                      {followerId !== exploreContent?.userId && (
-                        <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
-                          <p>{exploreContent?.creatorName} • </p>
+                      <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
+                        <button
+                          type="button"
+                          onClick={() => exploreContent?.userId && openArtistPortal(exploreContent.userId)}
+                          className="hover:text-white"
+                        >
+                          {exploreContent?.creatorName}
+                        </button>
+                        {followerId !== exploreContent?.userId && (
                           <button
+                            type="button"
                             onClick={() =>
                               handleFollowUser(exploreContent?.userId || "")
                             }
@@ -196,8 +216,8 @@ const ArtDetails = () => {
                           >
                             {isFollowing === true ? "Unfollow" : "Follow"}
                           </button>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                   <button
@@ -324,8 +344,13 @@ const ArtDetails = () => {
           </div>
         )}
       </AnimatePresence>
-    </div>,
-    document.body,
+        </div>,
+        document.body,
+      )}
+      {artistPortalId && (
+        <ArtistPortal artistId={artistPortalId} onClose={closeArtistPortal} />
+      )}
+    </>
   );
 };
 export default ArtDetails;
