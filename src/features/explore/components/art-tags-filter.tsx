@@ -17,7 +17,7 @@ const ArtTagsFilter = ({ tags }: ArtTagsFilterProps) => {
         {tags.map((tag, index) => (
           <span
             key={`${tag}-${index}`}
-            className="font-grotesk inline-flex min-h-8 items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 text-xs font-medium text-indigo-800"
+            className="font-grotesk inline-flex min-h-8 items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 text-xs font-medium text-[#1E3A8A] uppercase"
           >
             {tag}
           </span>

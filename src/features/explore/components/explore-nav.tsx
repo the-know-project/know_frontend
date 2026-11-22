@@ -169,7 +169,7 @@ const ExploreNav: React.FC<IExploreNavOptions> = ({
                   console.log(`Searching for ${query}`);
                 }}
                 placeholder="Explore"
-                debounceMs={300}
+                debounceMs={1000}
               />
             </motion.div>
           )}

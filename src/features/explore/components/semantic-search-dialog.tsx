@@ -99,7 +99,7 @@ const SemanticSearchDialog = ({
           >
             <header className="flex items-center justify-between border-b px-5 py-4">
               <div>
-                <p className="text-xs tracking-widest text-neutral-500 uppercase">
+                <p className="font-bebas text-xs tracking-widest text-neutral-500 uppercase">
                   Artwork search
                 </p>
                 <h2 className="font-grotesk text-lg font-semibold text-neutral-900">

@@ -85,7 +85,7 @@ const ArtInfoCard = ({ artwork }: ArtInfoCardProps) => {
           <Heart className="h-3.5 w-3.5" />
           {artwork.numOfLikes || 0} likes
         </span>
-        <span className="font-grotesk inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 text-xs font-medium text-indigo-700">
+        <span className="font-grotesk inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 text-xs font-medium text-[#1E3A8A]">
           <CalendarDays className="h-3.5 w-3.5" />
           {formattedDate}
         </span>

@@ -55,14 +55,14 @@ const ArtistInfoCard = ({
     <section className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
-          <p className="font-grotesk text-xs font-semibold tracking-[0.16em] text-neutral-400 uppercase">
+          <p className="font-grotesk text-xs font-semibold tracking-[0.1em] text-neutral-400 uppercase">
             Artist
           </p>
           <p className="font-grotesk mt-0.5 text-xs text-neutral-500">
             Meet the creator
           </p>
         </div>
-        <span className="font-grotesk rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-indigo-700 uppercase">
+        <span className="font-grotesk rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#1E3A8A] uppercase">
           Know creator
         </span>
       </div>
