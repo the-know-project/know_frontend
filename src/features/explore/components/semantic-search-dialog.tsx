@@ -159,9 +159,7 @@ const SemanticSearchDialog = ({
                             {asset.fileName}
                           </span>
                           <span className="mt-1 block text-sm text-neutral-700">
-                            {asset.price == null
-                              ? "Price unavailable"
-                              : `${asset.price} ${asset.currency || ""}`}
+                            {asset.formattedPrice ?? "Price unavailable"}
                           </span>
                           <span className="mt-1 block truncate text-xs text-neutral-500">
                             {[
