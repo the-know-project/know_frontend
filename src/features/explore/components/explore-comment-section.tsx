@@ -77,7 +77,7 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
     >
       <div className="mb-5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#1E3A8A]">
             <MessageCircle className="h-4 w-4" />
           </span>
           <div>
@@ -119,7 +119,7 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
                 <button
                   type="submit"
                   disabled={isAdding || !commentText.trim()}
-                  className="font-grotesk inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] px-4 text-sm font-semibold text-white transition-colors hover:bg-indigo-800 focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="font-grotesk inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] px-4 text-sm font-semibold text-white transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isAdding ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -206,7 +206,7 @@ const ExploreCommentSection = ({ fileId }: ExploreCommentSectionProps) => {
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                    <span className="font-helvetica text-sm font-semibold text-neutral-900">
+                    <span className="font-helvetica text-sm text-neutral-900 capitalize">
                       {comment.firstName} {comment.lastName}
                     </span>
                     <time

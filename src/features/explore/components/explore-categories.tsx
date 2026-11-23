@@ -329,7 +329,7 @@ const ExploreCategories = ({
                   key={ctx.id}
                   className="flex flex-shrink-0 flex-col items-start"
                 >
-                  <h3 className="font-grotesk mb-2 text-sm font-medium text-neutral-700">
+                  <h3 className="font-grotesk mb-2 text-sm font-semibold text-neutral-800">
                     {ctx.name}
                   </h3>
                   <div className="flex items-center gap-[3px] sm:gap-2">

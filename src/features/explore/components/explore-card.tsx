@@ -211,7 +211,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           />
         </div>
         {highResExtraUrls && highResExtraUrls.length > 0 && (
-          <div className="font-bebas absolute top-2 right-2 z-10 flex items-center justify-center rounded-full bg-white/80 px-2 py-1 text-xs font-medium tracking-wider text-neutral-800 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95">
+          <div className="font-grotesk absolute top-3 right-3 z-10 flex items-center justify-center rounded-full bg-neutral-600 px-2 py-1 text-xs font-bold tracking-wider text-neutral-50 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95">
             <p>{highResExtraUrls.length}</p>
           </div>
         )}
@@ -244,7 +244,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
             <p className="font-helvetica text-[16px] text-neutral-800 capitalize sm:text-[18px]">
               {artistName}
             </p>
-            <h3 className="font-grotesk text-sm font-medium text-neutral-600 underline">
+            <h3 className="font-grotesk text-sm font-normal text-neutral-800 underline">
               {artName}
             </h3>
           </div>
