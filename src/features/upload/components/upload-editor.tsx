@@ -114,7 +114,9 @@ const UploadEditor = () => {
         <section
           key={number}
           className={`rounded-2xl border border-neutral-200/80 bg-white shadow-sm ${
-            number === "03" ? "relative z-10 overflow-visible" : "overflow-hidden"
+            number === "03"
+              ? "relative z-10 overflow-visible"
+              : "overflow-hidden"
           }`}
         >
           <div className="flex items-start gap-3 px-4 pt-4 sm:px-5 sm:pt-5">
@@ -153,7 +155,7 @@ const UploadEditor = () => {
                 Choose a category, or add one if it is missing.
               </p>
             </div>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#1E3A8A]">
               <Shapes className="h-4 w-4" />
             </span>
           </div>
@@ -183,7 +185,7 @@ const UploadEditor = () => {
             <button
               type="submit"
               disabled={!newCategory.trim() || addCategories.isPending}
-              className="font-grotesk inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-indigo-700 px-3 text-sm font-semibold text-white transition hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+              className="font-grotesk inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#1E3A8A] px-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
             >
               {addCategories.isPending ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

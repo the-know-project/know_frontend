@@ -40,7 +40,7 @@ const UploadEditorCanvas = () => {
             >
               <header className="sticky top-0 z-40 -mx-3 mb-5 flex items-center justify-between border-b border-neutral-200 bg-neutral-100/95 px-3 py-3 backdrop-blur sm:-mx-5 sm:px-5 md:-mx-7 md:px-7">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-700 text-white shadow-sm">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1E3A8A] px-2 py-1 text-white shadow-sm">
                     <Settings2Icon className="h-5 w-5" />
                   </span>
                   <div>
@@ -53,7 +53,7 @@ const UploadEditorCanvas = () => {
                   </div>
                 </div>
                 <motion.button
-                  className="font-grotesk inline-flex min-h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:bg-neutral-50"
+                  className="font-bebas inline-flex min-h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:bg-neutral-50"
                   type="button"
                   aria-label="Close upload editor"
                   onClick={() => setIsEditorOpen(false)}

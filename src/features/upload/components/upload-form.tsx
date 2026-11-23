@@ -221,9 +221,9 @@ const UploadForm = ({
             onClick={() => setIsEditorOpen(true)}
             type="button"
             aria-label="Open upload editor"
-            className="font-grotesk relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-700 shadow-sm transition-colors duration-200 hover:bg-neutral-50 active:scale-[0.98] sm:min-h-12 sm:px-4"
+            className="font-bebas relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 text-sm font-semibold tracking-wider text-neutral-700 shadow-sm transition-colors duration-200 hover:bg-neutral-50 active:scale-[0.98] sm:min-h-12 sm:px-4"
           >
-            <Settings2Icon className="h-5 w-5 text-indigo-700" />
+            <Settings2Icon className="h-5 w-5 text-[#1E3A8A]" />
             <span>Details</span>
           </button>
         </div>
