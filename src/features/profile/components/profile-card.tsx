@@ -87,7 +87,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
         </div>
         <div className="mt-3 flex w-full min-w-0 items-center justify-between gap-3">
           <div className="flex min-w-0 flex-col items-start">
-            <h3 className="font-helvetica w-full truncate text-sm font-semibold text-neutral-900 capitalize sm:text-base">
+            <h3 className="font-helvetica w-full truncate text-sm text-neutral-900 capitalize sm:text-base">
               {title}
             </h3>
             <p className="font-grotesk mt-0.5 text-xs text-neutral-500">
@@ -109,7 +109,11 @@ const ProfileCard: React.FC<IProfileCard> = ({
                 aria-label={`Edit ${title}`}
                 className="font-grotesk inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
               >
-                <IconPencil width={15} height={15} className="text-neutral-600" />
+                <IconPencil
+                  width={15}
+                  height={15}
+                  className="text-neutral-600"
+                />
                 <span>Edit</span>
               </button>
             )}
