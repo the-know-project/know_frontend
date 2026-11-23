@@ -12,6 +12,7 @@ import { useGetCategories } from "../../personalize/hooks";
 interface ExploreCategoriesProps {
   debounceMs?: number;
   onPreferencesChange?: (preferences: string[]) => void;
+  onFollowingChange?: (isFollowing: boolean) => void;
   onFiltersChange?: (filters: {
     priceMin?: number;
     priceMax?: number;
@@ -62,6 +63,7 @@ const useFilterDebounce = (value: string[], delay: number) => {
 const ExploreCategories = ({
   debounceMs = 800,
   onPreferencesChange,
+  onFollowingChange,
   onFiltersChange,
   selectedPreferences: propSelectedPreferences = [],
   selectedFilters: propSelectedFilters = {},
@@ -237,7 +239,10 @@ const ExploreCategories = ({
 
             {/* Buttons */}
             <button
-              onClick={() => setActiveButton("for-you")}
+              onClick={() => {
+                setActiveButton("for-you");
+                onFollowingChange?.(false);
+              }}
               className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "for-you"
                   ? "text-neutral-300"
@@ -248,7 +253,10 @@ const ExploreCategories = ({
             </button>
 
             <button
-              onClick={() => setActiveButton("following")}
+              onClick={() => {
+                setActiveButton("following");
+                onFollowingChange?.(true);
+              }}
               className={`relative z-10 rounded-lg px-2 py-1 text-sm font-medium text-nowrap transition-colors duration-300 sm:px-4 sm:py-2 lg:text-[16px] ${
                 activeButton === "following"
                   ? "text-neutral-300"

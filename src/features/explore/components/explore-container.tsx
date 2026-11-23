@@ -24,6 +24,7 @@ const ExploreContainer = ({
 }: ExploreContainerProps = {}) => {
   const [selectedPreferences, setSelectedPreferences] =
     useState<string[]>(initialPreferences);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<{
     priceMin?: number;
     priceMax?: number;
@@ -55,6 +56,7 @@ const ExploreContainer = ({
     <div className="flex w-full flex-col gap-6">
       <ExploreCategories
         onPreferencesChange={handlePreferencesChange}
+        onFollowingChange={setIsFollowing}
         onFiltersChange={handleFiltersChange}
         selectedPreferences={selectedPreferences}
         selectedFilters={selectedFilters}
@@ -62,6 +64,7 @@ const ExploreContainer = ({
       <ExploreCanvas
         categories={selectedPreferences}
         filters={selectedFilters}
+        isFollowing={isFollowing}
         isInitialized={isInitialized}
       />
       <ExploreViewTracker />
