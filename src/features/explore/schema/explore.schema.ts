@@ -9,6 +9,7 @@ export const FetchAssetSchema = z.object({
   priceMax: z.number().min(0).optional(),
   sortBy: z.enum(["latest", "oldest"]).optional(),
   available: z.boolean().optional(),
+  isFollowing: z.boolean().optional(),
 });
 
 export const LikeAssetSchema = z.object({
