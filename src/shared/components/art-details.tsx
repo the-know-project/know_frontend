@@ -27,7 +27,9 @@ const ArtDetails = () => {
   const [mounted, setMounted] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const artistPortalId = useArtistPortalStore((state) => state.artistId);
-  const closeArtistPortal = useArtistPortalStore((state) => state.closeArtistPortal);
+  const closeArtistPortal = useArtistPortalStore(
+    (state) => state.closeArtistPortal,
+  );
   const followerId = useTokenStore(selectUserId);
 
   const { toggledContentId, exploreContent, isExploreContentToggled } =
@@ -114,236 +116,242 @@ const ArtDetails = () => {
     <>
       {ReactDOM.createPortal(
         <div className="relative flex w-full flex-col items-center justify-center">
-      <AnimatePresence mode="wait">
-        {isExploreContentToggled && toggledContentId && (
-          <div key={`modal-${toggledContentId}`}>
-            {/* Backdrop */}
-            <motion.div
-              variants={backdropVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut",
-              }}
-              className="fixed inset-0 z-40"
-              style={{
-                top: 0,
-                left: 0,
-                width: "100vw",
-                height: Math.max(
-                  typeof window !== "undefined"
-                    ? document.documentElement.scrollHeight
-                    : 0,
-                  typeof window !== "undefined" ? window.innerHeight : 0,
-                ),
-                position: "fixed",
-                backdropFilter: "blur(5px)",
-                backgroundColor: "rgba(0, 0, 0, 0.95)",
-              }}
-              onClick={() =>
-                toggleExploreContent(toggledContentId as string, null)
-              }
-            />
+          <AnimatePresence mode="wait">
+            {isExploreContentToggled && toggledContentId && (
+              <div key={`modal-${toggledContentId}`}>
+                {/* Backdrop */}
+                <motion.div
+                  variants={backdropVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
+                  className="fixed inset-0 z-40"
+                  style={{
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: Math.max(
+                      typeof window !== "undefined"
+                        ? document.documentElement.scrollHeight
+                        : 0,
+                      typeof window !== "undefined" ? window.innerHeight : 0,
+                    ),
+                    position: "fixed",
+                    backdropFilter: "blur(5px)",
+                    backgroundColor: "rgba(0, 0, 0, 0.95)",
+                  }}
+                  onClick={() =>
+                    toggleExploreContent(toggledContentId as string, null)
+                  }
+                />
 
-            {/* Popup */}
-            <motion.div
-              variants={popupVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut",
-                delay: 0.05,
-              }}
-              className="fixed z-50 rounded-2xl bg-transparent shadow-2xl"
-              style={{
-                top: "0",
-                left: window.innerWidth < 768 ? "2%" : "10%",
-                width:
-                  typeof window !== "undefined" && window.innerWidth < 768
-                    ? "95vw"
-                    : "80vw",
-                height:
-                  typeof window !== "undefined" && window.innerWidth < 768
-                    ? "90vh"
-                    : "95vh",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl">
-                {/* Header */}
-                <div className="flex items-center justify-between bg-transparent px-4 py-4">
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => exploreContent?.userId && openArtistPortal(exploreContent.userId)}
-                      aria-label={`Open ${exploreContent?.creatorName || "artist"}'s profile`}
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 p-1 backdrop-blur-lg"
-                    >
-                      <Image
-                        src={
-                          exploreContent?.creatorProfileUrl ||
-                          BlankProfilePicture
-                        }
-                        alt="creator_profile"
-                        width={32}
-                        height={32}
-                        className="rounded-full object-contain object-center select-none"
-                      />
-                    </button>
-                    <div>
-                      <h1 className="font-helvetica text-lg font-bold text-white capitalize">
-                        {exploreContent?.artName}
-                      </h1>
-                      <div className="font-bricolage flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
+                {/* Popup */}
+                <motion.div
+                  variants={popupVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                    delay: 0.05,
+                  }}
+                  className="fixed z-50 rounded-2xl bg-transparent shadow-2xl"
+                  style={{
+                    top: "0",
+                    left: window.innerWidth < 768 ? "2%" : "10%",
+                    width:
+                      typeof window !== "undefined" && window.innerWidth < 768
+                        ? "95vw"
+                        : "80vw",
+                    height:
+                      typeof window !== "undefined" && window.innerWidth < 768
+                        ? "90vh"
+                        : "95vh",
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl">
+                    {/* Header */}
+                    <div className="flex items-center justify-between bg-transparent px-4 py-4">
+                      <div className="flex items-center gap-3">
                         <button
                           type="button"
-                          onClick={() => exploreContent?.userId && openArtistPortal(exploreContent.userId)}
-                          className="hover:text-white"
+                          onClick={() =>
+                            exploreContent?.userId &&
+                            openArtistPortal(exploreContent.userId)
+                          }
+                          aria-label={`Open ${exploreContent?.creatorName || "artist"}'s profile`}
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 p-1 backdrop-blur-lg"
                         >
-                          {exploreContent?.creatorName}
-                        </button>
-                        {followerId !== exploreContent?.userId && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleFollowUser(exploreContent?.userId || "")
+                          <Image
+                            src={
+                              exploreContent?.creatorProfileUrl ||
+                              BlankProfilePicture
                             }
-                            className="font-grotesk text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
+                            alt="creator_profile"
+                            width={32}
+                            height={32}
+                            className="rounded-full object-contain object-center select-none"
+                          />
+                        </button>
+                        <div>
+                          <h1 className="font-helvetica text-lg font-bold text-white capitalize">
+                            {exploreContent?.artName}
+                          </h1>
+                          <div className="font-grotesk flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                exploreContent?.userId &&
+                                openArtistPortal(exploreContent.userId)
+                              }
+                              className="font-grotesk text-sm capitalize hover:text-white"
+                            >
+                              {exploreContent?.creatorName}
+                            </button>
+                            {followerId !== exploreContent?.userId && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleFollowUser(exploreContent?.userId || "")
+                                }
+                                className="font-grotesk text-xs font-light tracking-wide text-neutral-400 hover:text-blue-300"
+                              >
+                                {isFollowing === true ? "Unfollow" : "Follow"}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          toggleExploreContent(toggledContentId as string, null)
+                        }
+                        className="flex h-8 w-8 max-w-fit items-center justify-center rounded-full bg-white p-2"
+                      >
+                        <IconX width={20} height={20} className="text-black" />
+                      </button>
+                    </div>
+
+                    {/* Content */}
+                    <div className="custom-scrollbar flex-1 overflow-auto bg-[#141414]">
+                      <div className="space-y-6">
+                        <div className="p-6">
+                          <h2 className="font-helvetica mb-4 text-2xl font-bold text-white capitalize">
+                            {exploreContent?.artName}
+                          </h2>
+                          <p className="font-grotesk max-w-prose text-xs font-light text-neutral-300 sm:text-sm">
+                            {exploreContent?.description === null
+                              ? "Brought to you by Know, The ultimate partner for creatives."
+                              : exploreContent?.description}
+                          </p>
+
+                          {/*Tags*/}
+                          <div className="mt-2 flex items-center gap-2">
+                            {exploreContent?.tags?.map((tag, index) => (
+                              <span
+                                key={index}
+                                className="font-bebas motion-duration-500 motion-preset-expand flex items-center gap-1 rounded-full bg-neutral-600/50 px-2 py-1 text-xs font-medium tracking-wider text-white lowercase shadow-sm"
+                                style={{
+                                  animationDelay: `${index * 150}ms`,
+                                }}
+                              >
+                                <IconTag width={15} height={15} /> {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Artwork Image Carousel */}
+                        <div className="relative mt-8 w-full">
+                          <div
+                            onScroll={handleScroll}
+                            className="scrollbar-hide flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4"
                           >
-                            {isFollowing === true ? "Unfollow" : "Follow"}
-                          </button>
-                        )}
+                            {images.map((url, index) => (
+                              <div
+                                key={index}
+                                className="relative w-full flex-shrink-0 snap-center"
+                              >
+                                <div className="flex h-[42vh] max-h-[680px] min-h-[240px] w-full items-center justify-center overflow-hidden bg-neutral-900 md:h-[58vh]">
+                                  <Image
+                                    src={url}
+                                    alt={`art_work_${index + 1}`}
+                                    quality={100}
+                                    priority={index === 0}
+                                    width={1920}
+                                    height={1080}
+                                    className="h-full w-full object-contain object-center"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Indicator Dots */}
+                          {images.length > 1 && (
+                            <div className="text-glow absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 backdrop-blur-sm">
+                              {images.map((_, index) => (
+                                <div
+                                  key={index}
+                                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                                    activeIndex === index
+                                      ? "w-4 bg-white"
+                                      : "w-1.5 bg-white/50"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] lg:grid-cols-3">
+                          {/* Left side for comments */}
+                          <div className="lg:col-span-2">
+                            <ExploreCommentSection
+                              fileId={exploreContent?.id || ""}
+                            />
+                          </div>
+                          {/* Right side for artist info */}
+                          <div>
+                            {exploreContent?.userId && (
+                              <ExploreArtistInfo
+                                artistId={exploreContent.userId}
+                                userId={followerId}
+                                artwork={exploreContent}
+                              />
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <button
-                    onClick={() =>
-                      toggleExploreContent(toggledContentId as string, null)
-                    }
-                    className="flex h-8 w-8 max-w-fit items-center justify-center rounded-full bg-white p-2"
-                  >
-                    <IconX width={20} height={20} className="text-black" />
-                  </button>
-                </div>
 
-                {/* Content */}
-                <div className="custom-scrollbar flex-1 overflow-auto bg-[#141414]">
-                  <div className="space-y-6">
-                    <div className="p-6">
-                      <h2 className="font-helvetica mb-4 text-2xl font-bold text-white capitalize">
-                        {exploreContent?.artName}
-                      </h2>
-                      <p className="font-grotesk max-w-prose text-xs font-light text-neutral-300 sm:text-sm">
-                        {exploreContent?.description === null
-                          ? "Brought to you by Know, The ultimate partner for creatives."
-                          : exploreContent?.description}
-                      </p>
-
-                      {/*Tags*/}
-                      <div className="mt-2 flex items-center gap-2">
-                        {exploreContent?.tags?.map((tag, index) => (
+                    {/* Categories */}
+                    <div className="lg-mt-[50px] mt-0 border-t border-neutral-700 bg-[#141414] px-4 py-3">
+                      <div className="flex flex-wrap">
+                        {exploreContent?.categories?.map((category, index) => (
                           <span
                             key={index}
-                            className="font-bebas motion-duration-500 motion-preset-expand flex items-center gap-1 rounded-full bg-neutral-600/50 px-2 py-1 text-xs font-medium tracking-wider text-white lowercase shadow-sm"
+                            className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-md bg-neutral-600/50 px-3 py-1 text-xs font-medium tracking-wider text-white lowercase"
                             style={{
                               animationDelay: `${index * 150}ms`,
                             }}
                           >
-                            <IconTag width={15} height={15} /> {tag}
+                            {category}
                           </span>
                         ))}
                       </div>
                     </div>
-
-                    {/* Artwork Image Carousel */}
-                    <div className="relative mt-8 w-full">
-                      <div
-                        onScroll={handleScroll}
-                        className="scrollbar-hide flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4"
-                      >
-                        {images.map((url, index) => (
-                          <div
-                            key={index}
-                            className="relative w-full flex-shrink-0 snap-center"
-                          >
-                            <div className="flex h-[42vh] min-h-[240px] max-h-[680px] w-full items-center justify-center overflow-hidden bg-neutral-900 md:h-[58vh]">
-                              <Image
-                                src={url}
-                                alt={`art_work_${index + 1}`}
-                                quality={100}
-                                priority={index === 0}
-                                width={1920}
-                                height={1080}
-                                className="h-full w-full object-contain object-center"
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Indicator Dots */}
-                      {images.length > 1 && (
-                        <div className="text-glow absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 backdrop-blur-sm">
-                          {images.map((_, index) => (
-                            <div
-                              key={index}
-                              className={`h-1.5 rounded-full transition-all duration-300 ${
-                                activeIndex === index
-                                  ? "w-4 bg-white"
-                                  : "w-1.5 bg-white/50"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="grid w-full grid-cols-1 gap-8 bg-[#FAFAFA] lg:grid-cols-3">
-                      {/* Left side for comments */}
-                      <div className="lg:col-span-2">
-                        <ExploreCommentSection
-                          fileId={exploreContent?.id || ""}
-                        />
-                      </div>
-                      {/* Right side for artist info */}
-                      <div>
-                        {exploreContent?.userId && (
-                          <ExploreArtistInfo
-                            artistId={exploreContent.userId}
-                            userId={followerId}
-                            artwork={exploreContent}
-                          />
-                        )}
-                      </div>
-                    </div>
                   </div>
-                </div>
-
-                {/* Categories */}
-                <div className="lg-mt-[50px] mt-0 border-t border-neutral-700 bg-[#141414] px-4 py-3">
-                  <div className="flex flex-wrap">
-                    {exploreContent?.categories?.map((category, index) => (
-                      <span
-                        key={index}
-                        className="font-bebas motion-duration-500 motion-preset-expand mt-2 mr-2 rounded-md bg-neutral-600/50 px-3 py-1 text-xs font-medium tracking-wider text-white lowercase"
-                        style={{
-                          animationDelay: `${index * 150}ms`,
-                        }}
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+            )}
+          </AnimatePresence>
         </div>,
         document.body,
       )}
