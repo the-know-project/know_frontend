@@ -28,12 +28,14 @@ interface UseSimpleInfiniteAssetsProps {
     sortBy?: "latest" | "oldest";
     available?: boolean;
   };
+  isFollowing?: boolean;
   limit?: number;
 }
 
 export const useSimpleInfiniteAssets = ({
   categories = [],
   filters = {},
+  isFollowing = false,
   limit = 12,
 }: UseSimpleInfiniteAssetsProps = {}) => {
   const canFetch = useCanFetchData();
@@ -55,6 +57,7 @@ export const useSimpleInfiniteAssets = ({
     limit,
     categories: categories.length > 0 ? categories : undefined,
     ...filters,
+    isFollowing,
   };
 
   const { data, isLoading, error } = useQuery({
@@ -89,7 +92,7 @@ export const useSimpleInfiniteAssets = ({
     setHasNextPage(true);
     setTotalPages(0);
     setIsLoadingMore(false);
-  }, [JSON.stringify(categories), JSON.stringify(filters)]);
+  }, [JSON.stringify(categories), JSON.stringify(filters), isFollowing]);
 
   useEffect(() => {
     if (data?.data) {
