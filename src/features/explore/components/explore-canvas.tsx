@@ -29,16 +29,21 @@ interface ExploreCanvasProps {
     available?: boolean;
   };
   isInitialized?: boolean;
+  isFollowing?: boolean;
 }
 
 const ExploreCanvasContent = ({
   categories = [],
   filters = {},
+  isFollowing = false,
 }: ExploreCanvasProps) => {
-  const openArtistPortal = useArtistPortalStore((state) => state.openArtistPortal);
+  const openArtistPortal = useArtistPortalStore(
+    (state) => state.openArtistPortal,
+  );
   const assetsHookResult = useSimpleInfiniteAssets({
     categories,
     filters,
+    isFollowing,
     limit: 12,
   });
 
