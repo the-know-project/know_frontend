@@ -5,6 +5,9 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Folder, Plus, X } from "lucide-react";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 import { useAddAssetToCollection } from "../hooks/use-add-asset-to-collection";
 import { useArtistCollections } from "../hooks/use-artist-collections";
 
@@ -111,9 +114,67 @@ export default function CollectionPickerDialog({
                 disabled={addAsset.isPending}
                 onClick={() => {
                   setSelectedCollectionId(collection.id);
+                  const toastId = toast.loading(
+                    `Adding asset to collection: ${collection.title}`,
+                    {
+                      style: {
+                        backgroundColor: "oklch(62.7% 0.194 149.214)",
+                        fontSize: "12px",
+                        fontFamily: "Space Grotesk",
+                        color: "#ffffff",
+                        fontWeight: "600",
+                      },
+                    },
+                  );
                   addAsset.mutate(
                     { collectionId: collection.id, fileId },
-                    { onSuccess: onClose },
+                    {
+                      onSuccess: () => {
+                        toast.success("Asset added to collection", {
+                          id: toastId,
+                          icon: <ToastIcon />,
+                          description: (
+                            <ToastDescription
+                              description={`Added to “${collection.title}”.`}
+                            />
+                          ),
+                          style: {
+                            backdropFilter: "-moz-initial",
+                            opacity: "-moz-initial",
+                            backgroundColor: "oklch(62.7% 0.194 149.214)",
+                            fontSize: "15px",
+                            font: "Space Grotesk",
+                            color: "#ffffff",
+                            fontWeight: "bolder",
+                          },
+                        });
+                        onClose();
+                      },
+                      onError: (error) => {
+                        toast("Could not add asset to collection", {
+                          id: toastId,
+                          icon: <ToastIcon />,
+                          description: (
+                            <ToastDescription
+                              description={
+                                error instanceof Error
+                                  ? error.message
+                                  : "Please try again."
+                              }
+                            />
+                          ),
+                          style: {
+                            backdropFilter: "-moz-initial",
+                            opacity: "-moz-initial",
+                            backgroundColor: "oklch(62.8% 0.258 29.234)",
+                            fontSize: "15px",
+                            font: "Space Grotesk",
+                            color: "#ffffff",
+                            fontWeight: "bolder",
+                          },
+                        });
+                      },
+                    },
                   );
                 }}
                 className="flex w-full items-center gap-3 rounded-xl border border-neutral-200 p-3 text-left transition hover:bg-neutral-50 disabled:opacity-60"
@@ -161,7 +222,7 @@ export default function CollectionPickerDialog({
             <Link
               href="/collections/new"
               onClick={onClose}
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] px-4 py-2 text-sm font-medium text-white transition-all hover:scale-105 active:scale-90"
+              className="font-bebas inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] px-4 py-2 text-sm font-medium tracking-wider text-white transition-all hover:scale-105 active:scale-90"
             >
               <Plus className="h-4 w-4" />
               Create a collection

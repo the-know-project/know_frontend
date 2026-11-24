@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Camera, Tag, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 import { useCreateCollection } from "../hooks/use-create-collection";
 
 export default function CreateCollectionForm() {
@@ -45,11 +48,21 @@ export default function CreateCollectionForm() {
     return () => URL.revokeObjectURL(previewUrl);
   }, [profileImage]);
 
-  const create = (event: FormEvent<HTMLFormElement>) => {
+  const create = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!title.trim()) return;
-    createCollection.mutate(
-      {
+    const toastId = toast.loading(`Creating collection: ${title.trim()}`, {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+
+    try {
+      const result = await createCollection.mutateAsync({
         title: title.trim(),
         description: description.trim(),
         tags,
@@ -59,13 +72,49 @@ export default function CreateCollectionForm() {
         profileImage,
         bannerPositionX,
         bannerPositionY,
-      },
-      {
-        onSuccess: (result) => {
-          if (result.data?.id) router.replace(`/collections/${result.data.id}`);
+      });
+
+      toast.success("Collection created", {
+        id: toastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription description="Your collection is ready." />
+        ),
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
         },
-      },
-    );
+      });
+      if (result.data?.id) router.replace(`/collections/${result.data.id}`);
+    } catch (error) {
+      toast("Could not create collection", {
+        id: toastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription
+            description={
+              error instanceof Error
+                ? error.message
+                : "Please try again."
+            }
+          />
+        ),
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+    }
   };
 
   const addTag = () => {
