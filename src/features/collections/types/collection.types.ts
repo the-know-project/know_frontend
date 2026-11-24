@@ -40,6 +40,8 @@ export interface Collection {
   completedSalesVolume: string;
   numOfArt: number;
   numOfLikes: number;
+  numOfViews: number;
+  isLikedByUser: boolean;
   createdAt: string;
   bannerUrl?: string;
   bannerPositionX: number;
