@@ -26,6 +26,19 @@ export interface CollectionAssetInput {
   fileId: string;
 }
 
+export interface CollectionMetricInput {
+  collectionId: string;
+}
+
+export interface CollectionViewResponse {
+  status: number;
+  data?: { counted: boolean };
+}
+
+export interface ToggleCollectionLikeInput extends CollectionMetricInput {
+  isLiked: boolean;
+}
+
 export interface DeleteCollectionInput {
   collectionId: string;
 }
