@@ -4,7 +4,16 @@ import { ArtistProfileToggle } from "@/src/constants/constants";
 import { formatDateToReadable } from "@/src/utils/date";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect, type KeyboardEvent } from "react";
-import { Folder, Heart, Image as ImageIcon, RefreshCw } from "lucide-react";
+import { createPortal } from "react-dom";
+import {
+  Folder,
+  Heart,
+  Image as ImageIcon,
+  MoreHorizontal,
+  Plus,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import InfiniteLoadingIndicator from "../../../explore/components/infinite-loading-indicator";
 import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
@@ -22,6 +31,7 @@ import UploadCanvas from "@/src/features/upload/components/upload-canvas";
 import { useArtistCollections } from "@/src/features/collections/hooks/use-artist-collections";
 import CollectionPickerDialog from "@/src/features/collections/components/collection-picker-dialog";
 import type { CollectionOverview } from "@/src/features/collections/types/collection.types";
+import { useDeleteCollection } from "@/src/features/collections/hooks/use-delete-collection";
 
 interface ArtistProfileGridProps {
   user: IUser;
@@ -30,14 +40,22 @@ interface ArtistProfileGridProps {
 const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const canFetch = useCanFetchData();
   const [activeToggle, setActiveToggle] = useState<string>("posts");
+  const [mounted, setMounted] = useState(false);
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const [editingPost, setEditingPost] = useState<TUserAssetData | null>(null);
   const [collectionAssetId, setCollectionAssetId] = useState<string | null>(
     null,
   );
+  const [openCollectionMenu, setOpenCollectionMenu] = useState<string | null>(
+    null,
+  );
+  const [deleteErrorId, setDeleteErrorId] = useState<string | null>(null);
+  const deleteCollection = useDeleteCollection();
 
   const toggleExploreContent = useToggleExploreContent();
+
+  useEffect(() => setMounted(true), []);
 
   const handleOpenArtDetails = (post: TUserAssetData) => {
     const content: IExploreContent = {
@@ -192,7 +210,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
             <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
               <ImageIcon aria-hidden="true" className="h-6 w-6" />
             </span>
-            <p className="font-helvetica text-lg font-semibold text-neutral-800">
+            <p className="font-bebas text-lg font-semibold tracking-wider text-neutral-800">
               No posts yet
             </p>
             <p className="font-grotesk mt-1 max-w-xs text-sm leading-6 text-neutral-500">
@@ -335,18 +353,6 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         aria-label={`${activeToggle} content`}
         className="mt-4 grid min-h-screen w-full grid-cols-1 items-start gap-y-6 bg-white pb-16 md:grid-cols-2 md:gap-x-5 md:gap-y-8 lg:gap-x-7"
       >
-        {activeToggle === "collections" &&
-          canFetch &&
-          collections.length > 0 && (
-            <div className="col-span-full flex justify-end">
-              <Link
-                href="/collections/new"
-                className="inline-flex min-h-10 items-center justify-center rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
-              >
-                Create a collection
-              </Link>
-            </div>
-          )}
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
           <div className="col-span-full flex w-full flex-col items-center justify-center">
@@ -381,18 +387,12 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
               <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
                 <Folder aria-hidden="true" className="h-6 w-6" />
               </span>
-              <p className="font-helvetica text-lg font-semibold text-neutral-800">
+              <p className="font-bebas text-lg font-semibold tracking-wider text-neutral-800">
                 No collections yet
               </p>
               <p className="font-grotesk mt-1 max-w-xs text-center text-sm leading-6 text-neutral-500">
                 Collections created by this artist will appear here.
               </p>
-              <Link
-                href="/collections/new"
-                className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
-              >
-                Create a collection
-              </Link>
             </div>
           )}
         {activeToggle === "collections" &&
@@ -400,7 +400,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
           !collectionsHookResult.isLoading &&
           !collectionsHookResult.isError &&
           collections.map((collection: CollectionOverview, index: number) => (
-            <motion.div
+            <motion.article
               key={collection.id}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -408,7 +408,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                 duration: 0.24,
                 delay: Math.min(index, 10) * 0.035,
               }}
-              className="w-full min-w-0"
+              className="relative w-full min-w-0"
             >
               <Link
                 href={`/collections/${collection.id}`}
@@ -434,7 +434,59 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                   </div>
                 </div>
               </Link>
-            </motion.div>
+              <div className="absolute top-3 right-3 z-10">
+                <button
+                  type="button"
+                  aria-label={`Collection actions for ${collection.title}`}
+                  aria-expanded={openCollectionMenu === collection.id}
+                  onClick={() => {
+                    setDeleteErrorId(null);
+                    setOpenCollectionMenu((current) =>
+                      current === collection.id ? null : collection.id,
+                    );
+                  }}
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-white bg-neutral-500 text-white shadow backdrop-blur transition"
+                >
+                  <MoreHorizontal className="h-5 w-5" />
+                </button>
+                {openCollectionMenu === collection.id && (
+                  <div className="absolute top-12 right-0 min-w-40 rounded-xl border border-neutral-200 bg-neutral-50 p-1.5 shadow-xl">
+                    <button
+                      type="button"
+                      disabled={deleteCollection.isPending}
+                      onClick={() => {
+                        if (
+                          !window.confirm(
+                            `Delete “${collection.title}”? This cannot be undone.`,
+                          )
+                        )
+                          return;
+                        setDeleteErrorId(null);
+                        deleteCollection.mutate(
+                          { collectionId: collection.id },
+                          {
+                            onSuccess: () => setOpenCollectionMenu(null),
+                            onError: () => setDeleteErrorId(collection.id),
+                          },
+                        );
+                      }}
+                      className="flex min-h-10 w-full items-center gap-2 rounded-lg px-3 text-left text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-60"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {deleteCollection.isPending &&
+                      deleteCollection.variables?.collectionId === collection.id
+                        ? "Deleting…"
+                        : "Delete"}
+                    </button>
+                  </div>
+                )}
+              </div>
+              {deleteErrorId === collection.id && (
+                <p role="alert" className="mt-2 text-sm text-red-600">
+                  Could not delete this collection. Please try again.
+                </p>
+              )}
+            </motion.article>
           ))}
         {activeToggle === "collections" &&
           collectionsHookResult.isFetchingNextPage && (
@@ -451,6 +503,20 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
             />
           )}
       </div>
+      {mounted &&
+        activeToggle === "collections" &&
+        canFetch &&
+        createPortal(
+          <Link
+            href="/collections/new"
+            aria-label="Create a collection"
+            title="Create a collection"
+            className="fixed right-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-[120] flex h-14 w-14 items-center justify-center rounded-full bg-[#1E3A8A] text-white shadow-xl transition hover:scale-105 focus-visible:ring-4 focus-visible:ring-indigo-300 focus-visible:outline-none"
+          >
+            <Plus className="h-7 w-7" aria-hidden="true" />
+          </Link>,
+          document.body,
+        )}
     </section>
   );
 };
