@@ -351,7 +351,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         role="tabpanel"
         tabIndex={0}
         aria-label={`${activeToggle} content`}
-        className="mt-4 grid min-h-screen w-full grid-cols-1 items-start gap-y-6 bg-white pb-16 md:grid-cols-2 md:gap-x-5 md:gap-y-8 lg:gap-x-7"
+        className="mt-4 grid min-h-screen w-full content-start grid-cols-1 items-start gap-y-6 bg-white pb-16 md:grid-cols-2 md:gap-x-5 md:gap-y-8 lg:gap-x-7"
       >
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
