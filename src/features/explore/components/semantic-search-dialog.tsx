@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { SemanticSearchAsset } from "../types/semantic-search.types";
+import { X } from "lucide-react";
 
 interface SemanticSearchDialogProps {
   query: string;
@@ -112,20 +113,20 @@ const SemanticSearchDialog = ({
                 className="rounded-full px-3 py-1 text-sm text-neutral-600 hover:bg-neutral-100"
                 aria-label="Close search results"
               >
-                Close
+                <X className="h-4 w-4" />
               </button>
             </header>
             <div className="max-h-[calc(84vh-76px)] overflow-y-auto p-4 sm:p-5">
               {isLoading ? (
                 <p
-                  className="py-12 text-center text-sm text-neutral-500"
+                  className="font-bebas py-12 text-center text-sm tracking-wider text-neutral-500"
                   role="status"
                 >
                   Finding artwork…
                 </p>
               ) : error ? (
                 <div className="py-12 text-center">
-                  <p className="text-sm text-red-600">
+                  <p className="font-bebas text-sm tracking-wider text-red-600">
                     Search couldn’t be completed.
                   </p>
                   <button
@@ -155,20 +156,20 @@ const SemanticSearchDialog = ({
                           className="h-24 w-24 shrink-0 rounded-lg bg-neutral-100 object-cover"
                         />
                         <span className="min-w-0 py-1">
-                          <span className="block truncate font-semibold text-neutral-900">
+                          <span className="font-helvetica block truncate text-neutral-900">
                             {asset.fileName}
                           </span>
-                          <span className="mt-1 block text-sm text-neutral-700">
+                          <span className="font-grotesk mt-1 block text-sm text-neutral-700 uppercase">
                             {asset.formattedPrice ?? "Price unavailable"}
                           </span>
-                          <span className="mt-1 block truncate text-xs text-neutral-500">
+                          <span className="font-bebas mt-1 block truncate text-xs tracking-wider text-neutral-500">
                             {[
                               ...(asset.categories || []),
                               ...(asset.tags || []),
                             ].join(" · ") || "Artwork"}
                           </span>
                           {asset.similarity != null && (
-                            <span className="mt-1 block text-xs text-neutral-400">
+                            <span className="font-grotesk mt-1 block text-xs text-neutral-400 uppercase">
                               {Math.round(asset.similarity * 100)}% relevance
                             </span>
                           )}
