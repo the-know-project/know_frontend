@@ -90,17 +90,17 @@ const ProfileCard: React.FC<IProfileCard> = ({
         </div>
         <div className="mt-3 flex w-full min-w-0 items-center justify-between gap-3">
           <div className="flex min-w-0 flex-col items-start">
-            <h3 className="font-helvetica w-full truncate text-sm text-neutral-900 capitalize sm:text-base">
+            <h3 className="font-helvetica w-full truncate font-semibold text-neutral-900 capitalize">
               {title}
             </h3>
-            <p className="font-grotesk mt-0.5 text-xs text-neutral-500">
+            <p className="font-grotesk mt-0.5 text-xs font-light text-neutral-500">
               {createdAt}
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <div className="flex items-center gap-1">
-              <IconEye width={15} height={15} className="text-neutral-600" />
-              <p className="font-grotesk text-xs text-neutral-600">
+              <IconEye width={15} height={15} className="text-neutral-500" />
+              <p className="font-grotesk text-xs font-light text-neutral-600">
                 {formatViewCount(views)}
               </p>
             </div>
@@ -115,9 +115,9 @@ const ProfileCard: React.FC<IProfileCard> = ({
                 <IconPencil
                   width={15}
                   height={15}
-                  className="text-neutral-600"
+                  className="text-neutral-500"
                 />
-                <span>Edit</span>
+                <span className="font-grotesk font-light">Edit</span>
               </button>
             )}
           </div>
