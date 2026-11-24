@@ -3,7 +3,7 @@
 import { BlankProfilePicture } from "@/src/constants/constants";
 import { useArtistContent } from "../hooks/use-artist-content";
 import { useEffect, useRef, useState } from "react";
-import { X, RefreshCw } from "lucide-react";
+import { X, RefreshCw, UserRoundPlus } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
@@ -11,6 +11,11 @@ import Link from "next/link";
 import { Folder, Heart, Image as ImageIcon } from "lucide-react";
 import ProfileCard from "@/src/features/profile/components/profile-card";
 import { useToggleExploreContent } from "../state/explore-content.store";
+import { useTokenStore } from "@/src/features/auth/state/store";
+import { selectUserId } from "@/src/features/auth/state/selectors/token.selectors";
+import { useFollowUser } from "@/src/features/metrics/hooks/use-follow-user";
+import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
+import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
 
 interface Props {
   artistId: string;
@@ -29,10 +34,26 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
   const active = tab === "posts" ? posts : collections;
   const sentinel = useRef<HTMLDivElement>(null);
   const toggleExploreContent = useToggleExploreContent();
+  const viewerId = useTokenStore(selectUserId);
+  const { mutateAsync: followUser, isPending: isFollowingPending } =
+    useFollowUser();
+  const { mutateAsync: unfollowUser, isPending: isUnfollowingPending } =
+    useUnfollowUser();
+  const { useIsUserFollowing } = useFollowActions();
+  const isFollowing = useIsUserFollowing(viewerId || "", artistId);
+  const isFollowPending = isFollowingPending || isUnfollowingPending;
   const profile =
     posts.data?.pages[0]?.data.profile ??
     collections.data?.pages[0]?.data.profile;
   const items = active.data?.pages.flatMap((page) => page.data.items) ?? [];
+
+  const handleFollowToggle = async () => {
+    if (isFollowing) {
+      await unfollowUser({ followingId: artistId });
+    } else {
+      await followUser({ followingId: artistId });
+    }
+  };
 
   useEffect(() => setMounted(true), []);
 
@@ -141,6 +162,17 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                 <p className="text-xs text-neutral-500">Collections</p>
               </div>
             </div>
+            {viewerId !== artistId && (
+              <button
+                type="button"
+                onClick={() => void handleFollowToggle()}
+                disabled={isFollowPending}
+                className="font-grotesk mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#1E3A8A] px-5 text-sm font-medium text-white transition hover:bg-[#172f70] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <UserRoundPlus className="h-4 w-4" aria-hidden="true" />
+                {isFollowing ? "Unfollow" : "Follow"}
+              </button>
+            )}
           </header>
           <div
             role="tablist"
@@ -184,42 +216,51 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {items.map((item, index) =>
                   tab === "posts" ? (
-                    <ProfileCard
+                    <motion.div
                       key={item.fileId}
-                      id={item.fileId}
-                      title={item.name}
-                      views={item.numOfViews ?? 0}
-                      createdAt={new Date(item.createdAt).toLocaleDateString()}
-                      image={item.url}
-                      isListed={Boolean(item.isListed)}
-                      showEditControls={false}
-                      onClick={() => {
-                        onClose();
-                        toggleExploreContent(item.fileId, {
-                          id: item.fileId,
-                          userId: artistId,
-                          creatorProfileUrl:
-                            profile?.imageUrl || BlankProfilePicture,
-                          creatorName:
-                            `${profile?.firstName ?? ""} ${profile?.lastName ?? ""}`.trim(),
-                          artName: item.name,
-                          description: item.description,
-                          artWorkUrl: item.url,
-                          highResUrl: item.highResUrl || item.url,
-                          extraUrls: item.extraUrls || [],
-                          highResExtraUrls: item.extraUrls || [],
-                          categories: item.categories || [],
-                          tags: item.tags || [],
-                          price: Number(item.price) || 0,
-                          size: item.size || {},
-                          numOfLikes: item.numOfLikes || 0,
-                          numOfViews: item.numOfViews || 0,
-                          numOfComments: 0,
-                          isListed: Boolean(item.isListed),
-                          createdAt: new Date(item.createdAt),
-                        });
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.25,
+                        delay: Math.min(index * 0.04, 0.2),
                       }}
-                    />
+                    >
+                      <ProfileCard
+                        id={item.fileId}
+                        title={item.name}
+                        views={item.numOfViews ?? 0}
+                        createdAt={new Date(item.createdAt).toLocaleDateString()}
+                        image={item.url}
+                        isListed={Boolean(item.isListed)}
+                        showEditControls={false}
+                        onClick={() => {
+                          onClose();
+                          toggleExploreContent(item.fileId, {
+                            id: item.fileId,
+                            userId: artistId,
+                            creatorProfileUrl:
+                              profile?.imageUrl || BlankProfilePicture,
+                            creatorName:
+                              `${profile?.firstName ?? ""} ${profile?.lastName ?? ""}`.trim(),
+                            artName: item.name,
+                            description: item.description,
+                            artWorkUrl: item.url,
+                            highResUrl: item.highResUrl || item.url,
+                            extraUrls: item.extraUrls || [],
+                            highResExtraUrls: item.extraUrls || [],
+                            categories: item.categories || [],
+                            tags: item.tags || [],
+                            price: Number(item.price) || 0,
+                            size: item.size || {},
+                            numOfLikes: item.numOfLikes || 0,
+                            numOfViews: item.numOfViews || 0,
+                            numOfComments: 0,
+                            isListed: Boolean(item.isListed),
+                            createdAt: new Date(item.createdAt),
+                          });
+                        }}
+                      />
+                    </motion.div>
                   ) : (
                     <motion.div
                       key={item.id}
