@@ -522,3 +522,48 @@
     0 0 5px rgba(255, 255, 255, 0.3),
     0 0 10px rgba(255, 255, 255, 0.2);
 }
+
+.ios-range-slider {
+  height: 6px;
+  appearance: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+.ios-range-slider::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  appearance: none;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  -webkit-appearance: none;
+}
+
+.ios-range-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.ios-range-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.ios-range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+}
+
+.ios-range-slider:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.28);
+  outline-offset: 5px;
+}
