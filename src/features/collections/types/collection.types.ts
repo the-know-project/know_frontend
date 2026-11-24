@@ -22,6 +22,8 @@ export interface Collection {
   numOfLikes: number;
   createdAt: string;
   bannerUrl?: string;
+  bannerPositionX: number;
+  bannerPositionY: number;
   imageUrl?: string;
   assetData: CollectionAsset[];
 }
@@ -48,6 +50,26 @@ export interface ArtistCollectionsPage {
       currentPage: number;
       totalItems: number;
       totalPages: number;
+      hasNextPage: boolean;
+    };
+  };
+}
+
+export interface ArtistAssetOverview {
+  fileId: string;
+  name: string;
+  url: string;
+  highResUrl?: string;
+  price?: string | number;
+  createdAt: string;
+}
+
+export interface ArtistAssetsPage {
+  status: number;
+  data: {
+    items: ArtistAssetOverview[];
+    pagination: {
+      currentPage: number;
       hasNextPage: boolean;
     };
   };
