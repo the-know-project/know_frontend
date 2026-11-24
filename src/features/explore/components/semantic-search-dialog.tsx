@@ -103,7 +103,7 @@ const SemanticSearchDialog = ({
                 <p className="font-bebas text-xs tracking-widest text-neutral-500 uppercase">
                   Artwork search
                 </p>
-                <h2 className="font-grotesk text-lg font-semibold text-neutral-900">
+                <h2 className="font-grotesk text-lg font-semibold text-neutral-900 capitalize">
                   “{query}”
                 </h2>
               </div>
