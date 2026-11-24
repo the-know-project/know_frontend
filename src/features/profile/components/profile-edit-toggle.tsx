@@ -17,6 +17,7 @@ interface IProfileEditToggle {
   image: string;
   isListed: boolean;
   onEditPost?: () => void;
+  onAddToCollection?: () => void;
 }
 
 const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
@@ -24,6 +25,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
   id,
   isListed,
   onEditPost,
+  onAddToCollection,
 }) => {
   const { mutateAsync: unlistAsset } = useUnlistAsset();
   const { mutateAsync: deleteAsset } = useDeleteAsset();
@@ -144,6 +146,10 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
     }
     if (itemId === "4") {
       void handleDeleteAsset();
+      setEditToggled(false);
+    }
+    if (itemId === "5") {
+      onAddToCollection?.();
       setEditToggled(false);
     }
   };

@@ -19,6 +19,7 @@ interface IProfileCard {
   onClick?: () => void;
   onEditPost?: () => void;
   showEditControls?: boolean;
+  onAddToCollection?: () => void;
 }
 
 const ProfileCard: React.FC<IProfileCard> = ({
@@ -31,6 +32,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
   onClick,
   onEditPost,
   showEditControls = true,
+  onAddToCollection,
 }) => {
   const role = useRoleStore((state) => state.role);
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
@@ -44,6 +46,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
             id={id as string}
             isListed={isListed}
             onEditPost={onEditPost}
+            onAddToCollection={onAddToCollection}
           />
         )}
       </div>
