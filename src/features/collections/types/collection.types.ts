@@ -4,6 +4,25 @@ export interface CollectionAsset {
   artTitle: string;
   artPrice: string | number;
   numOfLikes: number;
+  artDescription?: string | null;
+  artCategories?: string[] | null;
+  artTags?: string[] | null;
+  artSize?: {
+    width?: number;
+    height?: number;
+    weight?: number;
+    depth?: number;
+    diameter?: number;
+    length?: number;
+    aspectRatio?: string;
+    weightUnit?: string;
+    dimensionUnit?: string;
+  } | null;
+  isArtListed?: boolean;
+  artistProfileUrl?: string | null;
+  artistId?: string | null;
+  artCreatedAt?: string | Date | null;
+  artViewCount?: number | null;
 }
 
 export interface Collection {
