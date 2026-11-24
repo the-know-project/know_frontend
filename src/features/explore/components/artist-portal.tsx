@@ -120,6 +120,8 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
             >
               <X className="h-5 w-5" />
             </button>
+
+            {/*Profile Picture*/}
             <Image
               src={profile?.imageUrl || BlankProfilePicture}
               alt=""
@@ -127,6 +129,8 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
               height={88}
               className="h-22 w-22 rounded-full object-cover"
             />
+
+            {/*Name, username, description*/}
             <h2 className="mt-3 text-xl font-bold text-neutral-900 capitalize">
               {profile
                 ? `${profile.firstName ?? ""} ${profile.lastName ?? ""}`.trim() ||
@@ -142,6 +146,8 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                 {profile.description}
               </p>
             )}
+
+            {/*Artist Engagment metircs*/}
             <div className="font-grotesk mt-4 flex items-center justify-center gap-8 text-center">
               <div>
                 <p className="text-base font-semibold text-neutral-900">
@@ -162,12 +168,14 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                 <p className="text-xs text-neutral-500">Collections</p>
               </div>
             </div>
+
+            {/*Follow button*/}
             {viewerId !== artistId && (
               <button
                 type="button"
                 onClick={() => void handleFollowToggle()}
                 disabled={isFollowPending}
-                className="font-grotesk mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#1E3A8A] px-5 text-sm font-medium text-white transition hover:bg-[#172f70] disabled:cursor-not-allowed disabled:opacity-60"
+                className="font-bebas mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#1E3A8A] px-5 text-sm font-medium tracking-wider text-white transition hover:bg-[#172f70] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <UserRoundPlus className="h-4 w-4" aria-hidden="true" />
                 {isFollowing ? "Unfollow" : "Follow"}
@@ -177,7 +185,7 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
           <div
             role="tablist"
             aria-label="Artist content"
-            className="flex shrink-0 border-b"
+            className="relative flex shrink-0"
           >
             {(["posts", "collections"] as const).map((value) => (
               <button
@@ -186,11 +194,20 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                 role="tab"
                 aria-selected={tab === value}
                 onClick={() => setTab(value)}
-                className={`font-bebas flex-1 py-3 text-sm font-bold tracking-wider capitalize ${tab === value ? "border-b-2 border-neutral-900 text-neutral-900" : "text-neutral-500"}`}
+                className={`font-bebas relative z-10 flex-1 border-b-2 border-transparent py-3 text-sm font-bold tracking-wider capitalize transition-colors ${tab === value ? "text-neutral-900" : "text-neutral-500"}`}
               >
                 {value}
               </button>
             ))}
+            <div
+              aria-hidden="true"
+              className="absolute right-0 bottom-0 left-0 h-[2px] bg-gray-200"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute bottom-0 h-[2px] w-1/2 rounded-full bg-gray-900 transition-all duration-300"
+              style={{ left: tab === "posts" ? "0%" : "50%" }}
+            />
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
             {active.isLoading ? (
@@ -229,7 +246,9 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                         id={item.fileId}
                         title={item.name}
                         views={item.numOfViews ?? 0}
-                        createdAt={new Date(item.createdAt).toLocaleDateString()}
+                        createdAt={new Date(
+                          item.createdAt,
+                        ).toLocaleDateString()}
                         image={item.url}
                         isListed={Boolean(item.isListed)}
                         showEditControls={false}
