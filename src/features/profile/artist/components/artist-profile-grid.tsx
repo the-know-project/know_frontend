@@ -385,7 +385,7 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
           collections.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-20">
               <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
-                <Folder aria-hidden="true" className="h-6 w-6" />
+                <Folder aria-hidden="true" className="h-8 w-8" />
               </span>
               <p className="font-bebas text-lg font-semibold tracking-wider text-neutral-800">
                 No collections yet
@@ -418,16 +418,18 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                   <Folder className="h-20 w-20" strokeWidth={1.1} />
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-neutral-900">
+                  <h3 className="font-helvetica font-semibold text-neutral-900 capitalize">
                     {collection.title}
                   </h3>
                   <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-neutral-500">
-                    <span className="inline-flex items-center gap-1">
+                    <span className="font-grotesk inline-flex items-center gap-1 capitalize">
                       <ImageIcon className="h-3.5 w-3.5" />
                       {collection.assetCount ?? 0} assets
                     </span>
-                    <span>{formatDateToReadable(collection.createdAt)}</span>
-                    <span className="inline-flex items-center gap-1">
+                    <span className="font-grotesk capitalize">
+                      {formatDateToReadable(collection.createdAt)}
+                    </span>
+                    <span className="font-grotesk inline-flex items-center gap-1">
                       <Heart className="h-3.5 w-3.5" />
                       {collection.likeCount ?? 0}
                     </span>
@@ -504,13 +506,21 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
           )}
       </div>
       {mounted &&
-        activeToggle === "collections" &&
+        (activeToggle === "posts" || activeToggle === "collections") &&
         canFetch &&
         createPortal(
           <Link
-            href="/collections/new"
-            aria-label="Create a collection"
-            title="Create a collection"
+            href={activeToggle === "posts" ? "/upload" : "/collections/new"}
+            aria-label={
+              activeToggle === "posts"
+                ? "Upload an artwork"
+                : "Create a collection"
+            }
+            title={
+              activeToggle === "posts"
+                ? "Upload an artwork"
+                : "Create a collection"
+            }
             className="fixed right-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-[120] flex h-14 w-14 items-center justify-center rounded-full bg-[#1E3A8A] text-white shadow-xl transition hover:scale-105 focus-visible:ring-4 focus-visible:ring-indigo-300 focus-visible:outline-none"
           >
             <Plus className="h-7 w-7" aria-hidden="true" />
