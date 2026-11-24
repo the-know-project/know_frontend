@@ -4,7 +4,8 @@ import { ArtistProfileToggle } from "@/src/constants/constants";
 import { formatDateToReadable } from "@/src/utils/date";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect, type KeyboardEvent } from "react";
-import { Image as ImageIcon, RefreshCw } from "lucide-react";
+import { Folder, Heart, Image as ImageIcon, RefreshCw } from "lucide-react";
+import Link from "next/link";
 import InfiniteLoadingIndicator from "../../../explore/components/infinite-loading-indicator";
 import { useInfiniteScroll } from "../../../explore/hooks/use-infinite-scroll";
 import ProfileCard from "../../components/profile-card";
@@ -18,6 +19,9 @@ import ArtDetails from "@/src/shared/components/art-details";
 import { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
 import { useToggleExploreContent } from "@/src/features/explore/state/explore-content.store";
 import UploadCanvas from "@/src/features/upload/components/upload-canvas";
+import { useArtistCollections } from "@/src/features/collections/hooks/use-artist-collections";
+import CollectionPickerDialog from "@/src/features/collections/components/collection-picker-dialog";
+import type { CollectionOverview } from "@/src/features/collections/types/collection.types";
 
 interface ArtistProfileGridProps {
   user: IUser;
@@ -29,6 +33,9 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const [editingPost, setEditingPost] = useState<TUserAssetData | null>(null);
+  const [collectionAssetId, setCollectionAssetId] = useState<string | null>(
+    null,
+  );
 
   const toggleExploreContent = useToggleExploreContent();
 
@@ -89,6 +96,10 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
     userId: user.id,
     limit: 12,
   });
+  const collectionsHookResult = useArtistCollections(
+    user.id,
+    canFetch && activeToggle === "collections",
+  );
 
   const infiniteScrollResult = useInfiniteScroll({
     onLoadMore: postsHookResult.loadMore,
@@ -96,6 +107,13 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
     isLoadingMore: postsHookResult.isLoadingMore,
     threshold: 200,
     enabled: activeToggle === "posts",
+  });
+  const collectionsScroll = useInfiniteScroll({
+    onLoadMore: () => collectionsHookResult.fetchNextPage(),
+    hasNextPage: Boolean(collectionsHookResult.hasNextPage),
+    isLoadingMore: collectionsHookResult.isFetchingNextPage,
+    threshold: 200,
+    enabled: activeToggle === "collections",
   });
 
   const {
@@ -109,6 +127,8 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
   } = postsHookResult;
 
   const { sentinelRef } = infiniteScrollResult;
+  const collections =
+    collectionsHookResult.data?.pages.flatMap((page) => page.data.items) ?? [];
 
   const variants = {
     hidden: { opacity: 0, x: -20 },
@@ -205,11 +225,12 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
                 title={post.name}
                 views={post.numOfViews}
                 createdAt={formatDateToReadable(post.createdAt.toString())}
-                image={post.url}
+                image={post.highResUrl || post.url}
                 role={user.role as string}
                 isListed={post.isListed}
                 onClick={() => handleOpenArtDetails(post)}
                 onEditPost={() => setEditingPost(post)}
+                onAddToCollection={() => setCollectionAssetId(post.fileId)}
               />
             </motion.div>
           ))}
@@ -253,6 +274,13 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
             onComplete={() => setEditingPost(null)}
           />
         </div>
+      )}
+      {collectionAssetId && (
+        <CollectionPickerDialog
+          artistId={user.id}
+          fileId={collectionAssetId}
+          onClose={() => setCollectionAssetId(null)}
+        />
       )}
       <ArtDetails />
       <div className="w-full items-center justify-center">
@@ -307,19 +335,121 @@ const ArtistProfileGrid = ({ user }: ArtistProfileGridProps) => {
         aria-label={`${activeToggle} content`}
         className="mt-4 grid min-h-screen w-full grid-cols-1 items-start gap-y-6 bg-white pb-16 md:grid-cols-2 md:gap-x-5 md:gap-y-8 lg:gap-x-7"
       >
+        {activeToggle === "collections" &&
+          canFetch &&
+          collections.length > 0 && (
+            <div className="col-span-full flex justify-end">
+              <Link
+                href="/collections/new"
+                className="inline-flex min-h-10 items-center justify-center rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+              >
+                Create a collection
+              </Link>
+            </div>
+          )}
         {activeToggle === "posts" && renderPostsContent()}
         {activeToggle === "stats" && (
           <div className="col-span-full flex w-full flex-col items-center justify-center">
             <Stats />
           </div>
         )}
-        {activeToggle === "drafts" && (
-          <div className="col-span-full flex w-full flex-col items-center justify-center py-20">
-            <p className="font-bricolage text-gray-500">
-              Collections coming soon...
-            </p>
+        {activeToggle === "collections" &&
+          (!canFetch || collectionsHookResult.isLoading) && (
+            <div className="col-span-full">
+              <ProfileCardSkeletonGrid />
+            </div>
+          )}
+        {activeToggle === "collections" && collectionsHookResult.isError && (
+          <div className="col-span-full flex flex-col items-center justify-center py-20">
+            <p className="mb-4 text-gray-500">Failed to load collections.</p>
+            <button
+              type="button"
+              onClick={() => void collectionsHookResult.refetch()}
+              className="button_base inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Try Again
+            </button>
           </div>
         )}
+        {activeToggle === "collections" &&
+          canFetch &&
+          !collectionsHookResult.isLoading &&
+          !collectionsHookResult.isError &&
+          collections.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center py-20">
+              <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
+                <Folder aria-hidden="true" className="h-6 w-6" />
+              </span>
+              <p className="font-helvetica text-lg font-semibold text-neutral-800">
+                No collections yet
+              </p>
+              <p className="font-grotesk mt-1 max-w-xs text-center text-sm leading-6 text-neutral-500">
+                Collections created by this artist will appear here.
+              </p>
+              <Link
+                href="/collections/new"
+                className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+              >
+                Create a collection
+              </Link>
+            </div>
+          )}
+        {activeToggle === "collections" &&
+          canFetch &&
+          !collectionsHookResult.isLoading &&
+          !collectionsHookResult.isError &&
+          collections.map((collection: CollectionOverview, index: number) => (
+            <motion.div
+              key={collection.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.24,
+                delay: Math.min(index, 10) * 0.035,
+              }}
+              className="w-full min-w-0"
+            >
+              <Link
+                href={`/collections/${collection.id}`}
+                className="group block overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="flex aspect-[4/3] items-center justify-center bg-neutral-200 text-neutral-400 transition group-hover:bg-neutral-300">
+                  <Folder className="h-20 w-20" strokeWidth={1.1} />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-neutral-900">
+                    {collection.title}
+                  </h3>
+                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-neutral-500">
+                    <span className="inline-flex items-center gap-1">
+                      <ImageIcon className="h-3.5 w-3.5" />
+                      {collection.assetCount ?? 0} assets
+                    </span>
+                    <span>{formatDateToReadable(collection.createdAt)}</span>
+                    <span className="inline-flex items-center gap-1">
+                      <Heart className="h-3.5 w-3.5" />
+                      {collection.likeCount ?? 0}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        {activeToggle === "collections" &&
+          collectionsHookResult.isFetchingNextPage && (
+            <div className="col-span-full flex justify-center py-4">
+              <InfiniteLoadingIndicator />
+            </div>
+          )}
+        {activeToggle === "collections" &&
+          collectionsHookResult.hasNextPage && (
+            <div
+              ref={collectionsScroll.sentinelRef}
+              aria-hidden="true"
+              className="col-span-full h-6 w-full"
+            />
+          )}
       </div>
     </section>
   );
