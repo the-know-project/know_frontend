@@ -15,9 +15,16 @@ export function useAddAssetToCollection() {
       Promise.all([
         queryClient.invalidateQueries({
           queryKey: ["collection", input.collectionId],
+          refetchType: "all",
         }),
-        queryClient.invalidateQueries({ queryKey: ["artist-collections"] }),
-        queryClient.invalidateQueries({ queryKey: ["explore-artist-content"] }),
+        queryClient.invalidateQueries({
+          queryKey: ["artist-collections"],
+          refetchType: "all",
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["explore-artist-content"],
+          refetchType: "all",
+        }),
       ]),
   });
 }
