@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const MAX_UPLOAD_FILE_SIZE_BYTES = 20 * 1024 * 1024;
+
 // Schema for form state (allows optional file)
 export const UploadFormSchema = z.object({
   title: z
@@ -11,8 +13,8 @@ export const UploadFormSchema = z.object({
       z
         .instanceof(File, { message: "Please select a file" })
         .refine(
-          (file) => file.size <= 120 * 1024 * 1024,
-          "File size must be less than 120MB",
+          (file) => file.size <= MAX_UPLOAD_FILE_SIZE_BYTES,
+          "File size must be 20 MB or smaller",
         )
         .refine((file) => {
           const validTypes = ["image/png", "image/jpeg", "video/mp4"];
@@ -34,8 +36,8 @@ export const UploadSchema = z.object({
       z
         .instanceof(File, { message: "Please select a file" })
         .refine(
-          (file) => file.size <= 120 * 1024 * 1024,
-          "File size must be less than 120MB",
+          (file) => file.size <= MAX_UPLOAD_FILE_SIZE_BYTES,
+          "File size must be 20 MB or smaller",
         )
         .refine((file) => {
           const validTypes = ["image/png", "image/jpeg", "video/mp4"];
