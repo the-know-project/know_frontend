@@ -183,25 +183,21 @@ export default function CollectionDetail({ collectionId }: Props) {
   };
 
   const tagsContent = (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.4 }}
-      variants={{
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.12 } },
-      }}
+    <div
       className="mt-3 flex w-full flex-wrap items-center gap-2 rounded-xl bg-neutral-100 px-3 py-3"
       aria-label="Collection tags"
     >
-      {displayedTags.map((tag) => (
+      {displayedTags.map((tag, index) => (
         <motion.span
           key={tag}
-          variants={{
-            hidden: { opacity: 0, y: 10 },
-            visible: { opacity: 1, y: 0 },
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{
+            duration: 0.35,
+            delay: Math.min(index, 8) * 0.12,
+            ease: "easeOut",
           }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
           className="font-bebas inline-flex min-h-8 items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium tracking-widest text-neutral-700"
         >
           <Tag className="h-4 w-4 text-neutral-500" aria-hidden="true" />
@@ -225,11 +221,14 @@ export default function CollectionDetail({ collectionId }: Props) {
           <motion.button
             type="button"
             aria-label="Add collection tag"
-            variants={{
-              hidden: { opacity: 0, y: 10 },
-              visible: { opacity: 1, y: 0 },
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{
+              duration: 0.35,
+              delay: Math.min(displayedTags.length, 8) * 0.12,
+              ease: "easeOut",
             }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
             onClick={() => setTagInputOpen((open) => !open)}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-neutral-400 text-neutral-600 hover:bg-neutral-100"
           >
@@ -263,7 +262,7 @@ export default function CollectionDetail({ collectionId }: Props) {
           )}
         </>
       )}
-    </motion.div>
+    </div>
   );
 
   return (
@@ -423,7 +422,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                   className="font-bebas rounded-lg bg-[#1E3A8A] px-4 py-2 tracking-wider text-white"
                   disabled={update.isPending}
                 >
-                  {update.isPending ? "Saving…" : "Save details"}
+                  {update.isPending ? "Saving…" : "Save"}
                 </button>
                 {update.isError && (
                   <p className="text-sm text-red-600">
@@ -463,7 +462,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                 className="flex items-center gap-2"
               >
                 <Images aria-hidden="true" className="h-4 w-4 text-blue-600" />
-                <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                <span className="font-grotesk text-xs text-neutral-700 uppercase lg:text-sm">
                   {formatMetricCount(collection.numOfArt, "asset")}
                 </span>
               </motion.div>
@@ -479,7 +478,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                 className="flex items-center gap-2"
               >
                 <Eye aria-hidden="true" className="h-4 w-4 text-sky-600" />
-                <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                <span className="font-grotesk text-xs text-neutral-700 uppercase lg:text-sm">
                   {formatMetricCount(collection.numOfViews, "view")}
                 </span>
               </motion.div>
@@ -496,7 +495,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                   className="flex items-center gap-2"
                 >
                   <Heart aria-hidden="true" className="h-4 w-4 text-rose-500" />
-                  <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                  <span className="font-grotesk text-xs text-neutral-700 uppercase lg:text-sm">
                     {formatMetricCount(collection.numOfLikes, "like")}
                   </span>
                 </motion.div>
@@ -534,7 +533,10 @@ export default function CollectionDetail({ collectionId }: Props) {
               )}
             </motion.div>
             {collectionLike.isError && (
-              <p role="alert" className="mt-2 text-xs text-red-600">
+              <p
+                role="alert"
+                className="font-bebas mt-2 text-xs tracking-wider text-red-600"
+              >
                 Could not update the collection like. Please try again.
               </p>
             )}
@@ -543,13 +545,13 @@ export default function CollectionDetail({ collectionId }: Props) {
                 aria-hidden="true"
                 className="h-4 w-4 text-emerald-600"
               />
-              <span className="font-grotesk text-xs capitalize lg:text-sm">
+              <span className="font-grotesk text-xs text-neutral-700 uppercase lg:text-sm">
                 Collection price: {money(collection.price)}
               </span>
             </p>
             <p className="mt-2 flex items-center gap-2">
               <Images aria-hidden="true" className="h-4 w-4 text-violet-600" />
-              <span className="font-grotesk text-xs capitalize lg:text-sm">
+              <span className="font-grotesk text-xs text-neutral-700 uppercase lg:text-sm">
                 Asset price total: {money(collection.assetPriceTotal)}
               </span>
             </p>
@@ -558,7 +560,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                 aria-hidden="true"
                 className="h-4 w-4 text-amber-600"
               />
-              <span className="font-grotesk text-xs capitalize lg:text-sm">
+              <span className="font-grotesk text-xs text-neutral-700 uppercase lg:text-sm">
                 Completed sales: {money(collection.completedSalesVolume)}
               </span>
             </p>
