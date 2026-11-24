@@ -41,7 +41,7 @@ const ExploreFollowButton = ({ artistId }: ExploreFollowButtonProps) => {
       type="button"
       onClick={handleFollowUser}
       disabled={isPending}
-      className="font-grotesk min-h-11 w-full cursor-pointer rounded-xl bg-[#1E3A8A] px-4 py-2 text-sm font-semibold tracking-normal text-white shadow-sm hover:bg-indigo-800"
+      className="font-bebas min-h-11 w-full cursor-pointer rounded-xl bg-[#1E3A8A] px-4 py-2 text-sm tracking-wider text-white shadow-sm hover:bg-indigo-800"
     >
       {isFollowing === true ? (
         <UserRoundCheck className="h-4 w-4" />

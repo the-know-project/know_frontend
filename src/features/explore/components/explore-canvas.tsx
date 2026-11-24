@@ -136,12 +136,12 @@ const ExploreCanvasContent = ({
     return (
       <section className="flex w-full flex-col items-center justify-center py-20">
         <div className="text-center">
-          <p className="font-bricolage mb-4 text-gray-500">
-            Failed to load assets: {error}
+          <p className="font-bebas mb-4 tracking-wider text-neutral-500">
+            Something went wrong
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="button_base px-4 py-2"
+            className="font-bebas bg-[#1E3A8A] px-4 py-2 tracking-wider"
           >
             Try Again
           </button>
