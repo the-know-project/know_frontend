@@ -3,6 +3,7 @@ import type {
   CollectionAssetInput,
   CreateCollectionInput,
   CreateCollectionResponse,
+  DeleteCollectionInput,
   FetchCollectionResponse,
   UpdateCollectionInput,
 } from "../dto/collection.dto";
@@ -31,9 +32,12 @@ export const createCollection = (input: CreateCollectionInput) => {
   body.append("currency", input.currency);
   if (input.bannerImage) body.append("bannerImage", input.bannerImage);
   if (input.profileImage) body.append("profileImage", input.profileImage);
+  body.append("bannerPositionX", String(input.bannerPositionX ?? 50));
+  body.append("bannerPositionY", String(input.bannerPositionY ?? 50));
   return ApiClient.post<CreateCollectionResponse>(
     COLLECTIONS_ROUTES.CREATE_COLLECTION,
     body,
+    { headers: { "Content-Type": undefined } },
   );
 };
 
@@ -44,7 +48,11 @@ export const updateCollection = (input: UpdateCollectionInput) => {
   body.append("description", input.description);
   if (input.bannerImage) body.append("bannerImage", input.bannerImage);
   if (input.profileImage) body.append("profileImage", input.profileImage);
-  return ApiClient.patch(COLLECTIONS_ROUTES.UPDATE_COLLECTION, body);
+  body.append("bannerPositionX", String(input.bannerPositionX ?? 50));
+  body.append("bannerPositionY", String(input.bannerPositionY ?? 50));
+  return ApiClient.patch(COLLECTIONS_ROUTES.UPDATE_COLLECTION, body, {
+    headers: { "Content-Type": undefined },
+  });
 };
 
 export const addAssetToCollection = (input: CollectionAssetInput) =>
@@ -52,3 +60,11 @@ export const addAssetToCollection = (input: CollectionAssetInput) =>
 
 export const removeAssetFromCollection = (input: CollectionAssetInput) =>
   ApiClient.delete("/api/collections/removeFromCollection", input);
+
+export const deleteCollection = (input: DeleteCollectionInput) =>
+  ApiClient.delete(COLLECTIONS_ROUTES.DELETE_COLLECTION, input);
+
+export const fetchArtistAssets = (artistId: string, page: number, limit = 12) =>
+  ApiClient.get<import("../types/collection.types").ArtistAssetsPage>(
+    `/api/asset/artist-content?${new URLSearchParams({ artistId, type: "posts", page: String(page), limit: String(limit) })}`,
+  );
