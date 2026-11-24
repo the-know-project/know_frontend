@@ -4,4 +4,5 @@ export enum COLLECTIONS_ROUTES {
   UPDATE_COLLECTION = "/api/collections/updateCollection",
   ADD_TO_COLLECTION = "/api/collections/addToCollection",
   REMOVE_FROM_COLLECTION = "/api/collections/removeFromCollection",
+  DELETE_COLLECTION = "/api/collections/deleteCollection",
 }
