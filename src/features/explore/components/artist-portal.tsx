@@ -232,6 +232,7 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                     >
                       <Link
                         href={`/collections/${item.id}`}
+                        onClick={onClose}
                         className="group block overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                       >
                         <div className="flex aspect-[4/3] items-center justify-center bg-neutral-200 text-neutral-400 transition group-hover:bg-neutral-300">
