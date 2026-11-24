@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useEffect } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useCreateCollection } from "../hooks/use-create-collection";
@@ -10,6 +9,8 @@ export default function CreateCollectionForm() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
   const [price, setPrice] = useState("0");
   const [currency, setCurrency] = useState("NGN");
   const [bannerPositionX, setBannerPositionX] = useState(50);
@@ -47,6 +48,7 @@ export default function CreateCollectionForm() {
       {
         title: title.trim(),
         description: description.trim(),
+        tags,
         price: price || "0",
         currency,
         bannerImage,
@@ -62,6 +64,12 @@ export default function CreateCollectionForm() {
     );
   };
 
+  const addTag = () => {
+    const tag = tagInput.trim();
+    if (tag && !tags.includes(tag)) setTags((current) => [...current, tag]);
+    setTagInput("");
+  };
+
   return (
     <main className="min-h-screen bg-neutral-50 px-4 py-10 sm:px-8">
       <form
@@ -69,20 +77,65 @@ export default function CreateCollectionForm() {
         className="mx-auto max-w-3xl overflow-hidden rounded-2xl border bg-white shadow-sm"
       >
         <div className="relative h-44 bg-neutral-200 sm:h-56">
-          {bannerPreview && <Image src={bannerPreview} alt="Banner preview" fill unoptimized style={{ objectPosition: `${bannerPositionX}% ${bannerPositionY}%` }} className="object-cover" />}
+          {bannerPreview && (
+            <Image
+              src={bannerPreview}
+              alt="Banner preview"
+              fill
+              unoptimized
+              style={{
+                objectPosition: `${bannerPositionX}% ${bannerPositionY}%`,
+              }}
+              className="object-cover"
+            />
+          )}
           <div className="absolute inset-0 bg-black/5" />
           <div className="absolute -bottom-12 left-5 z-10 flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border-4 border-white bg-neutral-300 shadow-sm sm:left-8">
-            {profilePreview ? <Image src={profilePreview} alt="Profile image preview" fill unoptimized className="object-cover" /> : <span className="text-xs text-neutral-500">Profile</span>}
+            {profilePreview ? (
+              <Image
+                src={profilePreview}
+                alt="Profile image preview"
+                fill
+                unoptimized
+                className="object-cover"
+              />
+            ) : (
+              <span className="text-xs text-neutral-500">Profile</span>
+            )}
           </div>
           {bannerPreview && (
             <div className="absolute right-3 bottom-3 left-32 z-20 grid grid-cols-2 gap-3 rounded-lg bg-white/90 p-3 shadow-sm backdrop-blur-sm">
               <label className="text-xs text-neutral-700">
                 Horizontal: {bannerPositionX}%
-                <input type="range" min="0" max="100" value={bannerPositionX} onChange={(event) => setBannerPositionX(Number(event.target.value))} style={{ background: `linear-gradient(to right, #2563eb ${bannerPositionX}%, #d1d5db ${bannerPositionX}%)` }} className="ios-range-slider mt-2 block w-full" />
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={bannerPositionX}
+                  onChange={(event) =>
+                    setBannerPositionX(Number(event.target.value))
+                  }
+                  style={{
+                    background: `linear-gradient(to right, #2563eb ${bannerPositionX}%, #d1d5db ${bannerPositionX}%)`,
+                  }}
+                  className="ios-range-slider mt-2 block w-full"
+                />
               </label>
               <label className="text-xs text-neutral-700">
                 Vertical: {bannerPositionY}%
-                <input type="range" min="0" max="100" value={bannerPositionY} onChange={(event) => setBannerPositionY(Number(event.target.value))} style={{ background: `linear-gradient(to right, #2563eb ${bannerPositionY}%, #d1d5db ${bannerPositionY}%)` }} className="ios-range-slider mt-2 block w-full" />
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={bannerPositionY}
+                  onChange={(event) =>
+                    setBannerPositionY(Number(event.target.value))
+                  }
+                  style={{
+                    background: `linear-gradient(to right, #2563eb ${bannerPositionY}%, #d1d5db ${bannerPositionY}%)`,
+                  }}
+                  className="ios-range-slider mt-2 block w-full"
+                />
               </label>
             </div>
           )}
@@ -121,6 +174,55 @@ export default function CreateCollectionForm() {
                 className="font-grotesk mt-1 w-full rounded-lg border p-3 font-normal text-neutral-600"
               />
             </label>
+            <section aria-label="Collection tags" className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  aria-label="Add a tag"
+                  value={tagInput}
+                  onChange={(event) => setTagInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      addTag();
+                    }
+                  }}
+                  placeholder="Add a tag"
+                  className="min-h-11 min-w-0 flex-1 rounded-lg border p-3 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={addTag}
+                  disabled={!tagInput.trim()}
+                  className="rounded-lg bg-neutral-900 px-4 text-sm text-white disabled:opacity-50"
+                >
+                  Add
+                </button>
+              </div>
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex min-h-9 items-center gap-2 rounded-full border bg-neutral-50 px-3 py-1 text-xs capitalize"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        aria-label={`Remove ${tag} tag`}
+                        onClick={() =>
+                          setTags((current) =>
+                            current.filter((item) => item !== tag),
+                          )
+                        }
+                        className="rounded-full p-1 text-neutral-500 hover:bg-neutral-200"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </section>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm font-medium">
                 Collection price

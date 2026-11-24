@@ -8,9 +8,12 @@ import {
   DollarSign,
   Images,
   ImagePlus,
+  Tag,
   Trash2,
   ThumbsUp,
   TrendingUp,
+  Plus,
+  X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTokenStore } from "@/src/features/auth/state/store/token.store";
@@ -33,6 +36,9 @@ export default function CollectionDetail({ collectionId }: Props) {
   const viewerId = useTokenStore((state) => state.user?.id);
   const [title, setTitle] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[] | null>(null);
+  const [tagInput, setTagInput] = useState("");
+  const [tagInputOpen, setTagInputOpen] = useState(false);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
@@ -44,9 +50,15 @@ export default function CollectionDetail({ collectionId }: Props) {
   const [assetPickerOpen, setAssetPickerOpen] = useState(false);
   const collectionQuery = useCollection(collectionId);
   const collection = collectionQuery.data?.data;
+  useEffect(() => {
+    if (collection) setTags(collection.tags ?? []);
+  }, [collection?.id, collection?.tags]);
   const owner = Boolean(
     collection && viewerId && collection.ownerId === viewerId,
   );
+  const collectionTags = tags ?? collection?.tags ?? [];
+  const displayedTags =
+    collectionTags.length > 0 ? collectionTags : ["Know Creator"];
   const update = useUpdateCollection();
   const removeAsset = useRemoveAssetFromCollection();
   const toggleExploreContent = useToggleExploreContent();
@@ -129,6 +141,7 @@ export default function CollectionDetail({ collectionId }: Props) {
         collectionId,
         title: title ?? collection.title,
         description: description ?? collection.description ?? "",
+        tags: tags ?? collection.tags ?? [],
         bannerImage,
         profileImage,
         bannerPositionX: bannerPositionX ?? collection.bannerPositionX ?? 50,
@@ -144,6 +157,81 @@ export default function CollectionDetail({ collectionId }: Props) {
       },
     );
   };
+
+  const addTag = () => {
+    const tag = tagInput.trim();
+    const currentTags = tags ?? collection.tags ?? [];
+    if (tag && !currentTags.includes(tag)) setTags([...currentTags, tag]);
+    setTagInput("");
+    setTagInputOpen(false);
+  };
+
+  const tagsContent = (
+    <div
+      className="mt-3 flex flex-wrap items-center gap-2 rounded-xl p-3"
+      aria-label="Collection tags"
+    >
+      {displayedTags.map((tag) => (
+        <span
+          key={tag}
+          className="font-bebas inline-flex min-h-8 items-center gap-2 rounded-full border border-neutral-200 bg-neutral-100 px-3 py-1 text-xs font-medium tracking-widest text-neutral-700"
+        >
+          <Tag className="h-4 w-4 text-neutral-500" aria-hidden="true" />
+          {tag}
+          {owner && collectionTags.includes(tag) && (
+            <button
+              type="button"
+              aria-label={`Remove ${tag} tag`}
+              onClick={() =>
+                setTags(collectionTags.filter((item) => item !== tag))
+              }
+              className="rounded-full p-1 text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-900"
+            >
+              <X className="h-3 w-3" aria-hidden="true" />
+            </button>
+          )}
+        </span>
+      ))}
+      {owner && (
+        <>
+          <button
+            type="button"
+            aria-label="Add collection tag"
+            onClick={() => setTagInputOpen((open) => !open)}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-neutral-400 text-neutral-600 hover:bg-neutral-100"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+          </button>
+          {tagInputOpen && (
+            <div className="flex min-w-0 gap-2">
+              <input
+                autoFocus
+                aria-label="New collection tag"
+                value={tagInput}
+                onChange={(event) => setTagInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    addTag();
+                  }
+                }}
+                placeholder="Tag name"
+                className="font-grotesk h-9 w-36 rounded-lg border px-3 text-sm"
+              />
+              <button
+                type="button"
+                disabled={!tagInput.trim()}
+                onClick={addTag}
+                className="font-bebas rounded-lg bg-[#1E3A8A] px-3 text-xs tracking-wider text-white disabled:opacity-50"
+              >
+                Add
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
 
   return (
     <main className="min-h-screen bg-white text-neutral-900">
@@ -257,6 +345,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                   value={description ?? collection.description ?? ""}
                   onChange={(event) => setDescription(event.target.value)}
                 />
+                {tagsContent}
                 <div className="grid gap-3 rounded-lg bg-neutral-50 p-3 sm:grid-cols-2">
                   <label className="font-grotesk text-xs text-neutral-700 uppercase">
                     Horizontal banner position:{" "}
@@ -315,6 +404,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                 <p className="mt-3 whitespace-pre-wrap text-neutral-600">
                   {collection.description}
                 </p>
+                {tagsContent}
               </>
             )}
           </div>
@@ -366,7 +456,7 @@ export default function CollectionDetail({ collectionId }: Props) {
             <button
               type="button"
               onClick={() => setAssetPickerOpen(true)}
-              className="font-bebas inline-flex min-h-11 items-center gap-2 rounded-lg bg-neutral-500 px-4 py-2 tracking-wider text-white transition hover:bg-neutral-800"
+              className="font-bebas inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#1E3A8A] px-4 py-2 tracking-wider text-white transition hover:bg-[#1E3A8A]"
             >
               <ImagePlus className="h-4 w-4" />
               Add assets
