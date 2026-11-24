@@ -211,7 +211,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           />
         </div>
         {highResExtraUrls && highResExtraUrls.length > 0 && (
-          <div className="font-grotesk absolute top-3 right-3 z-10 flex items-center justify-center rounded-full bg-neutral-600 px-2 py-1 text-xs font-bold tracking-wider text-neutral-50 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95">
+          <div className="font-grotesk absolute top-3 right-3 z-10 flex items-center justify-center rounded-full border border-neutral-500 bg-neutral-700 px-2 py-1 text-xs font-bold tracking-wider text-neutral-50 shadow-md backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95">
             <p>{highResExtraUrls.length}</p>
           </div>
         )}
