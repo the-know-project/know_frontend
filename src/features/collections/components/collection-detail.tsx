@@ -190,7 +190,7 @@ export default function CollectionDetail({ collectionId }: Props) {
           type="button"
           onClick={() => router.back()}
           aria-label="Back to collections"
-          className="absolute top-4 right-4 z-20 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/55 px-4 text-sm font-medium text-white shadow-md backdrop-blur transition hover:bg-black/75 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+          className="font-bebas absolute top-4 right-4 z-20 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/55 px-4 text-sm font-medium tracking-wider text-white shadow-md backdrop-blur transition hover:bg-black/75 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back
