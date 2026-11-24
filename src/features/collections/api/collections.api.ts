@@ -30,6 +30,7 @@ export const createCollection = (input: CreateCollectionInput) => {
   body.append("description", input.description || " ");
   body.append("price", input.price);
   body.append("currency", input.currency);
+  body.append("tags", JSON.stringify(input.tags ?? []));
   if (input.bannerImage) body.append("bannerImage", input.bannerImage);
   if (input.profileImage) body.append("profileImage", input.profileImage);
   body.append("bannerPositionX", String(input.bannerPositionX ?? 50));
@@ -46,6 +47,7 @@ export const updateCollection = (input: UpdateCollectionInput) => {
   body.append("collectionId", input.collectionId);
   body.append("title", input.title);
   body.append("description", input.description);
+  body.append("tags", JSON.stringify(input.tags ?? []));
   if (input.bannerImage) body.append("bannerImage", input.bannerImage);
   if (input.profileImage) body.append("profileImage", input.profileImage);
   body.append("bannerPositionX", String(input.bannerPositionX ?? 50));
