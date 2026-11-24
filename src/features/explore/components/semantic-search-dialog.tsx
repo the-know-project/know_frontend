@@ -148,7 +148,7 @@ const SemanticSearchDialog = ({
                       <button
                         type="button"
                         onClick={() => openDetails(asset)}
-                        className="flex min-w-0 w-full gap-3 overflow-hidden rounded-xl border border-neutral-200 p-2 text-left transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2"
+                        className="flex w-full min-w-0 gap-3 overflow-hidden rounded-xl border border-neutral-200 p-2 text-left transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2"
                       >
                         <img
                           src={asset.url}
@@ -156,7 +156,7 @@ const SemanticSearchDialog = ({
                           className="h-24 w-24 shrink-0 rounded-lg bg-neutral-100 object-cover"
                         />
                         <span className="min-w-0 flex-1 overflow-hidden py-1">
-                          <span className="font-helvetica block truncate text-neutral-900">
+                          <span className="font-helvetica block truncate text-neutral-900 capitalize">
                             {asset.fileName}
                           </span>
                           <span className="font-grotesk mt-1 block text-sm text-neutral-700 uppercase">
