@@ -5,6 +5,8 @@ export interface CreateCollectionInput {
   currency: string;
   bannerImage?: File | null;
   profileImage?: File | null;
+  bannerPositionX?: number;
+  bannerPositionY?: number;
 }
 
 export interface UpdateCollectionInput {
@@ -13,11 +15,17 @@ export interface UpdateCollectionInput {
   description: string;
   bannerImage?: File | null;
   profileImage?: File | null;
+  bannerPositionX?: number;
+  bannerPositionY?: number;
 }
 
 export interface CollectionAssetInput {
   collectionId: string;
   fileId: string;
+}
+
+export interface DeleteCollectionInput {
+  collectionId: string;
 }
 
 export interface CreateCollectionResponse {
