@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { useTokenStore } from "@/src/features/auth/state/store/token.store";
 import ArtDetails from "@/src/shared/components/art-details";
 import type { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
@@ -167,14 +168,26 @@ export default function CollectionDetail({ collectionId }: Props) {
   };
 
   const tagsContent = (
-    <div
-      className="mt-3 flex flex-wrap items-center gap-2 rounded-xl p-3"
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.4 }}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: 0.12 } },
+      }}
+      className="mt-3 flex w-full flex-wrap items-center gap-2 rounded-xl bg-neutral-100 px-3 py-3"
       aria-label="Collection tags"
     >
       {displayedTags.map((tag) => (
-        <span
+        <motion.span
           key={tag}
-          className="font-bebas inline-flex min-h-8 items-center gap-2 rounded-full border border-neutral-200 bg-neutral-100 px-3 py-1 text-xs font-medium tracking-widest text-neutral-700"
+          variants={{
+            hidden: { opacity: 0, y: 10 },
+            visible: { opacity: 1, y: 0 },
+          }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="font-bebas inline-flex min-h-8 items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium tracking-widest text-neutral-700"
         >
           <Tag className="h-4 w-4 text-neutral-500" aria-hidden="true" />
           {tag}
@@ -190,18 +203,23 @@ export default function CollectionDetail({ collectionId }: Props) {
               <X className="h-3 w-3" aria-hidden="true" />
             </button>
           )}
-        </span>
+        </motion.span>
       ))}
       {owner && (
         <>
-          <button
+          <motion.button
             type="button"
             aria-label="Add collection tag"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
             onClick={() => setTagInputOpen((open) => !open)}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-neutral-400 text-neutral-600 hover:bg-neutral-100"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
-          </button>
+          </motion.button>
           {tagInputOpen && (
             <div className="flex min-w-0 gap-2">
               <input
@@ -230,7 +248,7 @@ export default function CollectionDetail({ collectionId }: Props) {
           )}
         </>
       )}
-    </div>
+    </motion.div>
   );
 
   return (
@@ -340,7 +358,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                 />
                 <textarea
                   aria-label="Collection description"
-                  className="font-grotesk w-full rounded-lg border p-3 text-sm"
+                  className="font-grotesk w-full rounded-lg border p-3 text-sm font-light"
                   rows={3}
                   value={description ?? collection.description ?? ""}
                   onChange={(event) => setDescription(event.target.value)}
@@ -400,8 +418,10 @@ export default function CollectionDetail({ collectionId }: Props) {
               </form>
             ) : (
               <>
-                <h1 className="text-3xl font-bold">{collection.title}</h1>
-                <p className="mt-3 whitespace-pre-wrap text-neutral-600">
+                <h1 className="font-helvetica text-3xl font-bold">
+                  {collection.title}
+                </h1>
+                <p className="font-grotesk mt-3 text-sm font-light whitespace-pre-wrap text-neutral-600">
                   {collection.description}
                 </p>
                 {tagsContent}
@@ -410,42 +430,39 @@ export default function CollectionDetail({ collectionId }: Props) {
           </div>
           <aside className="rounded-xl bg-neutral-100 p-4 text-sm font-medium">
             <div className="flex items-center gap-2 text-neutral-700">
-              <Images aria-hidden="true" className="h-4 w-4 text-neutral-500" />
-              <span className="font-grotesk text-xs uppercase lg:text-sm">
+              <Images aria-hidden="true" className="h-4 w-4 text-blue-600" />
+              <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
                 {collection.numOfArt} assets
               </span>
               <span aria-hidden="true" className="text-neutral-300">
                 ·
               </span>
-              <ThumbsUp
-                aria-hidden="true"
-                className="h-4 w-4 text-neutral-500"
-              />
-              <span className="font-grotesk text-xs uppercase lg:text-sm">
+              <ThumbsUp aria-hidden="true" className="h-4 w-4 text-rose-500" />
+              <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
                 {collection.numOfLikes} likes
               </span>
             </div>
             <p className="mt-5 flex items-center gap-2 lg:mt-10">
               <DollarSign
                 aria-hidden="true"
-                className="h-4 w-4 text-neutral-500"
+                className="h-4 w-4 text-emerald-600"
               />
-              <span className="font-grotesk text-xs uppercase lg:text-sm">
+              <span className="font-grotesk text-xs capitalize lg:text-sm">
                 Collection price: {money(collection.price)}
               </span>
             </p>
             <p className="mt-2 flex items-center gap-2">
-              <Images aria-hidden="true" className="h-4 w-4 text-neutral-500" />
-              <span className="font-grotesk text-xs uppercase lg:text-sm">
+              <Images aria-hidden="true" className="h-4 w-4 text-violet-600" />
+              <span className="font-grotesk text-xs capitalize lg:text-sm">
                 Asset price total: {money(collection.assetPriceTotal)}
               </span>
             </p>
             <p className="mt-2 flex items-center gap-2">
               <TrendingUp
                 aria-hidden="true"
-                className="h-4 w-4 text-neutral-500"
+                className="h-4 w-4 text-amber-600"
               />
-              <span className="font-grotesk text-xs uppercase lg:text-sm">
+              <span className="font-grotesk text-xs capitalize lg:text-sm">
                 Completed sales: {money(collection.completedSalesVolume)}
               </span>
             </p>
