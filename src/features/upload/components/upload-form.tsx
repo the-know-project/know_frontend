@@ -28,7 +28,10 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useUploadContext } from "../context/upload-context";
-import { UploadFormSchema } from "../schema/upload.schema";
+import {
+  MAX_UPLOAD_FILE_SIZE_BYTES,
+  UploadFormSchema,
+} from "../schema/upload.schema";
 import { IUploadFormState } from "../types/upload.types";
 import { Settings2Icon } from "lucide-react";
 
@@ -67,6 +70,10 @@ const UploadForm = ({
   });
 
   const watchedFiles = form.watch("files") || [];
+  const oversizedFiles = watchedFiles.filter(
+    (file) => file.size > MAX_UPLOAD_FILE_SIZE_BYTES,
+  );
+  const hasOversizedFiles = oversizedFiles.length > 0;
   const watchedTitle = form.watch("title");
   const mediaItems = [
     ...existingMedia.map((url, index) => ({
@@ -172,6 +179,7 @@ const UploadForm = ({
   };
 
   const onSubmit = (data: IUploadFormState) => {
+    if (hasOversizedFiles) return;
     console.log("Form submitted with data:", data);
     updateBasicInfo(data);
     if (onContinue) {
@@ -210,7 +218,8 @@ const UploadForm = ({
               }}
               disabled={
                 (watchedFiles.length === 0 && existingMedia.length === 0) ||
-                !watchedTitle
+                !watchedTitle ||
+                hasOversizedFiles
               }
             >
               <span>Continue</span>
@@ -236,7 +245,7 @@ const UploadForm = ({
             const hasMedia = allowMediaChanges
               ? watchedFiles.length > 0
               : existingMedia.length > 0;
-            if (watchedTitle && hasMedia) {
+            if (watchedTitle && hasMedia && !hasOversizedFiles) {
               onSubmit({ ...form.getValues(), files: watchedFiles });
             } else {
               void form.trigger("title");
@@ -460,7 +469,7 @@ const UploadForm = ({
                           </span>
                         </p>
                         <p className="font-grotesk mt-2 text-sm font-light text-neutral-500">
-                          Max 120mb each (25mb for videos)
+                          Max 20 MB each
                         </p>
                         <div className="font-grotesk mt-4 space-y-1 text-sm font-light text-neutral-500">
                           <p>- Only upload media you own the rights to</p>
@@ -483,6 +492,15 @@ const UploadForm = ({
                   </div>
                 </FormControl>
                 <FormMessage className="font-bebas self-center tracking-wider" />
+                {hasOversizedFiles && (
+                  <p
+                    role="alert"
+                    className="mt-2 text-center text-sm font-medium text-red-600"
+                  >
+                    Each file must be 20 MB or smaller. Remove or replace:{" "}
+                    {oversizedFiles.map((file) => file.name).join(", ")}.
+                  </p>
+                )}
               </FormItem>
             )}
           />
