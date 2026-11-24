@@ -323,7 +323,7 @@ export const ArtistProfileToggle = [
   },
   {
     id: 3,
-    name: "drafts",
+    name: "collections",
   },
 ];
 
