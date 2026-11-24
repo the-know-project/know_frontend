@@ -1,16 +1,22 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
+  ArrowLeft,
   Camera,
   DollarSign,
   Images,
   ImagePlus,
+  Trash2,
   ThumbsUp,
   TrendingUp,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTokenStore } from "@/src/features/auth/state/store/token.store";
+import ArtDetails from "@/src/shared/components/art-details";
+import type { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
+import { useToggleExploreContent } from "@/src/features/explore/state/explore-content.store";
 import AssetPickerDialog from "./asset-picker-dialog";
 import { useCollection } from "../hooks/use-collection";
 import { useRemoveAssetFromCollection } from "../hooks/use-remove-asset-from-collection";
@@ -21,6 +27,7 @@ interface Props {
 }
 
 export default function CollectionDetail({ collectionId }: Props) {
+  const router = useRouter();
   const viewerId = useTokenStore((state) => state.user?.id);
   const [title, setTitle] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
@@ -40,6 +47,7 @@ export default function CollectionDetail({ collectionId }: Props) {
   );
   const update = useUpdateCollection();
   const removeAsset = useRemoveAssetFromCollection();
+  const toggleExploreContent = useToggleExploreContent();
 
   useEffect(() => {
     if (!bannerImage) {
@@ -77,6 +85,37 @@ export default function CollectionDetail({ collectionId }: Props) {
 
   const money = (value: string | number) =>
     `${collection.currency || "USD"} ${Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const openAssetDetails = (asset: (typeof collection.assetData)[number]) => {
+    const content: IExploreContent = {
+      id: asset.fileId,
+      userId: asset.artistId || collection.ownerId,
+      creatorProfileUrl: asset.artistProfileUrl || collection.imageUrl || "",
+      creatorName: `${collection.firstName} ${collection.lastName}`.trim(),
+      artName: asset.artTitle,
+      description: asset.artDescription ?? null,
+      artWorkUrl: asset.assetUrl,
+      highResUrl: asset.assetUrl,
+      extraUrls: [],
+      highResExtraUrls: [],
+      categories: asset.artCategories || [],
+      tags: asset.artTags || [],
+      price: asset.artPrice,
+      size: asset.artSize || {},
+      numOfLikes: asset.numOfLikes,
+      numOfViews: asset.artViewCount || 0,
+      numOfComments: 0,
+      isListed: asset.isArtListed ?? true,
+      createdAt: asset.artCreatedAt
+        ? new Date(asset.artCreatedAt)
+        : new Date(collection.createdAt),
+    };
+
+    toggleExploreContent(asset.fileId, content, {
+      scrollY: window.scrollY,
+      viewportHeight: window.innerHeight,
+    });
+  };
 
   const save = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -142,6 +181,15 @@ export default function CollectionDetail({ collectionId }: Props) {
             </button>
           </>
         )}
+        <button
+          type="button"
+          onClick={() => router.back()}
+          aria-label="Back to collections"
+          className="absolute top-4 right-4 z-20 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/55 px-4 text-sm font-medium text-white shadow-md backdrop-blur transition hover:bg-black/75 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          Back
+        </button>
       </div>
       <section className="relative z-10 mx-auto max-w-6xl px-5 pb-12">
         <div className="relative -mt-12 flex items-end gap-4">
@@ -265,7 +313,7 @@ export default function CollectionDetail({ collectionId }: Props) {
               </>
             )}
           </div>
-          <aside className="rounded-xl bg-neutral-100 p-4 text-sm">
+          <aside className="rounded-xl bg-neutral-100 p-4 text-sm font-medium">
             <div className="flex items-center gap-2 text-neutral-700">
               <Images aria-hidden="true" className="h-4 w-4 text-neutral-500" />
               <span className="font-grotesk text-xs uppercase lg:text-sm">
@@ -288,14 +336,13 @@ export default function CollectionDetail({ collectionId }: Props) {
                 className="h-4 w-4 text-neutral-500"
               />
               <span className="font-grotesk text-xs uppercase lg:text-sm">
-                Collection price: <strong>{money(collection.price)}</strong>
+                Collection price: {money(collection.price)}
               </span>
             </p>
             <p className="mt-2 flex items-center gap-2">
               <Images aria-hidden="true" className="h-4 w-4 text-neutral-500" />
               <span className="font-grotesk text-xs uppercase lg:text-sm">
-                Asset price total:{" "}
-                <strong>{money(collection.assetPriceTotal)}</strong>
+                Asset price total: {money(collection.assetPriceTotal)}
               </span>
             </p>
             <p className="mt-2 flex items-center gap-2">
@@ -304,27 +351,33 @@ export default function CollectionDetail({ collectionId }: Props) {
                 className="h-4 w-4 text-neutral-500"
               />
               <span className="font-grotesk text-xs uppercase lg:text-sm">
-                Completed sales:{" "}
-                <strong>{money(collection.completedSalesVolume)}</strong>
+                Completed sales: {money(collection.completedSalesVolume)}
               </span>
             </p>
           </aside>
         </div>
         {owner && (
-          <button
-            type="button"
-            onClick={() => setAssetPickerOpen(true)}
-            className="font-bebas mt-8 inline-flex min-h-11 items-center gap-2 rounded-lg bg-neutral-500 px-4 py-2 tracking-wider text-white transition hover:bg-neutral-800"
-          >
-            <ImagePlus className="h-4 w-4" />
-            Add assets
-          </button>
+          <div className="mt-8 flex justify-start lg:justify-end">
+            <button
+              type="button"
+              onClick={() => setAssetPickerOpen(true)}
+              className="font-bebas inline-flex min-h-11 items-center gap-2 rounded-lg bg-neutral-500 px-4 py-2 tracking-wider text-white transition hover:bg-neutral-800"
+            >
+              <ImagePlus className="h-4 w-4" />
+              Add assets
+            </button>
+          </div>
         )}
         {collection.assetData.length ? (
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {collection.assetData.map((asset) => (
               <article key={asset.fileId} className="relative min-w-0">
-                <div className="artwork-oak-frame group relative w-full shadow-lg transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.99]">
+                <button
+                  type="button"
+                  onClick={() => openAssetDetails(asset)}
+                  aria-label={`View details for ${asset.artTitle}`}
+                  className="artwork-oak-frame group relative block w-full cursor-pointer border-0 text-left shadow-lg transition-transform duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:outline-none active:scale-[0.99]"
+                >
                   <div className="artwork-oak-mat aspect-[4/3] w-full overflow-hidden">
                     {asset.assetUrl && (
                       <Image
@@ -336,11 +389,13 @@ export default function CollectionDetail({ collectionId }: Props) {
                       />
                     )}
                   </div>
-                </div>
+                </button>
                 <div className="flex items-center justify-between p-3">
                   <div>
-                    <h2 className="font-semibold">{asset.artTitle}</h2>
-                    <p className="text-sm text-neutral-500">
+                    <h2 className="font-helvetica font-semibold">
+                      {asset.artTitle}
+                    </h2>
+                    <p className="font-grotesk text-xs font-light text-neutral-500 uppercase">
                       {money(asset.artPrice)} · {asset.numOfLikes} likes
                     </p>
                   </div>
@@ -354,9 +409,11 @@ export default function CollectionDetail({ collectionId }: Props) {
                           fileId: asset.fileId,
                         })
                       }
-                      className="text-sm text-red-600"
+                      aria-label={`Remove ${asset.artTitle} from collection`}
+                      title="Remove asset"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full text-red-600 transition hover:bg-red-50 hover:text-red-700 focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      Remove
+                      <Trash2 className="h-5 w-5" aria-hidden="true" />
                     </button>
                   )}
                 </div>
@@ -377,6 +434,7 @@ export default function CollectionDetail({ collectionId }: Props) {
           onClose={() => setAssetPickerOpen(false)}
         />
       )}
+      <ArtDetails />
     </main>
   );
 }
