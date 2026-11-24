@@ -99,11 +99,11 @@ const SemanticSearchDialog = ({
             transition={{ duration: 0.22, ease: "easeOut" }}
           >
             <header className="flex items-center justify-between border-b px-5 py-4">
-              <div>
+              <div className="min-w-0">
                 <p className="font-bebas text-xs tracking-widest text-neutral-500 uppercase">
                   Artwork search
                 </p>
-                <h2 className="font-grotesk text-lg font-semibold text-neutral-900 capitalize">
+                <h2 className="font-grotesk max-w-full truncate text-lg font-semibold text-neutral-900 capitalize">
                   “{query}”
                 </h2>
               </div>
@@ -116,7 +116,7 @@ const SemanticSearchDialog = ({
                 <X className="h-4 w-4" />
               </button>
             </header>
-            <div className="max-h-[calc(84vh-76px)] overflow-y-auto p-4 sm:p-5">
+            <div className="max-h-[calc(84vh-76px)] overflow-x-hidden overflow-y-auto p-4 sm:p-5">
               {isLoading ? (
                 <p
                   className="font-bebas py-12 text-center text-sm tracking-wider text-neutral-500"
@@ -144,25 +144,25 @@ const SemanticSearchDialog = ({
               ) : (
                 <ul className="grid gap-3 sm:grid-cols-2">
                   {results.map((asset) => (
-                    <li key={asset.fileId}>
+                    <li key={asset.fileId} className="min-w-0 overflow-hidden">
                       <button
                         type="button"
                         onClick={() => openDetails(asset)}
-                        className="flex w-full gap-3 rounded-xl border border-neutral-200 p-2 text-left transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2"
+                        className="flex min-w-0 w-full gap-3 overflow-hidden rounded-xl border border-neutral-200 p-2 text-left transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2"
                       >
                         <img
                           src={asset.url}
                           alt=""
                           className="h-24 w-24 shrink-0 rounded-lg bg-neutral-100 object-cover"
                         />
-                        <span className="min-w-0 py-1">
+                        <span className="min-w-0 flex-1 overflow-hidden py-1">
                           <span className="font-helvetica block truncate text-neutral-900">
                             {asset.fileName}
                           </span>
                           <span className="font-grotesk mt-1 block text-sm text-neutral-700 uppercase">
                             {asset.formattedPrice ?? "Price unavailable"}
                           </span>
-                          <span className="font-bebas mt-1 block truncate text-xs tracking-wider text-neutral-500">
+                          <span className="font-bebas mt-1 block max-w-full truncate text-xs tracking-wider text-neutral-500">
                             {[
                               ...(asset.categories || []),
                               ...(asset.tags || []),
