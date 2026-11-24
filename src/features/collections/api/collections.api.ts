@@ -6,6 +6,8 @@ import type {
   DeleteCollectionInput,
   FetchCollectionResponse,
   UpdateCollectionInput,
+  CollectionMetricInput,
+  CollectionViewResponse,
 } from "../dto/collection.dto";
 import type { ArtistCollectionsPage } from "../types/collection.types";
 import { COLLECTIONS_ROUTES } from "../routes/collections.routes";
@@ -65,6 +67,18 @@ export const removeAssetFromCollection = (input: CollectionAssetInput) =>
 
 export const deleteCollection = (input: DeleteCollectionInput) =>
   ApiClient.delete(COLLECTIONS_ROUTES.DELETE_COLLECTION, input);
+
+export const trackCollectionView = (input: CollectionMetricInput) =>
+  ApiClient.post<CollectionViewResponse>(
+    COLLECTIONS_ROUTES.VIEW_COLLECTION,
+    input,
+  );
+
+export const likeCollection = (input: CollectionMetricInput) =>
+  ApiClient.post(COLLECTIONS_ROUTES.LIKE_COLLECTION, input);
+
+export const unlikeCollection = (input: CollectionMetricInput) =>
+  ApiClient.post(COLLECTIONS_ROUTES.UNLIKE_COLLECTION, input);
 
 export const fetchArtistAssets = (artistId: string, page: number, limit = 12) =>
   ApiClient.get<import("../types/collection.types").ArtistAssetsPage>(
