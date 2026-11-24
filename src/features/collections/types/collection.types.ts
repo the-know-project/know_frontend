@@ -33,6 +33,7 @@ export interface Collection {
   lastName: string;
   username?: string;
   description: string;
+  tags?: string[];
   price: string;
   currency: string;
   assetPriceTotal: string;
