@@ -21,6 +21,8 @@ import AssetPickerDialog from "./asset-picker-dialog";
 import { useCollection } from "../hooks/use-collection";
 import { useRemoveAssetFromCollection } from "../hooks/use-remove-asset-from-collection";
 import { useUpdateCollection } from "../hooks/use-update-collection";
+import { TextEffect } from "@/src/shared/ui/text-effect";
+import TextEffectWithExit from "@/src/shared/components/animate-text";
 
 interface Props {
   collectionId: string;
@@ -71,14 +73,17 @@ export default function CollectionDetail({ collectionId }: Props) {
 
   if (collectionQuery.isLoading)
     return (
-      <main className="p-10 text-center text-neutral-500">
-        Loading collection…
+      <main className="flex items-center justify-center p-10 text-center text-neutral-500">
+        <TextEffectWithExit
+          text="loading collection"
+          style="!font-bebas items-center !text-neutral-600 tracking-wider"
+        />
       </main>
     );
 
   if (collectionQuery.isError || !collection)
     return (
-      <main className="p-10 text-center text-neutral-600">
+      <main className="font-bebas flex items-center justify-center p-10 text-center tracking-wider text-neutral-600">
         Collection could not be loaded.
       </main>
     );
