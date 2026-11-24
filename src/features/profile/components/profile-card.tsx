@@ -90,7 +90,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
         </div>
         <div className="mt-3 flex w-full min-w-0 items-center justify-between gap-3">
           <div className="flex min-w-0 flex-col items-start">
-            <h3 className="font-helvetica w-full truncate font-semibold text-neutral-900 capitalize">
+            <h3 className="font-helvetica w-full truncate text-neutral-900 capitalize">
               {title}
             </h3>
             <p className="font-grotesk mt-0.5 text-xs font-light text-neutral-500">

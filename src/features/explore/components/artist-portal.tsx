@@ -131,7 +131,7 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
             />
 
             {/*Name, username, description*/}
-            <h2 className="mt-3 text-xl font-bold text-neutral-900 capitalize">
+            <h2 className="font-helvetica mt-3 text-xl text-neutral-900 capitalize">
               {profile
                 ? `${profile.firstName ?? ""} ${profile.lastName ?? ""}`.trim() ||
                   profile.username ||
@@ -139,10 +139,12 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                 : "Artist profile"}
             </h2>
             {profile?.username && (
-              <p className="text-sm text-neutral-500">@{profile.username}</p>
+              <p className="font-grotesk text-sm text-neutral-500">
+                @{profile.username}
+              </p>
             )}
             {profile?.description && (
-              <p className="font-grotesk mt-2 max-w-2xl text-sm text-neutral-600">
+              <p className="font-grotesk mt-2 max-w-2xl text-sm font-light text-neutral-600">
                 {profile.description}
               </p>
             )}
@@ -153,19 +155,21 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                 <p className="text-base font-semibold text-neutral-900">
                   {profile?.followerCount ?? 0}
                 </p>
-                <p className="text-xs text-neutral-500">Followers</p>
+                <p className="text-xs font-light text-neutral-500">Followers</p>
               </div>
               <div>
                 <p className="text-base font-semibold text-neutral-900">
                   {profile?.assetCount ?? 0}
                 </p>
-                <p className="text-xs text-neutral-500">Artworks</p>
+                <p className="text-xs font-light text-neutral-500">Artworks</p>
               </div>
               <div>
                 <p className="text-base font-semibold text-neutral-900">
                   {profile?.collectionCount ?? 0}
                 </p>
-                <p className="text-xs text-neutral-500">Collections</p>
+                <p className="text-xs font-light text-neutral-500">
+                  Collections
+                </p>
               </div>
             </div>
 
@@ -299,13 +303,13 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                           <Folder className="h-20 w-20" strokeWidth={1.1} />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-semibold text-neutral-900">
+                          <h3 className="font-helvetica font-semibold text-neutral-900">
                             {item.title}
                           </h3>
-                          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-neutral-500">
+                          <div className="font-grotesk mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-neutral-500">
                             <span className="inline-flex items-center gap-1">
                               <ImageIcon className="h-3.5 w-3.5" />
-                              {item.assetCount ?? item.numOfArt ?? 0} assets
+                              {item.assetCount ?? item.numOfArt ?? 0} Assets
                             </span>
                             <span>
                               {new Date(item.createdAt).toLocaleDateString()}
