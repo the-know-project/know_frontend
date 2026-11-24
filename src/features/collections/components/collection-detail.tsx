@@ -6,11 +6,12 @@ import {
   ArrowLeft,
   Camera,
   DollarSign,
+  Eye,
+  Heart,
   Images,
   ImagePlus,
   Tag,
   Trash2,
-  ThumbsUp,
   TrendingUp,
   Plus,
   X,
@@ -25,6 +26,8 @@ import AssetPickerDialog from "./asset-picker-dialog";
 import { useCollection } from "../hooks/use-collection";
 import { useRemoveAssetFromCollection } from "../hooks/use-remove-asset-from-collection";
 import { useUpdateCollection } from "../hooks/use-update-collection";
+import { useToggleCollectionLike } from "../hooks/use-toggle-collection-like";
+import { useTrackCollectionView } from "../hooks/use-track-collection-view";
 import { TextEffect } from "@/src/shared/ui/text-effect";
 import TextEffectWithExit from "@/src/shared/components/animate-text";
 
@@ -48,9 +51,17 @@ export default function CollectionDetail({ collectionId }: Props) {
   const [bannerPositionY, setBannerPositionY] = useState<number | null>(null);
   const bannerInput = useRef<HTMLInputElement>(null);
   const profileInput = useRef<HTMLInputElement>(null);
+  const trackedViewId = useRef<string | null>(null);
   const [assetPickerOpen, setAssetPickerOpen] = useState(false);
   const collectionQuery = useCollection(collectionId);
   const collection = collectionQuery.data?.data;
+  const collectionLike = useToggleCollectionLike();
+  const trackView = useTrackCollectionView();
+  useEffect(() => {
+    if (!collection || trackedViewId.current === collection.id) return;
+    trackedViewId.current = collection.id;
+    trackView.mutate({ collectionId: collection.id });
+  }, [collection?.id, trackView.mutate]);
   useEffect(() => {
     if (collection) setTags(collection.tags ?? []);
   }, [collection?.id, collection?.tags]);
@@ -103,6 +114,10 @@ export default function CollectionDetail({ collectionId }: Props) {
 
   const money = (value: string | number) =>
     `${collection.currency || "USD"} ${Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formatMetricCount = (value: number | undefined, singular: string) => {
+    const count = Number(value ?? 0);
+    return `${count.toLocaleString()} ${count === 1 ? singular : `${singular}s`}`;
+  };
 
   const openAssetDetails = (asset: (typeof collection.assetData)[number]) => {
     const content: IExploreContent = {
@@ -429,19 +444,100 @@ export default function CollectionDetail({ collectionId }: Props) {
             )}
           </div>
           <aside className="rounded-xl bg-neutral-100 p-4 text-sm font-medium">
-            <div className="flex items-center gap-2 text-neutral-700">
-              <Images aria-hidden="true" className="h-4 w-4 text-blue-600" />
-              <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
-                {collection.numOfArt} assets
-              </span>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.4 }}
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.12 } },
+              }}
+              className="flex flex-wrap items-center gap-2 text-neutral-700"
+            >
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="flex items-center gap-2"
+              >
+                <Images aria-hidden="true" className="h-4 w-4 text-blue-600" />
+                <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                  {formatMetricCount(collection.numOfArt, "asset")}
+                </span>
+              </motion.div>
               <span aria-hidden="true" className="text-neutral-300">
                 ·
               </span>
-              <ThumbsUp aria-hidden="true" className="h-4 w-4 text-rose-500" />
-              <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
-                {collection.numOfLikes} likes
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="flex items-center gap-2"
+              >
+                <Eye aria-hidden="true" className="h-4 w-4 text-sky-600" />
+                <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                  {formatMetricCount(collection.numOfViews, "view")}
+                </span>
+              </motion.div>
+              <span aria-hidden="true" className="text-neutral-300">
+                ·
               </span>
-            </div>
+              {owner ? (
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="flex items-center gap-2"
+                >
+                  <Heart aria-hidden="true" className="h-4 w-4 text-rose-500" />
+                  <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                    {formatMetricCount(collection.numOfLikes, "like")}
+                  </span>
+                </motion.div>
+              ) : (
+                <motion.button
+                  type="button"
+                  disabled={collectionLike.isPending}
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  onClick={() =>
+                    collectionLike.mutate({
+                      collectionId,
+                      isLiked: Boolean(collection.isLikedByUser),
+                    })
+                  }
+                  aria-pressed={Boolean(collection.isLikedByUser)}
+                  aria-label={
+                    collection.isLikedByUser
+                      ? "Unlike collection"
+                      : "Like collection"
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-full px-1 py-1 text-rose-600 transition hover:text-rose-700 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none disabled:opacity-60"
+                >
+                  <Heart
+                    aria-hidden="true"
+                    className={`h-4 w-4 ${collection.isLikedByUser ? "fill-rose-500 text-rose-500" : "text-rose-500"}`}
+                  />
+                  <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                    {formatMetricCount(collection.numOfLikes, "like")}
+                  </span>
+                </motion.button>
+              )}
+            </motion.div>
+            {collectionLike.isError && (
+              <p role="alert" className="mt-2 text-xs text-red-600">
+                Could not update the collection like. Please try again.
+              </p>
+            )}
             <p className="mt-5 flex items-center gap-2 lg:mt-10">
               <DollarSign
                 aria-hidden="true"
