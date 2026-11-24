@@ -3,6 +3,7 @@
 import UploadEditorCanvas from "./upload-editor-canvas";
 import UploadForm from "./upload-form";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { UploadProvider, useUploadContext } from "../context/upload-context";
 import { useUploadAsset } from "../hooks/use-upload-asset";
 import { IUploadAssetClient } from "../types/upload.types";
@@ -28,9 +29,15 @@ const UploadCanvasContent = ({
   const router = useRouter();
   const { mutateAsync: uploadAsset, isPending: isUploading } = useUploadAsset();
   const { mutateAsync: saveAsset, isPending: isUpdating } = useUpdateAsset();
-  const { getAllFormData } = useUploadContext();
+  const { getAllFormData, setIsEditorOpen } = useUploadContext();
   const isEditing = mode === "edit" && !!asset;
   const isPending = isUploading || isUpdating;
+
+  useEffect(() => {
+    if (!isEditing) {
+      setIsEditorOpen(window.matchMedia("(min-width: 768px)").matches);
+    }
+  }, [isEditing, setIsEditorOpen]);
 
   const handleGoBack = () => {
     if (onCancel) onCancel();
