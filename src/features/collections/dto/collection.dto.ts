@@ -3,6 +3,7 @@ export interface CreateCollectionInput {
   description: string;
   price: string;
   currency: string;
+  tags?: string[];
   bannerImage?: File | null;
   profileImage?: File | null;
   bannerPositionX?: number;
@@ -13,6 +14,7 @@ export interface UpdateCollectionInput {
   collectionId: string;
   title: string;
   description: string;
+  tags?: string[];
   bannerImage?: File | null;
   profileImage?: File | null;
   bannerPositionX?: number;
