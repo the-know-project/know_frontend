@@ -7,6 +7,8 @@ import { X, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
+import Link from "next/link";
+import { Folder, Heart, Image as ImageIcon } from "lucide-react";
 import ProfileCard from "@/src/features/profile/components/profile-card";
 import { useToggleExploreContent } from "../state/explore-content.store";
 
@@ -219,28 +221,42 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                       }}
                     />
                   ) : (
-                    <article
+                    <motion.div
                       key={item.id}
-                      className="overflow-hidden rounded-xl border border-neutral-200"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.25,
+                        delay: Math.min(index * 0.04, 0.2),
+                      }}
                     >
-                      <Image
-                        src={
-                          item.imageUrl || item.bannerUrl || BlankProfilePicture
-                        }
-                        alt={item.title}
-                        width={640}
-                        height={480}
-                        className="aspect-[4/3] w-full object-cover"
-                      />
-                      <div className="p-3">
-                        <h3 className="font-semibold text-neutral-900">
-                          {item.title}
-                        </h3>
-                        <p className="mt-1 line-clamp-2 text-sm text-neutral-500">
-                          {item.description}
-                        </p>
-                      </div>
-                    </article>
+                      <Link
+                        href={`/collections/${item.id}`}
+                        className="group block overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                      >
+                        <div className="flex aspect-[4/3] items-center justify-center bg-neutral-200 text-neutral-400 transition group-hover:bg-neutral-300">
+                          <Folder className="h-20 w-20" strokeWidth={1.1} />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-semibold text-neutral-900">
+                            {item.title}
+                          </h3>
+                          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-neutral-500">
+                            <span className="inline-flex items-center gap-1">
+                              <ImageIcon className="h-3.5 w-3.5" />
+                              {item.assetCount ?? item.numOfArt ?? 0} assets
+                            </span>
+                            <span>
+                              {new Date(item.createdAt).toLocaleDateString()}
+                            </span>
+                            <span className="inline-flex items-center gap-1">
+                              <Heart className="h-3.5 w-3.5" />
+                              {item.likeCount ?? 0}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
                   ),
                 )}
               </div>
