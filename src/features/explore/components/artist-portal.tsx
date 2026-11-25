@@ -216,15 +216,19 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
           <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
             {active.isLoading ? (
               <div className="py-16 text-center text-sm text-neutral-500">
-                Loading {tab}…
+                <p className="font-bebas animate-pulse tracking-wider">
+                  Loading {tab}…
+                </p>
               </div>
             ) : active.isError ? (
               <div className="py-16 text-center">
-                <p className="text-sm text-red-600">Couldn’t load {tab}.</p>
+                <p className="font-bebas text-sm tracking-wider text-red-600">
+                  Couldn’t load {tab}.
+                </p>
                 <button
                   type="button"
                   onClick={() => void active.refetch()}
-                  className="mt-3 inline-flex items-center gap-2 text-sm underline"
+                  className="font-bebas mt-3 inline-flex items-center gap-2 text-sm tracking-wider underline"
                 >
                   <RefreshCw className="h-4 w-4" /> Try again
                 </button>
