@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { isProduction } from "@/src/config/environment";
 import { env } from "@/src/config/schemas/env";
 
+// Transition safeguard while any callers still use this streaming proxy.
+export const maxDuration = 300;
+
 type ProxyMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD";
 
 function getUpstreamUrl(path: string[], search: string): string {
@@ -30,7 +33,10 @@ function getForwardHeaders(request: NextRequest): Headers {
  * Secure cookie (and SameSite=None also requires Secure), so adapt those
  * attributes to the browser-facing protocol.
  */
-function rewriteSetCookieForClient(cookie: string, request: NextRequest): string {
+function rewriteSetCookieForClient(
+  cookie: string,
+  request: NextRequest,
+): string {
   if (request.nextUrl.protocol === "https:") {
     return cookie;
   }
