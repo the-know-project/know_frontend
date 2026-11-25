@@ -17,6 +17,7 @@ import { useFollowUser } from "@/src/features/metrics/hooks/use-follow-user";
 import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
 import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
 import { showLog } from "@/src/utils/logger";
+import { isImageKitUrl } from "@/src/utils/image-url";
 import { IconTag, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -281,6 +282,7 @@ const ArtDetails = () => {
                                 <div className="flex h-[42vh] max-h-[680px] min-h-[240px] w-full items-center justify-center overflow-hidden bg-neutral-900 md:h-[58vh]">
                                   <Image
                                     src={url}
+                                    unoptimized={isImageKitUrl(url)}
                                     alt={`art_work_${index + 1}`}
                                     quality={100}
                                     priority={index === 0}
