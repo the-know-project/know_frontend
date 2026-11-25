@@ -68,7 +68,7 @@ const CategoryPickerForm: React.FC<CategoryPickerFormProps> = ({
               onClick={() => handleCategoryToggle(category)}
               className={`font-grotesk flex min-h-11 min-w-0 items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs font-medium capitalize transition focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:outline-none sm:text-sm ${
                 selected
-                  ? "border-indigo-700 bg-indigo-700 text-white shadow-sm"
+                  ? "bg-[#1E3A8A] text-white shadow-sm"
                   : "border-neutral-200 bg-white text-neutral-700 hover:border-indigo-300 hover:bg-indigo-50"
               }`}
             >

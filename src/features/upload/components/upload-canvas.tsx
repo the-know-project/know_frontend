@@ -79,6 +79,14 @@ const UploadCanvasContent = ({
       categories: formData.categories || [],
       tags: formData.tags || [],
       customMetadata: formData.tags || [],
+      onProgress: (percent) => {
+        toast.loading(
+          percent === null
+            ? "Processing your upload..."
+            : `Uploading ${formData.title}: ${percent}%`,
+          { id: saveToastId },
+        );
+      },
     };
 
     try {

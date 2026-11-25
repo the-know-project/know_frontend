@@ -223,7 +223,7 @@ const SizePickerForm: React.FC<SizePickerFormProps> = ({ onSaveDraft }) => {
                       ref={(el) => {
                         dropdownRefs.current[dimension.key] = el;
                       }}
-                      className="absolute top-0 right-0 h-full rounded-tr-[15px] rounded-br-[15px] bg-neutral-800"
+                      className="absolute top-0 right-0 h-full rounded-tr-[15px] rounded-br-[15px] bg-[#1E3A8A]"
                     >
                       <button
                         type="button"

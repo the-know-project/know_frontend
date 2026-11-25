@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useUploadContext } from "../context/upload-context";
 import { Input } from "@/src/shared/ui/input";
 import { IconX } from "@tabler/icons-react";
+import { Tag } from "lucide-react";
 
 interface TagPickerFormProps {
   onSaveDraft?: (tags: string[]) => void;
@@ -64,7 +65,7 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
           <button
             type="submit"
             disabled={!inputValue.trim()}
-            className="font-grotesk min-h-11 rounded-xl bg-neutral-900 px-4 text-sm font-semibold text-white transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
+            className="font-bebas min-h-11 rounded-xl bg-[#1E3A8A] px-4 text-sm tracking-wider text-white transition hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Add
           </button>
@@ -76,20 +77,26 @@ const TagPickerForm: React.FC<TagPickerFormProps> = ({ onSaveDraft }) => {
             {uploadData.tags.map((tag, index) => (
               <div
                 key={index}
-                className={`font-grotesk flex min-h-9 transform items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium tracking-wide text-neutral-700 capitalize transition-all duration-500 ${
+                className={`font-bebas flex min-h-9 transform items-center gap-2 rounded-full border border-neutral-200 bg-neutral-100 px-3 py-1 text-xs font-medium tracking-wider text-neutral-700 capitalize transition-all duration-500 ${
                   animatingTag === tag
                     ? "scale-110 animate-pulse shadow-lg"
                     : "scale-100 hover:scale-105"
                 } `}
               >
-                <span>{tag}</span>
+                <span className="inline-flex items-center gap-1">
+                  <Tag
+                    className="h-4 w-4 text-neutral-700"
+                    aria-hidden="true"
+                  />
+                  {tag}
+                </span>
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
                   aria-label={`Remove ${tag} tag`}
                   className="rounded-full p-1 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900"
                 >
-                  <IconX width={12} height={12} />
+                  <IconX className="h-4 w-4 text-neutral-700" />
                 </button>
               </div>
             ))}

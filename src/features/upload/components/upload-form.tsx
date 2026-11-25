@@ -264,7 +264,7 @@ const UploadForm = ({
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="font-grotesk placeholder:font-grotesk bg-transparent text-lg font-medium text-neutral-600 placeholder:text-lg placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0"
+                    className="font-helvetica placeholder:font-grotesk bg-transparent text-xl text-neutral-600 placeholder:text-lg placeholder:text-neutral-600 focus-visible:shadow-none focus-visible:ring-0 lg:text-2xl"
                     placeholder="Title of your project"
                     {...field}
                     onChange={(e) => {
@@ -314,7 +314,7 @@ const UploadForm = ({
                                         ? `existing-${index}-${item.url}`
                                         : `upload-${index}-${item.name}-${item.size}`
                                     }
-                                    className="basis-[88%] pl-3 sm:basis-[78%]"
+                                    className="basis-[88%] pl-3 sm:basis-[78%] lg:basis-[58%]"
                                   >
                                     <motion.div
                                       initial={
