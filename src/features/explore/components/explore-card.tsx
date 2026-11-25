@@ -17,6 +17,7 @@ import { ShoppingCart } from "lucide-react";
 import { useTokenStore } from "../../auth/state/store";
 import { selectUserId } from "../../auth/state/selectors/token.selectors";
 import { logger } from "@/src/utils/logger";
+import { isImageKitUrl } from "@/src/utils/image-url";
 import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
@@ -171,6 +172,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
         <div className="artwork-oak-mat relative aspect-[4/3] w-full overflow-hidden">
           <Image
             src={highResUrl || artWork}
+            unoptimized={isImageKitUrl(highResUrl || artWork)}
             alt="Artwork"
             quality={100}
             fill
