@@ -2,8 +2,15 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { ProfileToggleData } from "../data/profile.data";
-import { Settings2Icon } from "lucide-react";
+import {
+  Check,
+  Ellipsis,
+  FolderPlus,
+  Pencil,
+  Store,
+  Trash2,
+  X,
+} from "lucide-react";
 import ListAssetModal from "./list-asset-modal";
 import { useUnlistAsset } from "../artist/hooks/use-unlist-asset";
 import { toast } from "sonner";
@@ -31,15 +38,12 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
   const { mutateAsync: deleteAsset } = useDeleteAsset();
   const [editToggled, setEditToggled] = useState(false);
   const [isListModalToggled, setIsListModalToggled] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const toggleRef = useRef<HTMLDivElement>(null);
 
-  const variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   const toggleEdit = () => {
-    setEditToggled((prev) => !prev);
+    if (editToggled) setConfirmDelete(false);
+    setEditToggled(!editToggled);
   };
 
   const handleUnlistAsset = async () => {
@@ -90,6 +94,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
 
   const handleListToggle = () => {
     setIsListModalToggled((prev) => !prev);
+    setEditToggled(false);
   };
 
   const handleDeleteAsset = async () => {
@@ -139,19 +144,9 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
     });
   };
 
-  const handleMenuItemClick = (itemId: string) => {
-    if (itemId === "1") {
-      onEditPost?.();
-      setEditToggled(false);
-    }
-    if (itemId === "4") {
-      void handleDeleteAsset();
-      setEditToggled(false);
-    }
-    if (itemId === "5") {
-      onAddToCollection?.();
-      setEditToggled(false);
-    }
+  const closeMenu = () => {
+    setEditToggled(false);
+    setConfirmDelete(false);
   };
 
   useEffect(() => {
@@ -175,73 +170,148 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
 
   return (
     <section className="flex w-full flex-col">
-      <div ref={toggleRef} className="relative flex flex-col gap-1">
+      <div
+        ref={toggleRef}
+        className="relative"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") closeMenu();
+        }}
+      >
         <button
           onClick={toggleEdit}
           type="button"
-          aria-label="Open artwork actions"
+          aria-label={
+            editToggled ? "Close artwork actions" : "Open artwork actions"
+          }
           aria-expanded={editToggled}
-          className="flex min-h-10 min-w-10 touch-manipulation flex-row items-center justify-center rounded-xl border border-white/20 bg-neutral-950/85 p-2.5 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:bg-neutral-700"
+          aria-controls={`artwork-actions-${id}`}
+          className="group flex h-10 w-10 touch-manipulation items-center justify-center rounded-full border border-white/70 bg-neutral-950/75 text-white shadow-lg shadow-black/20 backdrop-blur-md transition duration-200 hover:scale-105 hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/20 focus-visible:outline-none active:scale-95"
         >
-          <Settings2Icon className="h-4 w-4 text-white" />
+          <Ellipsis className="h-5 w-5 transition-transform group-hover:rotate-90" />
         </button>
-        <div className="absolute top-10 flex w-full px-4">
-          <AnimatePresence>
-            {editToggled && (
-              <motion.div
-                variants={variants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                transition={{
-                  delay: 0.05,
-                  ease: "easeInOut",
-                  duration: 0.3,
-                }}
-              >
-                <div className="flex w-fit touch-manipulation flex-col items-start gap-1 rounded-[15px] bg-white/30 p-2 text-nowrap shadow-sm backdrop-blur-md">
-                  {ProfileToggleData.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => handleMenuItemClick(String(item.id))}
-                      className="group flex w-full flex-col items-start"
-                    >
-                      <p className="font-grotesk text-sm font-medium text-neutral-50 transition-all duration-200 group-hover:scale-105 group-active:scale-95">
-                        {item.name}
-                      </p>
-                    </button>
-                  ))}
-                  {isListed ? (
-                    <button
-                      disabled={!isListed}
-                      onClick={handleUnlistAsset}
-                      className="font-grotesk text-sm font-medium text-neutral-50 capitalize transition-all duration-200 hover:scale-105 active:scale-95"
-                    >
-                      Unlist
-                    </button>
-                  ) : (
-                    <button
-                      disabled={isListed}
-                      onClick={handleListToggle}
-                      className="font-grotesk text-sm font-medium text-neutral-50 capitalize transition-all duration-200 hover:scale-105 active:scale-95"
-                    >
-                      list
-                    </button>
-                  )}
+        <AnimatePresence>
+          {editToggled && (
+            <motion.div
+              id={`artwork-actions-${id}`}
+              aria-label="Artwork actions"
+              initial={{ opacity: 0, y: 8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6, scale: 0.98 }}
+              transition={{ duration: 0.16, ease: "easeOut" }}
+              className="absolute top-12 left-0 z-40 w-60 origin-top-left overflow-hidden rounded-2xl border border-neutral-200/80 bg-white/95 p-1.5 text-neutral-900 shadow-2xl shadow-black/20 backdrop-blur-xl"
+            >
+              <div className="flex items-center justify-between px-3 pt-2 pb-2">
+                <div>
+                  <p className="font-bebas text-xs tracking-[0.12em] text-neutral-500 uppercase">
+                    Artwork actions
+                  </p>
+                  <p className="font-grotesk mt-0.5 text-[11px] text-neutral-400">
+                    Manage your artwork
+                  </p>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <span
+                  className={`font-bebas rounded-full px-2 py-1 text-[10px] tracking-wider ${
+                    isListed
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-neutral-100 text-neutral-500"
+                  }`}
+                >
+                  {isListed ? "Listed" : "Unlisted"}
+                </span>
+              </div>
 
-          {isListModalToggled && (
-            <ListAssetModal
-              fileId={id}
-              image={image}
-              isOpen={isListModalToggled}
-              onClose={handleListToggle}
-            />
+              <div className="space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onEditPost?.();
+                    closeMenu();
+                  }}
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+                >
+                  <Pencil className="h-4 w-4 text-neutral-500" />
+                  <span>Edit artwork</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onAddToCollection?.();
+                    closeMenu();
+                  }}
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+                >
+                  <FolderPlus className="h-4 w-4 text-neutral-500" />
+                  <span>Add to collection</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (isListed) await handleUnlistAsset();
+                    else handleListToggle();
+                    closeMenu();
+                  }}
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+                >
+                  <Store className="h-4 w-4 text-neutral-500" />
+                  <span>{isListed ? "Unlist from sale" : "List for sale"}</span>
+                  {isListed && (
+                    <Check className="ml-auto h-3.5 w-3.5 text-emerald-600" />
+                  )}
+                </button>
+              </div>
+
+              <div className="my-1.5 border-t border-neutral-100" />
+
+              {confirmDelete ? (
+                <div className="space-y-2 rounded-xl bg-red-50 p-3">
+                  <p className="font-bebas text-xs font-semibold tracking-wider text-red-800">
+                    Delete this artwork?
+                  </p>
+                  <p className="font-grotesk text-[11px] leading-4 text-red-700">
+                    This action cannot be undone.
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDelete(false)}
+                      className="font-bebas flex min-h-9 flex-1 items-center justify-center gap-1 rounded-lg border border-red-200 bg-white text-xs font-semibold tracking-wider text-neutral-700 transition-colors hover:bg-red-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+                    >
+                      <X className="h-3.5 w-3.5" /> Keep it
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void handleDeleteAsset();
+                        closeMenu();
+                      }}
+                      className="font-bebas flex min-h-9 flex-1 items-center justify-center gap-1 rounded-lg bg-red-600 text-xs font-semibold tracking-wider text-white transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Delete
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(true)}
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 focus-visible:bg-red-50 focus-visible:outline-none"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete artwork</span>
+                </button>
+              )}
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
+
+        {isListModalToggled && (
+          <ListAssetModal
+            fileId={id}
+            image={image}
+            isOpen={isListModalToggled}
+            onClose={handleListToggle}
+          />
+        )}
       </div>
     </section>
   );
