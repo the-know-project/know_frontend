@@ -6,6 +6,7 @@ import { useRoleStore } from "../../auth/state/store";
 import ProfileEditToggle from "./profile-edit-toggle";
 import { useIsEditProfileToggled } from "../artist/store/artist-profile.store";
 import { BlankProfilePicture } from "@/src/constants/constants";
+import { isImageKitUrl } from "@/src/utils/image-url";
 
 interface IProfileCard {
   id: number | string;
@@ -62,6 +63,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
               >
                 <Image
                   src={image || BlankProfilePicture}
+                  unoptimized={isImageKitUrl(image)}
                   alt={title ? `Artwork: ${title}` : "Artwork"}
                   quality={90}
                   fill
@@ -77,6 +79,7 @@ const ProfileCard: React.FC<IProfileCard> = ({
             ) : (
               <Image
                 src={image || BlankProfilePicture}
+                unoptimized={isImageKitUrl(image)}
                 alt={title ? `Artwork: ${title}` : "Artwork"}
                 quality={90}
                 fill
