@@ -19,6 +19,7 @@ export type IUploadAssetServer = z.infer<typeof UploadAssetSchemaServer>;
 export type IUploadAssetClient = Omit<IUploadAsset, "customMetadata"> & {
   description?: string;
   customMetadata?: string[];
+  onProgress?: (percent: number | null) => void;
 };
 
 type UploadData = {
