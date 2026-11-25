@@ -14,21 +14,22 @@ export const useUploadAsset = () => {
   return useMutation({
     mutationKey: [`upload-asset-${id}`],
     mutationFn: async (ctx: IUploadAssetClient) => {
+      const { onProgress, ...uploadInput } = ctx;
       const serverData: IUploadAssetServer = {
         userId: id as string,
-        fileName: ctx.fileName,
-        description: ctx.description,
-        asset: ctx.asset,
-        size: ctx.size,
-        categories: ctx.categories,
-        tags: ctx.tags,
-        customMetadata: ctx.customMetadata
-          ? transformCustomMetadata(ctx.customMetadata)
+        fileName: uploadInput.fileName,
+        description: uploadInput.description,
+        asset: uploadInput.asset,
+        size: uploadInput.size,
+        categories: uploadInput.categories,
+        tags: uploadInput.tags,
+        customMetadata: uploadInput.customMetadata
+          ? transformCustomMetadata(uploadInput.customMetadata)
           : undefined,
       };
 
       const result = await ResultAsync.fromPromise(
-        uploadAsset(serverData),
+        uploadAsset(serverData, onProgress),
         (error) => new UploadError(`Upload failed: ${error}`),
       ).andThen((response) => {
         const parseResult = UploadResponseDto.safeParse(response);
