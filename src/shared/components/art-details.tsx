@@ -16,9 +16,16 @@ import {
 import { useFollowUser } from "@/src/features/metrics/hooks/use-follow-user";
 import { useUnfollowUser } from "@/src/features/metrics/hooks/use-unfollow-user";
 import { useFollowActions } from "@/src/features/metrics/state/store/metrics.store";
+import { useAssetLike } from "@/src/features/explore/hooks/use-asset-like";
 import { showLog } from "@/src/utils/logger";
 import { isImageKitUrl } from "@/src/utils/image-url";
-import { IconTag, IconX } from "@tabler/icons-react";
+import { formatViewCount } from "@/src/utils/number-format";
+import {
+  IconTag,
+  IconThumbUp,
+  IconThumbUpFilled,
+  IconX,
+} from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -35,6 +42,15 @@ const ArtDetails = () => {
 
   const { toggledContentId, exploreContent, isExploreContentToggled } =
     useIsExploreContentToggled();
+  const {
+    isLiked,
+    likeCount,
+    toggleLike,
+    isLoading: isLikeLoading,
+  } = useAssetLike({
+    assetId: exploreContent?.id ?? "",
+    initialLikeCount: exploreContent?.numOfLikes ?? 0,
+  });
 
   useEffect(() => {
     setActiveIndex(0);
@@ -179,7 +195,7 @@ const ArtDetails = () => {
                   <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl">
                     {/* Header */}
                     <div className="flex items-center justify-between bg-transparent px-4 py-4">
-                      <div className="flex items-center gap-3">
+                      <div className="flex min-w-0 flex-1 items-center gap-3">
                         <button
                           type="button"
                           onClick={() =>
@@ -200,10 +216,12 @@ const ArtDetails = () => {
                             className="rounded-full object-contain object-center select-none"
                           />
                         </button>
-                        <div>
-                          <h1 className="font-helvetica text-lg font-bold text-white capitalize">
-                            {exploreContent?.artName}
-                          </h1>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-3">
+                            <h1 className="font-helvetica min-w-0 flex-1 text-lg font-bold text-white capitalize">
+                              {exploreContent?.artName}
+                            </h1>
+                          </div>
                           <div className="font-grotesk flex gap-1 text-xs tracking-wide text-neutral-300 capitalize sm:text-sm">
                             <button
                               type="button"
@@ -243,9 +261,41 @@ const ArtDetails = () => {
                     <div className="custom-scrollbar flex-1 overflow-auto bg-[#141414]">
                       <div className="space-y-6">
                         <div className="p-6">
-                          <h2 className="font-helvetica mb-4 text-2xl font-bold text-white capitalize">
-                            {exploreContent?.artName}
-                          </h2>
+                          <div className="flex w-full items-center justify-between">
+                            <h2 className="font-helvetica text-2xl font-bold text-white capitalize">
+                              {exploreContent?.artName}
+                            </h2>
+
+                            {exploreContent && (
+                              <button
+                                type="button"
+                                onClick={() => void toggleLike()}
+                                disabled={isLikeLoading}
+                                aria-pressed={isLiked}
+                                aria-label={`${isLiked ? "Unlike" : "Like"} ${exploreContent.artName}`}
+                                title={`${isLiked ? "Unlike" : "Like"} ${exploreContent.artName}`}
+                                className="inline-flex shrink-0 items-center gap-1 text-neutral-300 transition hover:text-blue-300 focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                {isLiked ? (
+                                  <IconThumbUpFilled
+                                    width={22}
+                                    height={22}
+                                    className="text-blue-300"
+                                    aria-hidden="true"
+                                  />
+                                ) : (
+                                  <IconThumbUp
+                                    width={22}
+                                    height={22}
+                                    aria-hidden="true"
+                                  />
+                                )}
+                                <span className="font-grotesk text-xs font-semibold text-white">
+                                  {formatViewCount(likeCount)}
+                                </span>
+                              </button>
+                            )}
+                          </div>
                           <p className="font-grotesk max-w-prose text-xs font-light text-neutral-300 sm:text-sm">
                             {exploreContent?.description === null
                               ? "Brought to you by Know, The ultimate partner for creatives."
