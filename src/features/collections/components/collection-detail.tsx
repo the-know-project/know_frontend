@@ -6,10 +6,12 @@ import {
   ArrowLeft,
   Camera,
   DollarSign,
+  Ellipsis,
   Eye,
   Heart,
   Images,
   ImagePlus,
+  Pencil,
   Tag,
   Trash2,
   TrendingUp,
@@ -19,10 +21,16 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
+import { IconThumbUp, IconThumbUpFilled } from "@tabler/icons-react";
 import { useTokenStore } from "@/src/features/auth/state/store/token.store";
 import ArtDetails from "@/src/shared/components/art-details";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 import type { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
+import { useAssetLike } from "@/src/features/explore/hooks/use-asset-like";
 import { useToggleExploreContent } from "@/src/features/explore/state/explore-content.store";
+import { formatViewCount } from "@/src/utils/number-format";
 import AssetPickerDialog from "./asset-picker-dialog";
 import { useCollection } from "../hooks/use-collection";
 import { useRemoveAssetFromCollection } from "../hooks/use-remove-asset-from-collection";
@@ -31,9 +39,203 @@ import { useToggleCollectionLike } from "../hooks/use-toggle-collection-like";
 import { useTrackCollectionView } from "../hooks/use-track-collection-view";
 import TextEffectWithExit from "@/src/shared/components/animate-text";
 import { useGetCategories } from "@/src/features/personalize/hooks";
+import UploadCanvas, {
+  type UploadAssetForEdit,
+} from "@/src/features/upload/components/upload-canvas";
+import type { CollectionAsset } from "../types/collection.types";
 
 interface Props {
   collectionId: string;
+}
+
+interface CollectionAssetLikeButtonProps {
+  assetId: string;
+  artTitle: string;
+  initialLikeCount: number;
+}
+
+function CollectionAssetLikeButton({
+  assetId,
+  artTitle,
+  initialLikeCount,
+}: CollectionAssetLikeButtonProps) {
+  const { isLiked, likeCount, toggleLike, isLoading } = useAssetLike({
+    assetId,
+    initialLikeCount,
+  });
+
+  return (
+    <button
+      type="button"
+      onClick={() => void toggleLike()}
+      disabled={isLoading}
+      aria-pressed={isLiked}
+      aria-label={`${isLiked ? "Unlike" : "Like"} ${artTitle}`}
+      title={`${isLiked ? "Unlike" : "Like"} ${artTitle}`}
+      className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-neutral-600 transition hover:text-[#1E3A8A] focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {isLiked ? (
+        <IconThumbUpFilled
+          width={20}
+          height={20}
+          className="text-[#1E3A8A]"
+          aria-hidden="true"
+        />
+      ) : (
+        <IconThumbUp
+          width={20}
+          height={20}
+          className="text-neutral-500"
+          aria-hidden="true"
+        />
+      )}
+      <span className="font-grotesk text-xs font-semibold">
+        {formatViewCount(likeCount)}
+      </span>
+    </button>
+  );
+}
+
+interface CollectionAssetActionsToggleProps {
+  assetId: string;
+  assetTitle: string;
+  disabled: boolean;
+  onEdit: () => void;
+  onRemove: () => void;
+}
+
+function CollectionAssetActionsToggle({
+  assetId,
+  assetTitle,
+  disabled,
+  onEdit,
+  onRemove,
+}: CollectionAssetActionsToggleProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const toggleRef = useRef<HTMLDivElement>(null);
+  const menuId = `collection-asset-actions-${assetId}`;
+
+  const closeMenu = () => {
+    setIsOpen(false);
+    setConfirmDelete(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        toggleRef.current &&
+        !toggleRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+        setConfirmDelete(false);
+      }
+    };
+
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
+  return (
+    <div
+      ref={toggleRef}
+      className="relative"
+      onKeyDown={(event) => {
+        if (event.key === "Escape") closeMenu();
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => {
+          if (isOpen) setConfirmDelete(false);
+          setIsOpen((open) => !open);
+        }}
+        disabled={disabled}
+        aria-label={isOpen ? "Close asset actions" : "Open asset actions"}
+        aria-expanded={isOpen}
+        aria-controls={menuId}
+        className="group flex h-10 w-10 touch-manipulation items-center justify-center rounded-full border border-white/70 bg-neutral-950/75 text-white shadow-lg shadow-black/20 backdrop-blur-md transition duration-200 hover:scale-105 hover:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/20 focus-visible:outline-none active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <Ellipsis className="h-5 w-5 transition-transform group-hover:rotate-90" />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            id={menuId}
+            aria-label="Collection asset actions"
+            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.98 }}
+            transition={{ duration: 0.16, ease: "easeOut" }}
+            className="absolute top-12 left-0 z-40 w-60 origin-top-left overflow-hidden rounded-2xl border border-neutral-200/80 bg-white/95 p-1.5 text-neutral-900 shadow-2xl shadow-black/20 backdrop-blur-xl"
+          >
+            <div className="flex items-center justify-between px-3 pt-2 pb-2">
+              <div>
+                <p className="font-bebas text-xs tracking-[0.12em] text-neutral-500 uppercase">
+                  Collection asset
+                </p>
+                <p className="font-grotesk mt-0.5 text-[11px] text-neutral-400">
+                  Manage this asset
+                </p>
+              </div>
+            </div>
+
+            {confirmDelete ? (
+              <div className="space-y-2 rounded-xl bg-red-50 p-3">
+                <p className="font-bebas text-xs font-semibold tracking-wider text-red-800">
+                  Remove this asset?
+                </p>
+                <p className="font-grotesk text-[11px] leading-4 text-red-700">
+                  “{assetTitle}” will be removed from this collection.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(false)}
+                    className="font-bebas flex min-h-9 flex-1 items-center justify-center gap-1 rounded-lg border border-red-200 bg-white text-xs font-semibold tracking-wider text-neutral-700 transition-colors hover:bg-red-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+                  >
+                    <X className="h-3.5 w-3.5" /> Keep it
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onRemove();
+                      closeMenu();
+                    }}
+                    className="font-bebas flex min-h-9 flex-1 items-center justify-center gap-1 rounded-lg bg-red-600 text-xs font-semibold tracking-wider text-white transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> Remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onEdit();
+                    closeMenu();
+                  }}
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium capitalize transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+                >
+                  <Pencil className="h-4 w-4 text-neutral-500" />
+                  <span>Edit asset</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(true)}
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-red-600 capitalize transition-colors hover:bg-red-50 focus-visible:bg-red-50 focus-visible:outline-none"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span>Remove from collection</span>
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
 
 export default function CollectionDetail({ collectionId }: Props) {
@@ -54,6 +256,9 @@ export default function CollectionDetail({ collectionId }: Props) {
   const profileInput = useRef<HTMLInputElement>(null);
   const trackedViewId = useRef<string | null>(null);
   const [assetPickerOpen, setAssetPickerOpen] = useState(false);
+  const [editingAsset, setEditingAsset] = useState<UploadAssetForEdit | null>(
+    null,
+  );
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availabilityFilter, setAvailabilityFilter] = useState<boolean | null>(
@@ -176,6 +381,87 @@ export default function CollectionDetail({ collectionId }: Props) {
   const formatMetricCount = (value: number | undefined, singular: string) => {
     const count = Number(value ?? 0);
     return `${count.toLocaleString()} ${count === 1 ? singular : `${singular}s`}`;
+  };
+
+  const removeCollectionAsset = (fileId: string, artTitle: string) => {
+    const toastId = toast.loading(`Removing ${artTitle} from collection`, {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+    removeAsset.mutate(
+      { collectionId, fileId },
+      {
+        onSuccess: () => {
+          toast.success("Asset removed from collection", {
+            id: toastId,
+            icon: <ToastIcon />,
+            description: (
+              <ToastDescription
+                description={`Removed “${artTitle}” from your collection.`}
+              />
+            ),
+            style: {
+              backdropFilter: "-moz-initial",
+              opacity: "-moz-initial",
+              backgroundColor: "oklch(62.7% 0.194 149.214)",
+              fontSize: "15px",
+              font: "Space Grotesk",
+              color: "#ffffff",
+              fontWeight: "bolder",
+            },
+          });
+        },
+        onError: (error) => {
+          toast("Could not remove asset from collection", {
+            id: toastId,
+            icon: <ToastIcon />,
+            description: (
+              <ToastDescription
+                description={
+                  error instanceof Error ? error.message : "Please try again."
+                }
+              />
+            ),
+            style: {
+              backdropFilter: "-moz-initial",
+              opacity: "-moz-initial",
+              backgroundColor: "oklch(62.8% 0.258 29.234)",
+              fontSize: "15px",
+              font: "Space Grotesk",
+              color: "#ffffff",
+              fontWeight: "bolder",
+            },
+          });
+        },
+      },
+    );
+  };
+
+  const editCollectionAsset = (asset: CollectionAsset) => {
+    setEditingAsset({
+      fileId: asset.fileId,
+      name: asset.artTitle,
+      description: asset.artDescription ?? "",
+      size: {
+        width: asset.artSize?.width,
+        height: asset.artSize?.height,
+        depth: asset.artSize?.depth,
+        diameter: asset.artSize?.diameter,
+        length: asset.artSize?.length,
+        weight: asset.artSize?.weight ?? 0,
+        aspectRatio: asset.artSize?.aspectRatio,
+        weightUnit: asset.artSize?.weightUnit,
+        dimensionUnit: asset.artSize?.dimensionUnit,
+      },
+      categories: asset.artCategories ?? [],
+      tags: asset.artTags ?? [],
+      url: asset.assetUrl,
+    });
   };
 
   const openAssetDetails = (asset: (typeof collection.assetData)[number]) => {
@@ -418,6 +704,38 @@ export default function CollectionDetail({ collectionId }: Props) {
               Published {new Date(collection.createdAt).toLocaleDateString()}
             </p>
           </div>
+          {!owner && (
+            <motion.button
+              type="button"
+              disabled={collectionLike.isPending}
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              onClick={() =>
+                collectionLike.mutate({
+                  collectionId,
+                  isLiked: Boolean(collection.isLikedByUser),
+                })
+              }
+              aria-pressed={Boolean(collection.isLikedByUser)}
+              aria-label={
+                collection.isLikedByUser
+                  ? "Unlike collection"
+                  : "Like collection"
+              }
+              className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full px-1 py-1 text-rose-600 transition hover:text-rose-700 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none disabled:opacity-60"
+            >
+              <Heart
+                aria-hidden="true"
+                className={`h-5 w-5 ${collection.isLikedByUser ? "fill-rose-500 text-rose-500" : "text-rose-500"}`}
+              />
+              <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
+                {formatMetricCount(collection.numOfLikes, "like")}
+              </span>
+            </motion.button>
+          )}
         </div>
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_280px]">
           <div>
@@ -544,7 +862,7 @@ export default function CollectionDetail({ collectionId }: Props) {
               <span aria-hidden="true" className="text-neutral-300">
                 ·
               </span>
-              {owner ? (
+              {owner && (
                 <motion.div
                   variants={{
                     hidden: { opacity: 0, y: 10 },
@@ -558,37 +876,6 @@ export default function CollectionDetail({ collectionId }: Props) {
                     {formatMetricCount(collection.numOfLikes, "like")}
                   </span>
                 </motion.div>
-              ) : (
-                <motion.button
-                  type="button"
-                  disabled={collectionLike.isPending}
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  onClick={() =>
-                    collectionLike.mutate({
-                      collectionId,
-                      isLiked: Boolean(collection.isLikedByUser),
-                    })
-                  }
-                  aria-pressed={Boolean(collection.isLikedByUser)}
-                  aria-label={
-                    collection.isLikedByUser
-                      ? "Unlike collection"
-                      : "Like collection"
-                  }
-                  className="inline-flex items-center gap-1.5 rounded-full px-1 py-1 text-rose-600 transition hover:text-rose-700 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none disabled:opacity-60"
-                >
-                  <Heart
-                    aria-hidden="true"
-                    className={`h-4 w-4 ${collection.isLikedByUser ? "fill-rose-500 text-rose-500" : "text-rose-500"}`}
-                  />
-                  <span className="font-grotesk text-xs font-bold uppercase lg:text-sm">
-                    {formatMetricCount(collection.numOfLikes, "like")}
-                  </span>
-                </motion.button>
               )}
             </motion.div>
             {collectionLike.isError && (
@@ -877,6 +1164,19 @@ export default function CollectionDetail({ collectionId }: Props) {
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {visibleAssets.map((asset) => (
               <article key={asset.fileId} className="relative min-w-0">
+                {owner && (
+                  <div className="absolute top-3 left-3 z-20">
+                    <CollectionAssetActionsToggle
+                      assetId={asset.fileId}
+                      assetTitle={asset.artTitle}
+                      disabled={removeAsset.isPending}
+                      onEdit={() => editCollectionAsset(asset)}
+                      onRemove={() =>
+                        removeCollectionAsset(asset.fileId, asset.artTitle)
+                      }
+                    />
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={() => openAssetDetails(asset)}
@@ -895,32 +1195,20 @@ export default function CollectionDetail({ collectionId }: Props) {
                     )}
                   </div>
                 </button>
-                <div className="flex items-center justify-between p-3">
+                <div className="flex items-center justify-between gap-3 p-3">
                   <div>
                     <h2 className="font-helvetica font-semibold">
                       {asset.artTitle}
                     </h2>
                     <p className="font-grotesk text-xs font-light text-neutral-500 uppercase">
-                      {money(asset.artPrice)} · {asset.numOfLikes} likes
+                      {money(asset.artPrice)}
                     </p>
                   </div>
-                  {owner && (
-                    <button
-                      type="button"
-                      disabled={removeAsset.isPending}
-                      onClick={() =>
-                        removeAsset.mutate({
-                          collectionId,
-                          fileId: asset.fileId,
-                        })
-                      }
-                      aria-label={`Remove ${asset.artTitle} from collection`}
-                      title="Remove asset"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full text-red-600 transition hover:bg-red-50 hover:text-red-700 focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <Trash2 className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                  )}
+                  <CollectionAssetLikeButton
+                    assetId={asset.fileId}
+                    artTitle={asset.artTitle}
+                    initialLikeCount={asset.numOfLikes}
+                  />
                 </div>
               </article>
             ))}
@@ -942,6 +1230,20 @@ export default function CollectionDetail({ collectionId }: Props) {
           existingAssetIds={collection.assetData.map((asset) => asset.fileId)}
           onClose={() => setAssetPickerOpen(false)}
         />
+      )}
+      {owner && editingAsset && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-white">
+          <UploadCanvas
+            key={editingAsset.fileId}
+            mode="edit"
+            asset={editingAsset}
+            onCancel={() => setEditingAsset(null)}
+            onComplete={() => {
+              setEditingAsset(null);
+              void collectionQuery.refetch();
+            }}
+          />
+        </div>
       )}
       <ArtDetails />
     </main>
