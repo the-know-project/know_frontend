@@ -260,6 +260,8 @@ export default function ArtistPortal({ artistId, onClose }: Props) {
                         image={item.url}
                         isListed={Boolean(item.isListed)}
                         showEditControls={false}
+                        showLikeControl
+                        likeCount={item.numOfLikes ?? 0}
                         onClick={() => {
                           onClose();
                           toggleExploreContent(item.fileId, {
