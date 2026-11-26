@@ -15,9 +15,10 @@ import {
   TrendingUp,
   Plus,
   X,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTokenStore } from "@/src/features/auth/state/store/token.store";
 import ArtDetails from "@/src/shared/components/art-details";
 import type { IExploreContent } from "@/src/shared/hooks/interface/shared.interface";
@@ -28,8 +29,8 @@ import { useRemoveAssetFromCollection } from "../hooks/use-remove-asset-from-col
 import { useUpdateCollection } from "../hooks/use-update-collection";
 import { useToggleCollectionLike } from "../hooks/use-toggle-collection-like";
 import { useTrackCollectionView } from "../hooks/use-track-collection-view";
-import { TextEffect } from "@/src/shared/ui/text-effect";
 import TextEffectWithExit from "@/src/shared/components/animate-text";
+import { useGetCategories } from "@/src/features/personalize/hooks";
 
 interface Props {
   collectionId: string;
@@ -53,7 +54,17 @@ export default function CollectionDetail({ collectionId }: Props) {
   const profileInput = useRef<HTMLInputElement>(null);
   const trackedViewId = useRef<string | null>(null);
   const [assetPickerOpen, setAssetPickerOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [availabilityFilter, setAvailabilityFilter] = useState<boolean | null>(
+    null,
+  );
+  const [dateSort, setDateSort] = useState<"latest" | "oldest" | null>(null);
+  const [priceTier, setPriceTier] = useState<
+    "middle" | "high" | "premium" | null
+  >(null);
   const collectionQuery = useCollection(collectionId);
+  const categoriesQuery = useGetCategories();
   const collection = collectionQuery.data?.data;
   const collectionLike = useToggleCollectionLike();
   const trackView = useTrackCollectionView();
@@ -74,6 +85,54 @@ export default function CollectionDetail({ collectionId }: Props) {
   const update = useUpdateCollection();
   const removeAsset = useRemoveAssetFromCollection();
   const toggleExploreContent = useToggleExploreContent();
+
+  const hasActiveAssetFilters =
+    selectedCategories.length > 0 ||
+    availabilityFilter !== null ||
+    dateSort !== null ||
+    priceTier !== null;
+  const visibleAssets = collection
+    ? collection.assetData
+        .filter((asset) => {
+          if (
+            selectedCategories.length > 0 &&
+            !asset.artCategories?.some((category) =>
+              selectedCategories.includes(category),
+            )
+          ) {
+            return false;
+          }
+          if (
+            availabilityFilter !== null &&
+            Boolean(asset.isArtListed ?? true) !== availabilityFilter
+          ) {
+            return false;
+          }
+          const price = Number(asset.artPrice);
+          if (priceTier === "middle" && !(price >= 50 && price <= 500)) {
+            return false;
+          }
+          if (priceTier === "high" && !(price > 500 && price < 1500)) {
+            return false;
+          }
+          if (priceTier === "premium" && !(price >= 1500)) {
+            return false;
+          }
+          return true;
+        })
+        .sort((first, second) => {
+          if (!dateSort) return 0;
+          const firstDate = new Date(
+            first.artCreatedAt ?? collection.createdAt,
+          ).getTime();
+          const secondDate = new Date(
+            second.artCreatedAt ?? collection.createdAt,
+          ).getTime();
+          return dateSort === "latest"
+            ? secondDate - firstDate
+            : firstDate - secondDate;
+        })
+    : [];
 
   useEffect(() => {
     if (!bannerImage) {
@@ -419,7 +478,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                   </label>
                 </div>
                 <button
-                  className="font-bebas rounded-lg bg-[#1E3A8A] px-4 py-2 tracking-wider text-white"
+                  className="font-bebas rounded-md border !border-[#666666] bg-[#1E3A8A] px-2 py-1 text-sm tracking-wider text-white transition-all duration-300 hover:scale-105 active:scale-95 lg:px-3 lg:py-2 lg:text-base"
                   disabled={update.isPending}
                 >
                   {update.isPending ? "Saving…" : "Save"}
@@ -566,21 +625,254 @@ export default function CollectionDetail({ collectionId }: Props) {
             </p>
           </aside>
         </div>
-        {owner && (
-          <div className="mt-8 flex justify-start lg:justify-end">
-            <button
-              type="button"
-              onClick={() => setAssetPickerOpen(true)}
-              className="font-bebas inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#1E3A8A] px-4 py-2 tracking-wider text-white transition hover:bg-[#1E3A8A]"
+        <section
+          aria-label="Filter collection assets"
+          className="relative mt-10 flex w-full flex-col gap-2 lg:mt-20"
+        >
+          <div
+            className={
+              owner
+                ? "grid w-full grid-cols-[minmax(0,1fr)_max-content] items-center justify-between gap-y-2 md:grid-cols-[max-content_minmax(0,1fr)_max-content] md:gap-x-5"
+                : "flex w-full flex-col items-start gap-2"
+            }
+          >
+            {owner && (
+              <button
+                type="button"
+                onClick={() => setAssetPickerOpen(true)}
+                className="font-bebas col-start-1 row-start-1 inline-flex w-fit items-center justify-center gap-1 rounded-md border !border-[#666666] bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider whitespace-nowrap text-white transition-all duration-300 hover:scale-105 active:scale-95 lg:px-3 lg:py-2 lg:text-base"
+              >
+                <ImagePlus className="h-3.5 w-3.5 lg:h-5 lg:w-5" />
+                Add assets
+              </button>
+            )}
+            <div
+              className={`scrollbar-hide w-full min-w-0 overflow-x-auto ${owner ? "col-span-2 row-start-2 md:col-span-1 md:col-start-2 md:row-start-1 md:w-auto" : ""}`}
             >
-              <ImagePlus className="h-4 w-4" />
-              Add assets
-            </button>
+              <div className="flex min-w-fit items-center gap-2 px-1">
+                {(categoriesQuery.data?.data ?? []).map((category) => {
+                  const selected = selectedCategories.includes(category);
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() =>
+                        setSelectedCategories((current) =>
+                          selected
+                            ? current.filter((item) => item !== category)
+                            : [...current, category],
+                        )
+                      }
+                      className={`font-bebas group inline-flex w-fit flex-shrink-0 rounded-md border !border-[#666666] px-2 py-1 text-sm font-normal tracking-wider text-nowrap capitalize transition-all duration-300 hover:scale-105 active:scale-95 lg:px-3 lg:py-2 lg:text-base ${selected ? "bg-[#1E3A8A] text-white" : "text-neutral-600"}`}
+                    >
+                      {category}
+                    </button>
+                  );
+                })}
+                {categoriesQuery.isError && (
+                  <p className="text-sm text-red-600">
+                    Categories could not be loaded.
+                  </p>
+                )}
+              </div>
+            </div>
+            <div
+              className={
+                owner
+                  ? "col-start-2 row-start-1 justify-self-end md:col-start-3 md:row-start-1"
+                  : "flex w-full items-center justify-between"
+              }
+            >
+              {!owner && hasActiveAssetFilters && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategories([]);
+                    setAvailabilityFilter(null);
+                    setDateSort(null);
+                    setPriceTier(null);
+                  }}
+                  className="font-bebas min-h-9 rounded-lg px-2 text-sm tracking-wider text-blue-800 underline underline-offset-2"
+                >
+                  Clear all
+                </button>
+              )}
+              <button
+                type="button"
+                aria-expanded={filtersOpen}
+                onClick={() => setFiltersOpen((open) => !open)}
+                className={`font-bebas flex w-fit items-center justify-center gap-1 rounded-md border !border-[#666666] bg-[#1E3A8A] px-2 py-1 text-sm font-normal tracking-wider whitespace-nowrap text-white transition-all duration-300 hover:scale-105 active:scale-95 lg:px-3 lg:py-2 lg:text-base ${owner ? "" : "ml-auto"}`}
+              >
+                <SlidersHorizontal
+                  className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5"
+                  aria-hidden="true"
+                />
+                Filter
+              </button>
+            </div>
           </div>
+          {owner && hasActiveAssetFilters && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategories([]);
+                  setAvailabilityFilter(null);
+                  setDateSort(null);
+                  setPriceTier(null);
+                }}
+                className="font-bebas min-h-9 rounded-lg px-2 text-sm tracking-wider text-blue-800 underline underline-offset-2"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
+
+          {/* Filters and sorting */}
+          <AnimatePresence initial={false}>
+            {filtersOpen && (
+              <motion.div
+                key="collection-filters"
+                initial={{ opacity: 0, height: 0, y: -12 }}
+                animate={{ opacity: 1, height: "auto", y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -8 }}
+                transition={{ duration: 0.28, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <motion.div className="scrollbar-hide flex w-full flex-row items-start justify-between gap-6 overflow-x-auto py-1">
+                  <motion.fieldset
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      hidden: { opacity: 0, x: 12 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: { duration: 0.22 },
+                      },
+                    }}
+                    className="flex flex-shrink-0 flex-col items-start"
+                  >
+                    <legend className="font-grotesk mb-2 text-sm font-semibold text-neutral-800">
+                      Availability
+                    </legend>
+                    <div className="flex items-center gap-[3px] sm:gap-2">
+                      {[
+                        { label: "For Sale", value: true },
+                        { label: "Not For Sale", value: false },
+                      ].map(({ label, value }) => (
+                        <button
+                          key={label}
+                          type="button"
+                          aria-pressed={availabilityFilter === value}
+                          onClick={() =>
+                            setAvailabilityFilter((current) =>
+                              current === value ? null : value,
+                            )
+                          }
+                          className={`font-bebas flex flex-shrink-0 items-center rounded-lg px-2.5 py-2 text-xs tracking-wider whitespace-nowrap transition-all duration-300 sm:text-sm ${availabilityFilter === value ? "bg-[#1E3A8A] text-white" : "bg-neutral-300 text-neutral-800 hover:bg-neutral-400"}`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.fieldset>
+                  <motion.fieldset
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      hidden: { opacity: 0, x: 12 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: { duration: 0.22 },
+                      },
+                    }}
+                    className="flex flex-shrink-0 flex-col items-start"
+                  >
+                    <legend className="font-grotesk mb-2 text-sm font-semibold text-neutral-800">
+                      Date added
+                    </legend>
+                    <div className="flex items-center gap-[3px] sm:gap-2">
+                      {[
+                        { label: "Latest", value: "latest" },
+                        { label: "Oldest", value: "oldest" },
+                      ].map(({ label, value }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          aria-pressed={dateSort === value}
+                          onClick={() =>
+                            setDateSort((current) =>
+                              current === value
+                                ? null
+                                : (value as "latest" | "oldest"),
+                            )
+                          }
+                          className={`font-bebas flex flex-shrink-0 items-center rounded-lg px-2.5 py-2 text-xs tracking-wider whitespace-nowrap transition-all duration-300 sm:text-sm ${dateSort === value ? "bg-[#1E3A8A] text-white" : "bg-neutral-300 text-neutral-800 hover:bg-neutral-400"}`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.fieldset>
+                  <motion.fieldset
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      hidden: { opacity: 0, x: 12 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: { duration: 0.22 },
+                      },
+                    }}
+                    className="flex flex-shrink-0 flex-col items-start"
+                  >
+                    <legend className="font-grotesk mb-2 text-sm font-semibold text-neutral-800">
+                      Price
+                    </legend>
+                    <div className="flex items-center gap-[3px] sm:gap-2">
+                      {[
+                        { label: "$50–$500", value: "middle" },
+                        { label: "Over $500–under $1,500", value: "high" },
+                        { label: "$1,500 or more", value: "premium" },
+                      ].map(({ label, value }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          aria-pressed={priceTier === value}
+                          onClick={() =>
+                            setPriceTier((current) =>
+                              current === value
+                                ? null
+                                : (value as "middle" | "high" | "premium"),
+                            )
+                          }
+                          className={`font-bebas flex flex-shrink-0 items-center rounded-lg px-2.5 py-2 text-xs tracking-wider whitespace-nowrap transition-all duration-300 sm:text-sm ${priceTier === value ? "bg-[#1E3A8A] text-white" : "bg-neutral-300 text-neutral-800 hover:bg-neutral-400"}`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.fieldset>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </section>
+
+        {removeAsset.isError && (
+          <p role="alert" className="mt-4 text-sm text-red-600">
+            Could not remove this asset from the collection. Please try again.
+          </p>
         )}
-        {collection.assetData.length ? (
+
+        {/* Asset Grid */}
+        {visibleAssets.length ? (
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {collection.assetData.map((asset) => (
+            {visibleAssets.map((asset) => (
               <article key={asset.fileId} className="relative min-w-0">
                 <button
                   type="button"
@@ -630,6 +922,10 @@ export default function CollectionDetail({ collectionId }: Props) {
               </article>
             ))}
           </div>
+        ) : collection.assetData.length ? (
+          <p className="font-bebas py-16 text-center tracking-wider text-neutral-500">
+            No assets match these filters.
+          </p>
         ) : (
           <p className="font-bebas py-16 text-center tracking-wider text-neutral-500">
             This collection has no assets yet.
