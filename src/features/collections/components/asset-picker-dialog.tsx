@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ImagePlus, X } from "lucide-react";
+import { toast } from "sonner";
+import ToastIcon from "@/src/shared/components/toast-icon";
+import ToastDescription from "@/src/shared/components/toast-description";
 import { useAddAssetToCollection } from "../hooks/use-add-asset-to-collection";
 import { useArtistAssets } from "../hooks/use-artist-assets";
 
@@ -47,14 +50,68 @@ export default function AssetPickerDialog({
   };
 
   const handleAddSelected = async () => {
-    try {
-      for (const fileId of selectedAssetIds) {
-        if (!existingIds.has(fileId)) {
-          await addAsset.mutateAsync({ collectionId, fileId });
-        }
-      }
+    const assetsToAdd = selectedAssetIds.filter(
+      (fileId) => !existingIds.has(fileId),
+    );
+    if (!assetsToAdd.length) {
       onClose();
-    } catch {
+      return;
+    }
+
+    const toastId = toast.loading("Adding selected assets to collection", {
+      style: {
+        backgroundColor: "oklch(62.7% 0.194 149.214)",
+        fontSize: "12px",
+        fontFamily: "Space Grotesk",
+        color: "#ffffff",
+        fontWeight: "600",
+      },
+    });
+    let addedCount = 0;
+
+    try {
+      for (const fileId of assetsToAdd) {
+        await addAsset.mutateAsync({ collectionId, fileId });
+        addedCount++;
+      }
+      toast.success("Assets added to collection", {
+        id: toastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription
+            description={`${addedCount} ${addedCount === 1 ? "asset" : "assets"} added to your collection.`}
+          />
+        ),
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.7% 0.194 149.214)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
+      onClose();
+    } catch (error) {
+      toast("Could not add assets to collection", {
+        id: toastId,
+        icon: <ToastIcon />,
+        description: (
+          <ToastDescription
+            description={`${addedCount ? `${addedCount} ${addedCount === 1 ? "asset was" : "assets were"} added before another asset failed. ` : ""}${error instanceof Error ? error.message : "Please try again."}`}
+          />
+        ),
+        style: {
+          backdropFilter: "-moz-initial",
+          opacity: "-moz-initial",
+          backgroundColor: "oklch(62.8% 0.258 29.234)",
+          fontSize: "15px",
+          font: "Space Grotesk",
+          color: "#ffffff",
+          fontWeight: "bolder",
+        },
+      });
       // React Query's mutation state renders the failure message below.
     }
   };
@@ -215,7 +272,7 @@ export default function AssetPickerDialog({
                 type="button"
                 disabled={!selectedAssetIds.length || addAsset.isPending}
                 onClick={() => void handleAddSelected()}
-                className="font-bebas bg- rounded-lg px-4 py-2 text-sm font-medium tracking-wider text-white disabled:opacity-50"
+                className="font-bebas rounded-lg bg-[#1E3A8A] px-4 py-2 text-sm font-medium tracking-wider text-white disabled:opacity-50"
               >
                 {addAsset.isPending ? "Adding…" : "Add selected"}
               </button>
