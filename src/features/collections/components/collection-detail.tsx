@@ -671,7 +671,7 @@ export default function CollectionDetail({ collectionId }: Props) {
                   );
                 })}
                 {categoriesQuery.isError && (
-                  <p className="text-sm text-red-600">
+                  <p className="font-bebas text-sm tracking-wider text-red-600">
                     Categories could not be loaded.
                   </p>
                 )}
@@ -864,7 +864,10 @@ export default function CollectionDetail({ collectionId }: Props) {
         </section>
 
         {removeAsset.isError && (
-          <p role="alert" className="mt-4 text-sm text-red-600">
+          <p
+            role="alert"
+            className="font-bebas mt-4 text-sm tracking-wider text-red-600"
+          >
             Could not remove this asset from the collection. Please try again.
           </p>
         )}
