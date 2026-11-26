@@ -63,7 +63,7 @@ export const addAssetToCollection = (input: CollectionAssetInput) =>
   ApiClient.post("/api/collections/addToCollection", input);
 
 export const removeAssetFromCollection = (input: CollectionAssetInput) =>
-  ApiClient.delete("/api/collections/removeFromCollection", input);
+  ApiClient.delete(COLLECTIONS_ROUTES.REMOVE_FROM_COLLECTION, input);
 
 export const deleteCollection = (input: DeleteCollectionInput) =>
   ApiClient.delete(COLLECTIONS_ROUTES.DELETE_COLLECTION, input);
