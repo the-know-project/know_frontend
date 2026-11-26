@@ -227,7 +227,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                     onEditPost?.();
                     closeMenu();
                   }}
-                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium capitalize transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
                 >
                   <Pencil className="h-4 w-4 text-neutral-500" />
                   <span>Edit artwork</span>
@@ -238,7 +238,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                     onAddToCollection?.();
                     closeMenu();
                   }}
-                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium capitalize transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
                 >
                   <FolderPlus className="h-4 w-4 text-neutral-500" />
                   <span>Add to collection</span>
@@ -250,7 +250,7 @@ const ProfileEditToggle: React.FC<IProfileEditToggle> = ({
                     else handleListToggle();
                     closeMenu();
                   }}
-                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+                  className="font-grotesk flex min-h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium capitalize transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
                 >
                   <Store className="h-4 w-4 text-neutral-500" />
                   <span>{isListed ? "Unlist from sale" : "List for sale"}</span>

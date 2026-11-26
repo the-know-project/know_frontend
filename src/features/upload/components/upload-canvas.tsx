@@ -7,15 +7,26 @@ import { useEffect } from "react";
 import { UploadProvider, useUploadContext } from "../context/upload-context";
 import { useUploadAsset } from "../hooks/use-upload-asset";
 import { IUploadAssetClient } from "../types/upload.types";
+import type { ISizePickerForm } from "../types/upload.types";
 import { toast } from "sonner";
 import ToastIcon from "@/src/shared/components/toast-icon";
 import ToastDescription from "@/src/shared/components/toast-description";
-import type { TUserAssetData } from "@/src/features/profile/artist/dto/artist.dto";
 import { useUpdateAsset } from "@/src/features/profile/artist/hooks/use-update-asset";
+
+export interface UploadAssetForEdit {
+  fileId: string;
+  name: string;
+  description?: string;
+  size: ISizePickerForm;
+  categories: string[];
+  tags: string[];
+  url: string;
+  extraUrls?: string[];
+}
 
 interface UploadCanvasProps {
   mode?: "create" | "edit";
-  asset?: TUserAssetData;
+  asset?: UploadAssetForEdit;
   onCancel?: () => void;
   onComplete?: () => void;
 }

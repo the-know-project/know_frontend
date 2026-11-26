@@ -1,7 +1,13 @@
 "use client";
-import { IconEye, IconPencil } from "@tabler/icons-react";
+import {
+  IconEye,
+  IconPencil,
+  IconThumbUp,
+  IconThumbUpFilled,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import { formatViewCount } from "@/src/utils/number-format";
+import { useAssetLike } from "@/src/features/explore/hooks/use-asset-like";
 import { useRoleStore } from "../../auth/state/store";
 import ProfileEditToggle from "./profile-edit-toggle";
 import { useIsEditProfileToggled } from "../artist/store/artist-profile.store";
@@ -21,7 +27,57 @@ interface IProfileCard {
   onEditPost?: () => void;
   showEditControls?: boolean;
   onAddToCollection?: () => void;
+  showLikeControl?: boolean;
+  likeCount?: number;
 }
+
+interface ProfileCardLikeButtonProps {
+  assetId: string | number;
+  title: string;
+  initialLikeCount: number;
+}
+
+const ProfileCardLikeButton = ({
+  assetId,
+  title,
+  initialLikeCount,
+}: ProfileCardLikeButtonProps) => {
+  const { isLiked, likeCount, toggleLike, isLoading } = useAssetLike({
+    assetId,
+    initialLikeCount,
+  });
+
+  return (
+    <button
+      type="button"
+      onClick={() => void toggleLike()}
+      disabled={isLoading}
+      aria-pressed={isLiked}
+      aria-label={`${isLiked ? "Unlike" : "Like"} ${title}`}
+      title={`${isLiked ? "Unlike" : "Like"} ${title}`}
+      className="inline-flex items-center gap-1 rounded-full text-neutral-600 transition hover:text-[#1E3A8A] focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {isLiked ? (
+        <IconThumbUpFilled
+          width={15}
+          height={15}
+          className="text-[#1E3A8A]"
+          aria-hidden="true"
+        />
+      ) : (
+        <IconThumbUp
+          width={15}
+          height={15}
+          className="text-neutral-500"
+          aria-hidden="true"
+        />
+      )}
+      <span className="font-grotesk text-xs font-light text-neutral-600">
+        {formatViewCount(likeCount)}
+      </span>
+    </button>
+  );
+};
 
 const ProfileCard: React.FC<IProfileCard> = ({
   id,
@@ -34,6 +90,8 @@ const ProfileCard: React.FC<IProfileCard> = ({
   onEditPost,
   showEditControls = true,
   onAddToCollection,
+  showLikeControl = false,
+  likeCount = 0,
 }) => {
   const role = useRoleStore((state) => state.role);
   const isEditProfileToggled = useIsEditProfileToggled(id as string);
@@ -102,10 +160,19 @@ const ProfileCard: React.FC<IProfileCard> = ({
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <div className="flex items-center gap-1">
-              <IconEye width={15} height={15} className="text-neutral-500" />
-              <p className="font-grotesk text-xs font-light text-neutral-600">
-                {formatViewCount(views)}
-              </p>
+              <div className="flex items-center gap-1">
+                <IconEye width={15} height={15} className="text-neutral-500" />
+                <p className="font-grotesk text-xs font-light text-neutral-600">
+                  {formatViewCount(views)}
+                </p>
+              </div>
+              {showLikeControl && (
+                <ProfileCardLikeButton
+                  assetId={id}
+                  title={title}
+                  initialLikeCount={likeCount}
+                />
+              )}
             </div>
 
             {showEditControls && (
